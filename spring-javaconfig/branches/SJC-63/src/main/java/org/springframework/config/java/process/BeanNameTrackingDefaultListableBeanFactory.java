@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.util.Stack;
 
@@ -30,7 +30,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
  * @author Rod Johnson
  * 
  */
-public class BeanNameTrackingDefaultListableBeanFactory extends DefaultListableBeanFactory {
+class BeanNameTrackingDefaultListableBeanFactory extends DefaultListableBeanFactory {
 
 	private static ThreadLocal<Stack<String>> namesHolder = new ThreadLocal<Stack<String>>() {
 		@Override

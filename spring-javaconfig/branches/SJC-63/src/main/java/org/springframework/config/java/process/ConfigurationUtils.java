@@ -4,10 +4,6 @@ import java.lang.reflect.Modifier;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.core.AutoBeanMethodProcessor;
-import org.springframework.config.java.core.ExternalBeanMethodProcessor;
-import org.springframework.config.java.core.ExternalValueMethodProcessor;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 

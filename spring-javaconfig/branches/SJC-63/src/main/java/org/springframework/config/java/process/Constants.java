@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
-import java.lang.reflect.Method;
+/**
+ * @author Chris Beams
+ */
+final class Constants {
 
-import org.springframework.config.java.valuesource.ValueResolutionException;
+	private Constants() {
+	}
 
-public interface BeanMethodProcessor {
+	public static final String JAVA_CONFIG_PKG = "org.springframework.config.java";
 
-	Object processMethod(Method m) throws ValueResolutionException;
-
-	boolean understands(Method m);
 }

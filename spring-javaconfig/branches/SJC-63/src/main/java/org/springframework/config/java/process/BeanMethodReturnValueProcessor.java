@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
 
-public interface BeanMethodReturnValueProcessor {
+interface BeanMethodReturnValueProcessor {
 
 	boolean processBeanMethodReturnValue(BeanFactory childTrackingFactory, Object originallyCreatedBean, Method method,
 			ProxyFactory pf);

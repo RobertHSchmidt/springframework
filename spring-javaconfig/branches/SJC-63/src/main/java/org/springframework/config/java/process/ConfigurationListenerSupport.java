@@ -22,9 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterceptor;
-import org.springframework.config.java.enhancement.cglib.NoOpMethodInterceptor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
@@ -35,7 +32,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * @author Rod Johnson
  * @author Chris Beams
  */
-public abstract class ConfigurationListenerSupport implements ConfigurationListener {
+abstract class ConfigurationListenerSupport implements ConfigurationListener {
 
 	protected final Log log = LogFactory.getLog(getClass());
 

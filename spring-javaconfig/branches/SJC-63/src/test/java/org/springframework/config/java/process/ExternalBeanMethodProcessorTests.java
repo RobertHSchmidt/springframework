@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
@@ -33,6 +33,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
+import org.springframework.config.java.process.ExternalBeanMethodProcessor;
+import org.springframework.config.java.process.ProcessingContext;
 
 public class ExternalBeanMethodProcessorTests {
 	private ExternalBeanMethodProcessor externalBeanMethodProcessor;

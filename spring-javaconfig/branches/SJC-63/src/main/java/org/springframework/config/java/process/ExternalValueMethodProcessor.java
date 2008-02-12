@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -23,7 +23,7 @@ import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.util.Assert;
 
-public class ExternalValueMethodProcessor extends AbstractBeanMethodProcessor {
+class ExternalValueMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private final ValueSource valueSource;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement;
+package org.springframework.config.java.process;
 
 /**
  * Decorate the given configuration class for usage inside Spring application
@@ -27,7 +27,7 @@ package org.springframework.config.java.enhancement;
  * @author Costin Leau
  * @author Chris Beams
  */
-public interface ConfigurationEnhancer {
+interface ConfigurationEnhancer {
 
 	/**
 	 * Return an <i>enhanced</i> version of the given configuration instance

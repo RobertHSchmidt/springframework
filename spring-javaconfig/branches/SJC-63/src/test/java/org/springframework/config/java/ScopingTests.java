@@ -28,8 +28,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.process.ScopedProxyMethodProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import testutil.RootCauseDeterminingExceptionTemplate;

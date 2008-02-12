@@ -2,7 +2,6 @@ package org.springframework.config.java.process;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.core.ProcessingContext;
 
 class ImportConfigurationListener extends ConfigurationListenerSupport {
 

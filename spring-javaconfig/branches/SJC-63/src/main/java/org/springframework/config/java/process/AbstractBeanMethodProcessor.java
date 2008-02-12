@@ -1,4 +1,4 @@
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import static java.lang.String.format;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
  * 
  * @author Chris Beams
  */
-public class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
+class ExternalBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	public ExternalBeanMethodProcessor(ConfigurableListableBeanFactory owningBeanFactory,
 			BeanNamingStrategy namingStrategy, ProcessingContext pc) {

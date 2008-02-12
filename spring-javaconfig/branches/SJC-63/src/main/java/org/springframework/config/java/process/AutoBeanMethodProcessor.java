@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import java.util.Collection;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 
-public class AutoBeanMethodProcessor extends AbstractBeanMethodProcessor {
+class AutoBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	protected AutoBeanMethodProcessor(ProcessingContext pc) {
 		super(AutoBean.class, pc);

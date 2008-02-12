@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -38,7 +38,7 @@ import org.springframework.util.ClassUtils;
  * @author Costin Leau
  * @author Chris Beams
  */
-public class MethodBeanWrapper {
+class MethodBeanWrapper {
 
 	private final BeanFactory owningBeanFactory;
 

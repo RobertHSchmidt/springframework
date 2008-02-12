@@ -21,7 +21,6 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
