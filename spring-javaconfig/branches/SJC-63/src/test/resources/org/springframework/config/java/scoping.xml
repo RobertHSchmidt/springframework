@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
 	<bean id="configurationInstance"
-		class="org.springframework.config.java.ScopingTests$ScopedConfigurationClass" />
+		class="org.springframework.config.java.process.ScopingTests$ScopedConfigurationClass" />
 
 	<bean id="scopedProxyClass" factory-bean="configurationInstance"
 		factory-method="scopedProxyClass" scope="customScope">

@@ -21,7 +21,7 @@ import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.util.Assert;
 
-public class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
+class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 
 	private static final String TARGET_NAME_PREFIX = "scopedTarget.";
 

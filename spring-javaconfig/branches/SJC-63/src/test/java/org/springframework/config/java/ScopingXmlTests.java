@@ -24,6 +24,7 @@ import org.springframework.aop.scope.ScopedObject;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
+import org.springframework.config.java.process.ScopingTests;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
