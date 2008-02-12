@@ -1,5 +1,7 @@
 package issues;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.hamcrest.CoreMatchers;
@@ -16,7 +18,7 @@ import org.springframework.config.java.process.ConfigurationProcessor;
 public class Sjc63Tests {
 	@Test
 	public void ultraSimple() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(MyConfig.class);
+		new JavaConfigApplicationContext(MyConfig.class);
 	}
 
 	@Test
@@ -26,7 +28,6 @@ public class Sjc63Tests {
 		p.processClass(MyConfig.class);
 
 		TestBean bean = (TestBean) bf.getBean("testBean");
-		System.out.println(bean);
 		Assert.assertNotNull(bean);
 	}
 
@@ -41,6 +42,8 @@ public class Sjc63Tests {
 	@Aspect
 	@Configuration
 	static class MyConfig {
+		Log log = LogFactory.getLog(MyConfig.class);
+
 		@Bean
 		public TestBean testBean() {
 			return new TestBean("ultraSimpleBean");
@@ -48,7 +51,7 @@ public class Sjc63Tests {
 
 		@Before("execution(* *..TestBean.toString())")
 		public void log() {
-			System.out.println("got here");
+			log.info("got here");
 		}
 	}
 
