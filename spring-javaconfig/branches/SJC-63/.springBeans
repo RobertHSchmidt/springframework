@@ -7,6 +7,32 @@
 	</configSuffixes>
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
+		<config>src/test/resources/issues/Sjc54.xml</config>
+		<config>src/test/resources/issues/Sjc55.xml</config>
+		<config>src/test/resources/org/springframework/config/java/abstractDef.xml</config>
+		<config>src/test/resources/org/springframework/config/java/beanNamePostProcessor.xml</config>
+		<config>src/test/resources/org/springframework/config/java/externalBean.xml</config>
+		<config>src/test/resources/org/springframework/config/java/first.xml</config>
+		<config>src/test/resources/org/springframework/config/java/hiddenBeanPostProcessorTests.xml</config>
+		<config>src/test/resources/org/springframework/config/java/hiddenBeansWithAutowire.xml</config>
+		<config>src/test/resources/org/springframework/config/java/illegalShadow.xml</config>
+		<config>src/test/resources/org/springframework/config/java/independenceTest.xml</config>
+		<config>src/test/resources/org/springframework/config/java/injectedTest.xml</config>
+		<config>src/test/resources/org/springframework/config/java/javaandxml.xml</config>
+		<config>src/test/resources/org/springframework/config/java/legalShadow.xml</config>
+		<config>src/test/resources/org/springframework/config/java/localAndExternalAspects.xml</config>
+		<config>src/test/resources/org/springframework/config/java/myfactory.xml</config>
+		<config>src/test/resources/org/springframework/config/java/Person.hbm.xml</config>
+		<config>src/test/resources/org/springframework/config/java/requiredBean.xml</config>
+		<config>src/test/resources/org/springframework/config/java/reverseInjection.xml</config>
+		<config>src/test/resources/org/springframework/config/java/scoping.xml</config>
+		<config>src/test/resources/org/springframework/config/java/second.xml</config>
+		<config>src/test/resources/org/springframework/config/java/simpleCtx.xml</config>
+		<config>src/test/resources/org/springframework/config/java/test.xml</config>
+		<config>src/test/resources/org/springframework/config/java/context/simpleConfiguration.xml</config>
+		<config>src/test/resources/org/springframework/config/java/naming/PropagateBeanNamingTest.xml</config>
+		<config>src/test/resources/org/springframework/config/java/proxies/proxies.xml</config>
+		<config>src/test/resources/org/springframework/config/java/txannotations/txannotations.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
