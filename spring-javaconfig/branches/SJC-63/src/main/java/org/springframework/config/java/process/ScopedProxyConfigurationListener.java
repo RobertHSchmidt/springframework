@@ -26,6 +26,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
+import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterceptor;
+import org.springframework.config.java.enhancement.cglib.ScopedProxyBeanMethodMethodInterceptor;
 import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -103,6 +105,11 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 	public boolean understands(Class<?> configurerClass) {
 		Assert.notNull(configurerClass);
 		return configurerClass.isAnnotationPresent(Configuration.class);
+	}
+
+	@Override
+	public JavaConfigMethodInterceptor getMethodInterceptor(ProcessingContext pc) {
+		return new ScopedProxyBeanMethodMethodInterceptor(pc);
 	}
 
 }

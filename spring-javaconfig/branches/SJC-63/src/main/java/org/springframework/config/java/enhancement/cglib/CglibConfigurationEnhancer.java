@@ -15,20 +15,18 @@
  */
 package org.springframework.config.java.enhancement.cglib;
 
+import static java.lang.String.format;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.NoOp;
 
-import org.springframework.config.java.core.AutoBeanMethodProcessor;
-import org.springframework.config.java.core.ExternalBeanMethodProcessor;
-import org.springframework.config.java.core.ExternalValueMethodProcessor;
-import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.core.ScopedProxyMethodProcessor;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.util.Assert;
 
@@ -43,65 +41,43 @@ import org.springframework.util.Assert;
  */
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
-	private static final CallbackFilter BEAN_CREATION_METHOD_CALLBACK_FILTER = new CallbackFilter() {
-		public int accept(Method candidateMethod) {
-			if (ScopedProxyMethodProcessor.isScopedProxyMethod(candidateMethod))
-				return SCOPED_PROXY_CALLBACK_INDEX;
+	private final SortedSet<JavaConfigMethodInterceptor> methodInterceptors = new TreeSet<JavaConfigMethodInterceptor>();
 
-			if (StandardBeanMethodProcessor.isBeanCreationMethod(candidateMethod))
-				return BEAN_CALLBACK_INDEX;
+	public CglibConfigurationEnhancer() {
+		registerMethodInterceptor(new NoOpMethodInterceptor());
+	}
 
-			if (ExternalBeanMethodProcessor.isExternalBeanCreationMethod(candidateMethod)
-					|| AutoBeanMethodProcessor.isAutoBeanCreationMethod(candidateMethod))
-				return EXTERNAL_BEAN_CALLBACK_INDEX;
-
-			if (ExternalValueMethodProcessor.isExternalValueCreationMethod(candidateMethod))
-				return EXTERNAL_PROPERTY_CALLBACK_INDEX;
-
-			return NO_OP_CALLBACK_INDEX;
-		}
-	};
-
-	private static final Class<?>[] CALLBACK_TYPES = new Class[] { NoOp.class, BeanMethodMethodInterceptor.class,
-			ExternalBeanMethodMethodInterceptor.class, ScopedProxyBeanMethodMethodInterceptor.class,
-			ExternalValueMethodMethodInterceptor.class };
-
-	// non-intercepted method
-	private static final int NO_OP_CALLBACK_INDEX = 0;
-
-	// normal method invocation
-	private static final int BEAN_CALLBACK_INDEX = 1;
-
-	// external bean invocation
-	private static final int EXTERNAL_BEAN_CALLBACK_INDEX = 2;
-
-	// external property resolution
-	private static final int EXTERNAL_PROPERTY_CALLBACK_INDEX = 4;
-
-	// scoped proxy invocation (similar to normal invocation but aware of the
-	// scoping prefix)
-	private static final int SCOPED_PROXY_CALLBACK_INDEX = 3;
-
-	private final Callback[] callbacks;
-
-	public CglibConfigurationEnhancer(ProcessingContext pc) {
-		callbacks = new Callback[] { NoOp.INSTANCE, new BeanMethodMethodInterceptor(pc),
-				new ExternalBeanMethodMethodInterceptor(pc), new ScopedProxyBeanMethodMethodInterceptor(pc),
-				new ExternalValueMethodMethodInterceptor(pc) };
+	public void registerMethodInterceptor(JavaConfigMethodInterceptor methodInterceptor) {
+		methodInterceptors.add(methodInterceptor);
 	}
 
 	public <T> Class<? extends T> enhanceConfiguration(Class<T> configurationClass) {
 		Assert.notNull(configurationClass, "configuration class required");
 
+		final ArrayList<Class<? extends JavaConfigMethodInterceptor>> callbackTypes = new ArrayList<Class<? extends JavaConfigMethodInterceptor>>();
+		for (JavaConfigMethodInterceptor methodInterceptor : methodInterceptors)
+			callbackTypes.add(methodInterceptor.getClass());
+
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(configurationClass);
 		enhancer.setUseFactory(false);
-		enhancer.setCallbackFilter(BEAN_CREATION_METHOD_CALLBACK_FILTER);
-		enhancer.setCallbackTypes(CALLBACK_TYPES);
+		enhancer.setCallbackFilter(new CallbackFilter() {
+			public int accept(Method candidateMethod) {
+				for (JavaConfigMethodInterceptor methodInterceptor : methodInterceptors)
+					if (methodInterceptor.understands(candidateMethod))
+						return callbackTypes.indexOf(methodInterceptor.getClass());
+
+				throw new IllegalStateException(format("could not find a MethodInterceptor that understands method"
+						+ " [%s]. Did you forget to register a catch-all interceptor?" + "Consider using %s",
+						candidateMethod, NoOpMethodInterceptor.class.getSimpleName()));
+			}
+		});
+
+		enhancer.setCallbackTypes(callbackTypes.toArray(new Class<?>[] {}));
 
 		Class<?> configurationSubclass = enhancer.createClass();
 
-		Enhancer.registerCallbacks(configurationSubclass, callbacks);
+		Enhancer.registerCallbacks(configurationSubclass, methodInterceptors.toArray(new Callback[] {}));
 
 		return configurationSubclass.asSubclass(configurationClass);
 	}

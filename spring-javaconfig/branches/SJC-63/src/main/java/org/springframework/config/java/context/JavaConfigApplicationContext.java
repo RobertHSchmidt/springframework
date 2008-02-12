@@ -18,7 +18,6 @@ package org.springframework.config.java.context;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -348,22 +347,15 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		if (configClasses != null && configClasses.length > 0) {
-			for (Class<?> cz : configClasses) {
-				if (ConfigurationUtils.isConfigurationClass(cz)) {
+		if (configClasses != null && configClasses.length > 0)
+			for (Class<?> cz : configClasses)
+				if (ConfigurationUtils.isConfigurationClass(cz))
 					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
-				}
-			}
-		}
 
-		if (basePackages != null && basePackages.length > 0) {
-			for (String location : basePackages) {
-				Set<BeanDefinition> beandefs = scanner.findCandidateComponents(location);
-				for (BeanDefinition bd : beandefs) {
+		if (basePackages != null && basePackages.length > 0)
+			for (String location : basePackages)
+				for (BeanDefinition bd : scanner.findCandidateComponents(location))
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
-				}
-			}
-		}
 	}
 
 	/**

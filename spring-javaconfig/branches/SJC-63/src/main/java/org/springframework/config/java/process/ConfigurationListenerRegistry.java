@@ -44,10 +44,11 @@ class ConfigurationListenerRegistry implements Iterable<BeanMethodReturnValuePro
 	private final List<ConfigurationListener> configurationListeners = new ArrayList<ConfigurationListener>();
 
 	public ConfigurationListenerRegistry() {
-		/* TODO: SJC-63
-		*/
-		registerConfigurationListener(new ClassConfigurationListener());
+		ConfigurationEnhancerFactory factory = new ConfigurationEnhancerFactory(configurationListeners);
+		registerConfigurationListener(new ClassConfigurationListener(factory));
 		registerConfigurationListener(new AutoBeanConfigurationListener());
+		registerConfigurationListener(new ExternalBeanConfigurationListener());
+		registerConfigurationListener(new ExternalValueConfigurationListener());
 		registerConfigurationListener(new ResourceBundlesConfigurationListener());
 		registerConfigurationListener(new ScopedProxyConfigurationListener());
 		registerConfigurationListener(new ImportConfigurationListener());

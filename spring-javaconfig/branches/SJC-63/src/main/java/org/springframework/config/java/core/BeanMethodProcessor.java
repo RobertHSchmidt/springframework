@@ -23,4 +23,5 @@ public interface BeanMethodProcessor {
 
 	Object processMethod(Method m) throws ValueResolutionException;
 
+	boolean understands(Method m);
 }

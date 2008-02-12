@@ -54,7 +54,7 @@ abstract class AbstractBeanMethodProcessor implements BeanMethodProcessor {
 		return false;
 	}
 
-	protected boolean understands(Method candidateMethod) {
+	public boolean understands(Method candidateMethod) {
 		return isAnnotatedAndNonPrivate(candidateMethod);
 	}
 

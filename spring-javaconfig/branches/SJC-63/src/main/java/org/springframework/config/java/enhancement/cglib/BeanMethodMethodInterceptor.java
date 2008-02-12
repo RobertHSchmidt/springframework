@@ -17,7 +17,6 @@ package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
 
-import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.EnhancerMethodInvoker;
@@ -37,7 +36,7 @@ import org.springframework.config.java.core.StandardBeanMethodProcessor;
  * @author Costin Leau
  * @author Chris Beams
  */
-class BeanMethodMethodInterceptor implements MethodInterceptor {
+public class BeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	private final StandardBeanMethodProcessor beanMethodProcessor;
 
@@ -64,5 +63,17 @@ class BeanMethodMethodInterceptor implements MethodInterceptor {
 				}
 			});
 		}
+	}
+
+	public boolean understands(Method candidateMethod) {
+		return beanMethodProcessor.understands(candidateMethod);
+	}
+
+	public int getOrder() {
+		return 200;
+	}
+
+	public int compareTo(JavaConfigMethodInterceptor that) {
+		return this.getOrder() - that.getOrder();
 	}
 }
