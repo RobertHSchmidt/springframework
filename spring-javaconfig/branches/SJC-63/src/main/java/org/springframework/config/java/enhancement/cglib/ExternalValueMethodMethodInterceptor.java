@@ -17,7 +17,6 @@ package org.springframework.config.java.enhancement.cglib;
 
 import java.lang.reflect.Method;
 
-import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.core.BeanMethodProcessor;
@@ -33,7 +32,7 @@ import org.springframework.config.java.valuesource.ValueResolutionException;
  * @author Chris Beams
  * @author Rod Johnson
  */
-class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
+public class ExternalValueMethodMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	private final BeanMethodProcessor beanMethodProcessor;
 
@@ -55,5 +54,17 @@ class ExternalValueMethodMethodInterceptor implements MethodInterceptor {
 				throw ve;
 			}
 		}
+	}
+
+	public boolean understands(Method candidateMethod) {
+		return beanMethodProcessor.understands(candidateMethod);
+	}
+
+	public int getOrder() {
+		return 400;
+	}
+
+	public int compareTo(JavaConfigMethodInterceptor that) {
+		return this.getOrder() - that.getOrder();
 	}
 }

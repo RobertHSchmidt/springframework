@@ -23,13 +23,19 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
+import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 class ClassConfigurationListener extends ConfigurationListenerSupport {
+
+	private final ConfigurationEnhancerFactory enhancerFactory;
+
+	public ClassConfigurationListener(ConfigurationEnhancerFactory enhancerFactory) {
+		this.enhancerFactory = enhancerFactory;
+	}
 
 	@Override
 	public boolean understands(Class<?> configurationClass) {
@@ -113,7 +119,8 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 				.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
-		Class<?> enhancedClass = new CglibConfigurationEnhancer(pc).enhanceConfiguration(configurationClass);
+		ConfigurationEnhancer enh = enhancerFactory.createNewEnhancer(pc);
+		Class<?> enhancedClass = enh.enhanceConfiguration(configurationClass);
 		definition.setBeanClass(enhancedClass);
 
 		// Force resolution of dependencies on other beans

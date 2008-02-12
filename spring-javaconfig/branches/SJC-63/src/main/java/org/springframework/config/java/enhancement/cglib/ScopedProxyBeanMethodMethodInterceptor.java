@@ -34,7 +34,7 @@ import org.springframework.config.java.core.StandardBeanMethodProcessor;
  * @see MethodInterceptor
  * @author Costin Leau
  */
-class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
+public class ScopedProxyBeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	private final BeanMethodMethodInterceptor delegate;
 
@@ -49,5 +49,17 @@ class ScopedProxyBeanMethodMethodInterceptor implements MethodInterceptor {
 		String beanToReturn = scopedProxyMethodProcessor.processMethod(m);
 
 		return delegate.returnWrappedResultMayBeCached(beanToReturn, o, m, args, mp);
+	}
+
+	public boolean understands(Method candidateMethod) {
+		return scopedProxyMethodProcessor.understands(candidateMethod);
+	}
+
+	public int getOrder() {
+		return 100;
+	}
+
+	public int compareTo(JavaConfigMethodInterceptor that) {
+		return this.getOrder() - that.getOrder();
 	}
 }

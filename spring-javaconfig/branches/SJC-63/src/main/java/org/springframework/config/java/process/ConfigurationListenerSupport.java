@@ -22,6 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.config.java.core.ProcessingContext;
+import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterceptor;
+import org.springframework.config.java.enhancement.cglib.NoOpMethodInterceptor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
@@ -80,6 +83,10 @@ public abstract class ConfigurationListenerSupport implements ConfigurationListe
 			}
 
 		});
+	}
+
+	public JavaConfigMethodInterceptor getMethodInterceptor(ProcessingContext pc) {
+		return new NoOpMethodInterceptor();
 	}
 
 }

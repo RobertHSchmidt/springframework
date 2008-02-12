@@ -20,6 +20,8 @@ import java.lang.reflect.Method;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
+import org.springframework.config.java.core.ProcessingContext;
+import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterceptor;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.
@@ -55,4 +57,6 @@ public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 	void handleEvent(Reactor reactor, MethodEvent event);
 
 	void handleEvent(Reactor reactor, BeanMethodEvent event);
+
+	JavaConfigMethodInterceptor getMethodInterceptor(ProcessingContext pc);
 }

@@ -38,6 +38,8 @@ import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanF
 import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.core.StandardBeanMethodProcessor;
+import org.springframework.config.java.enhancement.cglib.BeanMethodMethodInterceptor;
+import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterceptor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
@@ -222,5 +224,10 @@ class StandardBeanConfigurationListener extends ConfigurationListenerSupport {
 			rbd.setAutowireMode(configuration.defaultAutowire().value());
 		}
 
+	}
+
+	@Override
+	public JavaConfigMethodInterceptor getMethodInterceptor(ProcessingContext pc) {
+		return new BeanMethodMethodInterceptor(pc);
 	}
 }
