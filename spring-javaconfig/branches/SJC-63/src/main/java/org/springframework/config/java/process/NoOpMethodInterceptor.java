@@ -1,4 +1,4 @@
-package org.springframework.config.java.enhancement.cglib;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
@@ -9,7 +9,7 @@ import net.sf.cglib.proxy.MethodProxy;
  * 
  * @author Chris Beams
  */
-public class NoOpMethodInterceptor implements JavaConfigMethodInterceptor {
+class NoOpMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	public boolean understands(Method candidateMethod) {
 		return true;

@@ -26,7 +26,6 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.core.Ordered;
 
 /**

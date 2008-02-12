@@ -6,10 +6,9 @@ import java.lang.reflect.Method;
 
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.util.Assert;
 
-public class Main {
+class Main {
 }
 
 interface Reactor {

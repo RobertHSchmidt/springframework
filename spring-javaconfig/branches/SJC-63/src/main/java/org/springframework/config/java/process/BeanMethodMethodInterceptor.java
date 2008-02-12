@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement.cglib;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
 import net.sf.cglib.proxy.MethodProxy;
-
-import org.springframework.config.java.core.EnhancerMethodInvoker;
-import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
 
 /**
  * CGLIB MethodInterceptor that applies to methods on the configuration
@@ -36,7 +32,7 @@ import org.springframework.config.java.core.StandardBeanMethodProcessor;
  * @author Costin Leau
  * @author Chris Beams
  */
-public class BeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
+class BeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	private final StandardBeanMethodProcessor beanMethodProcessor;
 

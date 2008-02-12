@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement.cglib;
+package org.springframework.config.java.process;
 
 import static java.lang.String.format;
 
@@ -27,7 +27,6 @@ import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
 
-import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.util.Assert;
 
 /**
@@ -39,7 +38,7 @@ import org.springframework.util.Assert;
  * @author Costin Leau
  * @author Chris Beams
  */
-public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
+class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	private final SortedSet<JavaConfigMethodInterceptor> methodInterceptors = new TreeSet<JavaConfigMethodInterceptor>();
 

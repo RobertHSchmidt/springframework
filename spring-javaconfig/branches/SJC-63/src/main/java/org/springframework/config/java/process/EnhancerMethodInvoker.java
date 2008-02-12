@@ -13,16 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
+
+import java.lang.reflect.Method;
 
 /**
- * @author Chris Beams
+ * Invoking interface for bypassing the decorated class. This interface simply
+ * decouples the processing class from the actual bytecode instrumentation
+ * libraries.
+ * 
+ * @author Costin Leau
  */
-public final class Constants {
+interface EnhancerMethodInvoker {
 
-	private Constants() {
-	}
+	/**
+	 * Invoke the original (non decorated) code.
+	 * 
+	 * @return method result
+	 * @throws Throwable
+	 */
+	Object invokeOriginalClass() throws Throwable;
 
-	public static final String JAVA_CONFIG_PKG = "org.springframework.config.java";
-
+	/**
+	 * The method used for invocation.
+	 * 
+	 * @return method backing the invocation
+	 */
+	Method getMethod();
 }

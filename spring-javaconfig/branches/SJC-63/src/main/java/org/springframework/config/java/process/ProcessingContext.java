@@ -1,4 +1,4 @@
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 
-public final class ProcessingContext {
+final class ProcessingContext {
 
 	private static final Log log = LogFactory.getLog(ProcessingContext.class);
 

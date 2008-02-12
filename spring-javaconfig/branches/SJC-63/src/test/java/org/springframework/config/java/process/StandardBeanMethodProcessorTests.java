@@ -1,4 +1,4 @@
-package org.springframework.config.java.core;
+package org.springframework.config.java.process;
 
 
 import java.lang.reflect.Method;
@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
+import org.springframework.config.java.process.StandardBeanMethodProcessor;
 
 public class StandardBeanMethodProcessorTests {
 

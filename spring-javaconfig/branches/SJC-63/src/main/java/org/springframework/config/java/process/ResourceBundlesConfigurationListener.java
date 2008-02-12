@@ -16,7 +16,6 @@
 package org.springframework.config.java.process;
 
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.core.ProcessingContext;
 import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.util.StringUtils;

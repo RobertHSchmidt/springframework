@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement.cglib;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
@@ -21,9 +21,6 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.core.ScopedProxyMethodProcessor;
-import org.springframework.config.java.core.StandardBeanMethodProcessor;
 
 /**
  * CGLIB callback suitable for scoped proxies. It's aware of the name switch
@@ -34,7 +31,7 @@ import org.springframework.config.java.core.StandardBeanMethodProcessor;
  * @see MethodInterceptor
  * @author Costin Leau
  */
-public class ScopedProxyBeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
+class ScopedProxyBeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	private final BeanMethodMethodInterceptor delegate;
 

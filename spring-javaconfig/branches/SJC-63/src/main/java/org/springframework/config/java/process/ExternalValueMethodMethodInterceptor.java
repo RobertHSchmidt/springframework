@@ -13,33 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.enhancement.cglib;
+package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
 
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.springframework.config.java.core.BeanMethodProcessor;
-import org.springframework.config.java.core.ExternalBeanMethodProcessor;
-import org.springframework.config.java.core.ProcessingContext;
+import org.springframework.config.java.valuesource.ValueResolutionException;
 
 /**
- * CGLIB method interceptor for external bean methods.
+ * CGLIB method interceptor for external property resolution methods.
  * 
  * <p/> This implementation is thread-safe.
  * 
+ * @author Chris Beams
  * @author Rod Johnson
  */
-public class ExternalBeanMethodMethodInterceptor implements JavaConfigMethodInterceptor {
+class ExternalValueMethodMethodInterceptor implements JavaConfigMethodInterceptor {
 
 	private final BeanMethodProcessor beanMethodProcessor;
 
-	public ExternalBeanMethodMethodInterceptor(ProcessingContext pc) {
-		this.beanMethodProcessor = new ExternalBeanMethodProcessor(pc);
+	public ExternalValueMethodMethodInterceptor(ProcessingContext pc) {
+		this.beanMethodProcessor = new ExternalValueMethodProcessor(pc);
 	}
 
 	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-		return beanMethodProcessor.processMethod(m);
+		try {
+			return beanMethodProcessor.processMethod(m);
+		}
+		catch (ValueResolutionException ve) {
+			// Look for a concrete implementation
+			try {
+				return mp.invokeSuper(o, args);
+			}
+			catch (AbstractMethodError ex) {
+				// There was no implementation in the superclass
+				throw ve;
+			}
+		}
 	}
 
 	public boolean understands(Method candidateMethod) {
@@ -47,7 +58,7 @@ public class ExternalBeanMethodMethodInterceptor implements JavaConfigMethodInte
 	}
 
 	public int getOrder() {
-		return 300;
+		return 400;
 	}
 
 	public int compareTo(JavaConfigMethodInterceptor that) {

@@ -2,11 +2,7 @@ package org.springframework.config.java.process;
 
 import java.util.List;
 
-import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.enhancement.ConfigurationEnhancer;
-import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhancer;
-
-public class ConfigurationEnhancerFactory {
+class ConfigurationEnhancerFactory {
 
 	private final List<ConfigurationListener> configurationListeners;
 

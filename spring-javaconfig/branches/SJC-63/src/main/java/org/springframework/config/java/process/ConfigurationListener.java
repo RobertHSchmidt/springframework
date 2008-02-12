@@ -19,9 +19,6 @@ import java.lang.reflect.Method;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
-import org.springframework.config.java.core.ProcessingContext;
-import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterceptor;
 
 /**
  * SPI interface that allows extension of a ConfigurationProcessor.
@@ -31,7 +28,7 @@ import org.springframework.config.java.enhancement.cglib.JavaConfigMethodInterce
  * 
  * @author Rod Johnson
  */
-public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
+interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 
 	/**
 	 * Does this configurer understand the given configuration class, which
