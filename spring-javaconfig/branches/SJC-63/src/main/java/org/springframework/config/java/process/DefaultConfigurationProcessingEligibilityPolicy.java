@@ -7,7 +7,7 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
-public class ConfigurationUtils {
+class DefaultConfigurationProcessingEligibilityPolicy {
 
 	/**
 	 * Check if the given class is a configuration.
@@ -16,7 +16,7 @@ public class ConfigurationUtils {
 	 * annotated with &#64;Configuration and/or have at least one method
 	 * annotated with &#64;Bean
 	 */
-	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
+	public static boolean isEligibleForConfigurationProcessing(Class<?> candidateConfigurationClass) {
 		Assert.notNull(candidateConfigurationClass);
 
 		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())

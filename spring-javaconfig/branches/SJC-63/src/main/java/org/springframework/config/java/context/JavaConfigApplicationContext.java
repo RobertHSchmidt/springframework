@@ -25,7 +25,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.config.java.process.ConfigurationUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
@@ -351,18 +350,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
 		if (configClasses != null && configClasses.length > 0)
-			for (Class<?> cz : configClasses) {
-				// TODO: ideally we'd use
-				// configurationPostProcessor.isConfigurationClass() here,
-				// but we cannot currently, because it's too permissive.
-				// Abstract classes will get picked up just because they have a
-				// single @Bean method (which is invalid). We need to do some
-				// kind of policy object for what constitutes a 'valid'
-				// configuration class. Something pluggable where we can
-				// aggregate all the rules.
-				if (ConfigurationUtils.isConfigurationClass(cz))
+			for (Class<?> cz : configClasses)
+				if (configurationPostProcessor.isConfigurationClass(cz))
 					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
-			}
 
 		if (basePackages != null && basePackages.length > 0)
 			for (String location : basePackages)

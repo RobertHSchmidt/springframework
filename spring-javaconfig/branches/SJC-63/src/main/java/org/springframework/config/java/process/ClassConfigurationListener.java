@@ -37,7 +37,7 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
 	public boolean understands(Class<?> configurationClass) {
-		return ConfigurationUtils.isConfigurationClass(configurationClass);
+		return DefaultConfigurationProcessingEligibilityPolicy.isEligibleForConfigurationProcessing(configurationClass);
 	}
 
 	public void handleEvent(Reactor reactor, ClassEvent event) {

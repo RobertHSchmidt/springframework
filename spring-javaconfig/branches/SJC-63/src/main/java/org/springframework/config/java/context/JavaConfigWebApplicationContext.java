@@ -109,9 +109,9 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
-		for (Class<?> cz : configClasses) {
-			beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
-		}
+		for (Class<?> cz : configClasses)
+			if (configurationPostProcessor.isConfigurationClass(cz))
+				beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
 
 		for (String basePackage : basePackages) {
 			Set<BeanDefinition> beandefs = scanner.findCandidateComponents(basePackage);
