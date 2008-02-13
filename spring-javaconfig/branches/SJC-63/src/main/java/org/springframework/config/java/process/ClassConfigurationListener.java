@@ -45,9 +45,6 @@ class ClassConfigurationListener extends ConfigurationListenerSupport {
 		Class<?> configurationClass = event.clazz;
 		ProcessingContext pc = event.processingContext;
 
-		if (!reactor.isConfigClass(configurationClass))
-			return;
-
 		// register the configuration as a bean to allow Spring to use it for
 		// creating the actual objects
 

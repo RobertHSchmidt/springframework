@@ -20,8 +20,6 @@ interface Reactor {
 
 	void sourceBeanMethodEvent(BeanMethodEvent beanMethodEvent);
 
-	boolean isConfigClass(Class<?> configurationClass);
-
 	void sourceClassEvent(ClassEvent classEvent);
 
 	void sourceMethodEvent(MethodEvent event);
