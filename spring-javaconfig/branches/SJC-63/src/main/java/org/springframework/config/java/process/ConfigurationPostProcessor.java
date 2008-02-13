@@ -108,7 +108,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	 * @see ConfigurationProcessor#ConfigurationProcessor(ProcessingContext,
 	 * ConfigurationListenerRegistry) for details on default settings
 	 */
-	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
+	void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
 		this.configurationListenerRegistry = configurationListenerRegistry;
 	}
 
@@ -155,6 +155,14 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 	}
 
 	/**
+	 * Evaluates <var>candidateClass</var> to determine whether it is eligible
+	 * for processing as a configuration class.
+	 */
+	public boolean isConfigurationClass(Class<?> candidateClass) {
+		return configurationListenerRegistry.isConfigurationClass(candidateClass);
+	}
+
+	/**
 	 * Processes each BeanDefinition in <var>beanFactory</var>, looking for any
 	 * beans that conform to the semantics of a {@link Configuration}. For any
 	 * {@link Configuration} bean found, process that class, generating a
@@ -193,7 +201,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Pri
 
 		for (String beanName : beanNames) {
 			Class<?> clazz = getBeanClass(beanName, beanFactory);
-			if (configurationListenerRegistry.isConfigurationClass(clazz)) {
+			if (isConfigurationClass(clazz)) {
 				ConfigurationProcessor processor = new ConfigurationProcessor(processingContext,
 						configurationListenerRegistry);
 				processor.processConfigurationBean(beanName, clazz);

@@ -16,6 +16,7 @@
 package org.springframework.config.java.process;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.valuesource.ValueResolutionException;
@@ -50,6 +51,29 @@ class ScopedProxyMethodProcessor extends AbstractBeanMethodProcessor {
 
 	public static boolean isScopedProxyMethod(Method candidateMethod) {
 		return new ScopedProxyMethodProcessor(new ProcessingContext()).understands(candidateMethod);
+	}
+
+	/**
+	 * Check whether <var>candidateMethod</var> is an {@link ScopedProxy}
+	 * method. Method may be annotated directly or in the case of overriding,
+	 * may inherit the declaration from a superclass/superinterface.
+	 * 
+	 * @param candidateMethod
+	 * @return true if non-private and annotated directly or indirectly with
+	 * {@link ScopedProxy}
+	 */
+	public static boolean isScopedProxyCreationMethod(Method candidateMethod) {
+		return new ScopedProxyMethodProcessor(new ProcessingContext()).understands(candidateMethod);
+	}
+
+	/**
+	 * Find all methods that are annotated with {@link ScopedProxy}.
+	 * 
+	 * @param configurationClass
+	 * @return collection of all methods annotated with {@link ScopedProxy}
+	 */
+	public static Collection<Method> findScopedProxyCreationMethods(Class<?> configurationClass) {
+		return new ScopedProxyMethodProcessor(new ProcessingContext()).findMatchingMethods(configurationClass);
 	}
 
 	/**

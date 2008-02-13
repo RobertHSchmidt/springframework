@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.process.ConfigurationUtils;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
@@ -50,12 +50,14 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	private ArrayList<String> basePackages = new ArrayList<String>();
 
+	private final ConfigurationPostProcessor configurationPostProcessor = new ConfigurationPostProcessor();
+
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
 		initConfigLocations();
 		processAnyOuterClasses();
-		registerDefaultPostProcessors();
+		addBeanFactoryPostProcessor(configurationPostProcessor);
 	}
 
 	protected void initConfigLocations() {
@@ -63,7 +65,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 		for (String location : getConfigLocations()) {
 			try {
 				Class<?> cz = Class.forName(location);
-				if (ConfigurationUtils.isConfigurationClass(cz)) {
+				if (configurationPostProcessor.isConfigurationClass(cz)) {
 					configClasses.add(cz);
 				}
 				else {
@@ -83,7 +85,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 		if (configClasses != null && configClasses.size() > 0) {
 			for (Class<?> configClass : configClasses) {
 				Class<?> candidate = configClass.getDeclaringClass();
-				if (candidate != null && ConfigurationUtils.isConfigurationClass(candidate)) {
+				if (candidate != null && configurationPostProcessor.isConfigurationClass(candidate)) {
 					if (outerConfig != null) {
 						// TODO: throw a better exception
 						throw new RuntimeException("cannot specify more than one inner configuration class");
@@ -125,15 +127,6 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 				log.warn(format(message, basePackage));
 			}
 		}
-	}
-
-	/**
-	 * Register the default post processors used for parsing Spring classes.
-	 * 
-	 * @see JavaConfigBeanFactoryPostProcessorRegistry
-	 */
-	protected void registerDefaultPostProcessors() {
-		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
 	}
 
 	public <T> T getBean(Class<T> type) {
