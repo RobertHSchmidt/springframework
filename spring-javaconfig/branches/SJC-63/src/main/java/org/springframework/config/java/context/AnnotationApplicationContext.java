@@ -24,7 +24,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
-import org.springframework.config.java.process.ConfigurationUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
@@ -53,6 +52,8 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	 * We delegate to Spring 2.5 and above class scanning support.
 	 */
 	private ClassPathScanningCandidateComponentProvider scanner;
+
+	private final ConfigurationPostProcessor configurationPostProcessor = new ConfigurationPostProcessor();
 
 	/**
 	 * Create a new AnnotationApplicationContext w/o any settings.
@@ -171,7 +172,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	 * 
 	 */
 	protected void registerDefaultPostProcessors() {
-		addBeanFactoryPostProcessor(new ConfigurationPostProcessor());
+		addBeanFactoryPostProcessor(configurationPostProcessor);
 	}
 
 	@Override
@@ -179,7 +180,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 		Class<?>[] configClasses = getConfigClasses();
 		if (configClasses != null && configClasses.length > 0) {
 			for (Class<?> cz : configClasses) {
-				if (ConfigurationUtils.isConfigurationClass(cz)) {
+				if (configurationPostProcessor.isConfigurationClass(cz)) {
 					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
 				}
 			}

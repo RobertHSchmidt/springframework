@@ -22,7 +22,6 @@ import org.springframework.aop.scope.ScopedProxyFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -98,9 +97,9 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 	}
 
 	@Override
-	public boolean understands(Class<?> configurerClass) {
-		Assert.notNull(configurerClass);
-		return configurerClass.isAnnotationPresent(Configuration.class);
+	public boolean understands(Class<?> configurationClass) {
+		Assert.notNull(configurationClass);
+		return ScopedProxyMethodProcessor.findScopedProxyCreationMethods(configurationClass).size() > 0;
 	}
 
 	@Override

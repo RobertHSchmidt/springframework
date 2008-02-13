@@ -23,6 +23,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.process.ConfigurationUtils;
 import org.springframework.context.ApplicationContext;
@@ -192,6 +193,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	private final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningConfigurationProviderFactory()
 			.getProvider(this);
 
+	private final ConfigurationPostProcessor configurationPostProcessor = new ConfigurationPostProcessor();
+
 	/**
 	 * requires calling refresh()
 	 * 
@@ -260,7 +263,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	protected void prepareRefresh() {
 		super.prepareRefresh();
 		processAnyOuterClasses();
-		registerDefaultPostProcessors();
+		this.addBeanFactoryPostProcessor(configurationPostProcessor);
 	}
 
 	public void setConfigClasses(Class<?>... classes) {
@@ -326,7 +329,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		if (configClasses != null && configClasses.length > 0) {
 			for (Class<?> configClass : configClasses) {
 				Class<?> candidate = configClass.getDeclaringClass();
-				if (candidate != null && ConfigurationUtils.isConfigurationClass(candidate)) {
+				if (candidate != null && configurationPostProcessor.isConfigurationClass(candidate)) {
 					if (outerConfig != null) {
 						// TODO: throw a better exception
 						throw new RuntimeException("cannot specify more than one inner configuration class");
@@ -348,23 +351,23 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
 		if (configClasses != null && configClasses.length > 0)
-			for (Class<?> cz : configClasses)
+			for (Class<?> cz : configClasses) {
+				// TODO: ideally we'd use
+				// configurationPostProcessor.isConfigurationClass() here,
+				// but we cannot currently, because it's too permissive.
+				// Abstract classes will get picked up just because they have a
+				// single @Bean method (which is invalid). We need to do some
+				// kind of policy object for what constitutes a 'valid'
+				// configuration class. Something pluggable where we can
+				// aggregate all the rules.
 				if (ConfigurationUtils.isConfigurationClass(cz))
 					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+			}
 
 		if (basePackages != null && basePackages.length > 0)
 			for (String location : basePackages)
 				for (BeanDefinition bd : scanner.findCandidateComponents(location))
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
-	}
-
-	/**
-	 * Register the default post processors used for parsing Spring classes.
-	 * 
-	 * @see JavaConfigBeanFactoryPostProcessorRegistry
-	 */
-	protected void registerDefaultPostProcessors() {
-		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
 	}
 
 	public <T> T getBean(Class<T> type) {

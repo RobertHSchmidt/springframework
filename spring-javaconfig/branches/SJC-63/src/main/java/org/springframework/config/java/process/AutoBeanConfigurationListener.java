@@ -21,7 +21,6 @@ import java.lang.reflect.Modifier;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.AutoBean;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -33,8 +32,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 class AutoBeanConfigurationListener extends ConfigurationListenerSupport {
 
 	@Override
-	public boolean understands(Class<?> configurerClass) {
-		return configurerClass.isAnnotationPresent(Configuration.class);
+	public boolean understands(Class<?> configurationClass) {
+		return AutoBeanMethodProcessor.findAutoBeanCreationMethods(configurationClass).size() > 0;
 	}
 
 	@Override
