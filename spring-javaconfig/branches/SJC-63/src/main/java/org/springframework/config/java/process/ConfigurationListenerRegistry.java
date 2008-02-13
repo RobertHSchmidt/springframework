@@ -74,14 +74,10 @@ class ConfigurationListenerRegistry implements Iterable<BeanMethodReturnValuePro
 		if (candidateClass == null)
 			return false;
 
-		if (ConfigurationUtils.isConfigurationClass(candidateClass)) {
+		if (DefaultConfigurationProcessingEligibilityPolicy.isEligibleForConfigurationProcessing(candidateClass)) {
 			CglibConfigurationEnhancer.validateSuitabilityForEnhancement(candidateClass);
 			return true;
 		}
-
-		for (ConfigurationListener cl : configurationListeners)
-			if (cl.understands(candidateClass))
-				return true;
 
 		return false;
 	}
