@@ -123,14 +123,6 @@ public final class ConfigurationProcessor implements Reactor {
 		sourceClassEvent(new ClassEvent(this, configurationClass, configurationBeanName, processingContext));
 	}
 
-	/**
-	 * @see {@link ConfigurationListenerRegistry#isConfigurationClass(Class)}.
-	 * Consider elimination
-	 */
-	public boolean isConfigClass(Class<?> candidateClass) {
-		return configurationListenerRegistry.isConfigurationClass(candidateClass);
-	}
-
 	public void sourceEvent(Event event) {
 		throw new UnsupportedOperationException();
 		/*
