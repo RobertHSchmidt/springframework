@@ -129,7 +129,7 @@
 						<lineRate>0</lineRate>
 						<packageLineRate>0</packageLineRate>
 						<packageBranchRate>0</packageBranchRate>
-						<totalBranchRate>89</totalBranchRate>
+						<totalBranchRate>83</totalBranchRate>
 						<totalLineRate>83</totalLineRate>
 					</check>
 				</configuration>
