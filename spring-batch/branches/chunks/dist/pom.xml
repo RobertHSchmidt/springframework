@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.batch</groupId>
+	<artifactId>spring-batch-dist</artifactId>
+	<name>Distribution</name>
+    <packaging>pom</packaging>
+	<description>
+		<!--  Use CDATA to keep it on a single line in the manifest -->
+		<![CDATA[Spring Batch Distribution - used to create a .zip package for distribution of the main sub modules.]]>
+	</description>
+	<parent>
+		<groupId>org.springframework.batch</groupId>
+		<artifactId>spring-batch</artifactId>
+		<version>1.0.0.m5-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<modules>
+		<module>../spring-batch-infrastructure</module>
+		<module>../spring-batch-core</module>
+		<module>../spring-batch-execution</module>
+		<module>../spring-batch-samples</module>
+	</modules>
+
+	<build>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.aws</groupId>
+				<artifactId>spring-aws-maven</artifactId>
+				<version>1.2</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>zip-files</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/no-dependencies.xml</descriptor>
+								<descriptor>src/assembly/with-dependencies.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-parent-pom</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<copy file="../pom.xml" todir="target"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
