@@ -19,20 +19,33 @@
 
 	<properties>
 		<unpack.version>1.1.2</unpack.version>
-		<export.package>javax.servlet.jsp.jstl*</export.package>
+		<taglibs.version>1.1.2</taglibs.version>
+		<export.packages>
+			javax.servlet.jsp.jstl*;version=${unpack.version},
+			org.apache.taglibs.standard*;version=${taglibs.version}
+		</export.packages>
 		<import.packages>
 			javax.xml.parsers;resolution:=optional,
 			org.xml.sax*;resolution:=optional,
-			*
+			*;resolution:=optional
 		</import.packages>
 
 	</properties>
 	<dependencies>
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.1.2</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
+	
 </project>

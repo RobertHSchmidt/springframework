@@ -43,11 +43,15 @@
 		<module>commons-collections</module>
 		<module>commons-lang</module>
 		<module>commons-pool</module>
+		<!--
 		<module>el/commons-el</module>
 		<module>el/unified-el</module>
+		-->
 		<module>hsqldb</module>
+		<!--
 		<module>jsp-api/2.0</module>
 		<module>jsp-api/2.1</module>
+		-->
 		<module>jstl</module>
 		<module>jta</module>
 		<module>junit</module>
@@ -55,11 +59,15 @@
 		<module>mx4j</module>
 		<module>mysql-connector</module>
 		<module>portlet-api</module>
+		<!--
 		<module>servlet-api/2.4</module>
 		<module>servlet-api/2.5</module>
+		-->
 		<module>struts</module>
+		<!--
 		<module>jasper/5.5.23</module>
 		<module>jasper/6.0.16</module>
+		-->
 	</modules>
 
 	<build>
