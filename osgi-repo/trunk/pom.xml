@@ -17,7 +17,7 @@
 			${export.package}*;version=${unpack.version}
 		</export.packages>
 		<import.packages>
-			*
+			*;resolution:=optional
 		</import.packages>
 		<include.resources>
 		</include.resources>
@@ -31,10 +31,12 @@
 		<unpack-bundle>false</unpack-bundle>
 	</properties>
 
+	<!-- build as many modules as possible -->
 	<modules>
 		<module>aop-alliance</module>
 		<module>asm</module>
 		<module>aspectj</module>
+		<module>ant</module>		
 		<module>backport-util-concurrent</module>
 		<module>c3p0</module>
 		<module>cglib</module>
@@ -42,17 +44,18 @@
 		<module>commons-beanutils</module>
 		<module>commons-collections</module>
 		<module>commons-lang</module>
-		<module>commons-pool</module>
-		<!--
 		<module>el/commons-el</module>
-		<module>el/unified-el</module>
-		-->
+		<module>el/api</module>
 		<module>hsqldb</module>
-		<!--
 		<module>jsp-api/2.0</module>
+		<!--
 		<module>jsp-api/2.1</module>
 		-->
-		<module>jstl</module>
+		
+		<module>jstl/1.1.2</module>
+		<!--
+		<module>jstl/1.2</module>
+		-->
 		<module>jta</module>
 		<module>junit</module>
 		<module>log4j</module>
@@ -61,11 +64,11 @@
 		<module>portlet-api</module>
 		<!--
 		<module>servlet-api/2.4</module>
-		<module>servlet-api/2.5</module>
 		-->
+		<module>servlet-api/2.5</module>
 		<module>struts</module>
-		<!--
 		<module>jasper/5.5.23</module>
+		<!--
 		<module>jasper/6.0.16</module>
 		-->
 	</modules>
