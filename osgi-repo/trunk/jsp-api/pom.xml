@@ -19,7 +19,7 @@
 
 	<properties>
 		<unpack.version>2.0</unpack.version>
-		<export.package>javax.servlet.jsp*</export.package>
+		<export.packages>javax.servlet.jsp*</export.packages>
 	</properties>
 
 	<dependencies>
