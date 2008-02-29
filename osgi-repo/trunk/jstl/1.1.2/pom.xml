@@ -15,7 +15,7 @@
 	<artifactId>jstl.osgi</artifactId>
 	<packaging>bundle</packaging>
 	<version>1.1.2-SNAPSHOT</version>
-	<name>JSTL (OSGi version)</name>
+	<name>JSTL 1.1.x (OSGi version)</name>
 
 	<properties>
 		<unpack.version>1.1.2</unpack.version>
