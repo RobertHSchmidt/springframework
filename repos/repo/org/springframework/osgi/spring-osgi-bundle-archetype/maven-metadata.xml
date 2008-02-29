@@ -3,10 +3,11 @@
   <artifactId>spring-osgi-bundle-archetype</artifactId>
   <version>1.0</version>
   <versioning>
-    <latest>1.0</latest>
+    <latest>1.0.1</latest>
     <versions>
       <version>1.0</version>
+      <version>1.0.1</version>
     </versions>
-    <lastUpdated>20080125103040</lastUpdated>
+    <lastUpdated>20080229084930</lastUpdated>
   </versioning>
 </metadata>
