@@ -13,7 +13,6 @@
 
 	<properties>
 <!-- Default visibility -->
-		<export.package/>
 		<export.packages>
 			${export.package}*;version=${unpack.version}
 		</export.packages>
@@ -28,6 +27,8 @@
 
 		<symName.prefix>org.springframework.osgi.bundle</symName.prefix>
 		<symbolic.name>${pom.groupId}.${pom.artifactId}</symbolic.name>
+		<embed-dep>*;scope=provided;type=!pom;inline=true</embed-dep>
+		<unpack-bundle>false</unpack-bundle>
 	</properties>
 
 	<modules>
@@ -43,7 +44,8 @@
 		<module>commons-lang</module>
 		<module>commons-pool</module>
 		<module>hsqldb</module>
-		<module>jsp-api</module>
+		<module>jsp-api/2.0</module>
+		<module>jsp-api/2.1</module>
 		<module>jstl</module>
 		<module>jta</module>
 		<module>junit</module>
@@ -51,8 +53,11 @@
 		<module>mx4j</module>
 		<module>mysql-connector</module>
 		<module>portlet-api</module>
-		<module>servlet-api</module>
+		<module>servlet-api/2.4</module>
+		<module>servlet-api/2.5</module>
 		<module>struts</module>
+		<module>jasper/5.5.23</module>
+		<module>jasper/6.0.16</module>
 	</modules>
 
 	<build>
@@ -65,12 +70,14 @@
 		</extensions>
 
 		<plugins>
-<!-- OSGi Felix bundle plugin -->
+			<!-- OSGi Felix bundle plugin -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>1.1.0-SNAPSHOT</version>
+				<version>1.2.0</version>
 				<configuration>
+					<unpackBundle>${unpack.bundle}</unpackBundle>
+					<obrRepository>NONE</obrRepository>
 					<instructions>
 						<Bundle-Name>${artifactId}</Bundle-Name>
 						<Bundle-SymbolicName>${symbolic.name}</Bundle-SymbolicName>
@@ -78,7 +85,7 @@
 						<Import-Package>${import.packages}</Import-Package>
 						<Private-Package>${private.packages}</Private-Package>
 						<Include-Resource>${include.resources}</Include-Resource>
-						<Embed-Dependency>*;scope=provided;type=!pom;inline=true</Embed-Dependency>
+						<Embed-Dependency>${embed-dep}</Embed-Dependency>
 						<_exportcontents>${export.packages}</_exportcontents>
 						<Implementation-Title>Spring Dynamic Modules Framework</Implementation-Title>
 						<Implementation-Version>${unpack.version}</Implementation-Version>
@@ -116,7 +123,7 @@
 		<repository>
 			<id>spring-ext</id>
 			<name>Spring External Dependencies Repository</name>
-			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
+			<url>http://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
 		</repository>
 	</repositories>
 </project>
