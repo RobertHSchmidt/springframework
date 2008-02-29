@@ -19,7 +19,7 @@
 
 	<properties>
 		<unpack.version>2.4</unpack.version>
-		<export.package>javax.servlet*</export.package>
+		<export.packages>javax.servlet*</export.packages>
 	</properties>
 
 	<dependencies>
