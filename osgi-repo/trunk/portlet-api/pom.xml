@@ -19,7 +19,7 @@
 
 	<properties>
 		<unpack.version>1.0</unpack.version>
-		<export.packages>javax.portlet*</export.packages>
+		<export.package>javax.portlet*</export.package>
 	</properties>
 
 	<dependencies>
