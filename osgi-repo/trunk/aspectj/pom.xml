@@ -18,7 +18,7 @@
 	<name>AspectJ Runtime Library (OSGi version)</name>
 
 	<properties>
-		<unpack.version>1.5.2a</unpack.version>
+		<unpack.version>1.5.2.a</unpack.version>
 		<export.package>org.aspectj.*</export.package>
 	</properties>
 
