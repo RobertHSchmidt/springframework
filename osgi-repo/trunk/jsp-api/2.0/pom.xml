@@ -28,8 +28,10 @@
 	</properties>
 
 	<dependencies>
+		<!-- use this group since the artifact is compiled for Java 1.2 -->
+		<!-- the rest are for Java 1.5 -->
 		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
+			<groupId>javax.servlet</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.0</version>
 			<scope>provided</scope>
