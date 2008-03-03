@@ -47,7 +47,12 @@
 		<module>el/commons-el</module>
 		<module>el/api</module>
 		<module>hsqldb</module>
+		
+		<!-- jetty modules -->
+		<module>jetty/etc</module>
+		<module>jetty/start</module>
 		<module>jsp-api/2.0</module>
+		
 		<!--
 		<module>jsp-api/2.1</module>
 		-->
