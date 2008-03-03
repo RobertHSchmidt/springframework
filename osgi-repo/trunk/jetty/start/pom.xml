@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<artifactId>osgi-repo</artifactId>
+		<groupId>org.springframework.osgi</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.osgi</groupId>
+	<artifactId>jetty.start.osgi</artifactId>
+	<packaging>bundle</packaging>
+	<version>6.1.7-SNAPSHOT</version>
+	<name>Jetty Start (OSGi version)</name>
+
+	<properties>
+		<unpack.version>6.1.7</unpack.version>
+		<export.packages>org.mortbay.start</export.packages>
+		<import.packages>
+			org.osgi.framework;version=1.3,
+			org.mortbay.jetty;version=${unpack.version},
+			org.mortbay.xml;version=${unpack.version},
+			*
+		</import.packages>
+		<private.packages>org.springframework.osgi.web.jetty.internal</private.packages>
+		<embed-dep>start;scope=provided;inline=true</embed-dep>
+		<include.resources>src/main/resources</include.resources>
+		<unpack-bundle>true</unpack-bundle>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty</artifactId>
+			<version>6.1.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+			<version>6.1.7</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.0</version>
+			<scope>provided</scope>			
+		</dependency>
+	</dependencies>
+
+	<build>
+	<plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+	      <groupId>org.apache.maven.plugins</groupId>
+          <configuration>
+            <source>1.4</source>
+            <target>1.4</target>
+            <debug>true</debug>
+          </configuration>
+      </plugin>
+				
+	
+		<plugin>
+		<artifactId>maven-jar-plugin</artifactId>
+		<configuration>
+		  <archive>  
+		    <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Bundle-Activator>org.springframework.osgi.web.jetty.internal.Activator</Bundle-Activator>
+            </manifestEntries>
+		  </archive>
+		</configuration>
+		</plugin>
+	</plugins>
+	</build>
+</project>
