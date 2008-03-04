@@ -19,8 +19,12 @@
 
 	<properties>
 		<unpack.version>5.5.23</unpack.version>
-		<export.packages>org.apache.jasper*;version=${unpack.version},
-		org.eclipse.jdt.core*;version=${unpack.version}</export.packages>
+		<export.package>org.apache.jasper*</export.package>
+		<import.packages>
+		javax.servlet.jsp*;version=2.0,
+		javax.servlet*;version=2.4,
+		*;resolution:=optional
+		</import.packages>
 	</properties>
 
 	<dependencies>

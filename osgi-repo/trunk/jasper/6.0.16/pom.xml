@@ -20,7 +20,11 @@
 	<properties>
 		<unpack.version>6.0.16</unpack.version>
 		<export.packages>*;version=${unpack.version}</export.packages>
-		<import.packages>*;resolution:=optional</import.packages>
+		<import.packages>
+		javax.servlet.jsp*;version=2.1,
+		javax.servlet*;version=2.5,
+		*;resolution:=optional
+		</import.packages>
 	</properties>
 
 	<dependencies>

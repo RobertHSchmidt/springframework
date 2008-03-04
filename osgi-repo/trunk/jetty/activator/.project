@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>osgi-jetty-start</name>
+	<name>osgi-jetty-activator</name>
 	<comment></comment>
 	<projects>
 	</projects>

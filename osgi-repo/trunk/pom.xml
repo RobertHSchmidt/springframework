@@ -50,7 +50,7 @@
 		
 		<!-- jetty modules -->
 		<module>jetty/etc</module>
-		<module>jetty/start</module>
+		<module>jetty/activator</module>
 		<module>jsp-api/2.0</module>
 		
 		<!--
