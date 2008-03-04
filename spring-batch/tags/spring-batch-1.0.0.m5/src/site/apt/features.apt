@@ -1,0 +1,134 @@
+                                    ------
+                                    Spring Batch Features
+                                    ------
+                                    Dave Syer
+                                    ------
+                                    July 2007, February 2008
+
+Spring Batch Features and Roadmap
+
+* 1.0 Features
+
+  The following features are supported by Spring Batch 1.0:
+
+** Optimisation and Infrastructure
+
+  * RepeatOperations: an abstraction for grouping repeated
+  operations together and moving the iteration logic into the
+  framework.
+ 
+  * RetryOperations: an abstraction for automatic retry.
+
+  * ItemReader abstraction and implementations for flat files, xml
+  streaming and simple database queries.
+
+  * Flat files are supported with fixed length and delimited records
+  (input and ouput).
+  
+  * Xml is supported through Spring OXM mapping between objects and Xml
+  elements (input and ouput).  Large files are streamed, not read as a whole.
+
+  * Database implementations ItemReader are provided that map a row of
+  a ResultSet identified by a simple (single or multiple column)
+  primary key.
+
+  * ItemWriter abstraction and implementations for flat files and xml
+  (the Sql case is just a regular Jdbc Dao).
+
+  * ItemReader and ItemWriter implementations are generally Skippable.
+  Skippable means that they can be asked by clients to mark items as
+  skipped, and not provide or process them next time they arrive.
+
+  * ItemReader and ItenWriter implementations are also generally
+  ItemStreams.  An ItemStrean encapsulates stream-like behaviour that
+  is needed for transaction synchronization (mark/reset). It also
+  provides the facility to be restored from a persistent
+  ExecutionAttributes so that jobs can fail and be restarted in
+  another process.
+
+  * For modifying an item before it is written, there is the
+  ItemTransformer abstraction.  ItemTransformer and ItemWriter are the
+  two most common application developer touch points.
+
+** Core Domain
+
+  * Job is the root of the core domain - it is a recipe for how to
+  construct and run a JobInstance.
+
+  * A Job is composed of a list of Steps (sequential step model for
+  job).
+
+  * Job is the entry point for launching a JobExecution.
+
+  * Step is the corresponding point for a StepExecution.  Step is the
+  main strategy for different scaling, distribution and processing
+  approaches.  The 1.0 release contains implementations for in-process
+  execution (single VM).  See below (in the Execution module).
+
+  * The most commonly used implementation of Step is a wrapper for an
+  ItemReader and an ItemWriter.  There is also a special
+  implementation that wraps a Tasklet, which can be used to execute a
+  single action like a stored procedure call.
+
+** Job Execution and Management
+
+  * A simple JobLauncher to launch jobs.  Start a new one or restart
+  one that has previously failed.  This can be used by a command-line
+  or JMX launcher to take simple input parameters and convert them to
+  the form required by the Core.  (Examples of both are in the Samples
+  module.)
+
+  * Persistence of job meta data for management and reporting
+  purposes: job and step identifiers, job parameters, commit counts,
+  rollback counts.  Execution attributes (a human readable
+  represenation of the state of the job - can be augmented by
+  developers).
+
+  * SimpleStep - uses an ItemReader to obtain the next record to
+  process, and hands it to an ItemWriter if it is not null.  It can
+  run a StepExecution in the same process (VM).
+
+  * Concurrent execution of chunks (a chunk is a batch of items
+  processed in the same transaction) through the Spring TaskExecutor
+  abstraction.
+
+  * Automatic retry of a chunk and recovery for items that have
+  exhausted their retry count.
+
+  * Translation of job execution result into an exit code for
+  schedulers running the job as an OS process.
+
+** Samples
+
+  * A range of samples is available as a separate module.  They all
+  use a common simple configuration and extend in various ways to show
+  the different features of the Execution module.
+
+* Roadmap (Beyond 1.0).
+
+  * Remote or distributed execution of steps.  The step proceeds as in
+  the single JVM case, but each chunk is passed on to the remote
+  processes.  The remote execution is an asynchronous listener of some
+  sort (e.g. message-driven component or web service).
+
+  * Asynchronous pipeline processing - steps execute concurrently and
+  optionally in separate processes.  Feedback loop between consumers
+  and producers to prevent overflows.
+
+  * Issue tracking - a job is not finished until all issues with its
+  executions are resolved.  Spring Batch can provide hooks to
+  integrate with internal issue tracking systems so that the lifetime
+  of a job can be properly managed.
+
+  * Auditing.  Implement hooks to monitor not only what jobs execute
+  and the result of the execution (as per 1.0 possibly with some
+  richer options for detailed outcome reports), but also who has
+  executed the job, what changes they made to runtime parameters.
+
+  * OSGi support.  Deploy the Spring Batch framework as an OSGi
+  service.  Deploy individual jobs or groups of jobs as additional
+  bundles that depend on the core.
+
+* No Plans Yet to Support
+
+  * Triggering.
