@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<bean id="beanWrapperMapperJob" parent="simpleJob">
+		<property name="steps">
+			<list>
+				<bean id="step1" parent="simpleStep">
+					<property name="streams" ref="fileInputTemplate" />
+					<property name="itemReader">
+						<bean
+							class="org.springframework.batch.item.reader.ValidatingItemReader">
+							<property name="itemReader"
+								ref="fileInputTemplate" />
+							<property name="validator"
+								ref="fixedValidator" />
+						</bean>
+					</property>
+					<property name="itemWriter">
+						<bean
+							class="org.springframework.batch.sample.item.writer.TradeWriter">
+							<property name="dao" ref="tradeDao" />
+						</bean>
+					</property>
+				</bean>
+				<bean id="step2" parent="simpleStep">
+					<property name="itemReader"
+						ref="fileInputTemplate2" />
+					<property name="itemWriter">
+						<bean
+							class="org.springframework.batch.sample.item.writer.PersonWriter" />
+					</property>
+				</bean>
+
+			</list>
+		</property>
+	</bean>
+
+	<!-- INFRASTRUCTURE SETUP -->
+
+	<bean id="fileInputTemplate"
+		class="org.springframework.batch.io.file.FlatFileItemReader">
+		<property name="resource" value="classpath:data/beanWrapperMapperSampleJob/input/20070122.teststream.ImportTradeDataStep.txt" />
+		<property name="lineTokenizer" ref="fixedFileDescriptor" />
+		<property name="fieldSetMapper" ref="fieldSetMapper" />
+	</bean>
+
+	<bean id="fileInputTemplate2"
+		class="org.springframework.batch.io.file.FlatFileItemReader">
+		<property name="resource" value="classpath:data/beanWrapperMapperSampleJob/input/20070122.teststream.ImportPersonDataStep.txt" />
+		<property name="lineTokenizer" ref="fixedFileDescriptor2" />
+		<property name="fieldSetMapper" ref="fieldSetMapper2" />
+		<!--		<property name="validator" ref="fixedValidator" />-->
+	</bean>
+
+	<bean id="fixedFileDescriptor"
+		class="org.springframework.batch.io.file.transform.FixedLengthTokenizer">
+		<property name="names" value="ISIN,Quantity,price, CUSTOMER" />
+		<property name="columns" value="1-12, 13-15, 16-20, 21-29" />
+	</bean>
+
+	<bean id="fixedFileDescriptor2"
+		class="org.springframework.batch.io.file.transform.FixedLengthTokenizer">
+		<property name="names"
+			value="Title, FirstName, LastName, Age, Address.AddrLine1, children[0].name, children[1].name" />
+		<property name="columns"
+			value="1-5, 6-20, 21-40, 41-45, 46-55, 56-65, 66-75" />
+	</bean>
+
+	<bean id="fixedValidator"
+		class="org.springframework.batch.item.validator.SpringValidator">
+		<property name="validator">
+			<bean id="tradeValidator"
+				class="org.springmodules.validation.valang.ValangValidator">
+				<property name="valang">
+					<value>
+						<![CDATA[
+						{ isin : length(?) < 13 : 'ISIN too long' : 'isin_length' : 12}
+					]]>
+					</value>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="tradeDao"
+		class="org.springframework.batch.sample.dao.JdbcTradeDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+		<property name="incrementer">
+			<bean parent="incrementerParent">
+				<property name="incrementerName" value="TRADE_SEQ" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="fieldSetMapper"
+		class="org.springframework.batch.io.file.mapping.BeanWrapperFieldSetMapper">
+		<property name="prototypeBeanName" value="trade" />
+	</bean>
+
+	<bean id="fieldSetMapper2"
+		class="org.springframework.batch.io.file.mapping.BeanWrapperFieldSetMapper">
+		<property name="prototypeBeanName" value="person" />
+	</bean>
+
+	<bean id="trade"
+		class="org.springframework.batch.sample.domain.Trade"
+		scope="prototype" />
+
+	<bean id="person"
+		class="org.springframework.batch.sample.domain.Person"
+		scope="prototype" />
+
+</beans>
