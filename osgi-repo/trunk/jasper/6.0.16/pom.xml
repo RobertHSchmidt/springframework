@@ -19,12 +19,15 @@
 
 	<properties>
 		<unpack.version>6.0.16</unpack.version>
-		<export.packages>*;version=${unpack.version}</export.packages>
+		<export.package>*</export.package>
 		<import.packages>
 		javax.servlet.jsp*;version=2.1,
+		javax.servlet.jsp.resources;version=2.1,
 		javax.servlet*;version=2.5,
+		javax.servlet.resources;version=2.5,
 		*;resolution:=optional
 		</import.packages>
+		<include.resources>${include.resources}</include.resources>
 	</properties>
 
 	<dependencies>
@@ -48,5 +51,8 @@
 		<version>6.0.16</version>
 		<scope>provided</scope>
 	  </dependency>	  
+	  
+
+			  
 	</dependencies>
 </project>
