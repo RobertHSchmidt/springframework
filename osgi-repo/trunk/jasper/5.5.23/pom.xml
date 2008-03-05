@@ -25,6 +25,7 @@
 		javax.servlet*;version=2.4,
 		*;resolution:=optional
 		</import.packages>
+		<include.resources>{maven-resources}</include.resources>
 	</properties>
 
 	<dependencies>
@@ -48,6 +49,7 @@
 		<version>${unpack.version}</version>
 		<scope>provided</scope>
 	  </dependency>
+	  
 	  
 	</dependencies>
 </project>
