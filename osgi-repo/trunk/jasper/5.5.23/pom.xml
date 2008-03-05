@@ -22,10 +22,11 @@
 		<export.package>org.apache.jasper*</export.package>
 		<import.packages>
 		javax.servlet.jsp*;version=2.0,
+		javax.servlet.jsp.resources;version=2.0,
 		javax.servlet*;version=2.4,
+		javax.servlet.resources;version=2.4,
 		*;resolution:=optional
 		</import.packages>
-		<include.resources>{maven-resources}</include.resources>
 	</properties>
 
 	<dependencies>
