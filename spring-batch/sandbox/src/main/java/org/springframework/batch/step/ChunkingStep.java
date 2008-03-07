@@ -15,19 +15,12 @@
  */
 package org.springframework.batch.step;
 
-import org.springframework.batch.chunk.Chunk;
-import org.springframework.batch.core.domain.Step;
-import org.springframework.batch.core.domain.StepExecution;
-import org.springframework.batch.core.domain.StepInterruptedException;
-import org.springframework.batch.io.exception.BatchCriticalException;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.stream.StreamManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class ChunkingStep implements Step {
