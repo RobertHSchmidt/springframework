@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/spring-binding"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/test/aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/asm.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/asm-attrs.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/cglib.jar"/>
+	<classpathentry kind="lib" path="lib/test/clover.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/ehcache.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/el-api.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/hibernate.jar"/>
+	<classpathentry kind="lib" path="lib/test/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/jboss-el.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/jta.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/junit.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/test/openjpa.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/persistence-api.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/portlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/test/serp.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-aop.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar" sourcepath="/spring"/>
+	<classpathentry kind="lib" path="lib/test/spring-jdbc.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-orm.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-security-core.jar"/>
+	<classpathentry kind="lib" path="lib/test/spring-test.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-tx.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-web.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/spring-webmvc-portlet.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
