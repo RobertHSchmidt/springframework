@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/test/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/global/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/el-api.jar"/>
+	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/jboss-el.jar"/>
+	<classpathentry kind="lib" path="lib/buildtime/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-core.jar"/>
+	<classpathentry kind="lib" path="lib/global/spring-beans.jar" sourcepath="/spring"/>
+	<classpathentry kind="lib" path="lib/global/spring-context.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
