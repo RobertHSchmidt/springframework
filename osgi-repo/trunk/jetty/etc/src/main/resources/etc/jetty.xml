@@ -166,6 +166,7 @@
     <!-- configuration (see $(jetty.home)/contexts/test.xml for an   -->
     <!-- example).                                                   -->
     <!-- =========================================================== -->
+    <!--
     <Set name="UserRealms">
       <Array type="org.mortbay.jetty.security.UserRealm">
         <Item>
@@ -177,6 +178,7 @@
         </Item>
       </Array>
     </Set>
+    -->
 
     <!-- =========================================================== -->
     <!-- Configure Request Log                                       -->
