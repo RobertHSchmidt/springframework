@@ -44,6 +44,8 @@
 		<module>commons-beanutils</module>
 		<module>commons-collections</module>
 		<module>commons-lang</module>
+		<module>catalina/6.0.x</module>
+		<module>catalina/activator/6.0.x</module>
 		<module>el/commons-el</module>
 		<module>el/api</module>
 		<module>hsqldb</module>
