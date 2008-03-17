@@ -1,0 +1,50 @@
+                                    ------
+                                    Spring Batch Infrastructure
+                                    ------
+                                    Dave Syer
+                                    ------
+                                    December 2006
+
+Introduction
+
+  This module provides framework code for the Spring Batch project.
+  The core interfaces are <<<RepeatOperations>>> and
+  <<<RetryOperations>>>.  The main implementations are
+  <<<RepeatTemplate>>> and <<<RetryTemplate>>>.  Example usage:
+
++---
+RepeatTemplate template = new RepeatTemplate();
+
+template.setCompletionPolicy(new FixedChunkSizeCompletionPolicy(2));
+
+template.iterate(new RepeatCallback() {
+
+    public ExitStatus doInIteration(RepeatContext context) {
+        // Do stuff in batch...
+        return ExitStatus.CONTINUABLE; // Return ExitStatus.FINISHED to signal exhausted data
+    }
+
+});
++---
+
+  The callback is executed repeatedly, until the completion policy
+  determines that the batch should end.
+
+  The framework provides <<<RetryOperations>>> for automatic retry of
+  a business operation.  This is independent of the batching support,
+  but will often be used in conjunction with it.  Example usage:
+
++---
+RetryTemplate template = new RetryTemplate();
+
+template.setRetryPolicy(new TimeoutRetryPolicy(30000L));
+
+Object result = template.execute(new RetryCallback() {
+
+    public Object doWithRetry(RetryContext context) {
+        // Do stuff that might fail, e.g. webservice operation
+        return result;
+    }
+
+});
++---
