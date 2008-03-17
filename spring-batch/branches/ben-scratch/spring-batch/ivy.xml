@@ -19,7 +19,10 @@
 	</publications>
 
 	<dependencies>
-		<dependency org="org.slf4j" name="slf4j-api" rev="1.4.3" conf="provided->default"/>
+		<dependency org="org.slf4j" name="slf4j-api" rev="1.5.0" conf="provided->default"/>
+
+		<dependency org="ch.qos.logback" name="logback-classic" rev="0.9.8" conf="test->default"/>
+		<dependency org="org.easymock" name="easymock" rev="2.3" conf="test->default"/>
 		<dependency org="org.junit" name="junit" rev="4.4" conf="test->default"/>
 	</dependencies>
 

@@ -6,6 +6,9 @@
 	<classpathentry kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="IVY_CACHE/org.junit/junit/junit-4.4.jar" sourcepath="/IVY_CACHE/org.junit/junit/junit-sources-4.4.jar"/>
-	<classpathentry kind="var" path="IVY_CACHE/org.slf4j/slf4j-api/slf4j-api-1.4.3.jar" sourcepath="/IVY_CACHE/org.slf4j/slf4j-api/slf4j-api-sources-1.4.3.jar"/>
+	<classpathentry kind="var" path="IVY_CACHE/org.easymock/easymock/easymock-2.3.jar" sourcepath="/IVY_CACHE/org.easymock/easymock/easymock-sources-2.3.jar"/>
+	<classpathentry kind="var" path="IVY_CACHE/org.slf4j/slf4j-api/slf4j-api-1.5.0.jar" sourcepath="/IVY_CACHE/org.slf4j/slf4j-api/slf4j-api-sources-1.5.0.jar"/>
+	<classpathentry kind="var" path="IVY_CACHE/ch.qos.logback/logback-classic/logback-classic-0.9.8.jar" sourcepath="/IVY_CACHE/ch.qos.logback/logback-classic/logback-classic-sources-0.9.8.jar"/>
+	<classpathentry kind="var" path="IVY_CACHE/ch.qos.logback/logback-core/logback-core-0.9.8.jar" sourcepath="/IVY_CACHE/ch.qos.logback/logback-core/logback-core-sources-0.9.8.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
