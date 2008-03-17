@@ -20,28 +20,32 @@ import java.util.List;
 import org.springframework.batch.Item;
 import org.springframework.batch.ItemWriteException;
 import org.springframework.batch.ItemWriter;
-import org.springframework.batch.LineItem;
-import org.springframework.batch.StubItemWriter;
 
 /**
+ * A synchronous implementation of {@link ChunkProcessor}. This implementation iterates over all
+ * items in the chunk and then called the {@link ChunkCompletionCallback} synchronously before
+ * returning.
+ * 
  * @author Ben Hale
  */
 public class SynchronousChunkProcessor<T extends Item> implements ChunkProcessor<T> {
 
 	private final ItemWriter<T> itemWriter;
 
+	/**
+	 * Creates a new <code>SynchronousChunkProcessor</code>.
+	 * 
+	 * @param itemWriter the {@link ItemWriter} to write items to
+	 */
 	public SynchronousChunkProcessor(ItemWriter<T> itemWriter) {
 		this.itemWriter = itemWriter;
 	}
 
-	public void process(Chunk<T> chunk, ChunkCompletionCallback callback) throws ItemWriteException {
+	public void process(Chunk<T> chunk, ChunkCompletionCallback<T> callback) throws ItemWriteException {
 		List<T> items = chunk.getItems();
 		for (T item : items) {
 			itemWriter.write(item);
 		}
+		callback.processed(new ChunkProcessingResult<T>(chunk.getId()));
 	}
-	
-	public static void main(String[] args) {
-	    new SynchronousChunkProcessor<LineItem>(new StubItemWriter());
-    }
 }

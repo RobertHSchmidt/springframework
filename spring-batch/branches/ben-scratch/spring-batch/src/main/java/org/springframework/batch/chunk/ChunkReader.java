@@ -32,7 +32,7 @@ import org.springframework.batch.ItemReader;
  * @see Chunk
  * @see ChunkProcessor
  */
-public class ChunkReader<T extends Item> {
+class ChunkReader<T extends Item> {
 
 	private final Logger logger = LoggerFactory.getLogger(ChunkReader.class);
 

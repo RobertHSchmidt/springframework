@@ -31,7 +31,8 @@ public interface ChunkProcessor<T extends Item> {
 	 * Processes the items in a {@link Chunk}.
 	 * 
 	 * @param chunk the {@link Chunk} to process
-	 * @throws ItemWriteException for any error condition while writing a chunk.
+	 * @param callback the callback for notification of completion of this chunk
+	 * @throws ItemWriteException for any error condition while writing a chunk
 	 */
-	void process(Chunk<T> chunk, ChunkCompletionCallback callback) throws ItemWriteException;
+	void process(Chunk<T> chunk, ChunkCompletionCallback<T> callback) throws ItemWriteException;
 }

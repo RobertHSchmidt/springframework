@@ -18,18 +18,29 @@ package org.springframework.batch.chunk;
 import org.springframework.batch.Item;
 
 /**
- * Callback interface to be notified of the completion of a {@link Chunk}'s processing.
- * Implementations of this interface cannot directly prevent the further processing of chunks, but
- * rather is intended as an asynchronous notification mechanism.
+ * Contains information about the result of a chunk processing attempt.
  * 
  * @author Ben Hale
  */
-public interface ChunkCompletionCallback<T extends Item> {
+public class ChunkProcessingResult<T extends Item> {
+
+	private final long id;
 
 	/**
-	 * Called to notify the callback that the processing of a given chunk has been completed.
+	 * Creates a new <code>ChunkProcessingResult</code>.
 	 * 
-	 * @param result the result of the processing of a chunk
+	 * @param id the identifier for the chunk that was processed
 	 */
-	void processed(ChunkProcessingResult<T> result);
+	public ChunkProcessingResult(long id) {
+		this.id = id;
+	}
+
+	/**
+	 * The id for the chunk that was processed
+	 * 
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
 }
