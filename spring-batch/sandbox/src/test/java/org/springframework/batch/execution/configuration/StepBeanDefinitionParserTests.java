@@ -18,7 +18,7 @@ package org.springframework.batch.execution.configuration;
 
 import junit.framework.TestCase;
 
-import org.springframework.batch.execution.step.ItemOrientedStep;
+import org.springframework.batch.core.step.item.ItemOrientedStep;
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
