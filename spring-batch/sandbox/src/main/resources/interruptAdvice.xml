@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+	<bean id="jobInterruptAdvice" class="org.springframework.batch.interrupt.DefaultJobInterruptionAdvice" />
+	
+	<aop:config>
+		<aop:aspect id="interruptChecker" ref="jobInterruptAdvice" >
+			
+			<aop:after-returning method="setJobExecution"
+				pointcut="execution(* org.springframework.batch.core.repository.JobRepository.createJobExecution(..))" 
+				returning="jobExecution" />
+			
+			<!-- check for interrupt between chunks -->
+			<aop:before method="checkInterrupt" 
+				pointcut="execution(* org.springframework.batch.repeat.RepeatOperations.iterate(..))"/>
+				
+		</aop:aspect>
+	 </aop:config>
+	 
+</beans>
