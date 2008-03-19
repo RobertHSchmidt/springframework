@@ -1,24 +1,23 @@
-SPRING JAVACONFIG 1.0-M2 (May 2007)
+SPRING JAVACONFIG 1.0.0-m3 (March 2008)
 -----------------------------------
 http://www.springframework.org/javaconfig
 
 1. INTRODUCTION
 
-Spring JavaConfig offers a Java-based alternative to configuring Spring Application Contexts. 
+Spring JavaConfig offers a Java-based option for configuring Spring Application Contexts. 
 While most people currently use XML to configure bean definitions in their Application Contexts, 
 Spring's versatility and metadata based internal handling of bean definitions means alternatives 
 to XML config are easy to implement.
 
 2. RELEASE INFO
 
-The Spring JavaConfig is targeted at Spring 2.0.5 and above and JDK level 1.5 and above.
+The Spring JavaConfig is targeted at Spring 2.5 and above and JDK level 1.5 and above.
 
 Release contents:
-* "src" contains the Java source files for the framework
-* "samples" contains the samples Java source files
-* "dist" contains various Spring JavaConfig distribution jar files
-* "lib" contains all third-party libraries needed for running the samples and/or building the framework
-* "docs" contains general documentation and API javadocs
+* "src/main/java" contains the Java source files for the framework
+* "src/main/test" contains the JUnit test cases for the framework
+* "src/main/docbook" contains documentation (docbook) sources
+* "samples" contains the samples Java source files (NOTE: currently out-of-date, will be fixed in a later milestone)
 
 The "lib" directory is just included in the "-with-dependencies" download. Make sure to download this full
 distribution ZIP file if you want to run the sample applications and/or build the framework yourself.
@@ -38,7 +37,7 @@ Please refer to the official Spring JavaConfig site for more material on Spring 
 
 A great way to get started is to review and run the sample applications, supplementing with reference manual
 material as needed. You will require Maven 2, which can be downloaded from http://maven.apache.org/, for building
-Spring JavaConfig.
+Spring JavaConfig. (Again, note that samples are out of date, and will be updated during a later milestone)
 
 5. ADDITIONAL RESOURCES
 
