@@ -2,19 +2,13 @@
 <chapter id="developing-web-applications">
   <title>Developing web applications with JavaConfig</title>
 
-  <para>JavaConfig provides several support classes for bootstrapping
-  your configurations into the web tier. With various combinations of
-  <classname>JavaConfigWebApplicationContext</classname>,
-  <classname>JavaConfigDispatcherServlet</classname> and
-  <classname>JavaConfigContextLoaderListener</classname>, you can
-  achieve XML-free web application configuration.</para>
+  <para>JavaConfig provides the <classname>JavaConfigWebApplicationContext</classname>
+  class for bootstrapping your configurations into the web tier.</para>
 
   <section>
     <title><classname>JavaConfigWebApplicationContext</classname></title>
 
-    <para>TODO: Solomon Duskis to complete this chapter</para>
+    <para>TODO</para>
 
-    <para>TODO: Consider bean naming and BeanNameHandlerMapping.
-    Use @Bean(aliases="/some/request/path")?</para>
   </section>
 </chapter>

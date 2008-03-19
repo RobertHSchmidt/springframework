@@ -49,6 +49,11 @@ public abstract class ConfigTwo {
 
   <section id="externalizing-string-values">
     <title>Working with externalized string values</title>
+    
+    <tip><para><emphasis>Important: This functionality may change!</emphasis>.
+    We are currently evaluating approaches for best supporting externalized
+    values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
+    for more details.</para></tip>
 
     <sidebar>
       <title>What about

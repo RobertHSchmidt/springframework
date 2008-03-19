@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preface>
+<preface id="preface-m3">
   <title>Preface to the third milestone release</title>
-  <para>TODO: discuss the 'state of the union' with JavaConfig.  Many users have
-  asked 'when are we going 1.0'; we've found that a good number of people and
-  organizations are already using M2 in production, while others have (rightly)
-  expressed concern about doing so due to the pre-GA state of the project and
-  it's documented 'experimental' status.  How has this changed with M3?  What
-  should users expect in terms of API changes between now and 1.0?  For example,
-  AOP support in SJC merits a good hard looking at
-  (<classname>@Aspect</classname> annotations on
-  <classname>@Configuration</classname> classes and other awkwardness).</para>
+  
+  <para>We're proud to announce this third milestone (M3) of the JavaConfig project.
+  Much has happened in the long months since M2, including a healthy dose of user
+  feedback.  The good news is that we've learned users seem to like JavaConfig
+  and the programming model works well for most needs.  Thanks to everyone that
+  has participated in the process thus far, including Rick Hightower, Solomon Duskis,
+  Ben Rowlands, Craig Walls, Jim Moore, and many others.</para>
 
-  <para>IMO: Generally, we should set people up that while SJC has enjoyed some positive
-  usage and feedback, it remains pre-1.0 for a reason, and that we don't want to
-  prematurely put something out there that is not really ready for primetime.  The
-  internals are stable, yes, but is the programming model right?  Right enough to
-  commit to backward compatibility?  The team needs to discuss all this, and we
-  will shortly.</para>
+  <para>M3 includes 20+ bug fixes and feature additions.  See <xref linkend="new-and-noteworthy"/>
+  for full details, but a couple high-level notes to users new and old: M3 introduces one
+  fairly major change to the existing core API - the deprecation of
+  <classname>AnnotationApplicationContext</classname> in favor of its replacement, <classname>
+  JavaConfigApplicationContext</classname>.  <classname>AnnotationApplicationContext</classname>
+  will remain deprecated in the codebase up until the 1.0 GA release, at which time it will be
+  deleted permanently.  So take heed and swap out references as soon as you can.</para>
+  
+  <para>Future milestones and RCs on the path to 1.0 may include other breaking
+  API changes.  The core public API (annotations, application contexts, and key util classes)
+  will not likely change radically, but internal APIs almost certainly will.  It is important
+  to the team that the packaging structure and internals of JavaConfig are 'just right' in
+  order to facilitate flexible evolution and solid backward compatibility post-1.0.</para>
+  
+  <para>What's needed now is users, users, and more users!  Please don't hesitate to contact
+  the team via <ulink url="http://jira.springframework.org/browse/SJC">JIRA issue tracking</ulink>
+  with anything you see missing from JavaConfig.</para>
 </preface>
