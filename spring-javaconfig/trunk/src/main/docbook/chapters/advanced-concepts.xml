@@ -3,7 +3,7 @@
   <title>Advanced concepts</title>
 
   <section>
-    <title><interfacename>Support for scoped proxies with @ScopedProxy</interfacename></title>
+    <title>Support for scoped proxies with <interfacename>@ScopedProxy</interfacename></title>
 
     <para>TODO</para>
   </section>
@@ -15,7 +15,7 @@
   </section>
   
   <section>
-    <title>Autowiring support with @AutoBean</title>
+    <title>Autowiring support with <interfacename>@AutoBean</interfacename></title>
 
     <para>TODO</para>
   </section>

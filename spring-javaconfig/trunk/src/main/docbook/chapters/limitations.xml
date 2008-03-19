@@ -2,13 +2,10 @@
 <appendix id="limitations">
   <title>Limitations</title>
 
-  <para>Compare SJC against XML / ADC, describing any functionality that
+  <para>TODO: Compare SJC against XML / ADC, describing any functionality that
   is currently not supported. * bean names can only be legal java method
   names. Workaround == @Bean(aliases="/whatev, foo^bar")? Possibly
   introduce improvement issue for adding a @Bean(name=...</para>
-
-  <para>no ability to do constructor autowiring (basic limitation of
-  Java)</para>
 
   <para>Nesting <classname>@Configuration</classname> classes. When
   nesting <classname>@Configuration</classname> classes (either inside one
@@ -17,5 +14,5 @@
   inner classes (classes defined inside methods), they must be static and
   non-private. This is due to CGLIB limitations.</para>
 
-  <para>talk about namespace support in xml</para>
+  <para>TODO: discuss namespace support in XML</para>
 </appendix>

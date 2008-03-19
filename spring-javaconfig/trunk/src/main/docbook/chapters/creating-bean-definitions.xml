@@ -239,8 +239,45 @@ Service service = (Service) context.getBean("serviceA");
       <para>JavaConfig offers a type-safe mechanism for looking up beans via
       <classname>JavaConfigApplicationContext</classname>:
       <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
-Service service = context.getBean(Service.class);
-</programlisting></para>
+Service service = context.getBean(Service.class);</programlisting>
+      If more than one bean of type <interfacename>Service</interfacename> had been defined, the
+      above call would throw an exception indicating an ambiguity that the container could not resolve.
+      In these cases, the user has a number of options:</para>
+
+      <para>1) Indicate one bean as 'primary'.  Like Spring's XML configuration, JavaConfig allows for
+      specifying a given <interfacename>@Bean</interfacename> as 'primary':
+      <programlisting>@Configuration
+public class MyConfig {
+    @Bean(primary=Primary.TRUE)
+    public Service myService() {
+        return new Service();
+    }
+
+    @Bean
+    public Service backupService() {
+    	return new Service();
+    }
+}</programlisting>After this modification, all calls to <methodname>getBean(Service.class)</methodname>
+        will return the primary bean
+      <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+<lineannotation>// returns the <methodname>myService()</methodname> primary bean</lineannotation>
+Service service = context.getBean(Service.class);</programlisting>
+</para>
+
+      <para>2) Disambiguate by bean name.  JavaConfig provides a <methodname>getBean()</methodname> variant
+      that accepts both a class and a bean name for cases just such as this
+      <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Service service = context.getBean(Service.class, "myService");</programlisting>
+      Because bean ids must be unique, this call guarantees that the ambiguity cannot occur.</para>
+
+      <para>3) Get all matching beans.  It is also reasonable to call the <methodname>getBeansOfType()</methodname>
+      method in order to return all beans that implement a given interface:
+      <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Map matchingBeans = context.getBeansOfType(Service.class);</programlisting>
+      Note that this latter approach is actually a feature of the Core Spring Framework's
+      <classname>AbstractApplicationContext</classname> (which <classname>JavaConfigApplicationContext</classname> extends)
+      and is not type-safe, in that the returned <interfacename>Map</interfacename> is not parameterized.
+      </para>
     </section>
   </section>
 </chapter>
