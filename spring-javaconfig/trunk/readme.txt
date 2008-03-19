@@ -1,4 +1,4 @@
-SPRING JAVACONFIG 1.0.0-m3 (March 2008)
+SPRING JAVACONFIG 1.0.0.m3 (March 2008)
 -----------------------------------
 http://www.springframework.org/javaconfig
 
@@ -14,10 +14,10 @@ to XML config are easy to implement.
 The Spring JavaConfig is targeted at Spring 2.5 and above and JDK level 1.5 and above.
 
 Release contents:
-* "src/main/java" contains the Java source files for the framework
-* "src/main/test" contains the JUnit test cases for the framework
-* "src/main/docbook" contains documentation (docbook) sources
-* "samples" contains the samples Java source files (NOTE: currently out-of-date, will be fixed in a later milestone)
+* "src" contains the Java source files for the framework
+* "docs" contains the api documentation (JavaDoc) as well as the reference manual in both PDF and HTML form
+* "dist" contains JavaConfig distribution zips
+* "samples" contains the samples Java source files (NOTE: currently out-of-date, will be fixed in a later milestone. See SJC-76)
 
 The "lib" directory is just included in the "-with-dependencies" download. Make sure to download this full
 distribution ZIP file if you want to run the sample applications and/or build the framework yourself.
@@ -47,4 +47,4 @@ The Spring JavaConfig homepage is located at:
 
 The Spring Framework portal is located at:
 
-	http://www.springframework.org	
+    http://www.springframework.org
