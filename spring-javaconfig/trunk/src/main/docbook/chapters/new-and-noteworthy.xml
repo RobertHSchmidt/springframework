@@ -182,6 +182,11 @@ public class AppConfig extends ConfigurationSupport {
   <section>
     <title>Support for externalizing string values with
     <classname>@ExternalValue</classname></title>
+    
+    <para><emphasis>Important: This functionality may change!</emphasis>.
+    We are currently evaluating approaches for best supporting externalized
+    values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
+    for more details.</para>
 
     <para>Somewhat similar to the way that
     <classname>@ExternalBean</classname> makes it possible to reference

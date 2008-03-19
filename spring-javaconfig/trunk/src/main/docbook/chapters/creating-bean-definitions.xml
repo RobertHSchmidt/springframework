@@ -137,8 +137,6 @@ public MyAbstractSingleton mySingleton(){
         }
     }
 }</programlisting>
-        <para>Thanks to Solomon Duskis for this contribution.
-        TODO: fact-check this.. does it work as expected?</para>
       </section>
     </section>
   </section>

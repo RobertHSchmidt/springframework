@@ -11,6 +11,7 @@
 <!ENTITY modularizing-configurations  SYSTEM "chapters/modularizing-configurations.xml">
 <!ENTITY using-aspects                SYSTEM "chapters/using-aspects.xml">
 <!ENTITY developing-web-applications  SYSTEM "chapters/developing-web-applications.xml">
+<!ENTITY advanced-concepts            SYSTEM "chapters/advanced-concepts.xml">
 <!ENTITY combining-config-approaches  SYSTEM "chapters/combining-config-approaches.xml">
 <!ENTITY limitations                  SYSTEM "chapters/limitations.xml">
 <!ENTITY undocumented-features        SYSTEM "chapters/undocumented-features.xml">
@@ -128,7 +129,7 @@
       convenient subclasses of Spring MVC's
       <classname>DispatcherServlet</classname> and
       <classname>ContextLoaderListener</classname>.</para>
-
+      
       <para><xref linkend="combining-config-approaches" />. Describes how to
       use JavaConfig's <classname>ConfigurationPostProcessor</classname> bean
       post-processor for integrating
@@ -139,6 +140,7 @@
     &modularizing-configurations;
     &using-aspects;
     &developing-web-applications;
+    &advanced-concepts;
     &combining-config-approaches;
   </part>
 
@@ -154,5 +156,5 @@
     &maven-configs;
     &additional-resources;
   </part>
-  &old-java-config;
+  <!-- old-java-config -->
 </book>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="advanced-concepts">
+  <title>Advanced concepts</title>
+
+  <section>
+    <title><interfacename>Support for scoped proxies with @ScopedProxy</interfacename></title>
+
+    <para>TODO</para>
+  </section>
+  
+  <section>
+    <title>Bean visibility</title>
+
+    <para>TODO</para>
+  </section>
+  
+  <section>
+    <title>Autowiring support with @AutoBean</title>
+
+    <para>TODO</para>
+  </section>
+  
+  <section>
+    <title>Using Groovy to define configurations</title>
+
+    <para>TODO</para>
+  </section>
+</chapter>
