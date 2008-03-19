@@ -7,7 +7,7 @@
 	<artifactId>spring-javaconfig</artifactId>
 	<packaging>jar</packaging>
 	<name>Spring JavaConfig</name>
-	<version>1.0-m3-SNAPSHOT</version>
+	<version>1.0.0.m3-SNAPSHOT</version>
 	<description>
 		The Spring Java Configuration project provides a type-safe, pure-Java alternative to configuring Spring
 		Application Contexts. While most people currently use XML to configure bean definitions in their Application
@@ -80,6 +80,33 @@
 		<name>Spring Framework</name>
 		<url>http://www.springframework.org</url>
 	</organization>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<id>with-dependencies</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assembly/with-dependencies.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<extensions>
 			<extension>
@@ -89,6 +116,46 @@
 			</extension>
 		</extensions>
 		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>all-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<appendAssemblyId>true</appendAssemblyId>
+							<archive>
+								<manifest>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+								</manifest>
+								<manifestEntries>
+									<Spring-JavaConfig-Version>${pom.version}</Spring-JavaConfig-Version>
+								</manifestEntries>
+							</archive>
+							<descriptors>
+								<descriptor>src/assembly/all.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>minimal-zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/assembly/minimal.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -493,17 +560,17 @@
 			<name>Spring Portfolio Release Repository</name>
 			<url>http://s3.amazonaws.com/maven.springframework.org/external</url>
 		</repository>
-    	<repository>
-    		<!-- required for dependency on javaee-api -->
-      		<id>java.net</id>
-        	<name>dev.java.net repository</name>
-        	<layout>legacy</layout>
-        	<url>https://maven-repository.dev.java.net/nonav/repository</url>
-        	<snapshots>
-        		<enabled>false</enabled>
-        	</snapshots>
-    	</repository>
-    </repositories>
+		<repository>
+			<!-- required for dependency on javaee-api -->
+	  		<id>java.net</id>
+			<name>dev.java.net repository</name>
+			<layout>legacy</layout>
+			<url>https://maven-repository.dev.java.net/nonav/repository</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<properties>
 		<spring.version>2.5</spring.version>
 	</properties>

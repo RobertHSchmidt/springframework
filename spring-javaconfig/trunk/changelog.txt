@@ -2,8 +2,18 @@ SPRING JAVACONFIG CHANGELOG
 ===========================
 http://springframework.org/javaconfig
 
-Changes in version 1.0-m3 (2007-mm-dd)
+Changes in version 1.0.0.m3 (2008-03-18)
 --------------------------------------
+* Changed versioning scheme (1.0 -> 1.0.0) to support OSGi naming conventions.
+* Added @Import annotation to allow directly importing another @Configuration class (works like XML's <import/>) [SJC-34]
+* Deprecated AnnotationApplicationContext in favor of JavaConfigApplicationContext (old naming clashed with Spring 2.5's Annotation-Driven Injection)
+  (NOTE: AnnotationApplicationContext will be removed completely before 1.0.0 GA release!)
+* Created JavaConfigWebApplicationContext to support using JavaConfig classes directly with DispatcherServlet [SJC-4]
+* Inner classes are now processed as child contexts [SJC-38]
+* Overhauled documentation (several TODOs remain, will be completed in a later milestone) [SJC-48]
+* Significant changes to internal packaging to eliminate cyclic dependencies [SJC-42]
+* Numerous bug fixes and minor improvements; see release notes at
+  http://jira.springframework.org/secure/ReleaseNote.jspa?projectId=10080&styleName=Html&version=10599
 
 Changes in version 1.0-m2a (2007-05-10)
 ---------------------------------------
