@@ -71,16 +71,6 @@ public abstract class ConfigTwo {
       functionality of <classname>PropertyOverrideConfigurer</classname>
       is not hard to emulate, either. Simply give the method a default
       return value.</para>
-
-      <para>
-        <emphasis>TODO (chris): this last bit is yet another reason why
-        @ExternalValue should be a field-level annotation, rathor than the
-        awkward 'abstract method' approach. Giving a field a default value
-        is very natural for Java programmers. Indeed, a much more natural
-        concept than having to learn about
-        <classname>BeanFactoryPostProcessor</classname>s, and what
-        Proprty(Placeholder|Override)Configurer are all about.</emphasis>
-      </para>
     </sidebar>
 
     <para>Access externally defined string values such as usernames,

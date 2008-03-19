@@ -42,7 +42,8 @@ public class AppConfig {
       semantics around the <classname>@Aspect</classname> annotation, and
       would thus likely be un-intuitive to someone familiar with XML
       configuration. <emphasis>This may change before 1.0
-      GA</emphasis></para>
+      GA</emphasis>.  See <ulink url="http://jira.springframework.org/browse/SJC-55">SJC-55</ulink>
+      for details.</para>
     </note>
   </section>
 
@@ -115,6 +116,6 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
       <classname>@HotSwappable</classname>
     </title>
 
-    <para>TODO: Rod</para>
+    <para>TODO</para>
   </section>
 </chapter>

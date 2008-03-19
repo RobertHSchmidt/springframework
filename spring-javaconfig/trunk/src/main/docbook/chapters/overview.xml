@@ -71,8 +71,10 @@
       <para>JavaConfig takes full advantage of Java 5.0 language features,
       especially annotations and generics. <emphasis>A Java 5.0+ runtime
       environment is a requirement for using JavaConfig.</emphasis>. For
-      an introduction to annotations and other Java 5.0 features, see TODO:
-      link to annotations tutorial</para>
+      an introduction to annotations and other Java 5.0 features, see
+      <ulink url="http://java.sun.com/docs/books/tutorial/java/javaOO/annotations.html"/>
+      and <ulink url="http://java.sun.com/j2se/1.5.0/docs/relnotes/features.html#lang"/>
+      </para>
     </section>
 
     <section id="project-dependencies">

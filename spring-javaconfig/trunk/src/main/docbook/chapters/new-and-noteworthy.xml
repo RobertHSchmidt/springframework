@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter id="new-and-noteworthy">
-  <title>New &amp; Noteworthy in 1.0-M3</title>
+<chapter id="new-and-noteworthy-1.0.0.m3">
+  <title>New &amp; Noteworthy in 1.0.0.m3</title>
 
   <section>
     <title><classname>AnnotationApplicationContext</classname> deprecated</title>
@@ -12,7 +12,7 @@
     renaming, <classname>JavaConfigApplicationContext</classname> has
     several new features worth discussing. See below for details.
     <emphasis><classname>AnnotationApplicationContext</classname> will be
-    removed entirely in JavaConfig 1.0-RC1</emphasis></para>
+    removed entirely in JavaConfig 1.0.0.rc1</emphasis></para>
 
     <para>See <xref linkend="javaconfigapplicationcontext" /></para>
   </section>

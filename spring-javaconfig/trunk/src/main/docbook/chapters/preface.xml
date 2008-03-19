@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preface id="preface-m3">
+<preface id="preface-1.0.0.m3">
   <title>Preface to the third milestone release</title>
   
   <para>We're proud to announce this third milestone (M3) of the JavaConfig project.
@@ -9,7 +9,7 @@
   has participated in the process thus far, including Rick Hightower, Solomon Duskis,
   Ben Rowlands, Craig Walls, Jim Moore, and many others.</para>
 
-  <para>M3 includes 20+ bug fixes and feature additions.  See <xref linkend="new-and-noteworthy"/>
+  <para>M3 includes 20+ bug fixes and feature additions.  See <xref linkend="new-and-noteworthy-1.0.0.m3"/>
   for full details, but a couple high-level notes to users new and old: M3 introduces one
   fairly major change to the existing core API - the deprecation of
   <classname>AnnotationApplicationContext</classname> in favor of its replacement, <classname>

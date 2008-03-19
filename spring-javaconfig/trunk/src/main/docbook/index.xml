@@ -14,7 +14,6 @@
 <!ENTITY advanced-concepts            SYSTEM "chapters/advanced-concepts.xml">
 <!ENTITY combining-config-approaches  SYSTEM "chapters/combining-config-approaches.xml">
 <!ENTITY limitations                  SYSTEM "chapters/limitations.xml">
-<!ENTITY undocumented-features        SYSTEM "chapters/undocumented-features.xml">
 <!ENTITY roadmap                      SYSTEM "chapters/roadmap.xml">
 <!ENTITY tooling                      SYSTEM "chapters/tooling.xml">
 <!ENTITY common-config-scenarios      SYSTEM "chapters/common-config-scenarios.xml">
@@ -24,30 +23,6 @@
 <!ENTITY old-java-config              SYSTEM "chapters/old-java-config.xml">
 ]>
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--
-    High-level TODOs (search TODO throughout this document for fine-grained tasks):
-
-
-    * @Meta (see @Bean.meta()).  No examples/tests; can probably refer to core docs (see A.2.10).
-    * @AutoBean (currently in 'undocumented features')
-    * ValueSource (and friends)... there is just one very simple unit test;
-      need more complete examples. Rod? Perhaps this should go in 'undocumented' as well..
-    * @ScopedProxy
-    * Bean visibility
-    * Fold in contents of m2 docs' Chap 4., "Wire Dependencies"
-    * Naming strategy (what section does this belong in?) (see BeanNamingStrategy interface)
-    * Figure out formatting for pdf generation (should look like Core Spring PDF).
-    * Think about packaging up the 'with-dependencies' jar (for easy downloading from sourceforge)
-    * Introduce an entity via the maven pom (as done with 'version') for the current spring docs and
-      replace the redundant url references.
-    * Link out to JavaDoc on initial mention of any class/interface/annotation?
-
-    Limitations:
-    * No property values... enumerate any limitations this imposes
-
-    Best Practices:
-    * Mention packaging / keeping @Configuration classes in their own, dedicated .config.* package
-  -->
 
   <bookinfo>
     <title>Spring JavaConfig Reference Guide</title>
@@ -88,12 +63,8 @@
       create a basic configuration and evaluate JavaConfig for yourself.
       Finally, you'll be ready to move on to Part II and explore the
       JavaConfig API in detail.</para>
-      <para>TODO: Shall we continue to use this 'we' and 'you' voicing in the document?
-      I find it particularly readable, personal, etc.  It would primarily be used as we introduce
-      the three parts of the book, but some might be offended by this 'informality'.  Just a talking
-      point for the upcoming review.</para>
       <para><xref linkend="overview" /></para>
-      <para><xref linkend="new-and-noteworthy" /></para>
+      <para><xref linkend="new-and-noteworthy-1.0.0.m3" /></para>
       <para><xref linkend="quick-start" /></para>
     </partintro>
     &overview;
@@ -129,7 +100,7 @@
       convenient subclasses of Spring MVC's
       <classname>DispatcherServlet</classname> and
       <classname>ContextLoaderListener</classname>.</para>
-      
+
       <para><xref linkend="combining-config-approaches" />. Describes how to
       use JavaConfig's <classname>ConfigurationPostProcessor</classname> bean
       post-processor for integrating
@@ -148,7 +119,6 @@
     <title>Appendices</title>
     <!-- TODO: partintro -->
     &limitations;
-    &undocumented-features;
     &roadmap;
     &tooling;
     &common-config-scenarios;
