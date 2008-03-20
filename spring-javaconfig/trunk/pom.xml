@@ -482,7 +482,7 @@
         </plugins>
     </reporting>
     <distributionManagement>
-        <downloadUrl>http://www.springframework.org/spring-javaconfig</downloadUrl>
+        <downloadUrl>http://www.springframework.org/javaconfig</downloadUrl>
         <repository>
             <id>spring-milestone</id>
             <name>Spring Milestone Repository</name>
