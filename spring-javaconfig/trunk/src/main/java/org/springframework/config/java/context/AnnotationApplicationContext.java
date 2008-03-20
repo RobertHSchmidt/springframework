@@ -41,7 +41,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * @author Chris Beams
  */
 // /CLOVER:OFF
-// TODO: delete this class before 1.0 release
 @Deprecated
 public class AnnotationApplicationContext extends AbstractRefreshableApplicationContext {
 
