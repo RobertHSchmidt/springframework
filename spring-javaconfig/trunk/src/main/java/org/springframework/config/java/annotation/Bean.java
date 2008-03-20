@@ -67,16 +67,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * for Spring AOP Advisors or AspectJ aspects, which might otherwise alter
  * behaviour of the owning factory as a whole.
  * 
- * <p/>TODO: consider providing a value() or name() attribute that, if set,
- * provides the name of the bean. This is useful, for example, in a web context
- * where the name of the bean may need to include slashes, etc. This could
- * currently be done through supplying a value to the aliases() array, but it is
- * more consistent with XML usage to provide a name() attribute that fully
- * overrides the method name, which in JavaConfig is equivalent to the 'id'
- * attribute of the bean element in XML. If this gets implemented, it will
- * likely affect the implementation of
- * {@link org.springframework.config.java.naming.MethodNameStrategy}
- * 
  * @author Rod Johnson
  * @author Costin Leau
  * @author Chris Beams

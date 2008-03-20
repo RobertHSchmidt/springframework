@@ -28,11 +28,7 @@ import org.springframework.aop.target.HotSwappableTargetSource;
  * The beans created will be automatically wrapped with
  * {@link HotSwappableTargetSource}.
  * 
- * <p/> XXX: Document (pending request to Rod for clarification on this
- * functionality)
- * 
  * @author Rod Johnson
- * 
  */
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
