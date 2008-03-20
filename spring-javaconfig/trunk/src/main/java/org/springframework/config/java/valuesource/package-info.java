@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /**
- * Bytecode analysis package.
- * <br>
- * Class which analyze for various bytecode structures such as fields or methods.
+ * Mechanisms for resolving externalized values within Java
+ * configurations.
  */
 package org.springframework.config.java.valuesource;
+

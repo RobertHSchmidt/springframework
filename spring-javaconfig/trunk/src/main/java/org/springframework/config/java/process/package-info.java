@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Processing package.
+ * <b><i>For internal use only</i></b>: subject to backward-incompatible changes.
  * <br>
  * This package provides the core functionality providing a raw and
  * BeanFactory processor which can interpret Java configurations.

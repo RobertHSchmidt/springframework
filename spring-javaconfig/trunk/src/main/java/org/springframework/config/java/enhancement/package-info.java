@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 /**
- * {@link org.springframework.context.ApplicationContext} implementations that
- * support Java configuration classes as input
+ * <b><i>For internal use only</i></b>: subject to backward-incompatible changes.
  */
-package org.springframework.config.java.context;
+package org.springframework.config.java.enhancement;
 
