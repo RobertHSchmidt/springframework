@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.DefaultNamingStrategy;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -222,8 +221,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Optionally indicate the naming strategy used for creating the bean names
-	 * during processing. If unspecified, {@link DefaultNamingStrategy} will be
-	 * used.
+	 * during processing. If unspecified a default, method-name-based strategy
+	 * will be used.
 	 * 
 	 * @param beanNamingStrategy bean naming strategy implementation
 	 */

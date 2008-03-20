@@ -9,7 +9,7 @@
     <name>Spring JavaConfig</name>
     <version>1.0.0.m3-SNAPSHOT</version>
     <description>
-        The Spring Java Configuration project provides a type-safe, pure-Java alternative to configuring Spring
+        The Spring Java Configuration project provides a type-safe, pure-Java option for configuring Spring
         Application Contexts. While most people currently use XML to configure bean definitions in their Application
         Contexts, Spring's versatility and metadata based internal handling of bean definitions means alternatives to
         XML config are easy to implement.
@@ -81,36 +81,14 @@
         <url>http://www.springframework.org</url>
     </organization>
     <profiles>
+    <!-- profile used for building spring-javaconfig-${version}-with-dependencies.zip
+         execute with `mvn -P release javadoc:javadoc docbkx:generate-pdf docbkx:generate-html install` -->
         <profile>
             <id>release</id>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-dependencies</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <!--Spring-->
-                                        <artifactItem>
-                                            <groupId>org.springframework</groupId>
-                                            <artifactId>spring-core</artifactId>
-                                            <version>${spring.version}</version>
-                                            <outputDirectory>${project.build.directory}/dependency/spring/</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2-beta-1</version>
                         <inherited>false</inherited>
                         <executions>
                             <execution>
@@ -121,7 +99,7 @@
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>src/assembly/with-dependencies.xml</descriptor>
+                                      <descriptor>src/assembly/with-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -140,46 +118,6 @@
             </extension>
         </extensions>
         <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>all-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>true</appendAssemblyId>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Spring-JavaConfig-Version>${pom.version}</Spring-JavaConfig-Version>
-                                </manifestEntries>
-                            </archive>
-                            <descriptors>
-                                <descriptor>src/assembly/all.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>minimal-zip</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/assembly/minimal.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -439,26 +377,6 @@
             <version>1.2.1</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-            <version>3.2.2.ga</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>asm</groupId>
-                    <artifactId>asm-attrs</artifactId>
-                </exclusion>
-            </exclusions>
-            <optional>true</optional>
-        </dependency>
 
         <!-- test-scoped dependencies -->
         <dependency>
@@ -550,7 +468,7 @@
         </plugins>
     </reporting>
     <distributionManagement>
-        <downloadUrl>http://www.springframework.org/spring-batch</downloadUrl>
+        <downloadUrl>http://www.springframework.org/spring-javaconfig</downloadUrl>
         <repository>
             <id>spring-milestone</id>
             <name>Spring Milestone Repository</name>
@@ -586,7 +504,7 @@
         </repository>
         <repository>
             <!-- required for dependency on javaee-api -->
-              <id>java.net</id>
+            <id>java.net</id>
             <name>dev.java.net repository</name>
             <layout>legacy</layout>
             <url>https://maven-repository.dev.java.net/nonav/repository</url>
