@@ -7,14 +7,12 @@
         <componentDescriptor>src/assembly/docs.xml</componentDescriptor>
     </componentDescriptors>
     <includeBaseDirectory>true</includeBaseDirectory>
-
     <files>
         <file>
             <source>target/${artifactId}-${version}.jar</source>
             <outputDirectory>dist</outputDirectory>
         </file>
     </files>
-
     <fileSets>
         <!-- Documentation -->
         <fileSet>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Bean naming strategy package.
+ * Pluggable strategies for bean naming.
  * <br>
  * Provides the means for doing the method -&gt; bean name translation.
  */
