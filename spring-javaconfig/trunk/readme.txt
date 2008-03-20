@@ -17,7 +17,7 @@ Release contents:
 * "src" contains the Java source files for the framework
 * "docs" contains the api documentation (JavaDoc) as well as the reference manual in both PDF and HTML form
 * "dist" contains JavaConfig distribution zips
-* "samples" contains the samples Java source files (NOTE: currently out-of-date, will be fixed in a later milestone. See SJC-76)
+* "lib" contains dependency jar files
 
 The "lib" directory is just included in the "-with-dependencies" download. Make sure to download this full
 distribution ZIP file if you want to run the sample applications and/or build the framework yourself.
