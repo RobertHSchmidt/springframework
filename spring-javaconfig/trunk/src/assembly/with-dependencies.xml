@@ -6,61 +6,9 @@
     <format>zip</format>
   </formats>
 
-  <fileSets>
-    <!-- Include readme files, etc -->
-    <fileSet>
-      <includes>
-        <include>readme.txt</include>
-        <include>license.txt</include>
-        <include>changelog.txt</include>
-      </includes>
-    </fileSet>
-
-    <!-- Include src files -->
-    <fileSet>
-      <directory>src/main/java</directory>
-      <outputDirectory>src</outputDirectory>
-      <includes>
-        <include>**/*.java</include>
-      </includes>
-    </fileSet>
-
-    <!-- Include JavaDoc -->
-    <fileSet>
-      <directory>target/site/apidocs</directory>
-      <outputDirectory>docs/apidocs</outputDirectory>
-      <includes>
-        <include>**/*</include>
-      </includes>
-    </fileSet>
-
-    <!-- Include PDF version of docbook documentation -->
-    <fileSet>
-      <directory>target/site/reference/pdf</directory>
-      <outputDirectory>docs/reference/pdf</outputDirectory>
-      <includes>
-        <include>spring-javaconfig-reference.pdf</include>
-      </includes>
-    </fileSet>
-
-    <!-- Include HTML version of docbook documentation -->
-    <fileSet>
-      <directory>target/site/reference/html</directory>
-      <outputDirectory>docs/reference/html</outputDirectory>
-      <includes>
-        <include>**/*</include>
-      </includes>
-    </fileSet>
-
-    <!-- Include the actual spring-javaconfig-${version}.jar -->
-    <fileSet>
-      <directory>target</directory>
-      <outputDirectory>dist</outputDirectory>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
+  <componentDescriptors>
+    <componentDescriptor>src/assembly/common.xml</componentDescriptor>
+  </componentDescriptors>
 
   <!-- Given this is the -with-dependencies assembly, include all assemblies
        note: this by default does NOT include test-scoped dependencies -->

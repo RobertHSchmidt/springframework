@@ -81,7 +81,9 @@
         <url>http://www.springframework.org</url>
     </organization>
     <profiles>
-    <!-- profile used for building spring-javaconfig-${version}-with-dependencies.zip
+    <!-- profile used for building:
+         1) spring-javaconfig-${version}.zip (minimal)
+         2) spring-javaconfig-${version}-with-dependencies.zip
          execute with `mvn -P release javadoc:javadoc docbkx:generate-pdf docbkx:generate-html install` -->
         <profile>
             <id>release</id>
@@ -100,6 +102,18 @@
                                 <configuration>
                                     <descriptors>
                                       <descriptor>src/assembly/with-dependencies.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>minimal</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                      <descriptor>src/assembly/minimal.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
