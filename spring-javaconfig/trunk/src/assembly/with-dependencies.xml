@@ -1,58 +1,72 @@
+<!-- This assembly builds spring-javaconfig-${version}-with-dependencies.zip -->
 <assembly>
-    <id>with-dependencies</id>
-    <formats>
-        <format>zip</format>
-    </formats>
-    <componentDescriptors>
-        <componentDescriptor>src/assembly/docs.xml</componentDescriptor>
-    </componentDescriptors>
-    <includeBaseDirectory>true</includeBaseDirectory>
-    <files>
-        <file>
-            <source>target/${artifactId}-${version}.jar</source>
-            <outputDirectory>dist</outputDirectory>
-        </file>
-    </files>
-    <fileSets>
-        <!-- Documentation -->
-        <fileSet>
-            <directory>target/site/apidocs</directory>
-            <outputDirectory>docs/api</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>target/site/reference</directory>
-            <outputDirectory>docs/reference</outputDirectory>
-        </fileSet>
-        <!-- Samples -->
-        <fileSet>
-            <directory>samples</directory>
-            <outputDirectory>samples</outputDirectory>
-            <includes>
-                <include>**/readme.txt</include>
-            </includes>
-            <lineEnding>dos</lineEnding>
-        </fileSet>
-        <fileSet>
-            <directory>samples</directory>
-            <outputDirectory>samples</outputDirectory>
-            <includes>
-                <include>**/src/**</include>
-                <include>**/build*.xml</include>
-                <include>**/*.bat</include>
-                <include>**/pom.xml</include>
-                <include>**/Makefile</include>
-                <include>mtom/**/spring-ws-logo.png</include>
-                <include>maven-ant-tasks-*.jar</include>
-                <includes>**/*.exe</includes>
-            </includes>
-            <excludes>
-                <exclude>airline/activemq-data</exclude>
-                <exclude>airline/activemq-data/**</exclude>
-                <exclude>**/target</exclude>
-                <exclude>**/target/**</exclude>
-                <exclude>**/bin</exclude>
-                <exclude>**/bin/**</exclude>
-            </excludes>
-        </fileSet>        
-    </fileSets>
+  <id>with-dependencies</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <fileSets>
+    <!-- Include readme files, etc -->
+    <fileSet>
+      <includes>
+        <include>readme.txt</include>
+        <include>license.txt</include>
+        <include>changelog.txt</include>
+      </includes>
+    </fileSet>
+
+    <!-- Include src files -->
+    <fileSet>
+      <directory>src/main/java</directory>
+      <outputDirectory>src</outputDirectory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+
+    <!-- Include JavaDoc -->
+    <fileSet>
+      <directory>target/site/apidocs</directory>
+      <outputDirectory>docs/apidocs</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <!-- Include PDF version of docbook documentation -->
+    <fileSet>
+      <directory>target/site/reference/pdf</directory>
+      <outputDirectory>docs/reference/pdf</outputDirectory>
+      <includes>
+        <include>spring-javaconfig-reference.pdf</include>
+      </includes>
+    </fileSet>
+
+    <!-- Include HTML version of docbook documentation -->
+    <fileSet>
+      <directory>target/site/reference/html</directory>
+      <outputDirectory>docs/reference/html</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <!-- Include the actual spring-javaconfig-${version}.jar -->
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>dist</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+
+  <!-- Given this is the -with-dependencies assembly, include all assemblies
+       note: this by default does NOT include test-scoped dependencies -->
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
 </assembly>
