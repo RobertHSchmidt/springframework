@@ -27,10 +27,12 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.JasperListener;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.startup.Embedded;
+import org.apache.catalina.util.ServerInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -59,6 +61,9 @@ import org.osgi.framework.ServiceRegistration;
  * @author Costin Leau
  */
 public class Activator implements BundleActivator {
+
+	/** logger */
+	private static final Log log = LogFactory.getLog(Activator.class);
 
 	/** user-configurable config location */
 	private static final String CONF_LOCATION = "conf/embedded-server.properties";
@@ -93,13 +98,18 @@ public class Activator implements BundleActivator {
 					Configuration config = readConfiguration(bundleContext.getBundle());
 					server = createCatalinaServer(config);
 
+					log.info("Starting " + ServerInfo.getServerInfo() + " ...");
 					server.start();
+					log.info("Succesfully started " + ServerInfo.getServerInfo());
 
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
+					log.info("Published " + ServerInfo.getServerInfo() + " as an OSGi service");
 				}
 				catch (Exception ex) {
-					throw new RuntimeException("cannot start server", ex);
+					String msg = "Cannot start " + ServerInfo.getServerInfo();
+					log.error(msg, ex);
+					throw new RuntimeException(msg, ex);
 				}
 				finally {
 					current.setContextClassLoader(old);
@@ -123,7 +133,13 @@ public class Activator implements BundleActivator {
 			current.setContextClassLoader(cl);
 			//reset CCL 
 			// current.setContextClassLoader(null);
+			log.info("Stopping " + ServerInfo.getServerInfo() + " ...");
 			server.stop();
+			log.info("Succesfully stopped " + ServerInfo.getServerInfo());
+		}
+		catch (Exception ex) {
+			log.error("Cannot stop " + ServerInfo.getServerInfo(), ex);
+			throw ex;
 		}
 		finally {
 			current.setContextClassLoader(old);
@@ -134,10 +150,10 @@ public class Activator implements BundleActivator {
 		// create embedded server
 		Embedded embedded = new Embedded();
 		embedded.setCatalinaHome(configuration.getHome());
-		embedded.setName("OSGi Embedded Tomcat");
+		embedded.setName("Catalina");
 
-		// add listener(s)
-		embedded.addLifecycleListener(new JasperListener());
+		// add listener(s) (removed since it only works on 6.0.x+ )
+		// embedded.addLifecycleListener(new JasperListener());
 
 		// create engine
 		Engine engine = embedded.createEngine();
@@ -213,9 +229,9 @@ public class Activator implements BundleActivator {
 	private ServiceRegistration publishServerAsAService(Embedded server) {
 		Properties props = new Properties();
 		// put some extra properties to easily identify the service
-		props.put(Constants.SERVICE_VENDOR, "Spring Framework");
-		props.put(Constants.SERVICE_DESCRIPTION, server.getInfo());
-		props.put(Constants.BUNDLE_VERSION, "6.0.x");
+		props.put(Constants.SERVICE_VENDOR, "Spring Dynamic Modules");
+		props.put(Constants.SERVICE_DESCRIPTION, ServerInfo.getServerInfo());
+		props.put(Constants.BUNDLE_VERSION, ServerInfo.getServerNumber());
 		props.put(Constants.BUNDLE_NAME, bundleContext.getBundle().getSymbolicName());
 
 		// spring-dm specific property
