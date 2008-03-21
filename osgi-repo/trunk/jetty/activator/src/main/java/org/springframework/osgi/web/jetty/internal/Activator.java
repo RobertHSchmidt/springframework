@@ -24,6 +24,8 @@ import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.HandlerContainer;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.HandlerWrapper;
+import org.mortbay.log.Log;
+import org.mortbay.log.Logger;
 import org.mortbay.util.Attributes;
 import org.mortbay.xml.XmlConfiguration;
 import org.osgi.framework.BundleActivator;
@@ -40,6 +42,9 @@ import org.osgi.framework.ServiceRegistration;
  * 
  */
 public class Activator implements BundleActivator {
+
+	/** logger */
+	private static final Logger log = Log.getLogger(Activator.class.getName());
 
 	/** standard jetty configuration file */
 	private static final String ETC_LOCATION = "/etc/jetty.xml";
@@ -68,6 +73,8 @@ public class Activator implements BundleActivator {
 		startupThread = new Thread(new Runnable() {
 
 			public void run() {
+				log.info("Starting Jetty " + Server.getVersion() + " ...", null, null);
+
 				// default startup procedure
 				ClassLoader cl = Activator.class.getClassLoader();
 				Thread current = Thread.currentThread();
@@ -77,6 +84,9 @@ public class Activator implements BundleActivator {
 					//current.setContextClassLoader(cl);
 					//reset CCL 
 					current.setContextClassLoader(null);
+					if (log.isDebugEnabled())
+						log.debug("Reading Jetty config " + config.toString(), null, null);
+
 					xmlConfig = new XmlConfiguration(config);
 					Object root = xmlConfig.configure();
 					if (!(root instanceof Server)) {
@@ -85,14 +95,19 @@ public class Activator implements BundleActivator {
 					}
 					server = (Server) root;
 					server.start();
+					log.info("Succesfully started Jetty " + Server.getVersion(), null, null);
 
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
 
+					log.info("Published Jetty " + Server.getVersion() + " as an OSGi service", null, null);
+
 					server.join();
 				}
 				catch (Exception ex) {
-					throw new RuntimeException("cannot start server", ex);
+					String msg = "Cannot start Jetty " + Server.getVersion();
+					log.warn(msg, ex);
+					throw new RuntimeException(msg, ex);
 				}
 				finally {
 					current.setContextClassLoader(old);
@@ -106,6 +121,7 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		// unpublish service first
 		registration.unregister();
+		log.info("Unpublished Jetty " + Server.getVersion() + " OSGi service", null, null);
 
 		// default startup procedure
 		ClassLoader cl = Activator.class.getClassLoader();
@@ -113,10 +129,16 @@ public class Activator implements BundleActivator {
 		ClassLoader old = current.getContextClassLoader();
 
 		try {
+			log.info("Stopping Jetty " + Server.getVersion() + " ...", null, null);
 			//current.setContextClassLoader(cl);
 			//reset CCL 
 			current.setContextClassLoader(null);
 			server.stop();
+			log.info("Succesfully stopped Jetty " + Server.getVersion() + " ...", null, null);
+		}
+		catch (Exception ex) {
+			log.warn("Cannot stop Jetty " + Server.getVersion(), ex);
+			throw ex;
 		}
 		finally {
 			current.setContextClassLoader(old);
@@ -127,8 +149,8 @@ public class Activator implements BundleActivator {
 		Properties props = new Properties();
 		// put some extra properties to easily identify the service
 		props.put(Constants.SERVICE_VENDOR, "Spring Framework");
-		props.put(Constants.SERVICE_DESCRIPTION, "Jetty " + server.getVersion());
-		props.put(Constants.BUNDLE_VERSION, server.getVersion());
+		props.put(Constants.SERVICE_DESCRIPTION, "Jetty " + Server.getVersion());
+		props.put(Constants.BUNDLE_VERSION, Server.getVersion());
 		props.put(Constants.BUNDLE_NAME, bundleContext.getBundle().getSymbolicName());
 
 		// spring-dm specific property
