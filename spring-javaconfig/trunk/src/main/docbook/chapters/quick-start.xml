@@ -9,11 +9,23 @@
   <section>
     <title>Download JavaConfig</title>
 
+    <para>Like any Java library, you'll first need to get the JavaConfig jar
+    (and the jars it depends on) into your classpath.</para>
+
+    <section>
+      <title>Manual download</title>
+
+      <para>Please visit <ulink url="http://www.springframework.org/javaconfig"/>
+      where you'll find links to zip file distributions.  Two distributions are
+      available, with and without dependencies included.</para>
+    </section>
+
     <section>
       <title>Maven 2</title>
 
-      <para>Assuming a Maven2 build infrastructure, using JavaConfig is as
-      simple as adding the following to your POM <programlisting>&lt;dependencies&gt;
+      <para>Assuming your project uses a Maven2 build infrastructure, using
+      JavaConfig is as simple as adding the following to your POM
+      <programlisting>&lt;dependencies&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
         &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
@@ -22,21 +34,15 @@
 &lt;/dependencies&gt;
 </programlisting> <note> See <xref linkend="maven-configs" /> for more
           information about using Maven2 with Spring JavaConfig </note></para>
-        </section>
+    </section>
 
-        <section>
-          <title>Ant/Other</title>
+  </section>
 
-          <para>TODO: Download from sourceforge (link), consider the
-          -with-dependencies jar.</para>
-        </section>
-      </section>
+  <section>
+    <title>Create bean definitions</title>
 
-      <section>
-        <title>Create bean definitions</title>
-
-        <para>
-          <programlisting>@Configuration
+    <para>
+      <programlisting>@Configuration
 public class ApplicationConfig {
     @Bean
     public TransferService transferService() {
@@ -50,7 +56,7 @@ public class ApplicationConfig {
 
     @Bean
     public DataSource dataSource() {
-        return new DriverManagerDataSource(TODO: args);
+        return new DriverManagerDataSource(...);
     }
 }
 </programlisting>
@@ -78,9 +84,8 @@ public class ApplicationConfig {
   <section>
     <title>Summary</title>
 
-    <para>Obviously, we're a bit too simplistic here, to learn more about
-    modularizing <classname>@Configuration</classname> classes, see TODO
-    link. To learn about more advanced mechanisms for ... TODO continue
-    this approach,</para>
+    <para>That's it!  You're now ready for <xref linkend="reference"/>, where
+    you'll walk through each of the features of Spring JavaConfig.
+    </para>
   </section>
 </chapter>

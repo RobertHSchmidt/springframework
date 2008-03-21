@@ -14,6 +14,7 @@
 <!ENTITY advanced-concepts            SYSTEM "chapters/advanced-concepts.xml">
 <!ENTITY combining-config-approaches  SYSTEM "chapters/combining-config-approaches.xml">
 <!ENTITY limitations                  SYSTEM "chapters/limitations.xml">
+<!ENTITY dynamic-language-support     SYSTEM "chapters/dynamic-language-support.xml">
 <!ENTITY roadmap                      SYSTEM "chapters/roadmap.xml">
 <!ENTITY tooling                      SYSTEM "chapters/tooling.xml">
 <!ENTITY common-config-scenarios      SYSTEM "chapters/common-config-scenarios.xml">
@@ -117,8 +118,9 @@
 
   <part id="appendices">
     <title>Appendices</title>
-    <!-- TODO: partintro -->
+
     &limitations;
+    &dynamic-language-support;
     &roadmap;
     &tooling;
     &common-config-scenarios;
