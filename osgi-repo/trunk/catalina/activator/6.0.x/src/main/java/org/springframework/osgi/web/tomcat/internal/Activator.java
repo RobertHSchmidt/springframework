@@ -87,6 +87,8 @@ public class Activator implements BundleActivator {
 		startupThread = new Thread(new Runnable() {
 
 			public void run() {
+				log.info("Starting " + ServerInfo.getServerInfo() + " ...");
+
 				// default startup procedure
 				ClassLoader cl = Activator.class.getClassLoader();
 				Thread current = Thread.currentThread();
@@ -98,7 +100,6 @@ public class Activator implements BundleActivator {
 					Configuration config = readConfiguration(bundleContext.getBundle());
 					server = createCatalinaServer(config);
 
-					log.info("Starting " + ServerInfo.getServerInfo() + " ...");
 					server.start();
 					log.info("Succesfully started " + ServerInfo.getServerInfo());
 
@@ -123,6 +124,8 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		// unpublish service first
 		registration.unregister();
+
+		log.info("Unpublished  " + ServerInfo.getServerInfo() + " OSGi service");
 
 		// default startup procedure
 		ClassLoader cl = Activator.class.getClassLoader();
@@ -192,7 +195,7 @@ public class Activator implements BundleActivator {
 
 		URL defaultLocation = bundle.getResource(DEFAULT_CONF_LOCATION);
 		if (defaultLocation == null)
-			throw new IllegalArgumentException("cannot find default location " + DEFAULT_CONF_LOCATION);
+			throw new IllegalArgumentException("Cannot find default location " + DEFAULT_CONF_LOCATION);
 
 		loadStream(defaults, defaultLocation.openStream());
 
@@ -201,9 +204,16 @@ public class Activator implements BundleActivator {
 
 		URL userConfigLocation = bundle.getResource(CONF_LOCATION);
 		// check if indeed we have something
-		if (userConfigLocation == null)
+		if (userConfigLocation == null) {
 			userProps = defaults;
+			if (log.isDebugEnabled())
+				log.debug("Reading default server configuration from  " + defaultLocation);
+		}
+
 		else {
+			if (log.isDebugEnabled())
+				log.debug("Reading user server configuration from  " + userConfigLocation);
+
 			userProps = new Properties(defaults);
 			loadStream(userProps, userConfigLocation.openStream());
 		}
