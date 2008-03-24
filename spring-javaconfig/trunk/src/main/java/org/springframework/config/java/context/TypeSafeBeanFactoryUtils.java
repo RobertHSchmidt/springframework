@@ -24,7 +24,13 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
-final class TypeSafeBeanFactoryUtils {
+/**
+ * <b><i>For internal use only</i></b>: subject to backward-incompatible
+ * changes.
+ * 
+ * @author Chris Beams
+ */
+public final class TypeSafeBeanFactoryUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getBean(ListableBeanFactory beanFactory, Class<T> type) {

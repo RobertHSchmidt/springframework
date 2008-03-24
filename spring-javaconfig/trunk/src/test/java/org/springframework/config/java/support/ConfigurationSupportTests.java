@@ -18,7 +18,6 @@ package org.springframework.config.java.support;
 import static org.junit.Assert.*;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TestBean;
@@ -159,6 +158,22 @@ public class ConfigurationSupportTests {
 		}
 	}
 
+	@Configuration
+	public static class TypeSafeConfig extends ConfigurationSupport {
+		@Bean
+		public TestBean foo() {
+			return new TestBean(getBean(String.class));
+		}
+	}
+
+	@Configuration
+	public static class TypeSafeConfigWithStringQualifier extends ConfigurationSupport {
+		@Bean
+		public TestBean foo() {
+			return new TestBean(getBean(String.class, "name"));
+		}
+	}
+
 	@Test
 	public void testFactoryBeanCallbacks() {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
@@ -189,10 +204,16 @@ public class ConfigurationSupportTests {
 		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
 	}
 
-	@Ignore
 	@Test
 	public void testTypeSafeGetBean() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config3.class, Config2.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(TypeSafeConfig.class, Config2.class);
+		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
+	}
+
+	@Test
+	public void testTypeSafeGetBeanWithStringQualifier() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(TypeSafeConfigWithStringQualifier.class,
+				Config2.class);
 		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
 	}
 }

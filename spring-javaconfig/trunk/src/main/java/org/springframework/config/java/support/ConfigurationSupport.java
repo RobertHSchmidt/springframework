@@ -18,8 +18,10 @@ package org.springframework.config.java.support;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.context.TypeSafeBeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -66,14 +68,13 @@ public class ConfigurationSupport implements BeanFactoryAware, ApplicationContex
 		return beanFactory.getBean(beanName);
 	}
 
-	/*
-	 * TODO: consider adding this back in once it's clear what to do with
-	 * TypeSafeBeanFactory (that interface is currently package-private in the
-	 * context package pending further review)
-	 * 
-	 * public <T> T getBean(Class<T> type) { return ((TypeSafeBeanFactory)
-	 * beanFactory).getBean(type); }
-	 */
+	public <T> T getBean(Class<T> type) {
+		return TypeSafeBeanFactoryUtils.getBean((ListableBeanFactory) beanFactory, type);
+	}
+
+	public <T> T getBean(Class<T> type, String beanName) {
+		return TypeSafeBeanFactoryUtils.getBean((ListableBeanFactory) beanFactory, type, beanName);
+	}
 
 	/**
 	 * Return the object created by this FactoryBean instance, first invoking
