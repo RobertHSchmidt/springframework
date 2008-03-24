@@ -49,7 +49,7 @@ public abstract class ConfigTwo {
 
   <section id="externalizing-string-values">
     <title>Working with externalized string values</title>
-    
+
     <tip><para><emphasis>Important: This functionality may change!</emphasis>.
     We are currently evaluating approaches for best supporting externalized
     values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
@@ -140,7 +140,7 @@ public class MyConfig {
 public class AppConfig extends ConfigurationSupport {
     @Bean
     public Service serviceA() {
-        DataSource dataSource = (DataSource) this.getBean("dataSource"); <lineannotation>// provided by base class</lineannotation>
+        DataSource dataSource = this.getBean(DataSource.class); <lineannotation>// provided by base class</lineannotation>
         <lineannotation>// ...</lineannotation>
     }
 }
