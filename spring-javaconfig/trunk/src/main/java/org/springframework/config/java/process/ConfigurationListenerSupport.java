@@ -29,7 +29,7 @@ import org.springframework.config.java.annotation.Bean;
  * 
  * @author Rod Johnson
  */
-public abstract class ConfigurationListenerSupport implements ConfigurationListener {
+abstract class ConfigurationListenerSupport implements ConfigurationListener {
 
 	protected final Log log = LogFactory.getLog(getClass());
 

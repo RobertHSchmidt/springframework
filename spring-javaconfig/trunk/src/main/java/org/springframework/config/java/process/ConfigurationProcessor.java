@@ -69,7 +69,8 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 /**
- * Class that processes Configuration beans.
+ * <em><strong>For internal use only</strong></em>. Processes Configuration
+ * beans.
  * <p>
  * A Configuration bean contains bean definition methods annotated with the Bean
  * annotation. The Configuration class itself may optionally be annotated with a

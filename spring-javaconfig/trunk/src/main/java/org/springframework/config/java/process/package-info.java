@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 /**
- * <b><i>For internal use only</i></b>: subject to backward-incompatible changes.
- * <br>
- * This package provides the core functionality providing a raw and
- * BeanFactory processor which can interpret Java configurations.
+ * Core functionality for processing
+ * {@link org.springframework.config.java.annotation.Configuration} classes.
  */
 package org.springframework.config.java.process;
 

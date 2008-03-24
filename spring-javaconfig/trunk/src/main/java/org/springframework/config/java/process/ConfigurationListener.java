@@ -31,7 +31,7 @@ import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
  * 
  * @author Rod Johnson
  */
-public interface ConfigurationListener extends BeanMethodReturnValueProcessor {
+interface ConfigurationListener extends BeanMethodReturnValueProcessor {
 
 	/**
 	 * Does this configurer understand the given configuration class, which
