@@ -5,7 +5,7 @@
   <section><title>Core Spring documentation</title>
   <para>The Core Spring documentation is mentioned throughout this document,
   and it is recommended that JavaConfig users read and understand the
-  <ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html">
+  <ulink url="&refdoc;/beans.html">
   IoC reference</ulink>. Although it discusses XML, its treatment of
   fundamental concepts remains directly applicable to JavaConfig</para>
   </section>

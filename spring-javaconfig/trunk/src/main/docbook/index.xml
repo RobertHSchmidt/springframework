@@ -11,7 +11,6 @@
 <!ENTITY modularizing-configurations  SYSTEM "chapters/modularizing-configurations.xml">
 <!ENTITY using-aspects                SYSTEM "chapters/using-aspects.xml">
 <!ENTITY developing-web-applications  SYSTEM "chapters/developing-web-applications.xml">
-<!ENTITY advanced-concepts            SYSTEM "chapters/advanced-concepts.xml">
 <!ENTITY combining-config-approaches  SYSTEM "chapters/combining-config-approaches.xml">
 <!ENTITY limitations                  SYSTEM "chapters/limitations.xml">
 <!ENTITY dynamic-language-support     SYSTEM "chapters/dynamic-language-support.xml">
@@ -21,7 +20,6 @@
 <!ENTITY how-javaconfig-works         SYSTEM "chapters/how-javaconfig-works.xml">
 <!ENTITY maven-configs                SYSTEM "chapters/maven-configs.xml">
 <!ENTITY additional-resources         SYSTEM "chapters/additional-resources.xml">
-<!ENTITY old-java-config              SYSTEM "chapters/old-java-config.xml">
 ]>
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
 
@@ -112,21 +110,18 @@
     &modularizing-configurations;
     &using-aspects;
     &developing-web-applications;
-    &advanced-concepts;
     &combining-config-approaches;
   </part>
 
   <part id="appendices">
     <title>Appendices</title>
-
-    &limitations;
-    &dynamic-language-support;
     &roadmap;
-    &tooling;
     &common-config-scenarios;
+    &tooling;
+    &dynamic-language-support;
     &how-javaconfig-works;
+    &limitations;
     &maven-configs;
     &additional-resources;
   </part>
-  <!-- old-java-config -->
 </book>
