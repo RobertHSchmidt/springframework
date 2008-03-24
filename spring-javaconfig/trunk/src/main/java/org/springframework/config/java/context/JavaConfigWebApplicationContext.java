@@ -32,9 +32,12 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
 
 /**
- * Fashioned after {@link JavaConfigApplicationContext}
- * 
- * <p/>TODO: Finish document
+ * JavaConfig ApplicationContext implementation for use in the web tier. May be
+ * supplied as the {@literal commandClass} parameter to Spring MVC's
+ * DispatcherServlet
+ * @see JavaConfigApplicationContext
+ * @see org.springframework.web.context.WebApplicationContext
+ * @see org.springframework.web.servlet.DispatcherServlet
  * 
  * @author Chris Beams
  */
