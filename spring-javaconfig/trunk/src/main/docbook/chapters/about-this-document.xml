@@ -22,7 +22,7 @@
     <para>This document assumes at least a general familiarity with the Spring
     IoC container.  If you are brand new to Spring (i.e.: have never used
     Spring's XML configuration language, it is suggested that you first read
-    <ulink url="http://static.springframework.org/spring/docs/2.5.x/reference/beans.html">
+    <ulink url="&refdoc;/beans.html">
     Chapter 3. IoC</ulink> of the Core Spring reference manual documentation. 
     You will also notice that this chapter is frequently referenced throughout
     this document.</para>

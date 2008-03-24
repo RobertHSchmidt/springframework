@@ -230,6 +230,10 @@
                             <name>version</name>
                             <value>${pom.version}</value>
                         </entity>
+                        <entity>
+                            <name>refdoc</name>
+                            <value>http://static.springframework.org/spring/docs/2.5.x/reference</value>
+                        </entity>
                     </entities>
                     <postProcess>
                         <copy todir="target/site/reference/pdf">
