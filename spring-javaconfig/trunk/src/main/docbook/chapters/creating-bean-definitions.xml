@@ -103,7 +103,7 @@ public class AppConfig {
 }</programlisting>
 
       <para>Also, the <ulink url="&refdoc;/beans.html#beans-factory-nature">lifecycle</ulink>
-      methods and <code>*Aware</code> interfaces are fully supported:</para>
+      callback methods are fully supported.</para>
     </section>
 
     <section id="bean-visibility">
@@ -194,12 +194,33 @@ public abstract class VisibilityConfiguration {
       the hidden beans can access beans defined in the parent (or owning)
       context but not the other way around.</para>
 
-      <para>TODO: include Rod's diagram</para>
+      <para><emphasis>TODO: include Rod's diagram</emphasis></para>
     </section>
 
 
     <section id="bean-scoping">
       <title>Bean scoping</title>
+
+      <section id="available-scopes">
+        <title>Using <interfacename>@Bean</interfacename>'s <literal>scope</literal> attribute</title>
+
+        <para>JavaConfig makes available each of the four standard scopes specified in
+        <ulink url="&refdoc;/beans.html#beans-factory-scopes">Section 3.4, "Bean Scopes"</ulink>
+        of the Spring reference documentation.</para>
+
+        <para>The <classname>DefaultScopes</classname> class provides string
+        constants for each of these four scopes.  SINGLETON is the default, and
+        can be overridden by supplying the <literal>scope</literal> attribute
+        to <interfacename>@Bean</interfacename> annotation:
+
+        <programlisting>@Configuration
+public class MyConfiguration {
+    @Bean(scope=DefaultScopes.PROTOTYPE)
+    public Encryptor encryptor() {
+        <lineannotation>// ...</lineannotation>
+    }
+}</programlisting></para>
+      </section>
 
       <section id="scoped-proxy">
         <title><interfacename>@ScopedProxy</interfacename></title>
@@ -251,11 +272,41 @@ public MyAbstractSingleton mySingleton(){
 }</programlisting>
       </section>
     </section>
+
+    <section id="bean-naming">
+      <title>Bean naming</title>
+      <para>By default, JavaConfig uses a <interfacename>@Bean</interfacename>
+      method's name as the name of the resulting bean.  This functionality can
+      be overridden, however, using the <interfacename>BeanNamingStrategy</interfacename>
+      extension point.
+      <note>Overriding the bean naming strategy is currently
+      only supported by XML configuration of
+      <classname>ConfigurationPostProcessor</classname>.  In future
+      revisions, it will be possible to specify BeanNamingStrategy directly on
+      <classname>JavaConfigApplicationContext</classname>. Watch
+      <ulink url="http://jira.springframework.org/browse/SJC-86">SJC-86</ulink>
+      for details.</note></para>
+      <programlisting>&lt;beans&gt;
+    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"&gt;
+        &lt;property name="namingStrategy"&gt;
+            &lt;bean class="my.custom.NamingStrategy"/&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;</programlisting>
+
+        <para>For more details, see the API documentation on <interfacename>BeanNamingStrategy</interfacename>.</para>
+
+        <para>For more information on integrating JavaConfig and XML, see <xref linkend="combining-config-approaches"/></para>
+    </section>
   </section>
 
   <section id="autobean">
   	<title>Autowiring support with @AutoBean</title>
-  	<para><emphasis>Work in progress</emphasis></para>
+  	<para><emphasis>Work in progress - see
+  	<ulink url="http://jira.springframework.org/browse/SJC-62">SJC-62</ulink>,
+  	<ulink url="http://jira.springframework.org/browse/SJC-70">SJC-70</ulink>,
+  	<ulink url="http://jira.springframework.org/browse/SJC-85">SJC-85</ulink>
+  	</emphasis></para>
   </section>
 
   <section id="javaconfigapplicationcontext">
@@ -274,7 +325,7 @@ public MyAbstractSingleton mySingleton(){
       <title>Construction Options</title>
 
       <para>Instantiating the
-      <classname>JavaConfigApplicationContext</classname> be done by
+      <classname>JavaConfigApplicationContext</classname> can be done by
       supplying <classname>@Configuration</classname>-annotated class
       literals to the constructor, and/or strings representing packages to
       scan for <classname>@Configuration</classname>-annotated
@@ -357,17 +408,24 @@ Service service = (Service) context.getBean("serviceA");
 
       <section id="typesafe-getbean">
         <title>Type-safe access</title>
-        <para>The preferred method for accessing beans is with the type-safe <methodname>getBean()</methodname> method.
+        <para>The preferred method for accessing beans is with the type-safe
+        <methodname>getBean()</methodname> method.</para>
 
         <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
 Service service = context.getBean(Service.class);</programlisting>
-        If more than one bean of type <interfacename>Service</interfacename> had been defined, the
-        above call would throw an exception indicating an ambiguity that the container could not resolve.
-        In these cases, the user has a number of options:</para>
 
-        <para>1) Indicate one bean as 'primary'.  Like Spring's XML configuration, JavaConfig allows for
-        specifying a given <interfacename>@Bean</interfacename> as 'primary':
-        <programlisting>@Configuration
+        <section id="disambiguation">
+          <title>Disambuguation options</title>
+          <para>If more than one bean of type <interfacename>Service</interfacename> had been defined
+          in the example above, the call to <methodname>getBean()</methodname> would throw an
+          exception indicating an ambiguity that the container could not resolve.
+          In these cases, the user has a number of options for disambiguation:</para>
+
+          <section id="primary-bean">
+            <title>Indicating a <interfacename>@Bean</interfacename> as <literal>primary</literal></title>
+            <para>Like Spring's XML configuration, JavaConfig allows for
+            specifying a given <interfacename>@Bean</interfacename> as <literal>primary</literal>:
+            <programlisting>@Configuration
 public class MyConfig {
     @Bean(primary=Primary.TRUE)
     public Service myService() {
@@ -379,30 +437,41 @@ public class MyConfig {
         return new Service();
     }
 }</programlisting>After this modification, all calls to <methodname>getBean(Service.class)</methodname>
-        will return the primary bean
-        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+            will return the <literal>primary</literal> bean
+            <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
 <lineannotation>// returns the <methodname>myService()</methodname> primary bean</lineannotation>
 Service service = context.getBean(Service.class);</programlisting></para>
+          </section>
 
-        <para>2) Disambiguate by bean name.  JavaConfig provides a <methodname>getBean()</methodname> variant
-        that accepts both a class and a bean name for cases just such as this
-        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+          <section id="disambiguation-by-bean-name">
+            <title>Disambiguation by bean name</title>
+            <para>JavaConfig provides a <methodname>getBean()</methodname> variant
+            that accepts both a class and a bean name for cases just such as these.
+            <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
 Service service = context.getBean(Service.class, "myService");</programlisting>
-        Because bean ids must be unique, this call guarantees that the ambiguity cannot occur.</para>
+            Because bean ids must be unique, this call guarantees that the ambiguity cannot occur.</para>
+          </section>
 
-        <para>3) Get all matching beans.  It is also reasonable to call the <methodname>getBeansOfType()</methodname>
-        method in order to return all beans that implement a given interface:
-        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+          <section id="retrieve-all-instances">
+            <title>Retrieve all beans of a given type</title>
+            <para>It is also reasonable to call the <methodname>getBeansOfType()</methodname>
+            method in order to return all beans that implement a given interface:
+            <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
 Map matchingBeans = context.getBeansOfType(Service.class);</programlisting>
-        Note that this latter approach is actually a feature of the Core Spring Framework's
-        <classname>AbstractApplicationContext</classname> (which <classname>JavaConfigApplicationContext</classname> extends)
-        and is not type-safe, in that the returned <interfacename>Map</interfacename> is not parameterized.</para>
+            Note that this latter approach is actually a feature of the Core Spring Framework's
+            <classname>AbstractApplicationContext</classname> (which <classname>JavaConfigApplicationContext</classname> extends)
+            and is not type-safe, in that the returned <interfacename>Map</interfacename> is not parameterized.</para>
+          </section>
+        </section>
       </section>
 
       <section id="string-based-access">
       	<title>String-based access</title>
-      	<para><emphasis>TODO: Document 'traditional' string-based
-      	<methodname>getBean()</methodname> usage</emphasis></para>
+      	<para>Beans may be accessed via the traditional string-based <literal>getBean()</literal>
+      	API as well.  Of course this is not type-safe and requires casting, but avoids any
+      	potential ambiguity entirely:
+        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Service service = (Service) context.getBean("myService");</programlisting></para>
       </section>
     </section>
   </section>
