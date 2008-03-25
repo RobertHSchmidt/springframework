@@ -2,25 +2,52 @@ SPRING JAVACONFIG CHANGELOG
 ===========================
 http://springframework.org/javaconfig
 
+
 Changes in version 1.0.0.m3 (2008-03-26)
 --------------------------------------
-* [SJC-34] Added @Import annotation to allow directly importing another @Configuration class (works like XML's <import/>)
-* [SJC-81] Deprecated AnnotationApplicationContext in favor of JavaConfigApplicationContext (old naming clashed with Spring 2.5's Annotation-Driven Injection)
-  [SJC-82] (NOTE: AnnotationApplicationContext will be removed completely before 1.0.0 GA release!)
-* [SJC-4]  Created JavaConfigWebApplicationContext to support using JavaConfig classes directly with DispatcherServlet
-* [SJC-38] Inner classes are now processed as child contexts
-* [SJC-48] Overhauled documentation (several TODOs remain, will be completed in a later milestone)
-* [SJC-42] Significant changes to internal packaging to eliminate cyclic dependencies
-* Changed versioning scheme (1.0 -> 1.0.0) to support OSGi naming conventions.
-* Numerous bug fixes and minor improvements; see release notes at
-  http://jira.springframework.org/secure/ReleaseNote.jspa?projectId=10080&styleName=Html&version=10599
+
+General
+* major update to documentation
+* internal refactoring to eliminate cyclic dependencies & reduce number of classes in public API
+* changed versioning scheme (1.0 -> 1.0.0) to support OSGi conventions
+* bean visibility: private @Bean methods are no longer supported (never worked properly anyway)
+* minimized dependencies
+* abstract @Configuration classes no longer registered unless one @ExternalBean, @ExternalValue or @AutoBean is present
+
+Package org.springframework.config.java.annotation
+* added @Import (works like XML's <import/> element)
+* added @ExternalValue and @ResourceBundles to facilitate externalizing string values
+* added Primary enum to support disambiguation in autowiring cases and when using new type-safe getBean() method
+* @Configuration is now annotated as @Component to support classpath scanning
+* @Bean 'allowOverriding' attribute now defaults to 'true'
+
+Package org.springframework.config.java.annotation
+* removed @SpringAdvice, @SpringAdvisor and related support (favor @Aspect-style)
+
+Package org.springframework.config.java.context
+* renamed ApplicationAnnotationContext to JavaConfigApplicationContext
+* deprecated ApplicationAnnotationContext
+* added type-safe getBean() methods to JavaConfigApplicationContext
+* added JavaConfigWebApplicationContext to facilitate using JavaConfig directly in the web tier
+
+Package org.springframework.config.java.process
+* ConfigurationProcessor now treats any inner @Configuration classes as child application contexts
+
+Package org.springframework.config.java.util
+* eliminated ClassUtils and ScopeUtils by refactoring static methods into the classes that use them
+
+Package org.springframework.config.java.valuesource
+* added ValueSource interface and various implementations to support @ExternalValue functionality mentioned above
+
 
 Changes in version 1.0-m2a (2007-05-10)
 ---------------------------------------
-* Fixed (a confusing) documentation typo. The binary code is identical to 1.0-m2 (the reason why the jar have the same name).
+* fixed (a confusing) documentation typo. The binary code is identical to 1.0-m2 (the reason why the jar have the same name).
+
 
 Changes in version 1.0-m2 (2007-05-08)
 --------------------------------------
+
 General
 * added root package org.springframework.config.java
 * refactored classes and restructured packages
@@ -50,8 +77,8 @@ Package org.springframework.config.java.support.cglib
 * the backing beanFactory is used for handling bean instances. Scopes are fully supported [SJC-9]
 
 Package org.springframework.config.java.util
-* added new package with two new utility classes: one for pasing the other for specifying Spring 2.0 default 
- scopes
+* added new package with two new utility classes: one for pasing the other for specifying Spring 2.0 default scopes
+
 
 Changes in version 1.0-M1 (2006-11-28)
 --------------------------------------
