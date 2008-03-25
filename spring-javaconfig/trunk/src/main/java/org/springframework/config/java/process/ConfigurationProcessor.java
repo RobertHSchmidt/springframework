@@ -41,6 +41,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.core.AutoBeanMethodProcessor;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
 import org.springframework.config.java.core.Constants;
@@ -551,6 +552,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		Assert.notNull(candidateConfigurationClass);
 
 		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())
+				&& AutoBeanMethodProcessor.findAutoBeanCreationMethods(candidateConfigurationClass).isEmpty()
 				&& ExternalBeanMethodProcessor.findExternalBeanCreationMethods(candidateConfigurationClass).isEmpty()
 				&& ExternalValueMethodProcessor.findExternalValueCreationMethods(candidateConfigurationClass).isEmpty())
 			return false;
