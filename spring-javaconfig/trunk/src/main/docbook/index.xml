@@ -95,10 +95,7 @@
 
       <para><xref linkend="developing-web-applications" />. Documents
       JavaConfig's first-class support for use within the web tier with
-      <classname>JavaConfigWebApplicationContext</classname>, along with
-      convenient subclasses of Spring MVC's
-      <classname>DispatcherServlet</classname> and
-      <classname>ContextLoaderListener</classname>.</para>
+      <classname>JavaConfigWebApplicationContext</classname>.</para>
 
       <para><xref linkend="combining-config-approaches" />. Describes how to
       use JavaConfig's <classname>ConfigurationPostProcessor</classname> bean
