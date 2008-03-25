@@ -16,6 +16,7 @@
 package org.springframework.config.java.core;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.valuesource.ValueResolutionException;
@@ -32,6 +33,16 @@ public class AutoBeanMethodProcessor extends AbstractBeanMethodProcessor {
 
 	public static boolean isAutoBeanCreationMethod(Method candidateMethod) {
 		return new AutoBeanMethodProcessor().understands(candidateMethod);
+	}
+
+	/**
+	 * Find all methods that are annotated with {@link AutoBean}.
+	 * 
+	 * @param configurationClass
+	 * @return collection of all methods annotated with {@link AutoBean}
+	 */
+	public static Collection<Method> findAutoBeanCreationMethods(Class<?> configurationClass) {
+		return new AutoBeanMethodProcessor().findMatchingMethods(configurationClass);
 	}
 
 }
