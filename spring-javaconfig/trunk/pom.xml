@@ -405,12 +405,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>1.1-BETA-1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>1.8.0.7</version>
@@ -425,7 +419,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>2.0</version>
+            <version>2.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
