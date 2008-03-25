@@ -8,7 +8,51 @@
   <section>
     <title><classname>JavaConfigWebApplicationContext</classname></title>
 
-    <para>TODO</para>
+    <para><classname>JavaConfigWebApplicationContext</classname> allows for seamlessly bootstrapping
+    JavaConfig bean definitions within your servlet container's web.xml.  This process requires
+    no Spring XML bean definitions whatsoever:
 
+    <programlisting>&lt;web-app&gt;
+    <lineannotation>&lt;!-- Bootstrap the root application context as usual using <literal>ContextLoaderListener</literal> --&gt;</lineannotation>
+    &lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+    <lineannotation>&lt;!-- Configure <literal>ContextLoaderListener</literal> to use <literal>JavaConfigWebApplicationContext</literal>
+         instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
+    &lt;context-param&gt;
+        &lt;param-name&gt;contextClass&lt;/param-name&gt;
+        &lt;param-value&gt;org.springframework.config.java.JavaConfigWebApplicationContext&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    <lineannotation>&lt;!-- Configuration locations must consist of one or more comma- or space-delimited
+         fully-qualified <literal>@Configuration</literal> classes --&gt;</lineannotation>
+    &lt;context-param&gt;
+        &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+        &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
+    &lt;/context-param&gt;
+
+    <lineannotation>&lt;!-- Declare a Spring MVC <literal>DispatcherServlet</literal> as usual --&gt;</lineannotation>
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;test&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        <lineannotation>&lt;!-- Configure <literal>DispatcherServlet</literal> to use <literal>JavaConfigWebApplicationContext</literal>
+             instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
+        &lt;init-param&gt;
+            &lt;param-name&gt;contextClass&lt;/param-name&gt;
+            &lt;param-value&gt;org.springframework.config.java.JavaConfigWebApplicationContext&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        <lineannotation>&lt;!-- Again, config locations must consist of one or more comma- or space-delimited
+             and fully-qualified <literal>@Configuration</literal> classes --&gt;</lineannotation>
+        &lt;init-param&gt;
+            &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+            &lt;param-value&gt;example.web.WebBeansConfig&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/servlet&gt;
+&lt;/web-app&gt;
+</programlisting> For basic information regarding initialization parameters to
+    <classname>DispatcherServlet</classname> and use of
+    <classname>ContextLoaderListener</classname>, see <ulink
+    url="&refdoc;/mvc.html">Chapter
+    13. Web MVC framework</ulink> in the Core Spring Framework
+    documentation.</para>
   </section>
 </chapter>

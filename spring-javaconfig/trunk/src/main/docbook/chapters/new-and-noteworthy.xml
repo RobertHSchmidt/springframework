@@ -58,27 +58,42 @@ public class SimpleApp {
     <interfacename>WebApplicationContext</interfacename> variant of
     <classname>JavaConfigApplicationContext</classname> has been created.
     This allows for seamless bootstrapping of JavaConfig bean definitions
-    within web.xml. Used in conjunction with JavaConfig-specific
-    subclasses of <classname>DispatcherServlet</classname> and
-    <classname>ContextLoaderListener</classname>, it makes for concise
-    usage: <programlisting>&lt;web-app&gt;
-&lt;context-param&gt;
-    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-    &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
-&lt;/context-param&gt;
-
-&lt;listener&gt;
-    &lt;listener-class&gt;org.springframework.config.java.context.support.JavaConfigContextLoaderListener&lt;/listener-class&gt;
-&lt;/listener&gt;
-
-&lt;servlet&gt;
-    &lt;servlet-name&gt;test&lt;/servlet-name&gt;
-    &lt;servlet-class&gt;org.springframework.config.java.context.support.JavaConfigDispatcherServlet&lt;/servlet-class&gt;
-    &lt;init-param&gt;
+    within web.xml requiring no Spring XML whatsoever.
+    <programlisting>&lt;web-app&gt;
+    <lineannotation>&lt;!-- Bootstrap the root application context as usual using <literal>ContextLoaderListener</literal> --&gt;</lineannotation>
+    &lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+    <lineannotation>&lt;!-- Configure <literal>ContextLoaderListener</literal> to use <literal>JavaConfigWebApplicationContext</literal>
+         instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
+    &lt;context-param&gt;
+        &lt;param-name&gt;contextClass&lt;/param-name&gt;
+        &lt;param-value&gt;org.springframework.config.java.JavaConfigWebApplicationContext&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    <lineannotation>&lt;!-- Configuration locations must consist of one or more comma- or space-delimited
+         fully-qualified <literal>@Configuration</literal> classes --&gt;</lineannotation>
+    &lt;context-param&gt;
         &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-        &lt;param-value&gt;example.web.WebApplicationConfig&lt;/param-value&gt;
-    &lt;/init-param&gt;
-&lt;/servlet&gt;
+        &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
+    &lt;/context-param&gt;
+
+    <lineannotation>&lt;!-- Declare a Spring MVC <literal>DispatcherServlet</literal> as usual --&gt;</lineannotation>
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;test&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        <lineannotation>&lt;!-- Configure <literal>DispatcherServlet</literal> to use <literal>JavaConfigWebApplicationContext</literal>
+             instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
+        &lt;init-param&gt;
+            &lt;param-name&gt;contextClass&lt;/param-name&gt;
+            &lt;param-value&gt;org.springframework.config.java.JavaConfigWebApplicationContext&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        <lineannotation>&lt;!-- Again, config locations must consist of one or more comma- or space-delimited
+             and fully-qualified <literal>@Configuration</literal> classes --&gt;</lineannotation>
+        &lt;init-param&gt;
+            &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+            &lt;param-value&gt;example.web.WebBeansConfig&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/servlet&gt;
 &lt;/web-app&gt;
 </programlisting> For basic information regarding initialization parameters to
     <classname>DispatcherServlet</classname> and use of
@@ -182,7 +197,7 @@ public class AppConfig extends ConfigurationSupport {
   <section>
     <title>Support for externalizing string values with
     <classname>@ExternalValue</classname></title>
-    
+
     <para><emphasis>Important: This functionality may change!</emphasis>.
     We are currently evaluating approaches for best supporting externalized
     values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>

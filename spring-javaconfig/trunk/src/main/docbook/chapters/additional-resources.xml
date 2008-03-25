@@ -6,12 +6,13 @@
   <para>The Core Spring documentation is mentioned throughout this document,
   and it is recommended that JavaConfig users read and understand the
   <ulink url="&refdoc;/beans.html">
-  IoC reference</ulink>. Although it discusses XML, its treatment of
-  fundamental concepts remains directly applicable to JavaConfig</para>
+  IoC chapter</ulink> of the reference guide. Although it discusses XML,
+  its treatment of fundamental concepts remains directly applicable to
+  JavaConfig.</para>
   </section>
 
   <section><title>Community forums</title>
-  <para>The first place to stop with questions around SJC is <ulink
+  <para>The first place to stop with questions regarding SJC is <ulink
   url="http://forums.springframework.org" />. As of this writing,
   Spring JavaConfig does not have its own dedicated forum, but you can
   post questions to 'Core Container' for the time being.</para></section>
@@ -27,8 +28,11 @@
   </section>
 
   <section><title>Consulting and training services</title>
-  <para>Spring JavaConfig development is sponsored by SpringSource,
+  <para>Spring JavaConfig development is sponsored by
+  <ulink url="http://www.springsource.com">SpringSource</ulink>,
   which specializes in consuling, training and support for the Spring
-  Portfolio of projects.  Contact sales@springsource.com for details.</para>
+  Portfolio of projects.  Contact
+  <ulink url="mailto:sales@springsource.com">sales@springsource.com</ulink>
+  for details.</para>
   </section>
 </appendix>
