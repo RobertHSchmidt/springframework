@@ -2,7 +2,7 @@ SPRING JAVACONFIG CHANGELOG
 ===========================
 http://springframework.org/javaconfig
 
-Changes in version 1.0.0.m3 (2008-03-20)
+Changes in version 1.0.0.m3 (2008-03-26)
 --------------------------------------
 * [SJC-34] Added @Import annotation to allow directly importing another @Configuration class (works like XML's <import/>)
 * [SJC-81] Deprecated AnnotationApplicationContext in favor of JavaConfigApplicationContext (old naming clashed with Spring 2.5's Annotation-Driven Injection)
