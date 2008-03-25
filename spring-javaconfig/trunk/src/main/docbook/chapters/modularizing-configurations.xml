@@ -147,6 +147,75 @@ public class AppConfig extends ConfigurationSupport {
 </programlisting>
   </section>
 
-  <section id="nested-configuration-classes"><title>Nesting
-  <classname>@Configuration</classname> classes</title> TODO (see new &amp; noteworthy...)</section>
+  <section id="nested-configuration-classes">
+    <title>Nesting <classname>@Configuration</classname> classes</title>
+
+    <para>Consider the case of nested
+    <classname>@Configuration</classname> classes: <programlisting>@Configuration
+public class OuterConfig {
+    @Bean
+    public Foo outerBean() {
+        <lineannotation>// ...</lineannotation>
+    }
+}
+
+@Configuration
+public static class InnerConfig {
+    @Bean
+    public Bar innerBean() {
+        <lineannotation>// ...</lineannotation>
+    }
+}
+</programlisting>
+
+    Nested <classname>@Configuration</classname> classes will be
+    processed as child <classname>ApplicationContext</classname>s. Perhaps better said,
+    any declaring (outer) <classname>@Configuration</classname> classes
+    will be processed as parent
+    <interfacename>ApplicationContexts</interfacename>. Using the example
+    above, Instantiate an
+    <interfacename>ApplicationContext</interfacename> using
+    <classname>InnerConfig</classname> as an argument <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(InnerConfig.class);
+context.getBean("innerBean"); <lineannotation>// locally defined beans are available</lineannotation>
+context.getBean("outerBean"); <lineannotation>// as are beans defined in the declaring <classname>OuterConfig</classname> class.</lineannotation>
+</programlisting> Note that when supplying <classname>OuterConfig</classname>
+    as the argument, <classname>InnerConfig</classname> is ignored
+    entirely. If it were to be processed, it would become a child context,
+    but its beans would would be inaccessible (parent contexts have no
+    access to child context beans). <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(OuterConfig.class);
+context.getBean("outerBean"); <lineannotation>// works fine</lineannotation>
+context.getBean("innerBean"); <lineannotation>// throws <classname>NoSuchBeanDefinitionException</classname>!</lineannotation>
+</programlisting></para>
+  </section>
+
+  <section>
+    <title>Importing <classname>@Configuration</classname> classes with <classname>@Import</classname></title>
+
+    <para><interfacename>@Import</interfacename> represents JavaConfig's
+    equivalent of XML configuration's <code>&lt;import/&gt;</code> element.
+    One configuration class can import any number of other configuration classes,
+    and their bean definitions will be processed as if locally defined.
+    <programlisting>@Configuration
+public class DataSourceConfig {
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(...);
+    }
+}
+
+@Configuration
+@Import(DataSourceConfig.class)
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public void TransferService transferService() {
+        return new TransferServiceImpl(getBean(DataSource.class);
+    }
+}</programlisting>Importing multiple configurations can be done by supplying an
+    array of classes to the <classname>@Import</classname> annotation
+    <programlisting>@Configuration
+@Import({ DataSourceConfig.class, TransactionConfig.class })
+public class AppConfig extends ConfigurationSupport {
+    <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
+}</programlisting></para>
+  </section>
 </chapter>

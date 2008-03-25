@@ -18,7 +18,7 @@
     of XML's <code>&lt;beans/&gt;</code> element. Like
     <code>&lt;beans/&gt;</code>, it provides an opportunity to explicitly
         set defaults for all enclosed bean definitions. <programlisting>@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
-public class DataSourceConfiguration extends ConfigurationSupport {
+public class DataSourceConfiguration {
     <lineannotation>// bean definitions follow</lineannotation>
 }
 </programlisting> Because the semantics of the attributes to the
@@ -255,7 +255,7 @@ public MyAbstractSingleton mySingleton(){
 
   <section id="autobean">
   	<title>Autowiring support with @AutoBean</title>
-  	<para>TODO</para>
+  	<para><emphasis>Work in progress</emphasis></para>
   </section>
 
   <section id="javaconfigapplicationcontext">
@@ -397,6 +397,12 @@ Map matchingBeans = context.getBeansOfType(Service.class);</programlisting>
         Note that this latter approach is actually a feature of the Core Spring Framework's
         <classname>AbstractApplicationContext</classname> (which <classname>JavaConfigApplicationContext</classname> extends)
         and is not type-safe, in that the returned <interfacename>Map</interfacename> is not parameterized.</para>
+      </section>
+
+      <section id="string-based-access">
+      	<title>String-based access</title>
+      	<para><emphasis>TODO: Document 'traditional' string-based
+      	<methodname>getBean()</methodname> usage</emphasis></para>
       </section>
     </section>
   </section>

@@ -2,15 +2,17 @@
 <chapter id="using-aspects">
   <title>Using aspects</title>
 
-  <para>AOP support in JavaConfig is a work-in-progress. It is
-  documented here in order to solicit feedback. TODO: revise this
-  </para>
+  <para>AOP support in JavaConfig is a work in progress. It is
+  documented here in order to solicit feedback.  <emphasis>Expect
+  changes in forthcoming milestone releases</emphasis></para>
 
   <section>
     <title>Embedded aspects</title>
 
-    <para>TODO: link out to an overview of AOP for the
-    uninitiatied.</para>
+    <para><tip>For those unfamiliar with AOP and/or Spring AOP, you'll want to take
+    a look Chapter 6 of the core Spring reference documentation,
+    <ulink url="&refdoc;/aop.html">Aspect-oriented Programming with Spring</ulink>.
+    </tip></para>
 
     <para>A configuration class can serve 'double duty' as an aspect. By
     applying <classname>@Aspect</classname> to a
@@ -35,16 +37,6 @@ public class AppConfig {
     <methodname>trackServicePropertyChange()</methodname> method will be
     executed.</para>
 
-    <note>
-      <para>It is currently considered somewhat awkward that Configuration
-      classes must be annotated with <classname>@Aspect</classname> to
-      enable this functionality. This is not consistent with the standard
-      semantics around the <classname>@Aspect</classname> annotation, and
-      would thus likely be un-intuitive to someone familiar with XML
-      configuration. <emphasis>This may change before 1.0
-      GA</emphasis>.  See <ulink url="http://jira.springframework.org/browse/SJC-55">SJC-55</ulink>
-      for details.</para>
-    </note>
   </section>
 
   <section>
@@ -109,6 +101,17 @@ public class MyConfig {
 
 JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class, PropertyChangeTracker.class);
 </programlisting>
+    <note>
+      <para>It is somewhat awkward that Configuration
+      classes must be annotated with <classname>@Aspect</classname> to
+      enable AOP functionality. This is not consistent with the standard
+      semantics around the <classname>@Aspect</classname> annotation, and
+      would thus likely be un-intuitive to someone familiar with XML
+      configuration. <emphasis>This approach to applying aspects will
+      change prior to JavaConfig's 1.0 GA release</emphasis>.
+      See <ulink url="http://jira.springframework.org/browse/SJC-55">SJC-55</ulink>
+      for details.</para>
+    </note>
   </section>
 
   <section>
@@ -117,5 +120,6 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
     </title>
 
     <para>TODO</para>
+
   </section>
 </chapter>

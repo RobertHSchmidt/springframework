@@ -54,10 +54,10 @@
       <title>Best Practices</title>
 
       <para>
-        <emphasis>TODO: talk about when it's best to use a combination of
-        XML and JavaConfig Mention limitations like lack of osgi:, tx:,
-        aop:, context: namespaces (or link to <xref
-        linkend="limitations" />)</emphasis>
+        <emphasis>TODO: discuss when it's best to use a combination of
+        XML and JavaConfig; mention limitations like lack of direct equivalent
+        for osgi:, tx:, aop:, context: namespaces (and/or link to
+        <xref linkend="limitations" />)</emphasis>
       </para>
     </section>
   </section>
@@ -65,7 +65,9 @@
   <section>
     <title>JavaConfig and Annotation-Driven Configuration</title>
 
-    <para>TODO</para>
+    <para>Spring 2.5 introduced a new style of dependency injection with
+    <emphasis>Annotation-Driven Injection</emphasis>.  TODO: compare and contrast
+    with JavaConfig, discuss integration possibilities &amp; best practices.</para>
   </section>
 </chapter>
 

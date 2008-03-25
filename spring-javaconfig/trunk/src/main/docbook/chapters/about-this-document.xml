@@ -23,12 +23,18 @@
     IoC container.  If you are brand new to Spring (i.e.: have never used
     Spring's XML configuration language, it is suggested that you first read
     <ulink url="&refdoc;/beans.html">
-    Chapter 3. IoC</ulink> of the Core Spring reference manual documentation. 
+    Chapter 3. IoC</ulink> of the Core Spring reference manual documentation.
     You will also notice that this chapter is frequently referenced throughout
     this document.</para>
   </section>
   <section id="code-conventions">
     <title>Code conventions</title>
-    Code artifacts will be referred to in <literal>fixed-with</literal> font.
+    <para>Code artifacts will be referred to in <literal>fixed-with</literal> font.</para>
+  </section>
+  <section id="work-in-progress">
+    <title>Work in progress</title>
+    <para>Portions of this document remain unfinished.  Such sections will be prefaced
+    with <emphasis>work in progress</emphasis> or <emphasis>TODO</emphasis> as appropriate.
+    </para>
   </section>
 </preface>
