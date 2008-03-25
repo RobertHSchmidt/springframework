@@ -301,7 +301,7 @@ public MyAbstractSingleton mySingleton(){
   </section>
 
   <section id="autobean">
-  	<title>Autowiring support with @AutoBean</title>
+  	<title>Autowiring support with <interfacename>@AutoBean</interfacename></title>
   	<para><emphasis>Work in progress - see
   	<ulink url="http://jira.springframework.org/browse/SJC-62">SJC-62</ulink>,
   	<ulink url="http://jira.springframework.org/browse/SJC-70">SJC-70</ulink>,
