@@ -26,7 +26,7 @@
     developers find configuring the Spring container via Java a more
     natural or appropriate approach, for a variety of reasons.</para>
 
-    <para>Motivations of JavaConfig include</para>
+    <para>Motivations of JavaConfig include:</para>
 
     <formalpara>
       <title>Object-oriented configuration</title>

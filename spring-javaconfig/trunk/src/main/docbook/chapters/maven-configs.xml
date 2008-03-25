@@ -3,7 +3,17 @@
   <title>Maven2 POM configurations</title>
 
   <para>As mentioned in <xref linkend="quick-start"/>, JavaConfig requires only a
-  minimal set of dependencies for basic (non-AOP) configuration scenarios.</para>
+  minimal set of dependencies for basic (non-AOP) configuration scenarios.
+  
+  <note>Please note that this release is not published
+  at the central Maven repository. Instead it is published on Amazon's S3
+  service, like all Spring milestones. To use it, add the following
+  repository to your POM:
+  <programlisting>&lt;repository&gt;
+  &lt;id&gt;spring-milestone&lt;/id&gt;
+  &lt;name&gt;Spring Milestone Repository&lt;/name&gt;
+  &lt;url&gt;http://s3.amazonaws.com/maven.springframework.org/milestone&lt;/url&gt;
+&lt;/repository&gt;</programlisting></note></para>
 
   <section>
     <title>Minimal</title>
