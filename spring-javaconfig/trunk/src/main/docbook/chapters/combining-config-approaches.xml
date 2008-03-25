@@ -50,6 +50,7 @@
       </section>
     </section>
 
+    <!--
     <section>
       <title>Best Practices</title>
 
@@ -60,8 +61,10 @@
         <xref linkend="limitations" />)</emphasis>
       </para>
     </section>
+    -->
   </section>
 
+  <!--
   <section>
     <title>JavaConfig and Annotation-Driven Configuration</title>
 
@@ -69,5 +72,6 @@
     <emphasis>Annotation-Driven Injection</emphasis>.  TODO: compare and contrast
     with JavaConfig, discuss integration possibilities &amp; best practices.</para>
   </section>
+  -->
 </chapter>
 

@@ -31,10 +31,4 @@
     <title>Code conventions</title>
     <para>Code artifacts will be referred to in <literal>fixed-with</literal> font.</para>
   </section>
-  <section id="work-in-progress">
-    <title>Work in progress</title>
-    <para>Portions of this document remain unfinished.  Such sections will be prefaced
-    with <emphasis>work in progress</emphasis> or <emphasis>TODO</emphasis> as appropriate.
-    </para>
-  </section>
 </preface>

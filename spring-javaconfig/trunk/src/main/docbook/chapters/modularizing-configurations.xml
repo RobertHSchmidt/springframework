@@ -8,7 +8,62 @@
   clarity.</para>
 
   <section>
-    <title>Referencing externally defined beans</title>
+    <title>Partitioning bean definitions across multiple
+    <interfacename>@Configuration</interfacename> classes</title>
+
+    <para>The simplest technique for modularizing configurations is to simply split up
+    large <interfacename>@Configuration</interfacename> classes containing many
+    <interfacename>@Bean</interfacename> definitions into multiple smaller classes:
+    <programlisting><lineannotation>// monolithic configuration</lineannotation>
+@Configuration
+public class AppConfig {
+    @Bean
+    public ServiceA serviceA() {
+       <lineannotation>// ...</lineannotation>
+    }
+
+    @Bean
+    public ServiceB serviceB() {
+       <lineannotation>// ...</lineannotation>
+    }
+
+   <lineannotation>// assume many bean definitions follow</lineannotation>
+}</programlisting>
+
+The above configuration class might be supplied as a parameter to <classname>JavaConfigApplicationContext</classname>:
+<programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(AppConfig.class);
+ServiceA serviceA = context.getBean(ServiceA.class);
+ServiceB serviceB = context.getBean(ServiceB.class);</programlisting></para>
+
+<para>We can easily partition this configuration such that bean definitions are
+spread across two classes, instead of one:<programlisting><lineannotation>// partitioned configuration</lineannotation>
+@Configuration
+public class AppConfigA {
+    @Bean
+    public ServiceA serviceA() {
+       <lineannotation>// ...</lineannotation>
+    }
+}
+
+@Configuration
+public class AppConfigB {
+    @Bean
+    public ServiceB serviceB() {
+       <lineannotation>// ...</lineannotation>
+    }
+}</programlisting>
+
+Now simply supply both configuration classes to the constructor of
+<classname>JavaConfigApplicationContext</classname>:
+<programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(AppConfigA.class, AppConfigB.class);
+<lineannotation>// both beans are still available in the resulting application context</lineannotation>
+ServiceA serviceA = context.getBean(ServiceA.class);
+ServiceB serviceB = context.getBean(ServiceB.class);</programlisting></para>
+  </section>
+
+  <section>
+    <title>Referencing externally defined beans with <interfacename>@ExternalBean</interfacename></title>
 
     <para>One configuration class may need to reference a bean defined in
     another configuration class (or in XML, for that matter). The
@@ -47,10 +102,63 @@ public abstract class ConfigTwo {
     <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(ConfigOne.class, ConfigTwo.class);</programlisting>
   </section>
 
-  <section id="externalizing-string-values">
-    <title>Working with externalized string values</title>
+  <section>
+    <title>Importing <classname>@Configuration</classname> classes with <classname>@Import</classname></title>
 
-    <tip><para><emphasis>Important: This functionality may change!</emphasis>.
+    <para><interfacename>@Import</interfacename> represents JavaConfig's
+    equivalent of XML configuration's <code>&lt;import/&gt;</code> element.
+    One configuration class can import any number of other configuration classes,
+    and their bean definitions will be processed as if locally defined.
+    <programlisting>@Configuration
+public class DataSourceConfig {
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(...);
+    }
+}
+
+@Configuration
+@Import(DataSourceConfig.class)
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public void TransferService transferService() {
+        return new TransferServiceImpl(getBean(DataSource.class);
+    }
+}</programlisting>Importing multiple configurations can be done by supplying an
+    array of classes to the <classname>@Import</classname> annotation
+    <programlisting>@Configuration
+@Import({ DataSourceConfig.class, TransactionConfig.class })
+public class AppConfig extends ConfigurationSupport {
+    <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
+}</programlisting></para>
+  </section>
+
+  <section>
+    <title><classname>ConfigurationSupport</classname></title>
+
+    <para>As a convenience, <classname>@Configuration</classname> classses
+    can extend <classname>ConfigurationSupport</classname>, primarily in
+    order to facilitate easy lookup of beans from the enclosing
+    <classname>BeanFactory</classname> /
+    <classname>ApplicationContext</classname>.</para>
+
+    <programlisting>@Configuration
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public Service serviceA() {
+        DataSource dataSource = this.getBean(DataSource.class); <lineannotation>// provided by base class</lineannotation>
+        <lineannotation>// ...</lineannotation>
+    }
+}
+</programlisting>
+  </section>
+
+
+  <section id="externalizing-string-values">
+    <title>Externalizing values with <interfacename>@ExternalValue</interfacename>
+    and <interfacename>@ResourceBundles</interfacename></title>
+
+    <tip><para><emphasis>Important: This functionality may change!</emphasis>
     We are currently evaluating approaches for best supporting externalized
     values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
     for more details.</para></tip>
@@ -112,41 +220,6 @@ public class AppConfig {
 </programlisting>
   </section>
 
-  <section id="importing-configurations">
-    <title>Importing configurations</title>
-
-    <para>Much like the XML <code>&lt;import/&gt;</code> element,
-    configuration classes can now import one another, for an additional
-    tool in the modularization toolbox.</para>
-
-    <programlisting>@Configuration
-@Import(OtherConfig.class)
-public class MyConfig {
-    <lineannotation>// <classname>@Bean</classname> definitions</lineannotation>
-}
-</programlisting>
-  </section>
-
-  <section>
-    <title>ConfigurationSupport</title>
-
-    <para>As a convenience, <classname>@Configuration</classname> classses
-    can extend <classname>ConfigurationSupport</classname>, primarily in
-    order to facilitate easy lookup of beans from the enclosing
-    <classname>BeanFactory</classname> /
-    <classname>ApplicationContext</classname>.</para>
-
-    <programlisting>@Configuration
-public class AppConfig extends ConfigurationSupport {
-    @Bean
-    public Service serviceA() {
-        DataSource dataSource = this.getBean(DataSource.class); <lineannotation>// provided by base class</lineannotation>
-        <lineannotation>// ...</lineannotation>
-    }
-}
-</programlisting>
-  </section>
-
   <section id="nested-configuration-classes">
     <title>Nesting <classname>@Configuration</classname> classes</title>
 
@@ -157,13 +230,13 @@ public class OuterConfig {
     public Foo outerBean() {
         <lineannotation>// ...</lineannotation>
     }
-}
 
-@Configuration
-public static class InnerConfig {
-    @Bean
-    public Bar innerBean() {
-        <lineannotation>// ...</lineannotation>
+    @Configuration
+    public static class InnerConfig {
+        @Bean
+        public Bar innerBean() {
+            <lineannotation>// ...</lineannotation>
+        }
     }
 }
 </programlisting>
@@ -188,34 +261,4 @@ context.getBean("innerBean"); <lineannotation>// throws <classname>NoSuchBeanDef
 </programlisting></para>
   </section>
 
-  <section>
-    <title>Importing <classname>@Configuration</classname> classes with <classname>@Import</classname></title>
-
-    <para><interfacename>@Import</interfacename> represents JavaConfig's
-    equivalent of XML configuration's <code>&lt;import/&gt;</code> element.
-    One configuration class can import any number of other configuration classes,
-    and their bean definitions will be processed as if locally defined.
-    <programlisting>@Configuration
-public class DataSourceConfig {
-    @Bean
-    public DataSource dataSource() {
-        return new DriverManagerDataSource(...);
-    }
-}
-
-@Configuration
-@Import(DataSourceConfig.class)
-public class AppConfig extends ConfigurationSupport {
-    @Bean
-    public void TransferService transferService() {
-        return new TransferServiceImpl(getBean(DataSource.class);
-    }
-}</programlisting>Importing multiple configurations can be done by supplying an
-    array of classes to the <classname>@Import</classname> annotation
-    <programlisting>@Configuration
-@Import({ DataSourceConfig.class, TransactionConfig.class })
-public class AppConfig extends ConfigurationSupport {
-    <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
-}</programlisting></para>
-  </section>
 </chapter>

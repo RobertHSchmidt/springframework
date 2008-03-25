@@ -193,8 +193,6 @@ public abstract class VisibilityConfiguration {
       particular configuration class inside a child application context. Thus,
       the hidden beans can access beans defined in the parent (or owning)
       context but not the other way around.</para>
-
-      <para><emphasis>TODO: include Rod's diagram</emphasis></para>
     </section>
 
 
@@ -300,6 +298,7 @@ public MyAbstractSingleton mySingleton(){
     </section>
   </section>
 
+  <!--
   <section id="autobean">
   	<title>Autowiring support with <interfacename>@AutoBean</interfacename></title>
   	<para><emphasis>Work in progress - see
@@ -308,6 +307,7 @@ public MyAbstractSingleton mySingleton(){
   	<ulink url="http://jira.springframework.org/browse/SJC-85">SJC-85</ulink>
   	</emphasis></para>
   </section>
+  -->
 
   <section id="javaconfigapplicationcontext">
     <title>
@@ -417,7 +417,7 @@ Service service = context.getBean(Service.class);</programlisting>
         <section id="disambiguation">
           <title>Disambuguation options</title>
           <para>If more than one bean of type <interfacename>Service</interfacename> had been defined
-          in the example above, the call to <methodname>getBean()</methodname> would throw an
+          in the example above, the call to <methodname>getBean()</methodname> would have thrown an
           exception indicating an ambiguity that the container could not resolve.
           In these cases, the user has a number of options for disambiguation:</para>
 

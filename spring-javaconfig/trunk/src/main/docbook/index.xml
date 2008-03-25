@@ -115,9 +115,11 @@
     &roadmap;
     &common-config-scenarios;
     &tooling;
+    <!--
     &dynamic-language-support;
     &how-javaconfig-works;
     &limitations;
+    -->
     &maven-configs;
     &additional-resources;
   </part>

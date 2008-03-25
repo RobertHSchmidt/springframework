@@ -11,7 +11,7 @@
 
   <para>M3 includes 20+ bug fixes and feature additions.  See <xref linkend="new-and-noteworthy-1.0.0.m3"/>
   for details.  As a special note to existing users, M3 introduces one fairly major change to the
-  existing core API - the deprecation of <classname>AnnotationApplicationContext</classname>
+  existing public API - the deprecation of <classname>AnnotationApplicationContext</classname>
   in favor of its replacement, <classname> JavaConfigApplicationContext</classname>.
   <classname>AnnotationApplicationContext</classname> will remain deprecated in the codebase up until the
   1.0 GA release, at which time it will be deleted permanently.  So take heed and swap out references
@@ -23,7 +23,8 @@
   to the team that the packaging structure and internals of JavaConfig are 'just right' in
   order to facilitate flexible evolution and solid backward compatibility post-1.0.</para>
 
-  <para>What's needed now is users, users, and more users!  Please don't hesitate to contact
-  the team via <ulink url="http://jira.springframework.org/browse/SJC">JIRA issue tracking</ulink>
-  with anything you see missing from JavaConfig.</para>
+  <para>Thanks for taking a look at JavaConfig!  Your feedback will drive
+  future revisions, so please don't hesitate to contact the team via
+  <ulink url="http://jira.springframework.org/browse/SJC">JIRA issue tracking</ulink>
+  with anything you see missing.</para>
 </preface>

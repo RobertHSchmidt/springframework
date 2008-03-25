@@ -44,7 +44,7 @@ public class AppConfig {
 
     <para>To create a reusable aspect, define a class annotated with
     <classname>@Configuration</classname> and
-    <classname>Aspect</classname>containing advice methods and
+    <classname>Aspect</classname> containing advice methods and
     pointcuts.</para>
 
     <programlisting>@Aspect
@@ -63,13 +63,7 @@ public class PropertyChangeTracker {
     using the @Import annotation or by adding at as a constructor argument
     when instantiating
     <classname>JavaConfigApplicationContext</classname>. Examples of both
-    approaches are below. <note>
-        <para>In either case, all configuration classes that wish to have
-        their beans be candidates for aspect weaving must also be
-        annotated with <classname>@Aspect</classname>. <emphasis>This is
-        clearly non-ideal, and will likely change before 1.0
-        GA.</emphasis></para>
-      </note></para>
+    approaches are below.</para>
 
     <programlisting>@Configuration
 @Import(PropertyChangeTracker.class)
@@ -99,13 +93,14 @@ public class MyConfig {
 
 ...
 
-JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class, PropertyChangeTracker.class);
+JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(MyConfig.class, PropertyChangeTracker.class);
 </programlisting>
     <note>
-      <para>It is somewhat awkward that Configuration
-      classes must be annotated with <classname>@Aspect</classname> to
-      enable AOP functionality. This is not consistent with the standard
-      semantics around the <classname>@Aspect</classname> annotation, and
+      <para>Annotating Configuration classes with
+      <interfacename>@Aspect</interfacename> to enable AOP functionality is not
+      consistent with the standard semantics around the
+      <interfacename>@Aspect</interfacename> annotation, and
       would thus likely be un-intuitive to someone familiar with XML
       configuration. <emphasis>This approach to applying aspects will
       change prior to JavaConfig's 1.0 GA release</emphasis>.
@@ -114,12 +109,14 @@ JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig
     </note>
   </section>
 
+  <!--
   <section>
     <title>
       <classname>@HotSwappable</classname>
     </title>
 
     <para>TODO</para>
-
   </section>
+  -->
+
 </chapter>
