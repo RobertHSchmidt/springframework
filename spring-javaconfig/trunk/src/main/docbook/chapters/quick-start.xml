@@ -109,8 +109,10 @@ public class ApplicationConfig {
     <para>That's it!  You're now ready for <xref linkend="reference"/>, where
     you'll walk through each of the features of Spring JavaConfig. </para>
 
+    <!--
     <para>Or, for further 'quick start' information, you may be interested in
     <xref linkend="common-config-scenarios"/>, which explores several
     'typical' uses of Spring JavaConfig.</para>
+    -->
   </section>
 </chapter>
