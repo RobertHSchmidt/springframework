@@ -185,7 +185,7 @@ public class AppConfig extends ConfigurationSupport {
     passwords, and the like using <classname>@ResourceBundles</classname>
     and <classname>@ExternalValue</classname>.</para>
 
-    <programlisting>@ResourceBundles("org/springframework/config/java/simple")
+    <programlisting>@ResourceBundles("classpath:/org/springframework/config/java/simple")
 @Configuration
 public abstract static class ConfigWithPlaceholders {
     @ExternalValue("datasource.username")
@@ -212,7 +212,7 @@ datasource.password=tiger
     <para>Multiple values can be supplied to
     <classname>@ResourceBundles</classname>:</para>
 
-    <programlisting>@ResourceBundles({"com/foo/myapp/simple", "com/foo/myapp/complex"})
+    <programlisting>@ResourceBundles({"classpath:/com/foo/myapp/simple", "classpath:/com/foo/myapp/complex"})
 @Configuration
 public class AppConfig {
     <lineannotation>// ...</lineannotation>

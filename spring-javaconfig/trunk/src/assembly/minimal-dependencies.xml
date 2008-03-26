@@ -1,0 +1,30 @@
+<!-- This assembly builds spring-javaconfig-${version}-minimal-dependencies.zip -->
+<assembly>
+  <id>minimal-dependencies</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <componentDescriptors>
+    <componentDescriptor>src/assembly/common.xml</componentDescriptor>
+  </componentDescriptors>
+
+  <!-- maven does not have the ability to include only non-optional dependencies
+       so we must repeat ourselves and do it manually here -->
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>org.springframework:spring-core</include>
+        <include>org.springframework:spring-beans</include>
+        <include>org.springframework:spring-context</include>
+        <include>cglib:cglib-nodep</include>
+        <include>commons-logging:commons-logging</include>
+        <!-- what follows are transitive dependencies of those listed above -->
+        <include>aopalliance:aopalliance</include>
+        <include>log4j:log4j</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
