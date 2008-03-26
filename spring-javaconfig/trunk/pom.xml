@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.javaconfig</groupId>
     <artifactId>spring-javaconfig</artifactId>
     <packaging>jar</packaging>
     <name>Spring JavaConfig</name>
-    <version>1.0.0.m3-SNAPSHOT</version>
+    <version>1.0.0.m3</version>
     <description>
         The Spring JavaConfig project provides a type-safe, pure-Java option for configuring Spring
         Application Contexts. While most people currently use XML to configure bean definitions in their Application
@@ -68,13 +67,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>
-            scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk
-        </connection>
-        <developerConnection>
-            scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk
-        </developerConnection>
-        <url>http://fisheye3.cenqua.com/browse/springframework/spring-javaconfig/trunk</url>
+        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/tags/spring-javaconfig-1.0.0.m3</connection>
+        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/tags/spring-javaconfig-1.0.0.m3</developerConnection>
+        <url>http://fisheye3.cenqua.com/browse/springframework/spring-javaconfig/tags/spring-javaconfig-1.0.0.m3</url>
     </scm>
     <organization>
         <name>Spring Framework</name>
@@ -267,8 +262,7 @@
                                 <include name="**/*.jpg" />
                             </fileset>
                         </copy>
-                        <move file="target/site/reference/pdf/index.pdf"
-                            tofile="target/site/reference/pdf/spring-javaconfig-reference.pdf" failonerror="false" />
+                        <move file="target/site/reference/pdf/index.pdf" tofile="target/site/reference/pdf/spring-javaconfig-reference.pdf" failonerror="false" />
                     </postProcess>
                 </configuration>
             </plugin>
