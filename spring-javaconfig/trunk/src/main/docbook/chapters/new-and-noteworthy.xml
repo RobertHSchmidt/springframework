@@ -212,7 +212,7 @@ public class AppConfig extends ConfigurationSupport {
     configuring up infrastructural resources with properties that may
     change at deployment time, or otherwise need to be externally
     accessible for modification. <programlisting>@Configuration
-@ResourceBundles("com/myapp/datasource")
+@ResourceBundles("classpath:/com/myapp/datasource")
 public abstract class AppConfig {
     @Bean
     public DataSource myDataSource() {

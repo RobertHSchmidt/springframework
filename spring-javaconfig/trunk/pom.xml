@@ -94,26 +94,38 @@
                         <inherited>false</inherited>
                         <executions>
                             <execution>
-                                <id>with-dependencies</id>
+                                <id>no-dependencies</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                      <descriptor>src/assembly/with-dependencies.xml</descriptor>
+                                        <descriptor>src/assembly/no-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>minimal</id>
+                                <id>minimal-dependencies</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                      <descriptor>src/assembly/minimal.xml</descriptor>
+                                        <descriptor>src/assembly/minimal-dependencies.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>all-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                      <descriptor>src/assembly/all-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -299,6 +311,10 @@
                 <exclusion>
                     <groupId>avalon-framework</groupId>
                     <artifactId>avalon-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
                 </exclusion>
             </exclusions>
             <optional>false</optional>

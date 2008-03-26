@@ -82,11 +82,11 @@
 
       <para>Every effort has been made to reduce the number of
       dependencies Spring JavaConfig requires. For very simple
-      configurations, the dependencies should be limited to CGLIB,
-      commons-logging, spring-beans, and spring-context. If you use more
-      advanced features such as AOP, you'll need aspectj, spring-aop, etc.
-      Maven2 use is recommended, as it helps greatly to reduce the burden
-      of dependencies.</para>
+      configurations, the dependencies are limited to CGLIB,
+      commons-logging, spring-core, spring-beans, and spring-context. If
+      you use more advanced features such as AOP, you'll need aspectj,
+      spring-aop, etc. Maven2 use is recommended, as it helps greatly
+      in reducing the burden of dependency management.</para>
 
       <para>See also: <xref linkend="maven-configs" /></para>
     </section>
