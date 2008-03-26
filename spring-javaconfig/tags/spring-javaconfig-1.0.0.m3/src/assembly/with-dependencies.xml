@@ -1,0 +1,20 @@
+<!-- This assembly builds spring-javaconfig-${version}-with-dependencies.zip -->
+<assembly>
+  <id>with-dependencies</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <componentDescriptors>
+    <componentDescriptor>src/assembly/common.xml</componentDescriptor>
+  </componentDescriptors>
+
+  <!-- Given this is the -with-dependencies assembly, include all assemblies
+       note: this by default does NOT include test-scoped dependencies -->
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+</assembly>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>spring-javaconfig</name>
+	<comment>The Spring Java Configuration project is an experiment in producing a Java-based alternative to configuring
+		Spring Application Contexts. While most people currently use XML to configure bean definitions in their
+		Application Contexts, Spring&apos;s versatility and metadata based internal handling of bean definitions means
+		alternatives to XML config are easy to implement.</comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.devzuz.q.maven.jdt.core.mavenIncrementalBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.springframework.ide.eclipse.core.springbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.springframework.ide.eclipse.core.springnature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.devzuz.q.maven.jdt.core.mavenNature</nature>
+	</natures>
+</projectDescription>
