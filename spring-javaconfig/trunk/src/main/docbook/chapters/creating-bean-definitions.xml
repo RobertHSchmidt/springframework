@@ -36,22 +36,26 @@ public class DataSourceConfiguration {
     </title>
 
     <para><classname>@Bean</classname> is a method-level annotation and
-    a direct analog the XML <code>&lt;bean/&gt;</code> element.  The annotation
+    a direct analog of the XML <code>&lt;bean/&gt;</code> element.  The annotation
     supports most of the attributes offered by <code>&lt;bean/&gt;</code> such as
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-lifecycle-initializingbean">init-method</ulink></literal>,
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-lifecycle-disposablebean">destroy-method</ulink></literal>,
     <literal><ulink url="&refdoc;/beans.html#beans-factory-autowire">autowiring</ulink></literal>,
     <literal><ulink url="&refdoc;/beans.html#beans-factory-lazy-init">lazy-init</ulink></literal>,
     <literal><ulink url="&refdoc;/beans.html#beans-factory-dependencies">dependency-check</ulink></literal>,
     <literal><ulink url="&refdoc;/beans.html#beans-factory-dependson">depends-on</ulink></literal>
-    and <literal><ulink url="&refdoc;/beans.html#beans-factory-scopes">scoping</ulink></literal>.</para>
+    and <literal><ulink url="&refdoc;/beans.html#beans-factory-scopes">scope</ulink></literal>.</para>
 
     <section id="declaring-a-bean">
       <title>Declaring a bean</title>
 
       <para>To declare a bean, simply annotate a method with the
       <classname>@Bean</classname> annotation.  When JavaConfig encounters
-      such a method, it will execute that method and registers the return value
-      as a bean within a <interfacename>BeanFactory</interfacename>.  The bean
-      name will be that of the method name.</para>
+      such a method, it will execute that method and register the return value
+      as a bean within a <interfacename>BeanFactory</interfacename>.  By default,
+      the bean name will be that of the method name (see
+      <link linkend="bean-naming">bean naming</link> for details on how to
+      customize this behavior).</para>
 
       <programlisting>@Configuration
 public class AppConfig {
@@ -254,7 +258,7 @@ public Service userService() {
         <title>Method injection</title>
         <para>As noted in the Core documentation,
         <ulink url="&refdoc;/beans.html#beans-factory-method-injection">method injection</ulink>
-        is an advanced topic that should be comparatively rarely used.  When using
+        is an advanced feature that should be comparatively rarely used.  When using
         XML configuration, it is required in cases where a singleton-scoped bean has
         a dependency on a prototype-scoped bean.  In JavaConfig, however, it is a
         (somewhat) simpler proposition:</para>
