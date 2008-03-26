@@ -16,8 +16,17 @@
       <title>Manual download</title>
 
       <para>Please visit <ulink url="http://www.springframework.org/javaconfig"/>
-      where you'll find links to zip file distributions.  Two distributions are
-      available, with and without dependencies included.</para>
+      where you'll find links to zip file distributions.  Three distributions are
+      available:<orderedlist>
+        <listitem><literal>spring-javaconfig-&version;.zip</literal></listitem>
+        <listitem><literal>spring-javaconfig-&version;-with-minimal-dependencies.zip</literal></listitem>
+        <listitem><literal>spring-javaconfig-&version;-with-dependencies.zip</literal></listitem>
+      </orderedlist></para>
+
+      <para>The <literal>-with-minimal-dependencies</literal> zip contains only those
+      jars that are required for basic JavaConfig functionality, while the
+      <literal>-with-dependencies</literal> zip contains all dependencies, including
+      those required for AOP support.</para>
     </section>
 
     <section>

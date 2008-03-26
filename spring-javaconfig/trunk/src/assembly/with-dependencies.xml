@@ -1,6 +1,6 @@
 <!-- This assembly builds spring-javaconfig-${version}-with-dependencies.zip -->
 <assembly>
-  <id>all-dependencies</id>
+  <id>with-dependencies</id>
 
   <formats>
     <format>zip</format>
