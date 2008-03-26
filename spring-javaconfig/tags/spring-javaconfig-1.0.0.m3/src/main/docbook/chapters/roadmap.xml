@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="roadmap">
+  <title>Roadmap</title>
+
+  <para>See the <ulink
+  url="http://jira.springframework.org/browse/SJC?report=com.atlassian.jira.plugin.system.project:roadmap-panel">JavaConfig
+  JIRA roadmap</ulink> for up-to date information</para>
+</appendix>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preface id="about">
+  <title>About this document</title>
+  <section id="document-structure">
+    <title>Document structure</title>
+    <para>
+        <xref linkend="introduction"/> Introduces JavaConfig, including a
+        <link linkend="quick-start">quick start tutorial</link>.  <emphasis>The
+        impatient should start here!</emphasis>
+    </para>
+    <para>
+        <xref linkend="reference"/> Provides a feature-by feature walk through
+        the JavaConfig API
+    </para>
+    <para>
+        <xref linkend="appendices"/> Covers tooling and other practical
+        considerations not well-suited for the core documentation
+    </para>
+  </section>
+  <section id="audience">
+    <title>Target audience</title>
+    <para>This document assumes at least a general familiarity with the Spring
+    IoC container.  If you are brand new to Spring (i.e.: have never used
+    Spring's XML configuration language, it is suggested that you first read
+    <ulink url="&refdoc;/beans.html">
+    Chapter 3. IoC</ulink> of the Core Spring reference manual documentation.
+    You will also notice that this chapter is frequently referenced throughout
+    this document.</para>
+  </section>
+  <section id="code-conventions">
+    <title>Code conventions</title>
+    <para>Code artifacts will be referred to in <literal>fixed-with</literal> font.</para>
+  </section>
+</preface>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="additional-resources">
+  <title>Additional resources</title>
+
+  <section><title>Core Spring documentation</title>
+  <para>The Core Spring documentation is mentioned throughout this document,
+  and it is recommended that JavaConfig users read and understand the
+  <ulink url="&refdoc;/beans.html">
+  IoC chapter</ulink> of the reference guide. Although it discusses XML,
+  its treatment of fundamental concepts remains directly applicable to
+  JavaConfig.</para>
+  </section>
+
+  <section><title>Community forums</title>
+  <para>The first place to stop with questions regarding SJC is <ulink
+  url="http://forums.springframework.org" />. As of this writing,
+  Spring JavaConfig does not have its own dedicated forum, but you can
+  post questions to 'Core Container' for the time being.</para></section>
+
+  <section id="issue-tracking"><title>Issue tracking</title>
+  <para>After checking out the forums, any bugs, improvements or new
+  features can be submitted via the Spring Framework issue tracker at <ulink
+  url="http://jira.springframework.org/browse/SJC" /></para></section>
+
+  <section><title>SpringSource team blog</title>
+  <para>Keep up to date with JavaConfig progress by watching the
+  SpringSource Team Blog at <ulink url="http://blog.springsource.com" /></para>
+  </section>
+
+  <section><title>Consulting and training services</title>
+  <para>Spring JavaConfig development is sponsored by
+  <ulink url="http://www.springsource.com">SpringSource</ulink>,
+  which specializes in consuling, training and support for the Spring
+  Portfolio of projects.  Contact
+  <ulink url="mailto:sales@springsource.com">sales@springsource.com</ulink>
+  for details.</para>
+  </section>
+</appendix>

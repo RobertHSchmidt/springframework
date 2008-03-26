@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+	
+	<!--
+		TODO list would allow ordering 
+	-->
+
+	<bean 
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		
+	<bean 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$InjectedConfig" >
+		<property name="age" value="33" />
+		</bean>
+	
+	
+</beans>

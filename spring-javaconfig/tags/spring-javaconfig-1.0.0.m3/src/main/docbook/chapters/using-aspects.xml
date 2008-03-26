@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="using-aspects">
+  <title>Using aspects</title>
+
+  <para>AOP support in JavaConfig is a work in progress. It is
+  documented here in order to solicit feedback.  <emphasis>Expect
+  changes in forthcoming milestone releases</emphasis></para>
+
+  <section>
+    <title>Embedded aspects</title>
+
+    <para><tip>For those unfamiliar with AOP and/or Spring AOP, you'll want to take
+    a look Chapter 6 of the core Spring reference documentation,
+    <ulink url="&refdoc;/aop.html">Aspect-oriented Programming with Spring</ulink>.
+    </tip></para>
+
+    <para>A configuration class can serve 'double duty' as an aspect. By
+    applying <classname>@Aspect</classname> to a
+    <classname>@Configuration</classname> class, you can then add
+    pointcuts and advice that will be applied against all beans in the
+    container. <programlisting>@Aspect
+@Configuration
+public class AppConfig {
+    @Bean
+    public Service service() {
+        return new ServiceImpl(...);
+    }
+
+    @Before("execution(* service..Service+.set*(*))")
+    public void trackServicePropertyChange() {
+        logger.info("property changed on service!");
+    }
+}
+</programlisting> This pointcut will match the all methods starting with 'set'
+    on all implementations of the Service interface. Before any matching
+    methods execute, the
+    <methodname>trackServicePropertyChange()</methodname> method will be
+    executed.</para>
+
+  </section>
+
+  <section>
+    <title>Reusable aspects</title>
+
+    <para>To create a reusable aspect, define a class annotated with
+    <classname>@Configuration</classname> and
+    <classname>Aspect</classname> containing advice methods and
+    pointcuts.</para>
+
+    <programlisting>@Aspect
+@Configuration
+public class PropertyChangeTracker {
+    private Logger logger = Logger.getLogger(PropertyChangeTracker.class);
+
+    @Before("execution(* set*(*))")
+    public void trackChange() {
+        logger.info("property just changed...");
+    }
+}
+</programlisting>
+
+    <para>Then include that aspect in the application context, either
+    using the @Import annotation or by adding at as a constructor argument
+    when instantiating
+    <classname>JavaConfigApplicationContext</classname>. Examples of both
+    approaches are below.</para>
+
+    <programlisting>@Configuration
+@Import(PropertyChangeTracker.class)
+@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
+public class MyConfig {
+    @Bean
+    public TransferService myService() {
+        return new TransferServiceImpl(...);
+    }
+}
+
+...
+
+JavaConfigApplicationContext context = new JavaConfigApplicationContext(MyConfig.class);
+</programlisting>
+
+    <para>or...</para>
+
+    <programlisting>@Aspect <lineannotation>// necessary in order to have <literal>transferService</literal> bean get aspects applied!</lineannotation>
+@Configuration
+public class MyConfig {
+    @Bean
+    public TransferService myService() {
+        return new TransferServiceImpl(...);
+    }
+}
+
+...
+
+JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(MyConfig.class, PropertyChangeTracker.class);
+</programlisting>
+    <note>
+      <para>Annotating Configuration classes with
+      <interfacename>@Aspect</interfacename> to enable AOP functionality is not
+      consistent with the standard semantics around the
+      <interfacename>@Aspect</interfacename> annotation, and
+      would thus likely be un-intuitive to someone familiar with XML
+      configuration. <emphasis>This approach to applying aspects will
+      change prior to JavaConfig's 1.0 GA release</emphasis>.
+      See <ulink url="http://jira.springframework.org/browse/SJC-55">SJC-55</ulink>
+      for details.</para>
+    </note>
+  </section>
+
+  <!--
+  <section>
+    <title>
+      <classname>@HotSwappable</classname>
+    </title>
+
+    <para>TODO</para>
+  </section>
+  -->
+
+</chapter>
