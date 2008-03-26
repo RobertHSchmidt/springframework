@@ -4,17 +4,17 @@
   <section id="document-structure">
     <title>Document structure</title>
     <para>
-    	<xref linkend="introduction"/> Introduces JavaConfig, including a
-    	<link linkend="quick-start">quick start tutorial</link>.  <emphasis>The
-    	impatient should start here!</emphasis>
+        <xref linkend="introduction"/> Introduces JavaConfig, including a
+        <link linkend="quick-start">quick start tutorial</link>.  <emphasis>The
+        impatient should start here!</emphasis>
     </para>
     <para>
-    	<xref linkend="reference"/> Provides a feature-by feature walk through
-    	the JavaConfig API
+        <xref linkend="reference"/> Provides a feature-by feature walk through
+        the JavaConfig API
     </para>
     <para>
-    	<xref linkend="appendices"/> Covers tooling and other practical
-    	considerations not well-suited for the core documentation
+        <xref linkend="appendices"/> Covers tooling and other practical
+        considerations not well-suited for the core documentation
     </para>
   </section>
   <section id="audience">

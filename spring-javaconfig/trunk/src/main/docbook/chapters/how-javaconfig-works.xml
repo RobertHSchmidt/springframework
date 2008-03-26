@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix id="how-javaconfig-works">
   <title>How JavaConfig works</title>
-  
+
   <para><emphasis>Work in progress</emphasis></para>
 
   <para>What are the internal mechanisms by which JavaConfig works?</para>
@@ -9,7 +9,7 @@
   <section>
     <title>Dynamic subclassing of <classname>@Configuration</classname>-annotated
     classes with CGLIB</title>
-    
+
     <para><emphasis>TODO</emphasis></para>
   </section>
   

@@ -299,12 +299,12 @@ public MyAbstractSingleton mySingleton(){
 
   <!--
   <section id="autobean">
-  	<title>Autowiring support with <interfacename>@AutoBean</interfacename></title>
-  	<para><emphasis>Work in progress - see
-  	<ulink url="http://jira.springframework.org/browse/SJC-62">SJC-62</ulink>,
-  	<ulink url="http://jira.springframework.org/browse/SJC-70">SJC-70</ulink>,
-  	<ulink url="http://jira.springframework.org/browse/SJC-85">SJC-85</ulink>
-  	</emphasis></para>
+      <title>Autowiring support with <interfacename>@AutoBean</interfacename></title>
+      <para><emphasis>Work in progress - see
+      <ulink url="http://jira.springframework.org/browse/SJC-62">SJC-62</ulink>,
+      <ulink url="http://jira.springframework.org/browse/SJC-70">SJC-70</ulink>,
+      <ulink url="http://jira.springframework.org/browse/SJC-85">SJC-85</ulink>
+      </emphasis></para>
   </section>
   -->
 
@@ -465,10 +465,10 @@ Map matchingBeans = context.getBeansOfType(Service.class);</programlisting>
       </section>
 
       <section id="string-based-access">
-      	<title>String-based access</title>
-      	<para>Beans may be accessed via the traditional string-based <literal>getBean()</literal>
-      	API as well.  Of course this is not type-safe and requires casting, but avoids any
-      	potential ambiguity entirely:
+          <title>String-based access</title>
+          <para>Beans may be accessed via the traditional string-based <literal>getBean()</literal>
+          API as well.  Of course this is not type-safe and requires casting, but avoids any
+          potential ambiguity entirely:
         <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
 Service service = (Service) context.getBean("myService");</programlisting></para>
       </section>
