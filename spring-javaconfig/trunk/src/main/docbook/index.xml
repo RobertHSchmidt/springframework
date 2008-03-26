@@ -113,7 +113,9 @@
   <part id="appendices">
     <title>Appendices</title>
     &roadmap;
+    <!--
     &common-config-scenarios;
+    -->
     &tooling;
     <!--
     &dynamic-language-support;

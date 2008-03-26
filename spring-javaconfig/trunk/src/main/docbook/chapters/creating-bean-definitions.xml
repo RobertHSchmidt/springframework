@@ -276,7 +276,13 @@ public MyAbstractSingleton mySingleton(){
       <para>By default, JavaConfig uses a <interfacename>@Bean</interfacename>
       method's name as the name of the resulting bean.  This functionality can
       be overridden, however, using the <interfacename>BeanNamingStrategy</interfacename>
-      extension point.
+      extension point.<programlisting>&lt;beans&gt;
+    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"&gt;
+        &lt;property name="namingStrategy"&gt;
+            &lt;bean class="my.custom.NamingStrategy"/&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;</programlisting>
       <note>Overriding the bean naming strategy is currently
       only supported by XML configuration of
       <classname>ConfigurationPostProcessor</classname>.  In future
@@ -284,17 +290,10 @@ public MyAbstractSingleton mySingleton(){
       <classname>JavaConfigApplicationContext</classname>. Watch
       <ulink url="http://jira.springframework.org/browse/SJC-86">SJC-86</ulink>
       for details.</note></para>
-      <programlisting>&lt;beans&gt;
-    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"&gt;
-        &lt;property name="namingStrategy"&gt;
-            &lt;bean class="my.custom.NamingStrategy"/&gt;
-        &lt;/property&gt;
-    &lt;/bean&gt;
-&lt;/beans&gt;</programlisting>
 
-        <para>For more details, see the API documentation on <interfacename>BeanNamingStrategy</interfacename>.</para>
+      <para>For more details, see the API documentation on <interfacename>BeanNamingStrategy</interfacename>.</para>
 
-        <para>For more information on integrating JavaConfig and XML, see <xref linkend="combining-config-approaches"/></para>
+      <para>For more information on integrating JavaConfig and XML, see <xref linkend="combining-config-approaches"/></para>
     </section>
   </section>
 

@@ -49,12 +49,6 @@
         &lt;version&gt;&version;&lt;/version&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;aopalliance&lt;/groupId&gt;
-        &lt;artifactId&gt;aopalliance&lt;/artifactId&gt;
-        &lt;version&gt;1.0&lt;/version&gt;
-        &lt;optional&gt;true&lt;/optional&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
         &lt;groupId&gt;asm&lt;/groupId&gt;
         &lt;artifactId&gt;asm&lt;/artifactId&gt;
         &lt;version&gt;2.2.3&lt;/version&gt;

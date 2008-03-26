@@ -1,5 +1,4 @@
 <assembly>
-  <id>no-dependencies</id>
   <formats>
     <format>zip</format>
   </formats>

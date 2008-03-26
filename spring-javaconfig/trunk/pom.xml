@@ -9,7 +9,7 @@
     <name>Spring JavaConfig</name>
     <version>1.0.0.m3-SNAPSHOT</version>
     <description>
-        The Spring Java Configuration project provides a type-safe, pure-Java option for configuring Spring
+        The Spring JavaConfig project provides a type-safe, pure-Java option for configuring Spring
         Application Contexts. While most people currently use XML to configure bean definitions in their Application
         Contexts, Spring's versatility and metadata based internal handling of bean definitions means alternatives to
         XML config are easy to implement.
@@ -84,6 +84,7 @@
     <!-- profile used for building:
          1) spring-javaconfig-${version}.zip (minimal)
          2) spring-javaconfig-${version}-with-dependencies.zip
+         2) spring-javaconfig-${version}-with-minimal-dependencies.zip
          execute with `mvn -P release javadoc:javadoc docbkx:generate-pdf docbkx:generate-html install` -->
         <profile>
             <id>release</id>
@@ -106,26 +107,26 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>minimal-dependencies</id>
+                                <id>with-minimal-dependencies</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                        <descriptor>src/assembly/minimal-dependencies.xml</descriptor>
+                                        <descriptor>src/assembly/with-minimal-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>all-dependencies</id>
+                                <id>with-dependencies</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                      <descriptor>src/assembly/all-dependencies.xml</descriptor>
+                                      <descriptor>src/assembly/with-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -367,12 +368,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>aopalliance</groupId>
-            <artifactId>aopalliance</artifactId>
-            <version>1.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>

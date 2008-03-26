@@ -1,6 +1,6 @@
-<!-- This assembly builds spring-javaconfig-${version}-minimal-dependencies.zip -->
+<!-- This assembly builds spring-javaconfig-${version}-with-minimal-dependencies.zip -->
 <assembly>
-  <id>minimal-dependencies</id>
+  <id>with-minimal-dependencies</id>
 
   <formats>
     <format>zip</format>
