@@ -19,7 +19,7 @@
     <title>Minimal</title>
 
     <para>This minimal configuration will work for all JavaConfig features
-    that do not involve AOP features.</para>
+    that do not involve AOP.</para>
 
     <para>
       <programlisting>&lt;dependencies&gt;
