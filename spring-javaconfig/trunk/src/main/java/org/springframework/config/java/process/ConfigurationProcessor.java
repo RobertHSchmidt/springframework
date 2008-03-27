@@ -17,6 +17,7 @@ package org.springframework.config.java.process;
 
 import static java.lang.String.format;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -60,7 +62,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -160,20 +162,45 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	private ConfigurableApplicationContext createChildApplicationContext() {
-		ConfigurableApplicationContext child = new GenericApplicationContext(childFactory, owningApplicationContext) {
-			// TODO this override is a hack! Why is EventMulticaster null?
+		ConfigurableApplicationContext child = new AbstractRefreshableApplicationContext(owningApplicationContext) {
+
 			@Override
 			public void publishEvent(ApplicationEvent event) {
 				if (event instanceof ContextRefreshedEvent)
 					log.debug("suppressed " + event);
 			}
+
+			@Override
+			protected DefaultListableBeanFactory createBeanFactory() {
+				return ConfigurationProcessor.this.childFactory;
+			}
+
+			@Override
+			protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException,
+					BeansException {
+				// do nothing
+			}
+
+			@Override
+			public void refresh() throws BeansException, IllegalStateException {
+				super.refresh();
+			}
+
 		};
 
 		// Piggyback on owning application context refresh
 		owningApplicationContext.addApplicationListener(new ApplicationListener() {
 			public void onApplicationEvent(ApplicationEvent event) {
-				if (event instanceof ContextRefreshedEvent)
-					ConfigurationProcessor.this.childApplicationContext.refresh();
+				if (event instanceof ContextRefreshedEvent) {
+					// Proud parent ApplicationContexts are notified when a
+					// child refreshes. They in turn will let everyone else who
+					// wants to listen that their child refreshed. A
+					// ConfigurationProcessor only cares about its owner
+					// ApplicationContext, not it's relatives.
+					if (event.getSource() == ConfigurationProcessor.this.owningApplicationContext) {
+						ConfigurationProcessor.this.childApplicationContext.refresh();
+					}
+				}
 			}
 		});
 
