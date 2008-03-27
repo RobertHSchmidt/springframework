@@ -21,7 +21,7 @@
          instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
     &lt;context-param&gt;
         &lt;param-name&gt;contextClass&lt;/param-name&gt;
-        &lt;param-value&gt;org.springframework.config.java.JavaConfigWebApplicationContext&lt;/param-value&gt;
+        &lt;param-value&gt;org.springframework.config.java.context.JavaConfigWebApplicationContext&lt;/param-value&gt;
     &lt;/context-param&gt;
     <lineannotation>&lt;!-- Configuration locations must consist of one or more comma- or space-delimited
          fully-qualified <literal>@Configuration</literal> classes --&gt;</lineannotation>
@@ -38,7 +38,7 @@
              instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
         &lt;init-param&gt;
             &lt;param-name&gt;contextClass&lt;/param-name&gt;
-            &lt;param-value&gt;org.springframework.config.java.JavaConfigWebApplicationContext&lt;/param-value&gt;
+            &lt;param-value&gt;org.springframework.config.java.context.JavaConfigWebApplicationContext&lt;/param-value&gt;
         &lt;/init-param&gt;
         <lineannotation>&lt;!-- Again, config locations must consist of one or more comma- or space-delimited
              and fully-qualified <literal>@Configuration</literal> classes --&gt;</lineannotation>
