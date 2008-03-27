@@ -15,7 +15,6 @@
  */
 package issues;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -24,16 +23,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * SJC-60 is an open bug that demonstrates JavaConfig calling refresh() multiple
- * times in the hierarchical context situation below.
+ * SJC-60 exposed a bug with JavaConfig calling refresh() multiple times in the
+ * hierarchical context situation below.
  * 
  * @author Serge Bogatyrev
  * @author Chris Beams
  */
 public class Sjc60Tests {
 
-	// work in progress
-	@Ignore
 	@Test
 	public void repro() {
 		ApplicationContext parent = new ClassPathXmlApplicationContext("issues/Sjc60-parent.xml");
