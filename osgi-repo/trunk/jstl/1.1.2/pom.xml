@@ -20,6 +20,7 @@
 	<properties>
 		<unpack.version>1.1.2</unpack.version>
 		<taglibs.version>1.1.2</taglibs.version>
+		<xalan.version>2.7.0</xalan.version>
 		<export.packages>
 			javax.servlet.jsp.jstl*;version=${unpack.version},
 			org.apache.taglibs.standard*;version=${taglibs.version}
@@ -29,22 +30,34 @@
 			org.xml.sax*;resolution:=optional,
 			*;resolution:=optional
 		</import.packages>
-
 	</properties>
+	
+	<!---
+			org.apache.xalan.serialize;version=${xalan.version},
+			org.apache.xalan.templates;version=${xalan.version}
+
+	-->
 	<dependencies>
 		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-			<version>1.1.2</version>
+			<version>${unpack.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
-			<version>1.1.2</version>
+			<version>${taglibs.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+		  <groupId>xalan</groupId>
+		  <artifactId>xalan</artifactId>
+		  <version>${xalan.version}</version>
+		  <scope>provided</scope>
+		</dependency>		
 		
 	</dependencies>
 	

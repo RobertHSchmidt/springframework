@@ -19,7 +19,7 @@
 
 	<properties>
 		<unpack.version>6.0.16</unpack.version>
-		<export.package>*</export.package>
+		<export.package>org.apache.jasper*</export.package>
 		<import.packages>
 		javax.servlet.jsp*;version=2.1,
 		javax.servlet.jsp.resources;version=2.1,
@@ -27,7 +27,6 @@
 		javax.servlet.resources;version=2.5,
 		*;resolution:=optional
 		</import.packages>
-		<include.resources>${include.resources}</include.resources>
 	</properties>
 
 	<dependencies>
@@ -52,6 +51,12 @@
 		<scope>provided</scope>
 	  </dependency>	  
 	  
+	  <dependency>
+		<groupId>org.apache.tomcat</groupId>
+		<artifactId>jasper-el</artifactId>
+		<version>6.0.16</version>
+		<scope>provided</scope>
+	  </dependency>	  
 
 			  
 	</dependencies>

@@ -18,7 +18,7 @@
 	<name>JSP 2.1 API (OSGi version)</name>
 
 	<properties>
-		<servlet.version>2.4</servlet.version>
+		<servlet.version>2.5</servlet.version>
 		<unpack.version>2.1</unpack.version>
 		<export.package>javax.servlet.jsp*;version=${unpack.version},javax.el*</export.package>
 		<import.packages>
