@@ -25,7 +25,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
@@ -40,7 +39,6 @@ import org.springframework.beans.IOther;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.config.java.ConfigurationProcessorTests.BaseConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -597,39 +595,6 @@ public class ConfigurationPostProcessorTests {
 		TestBean bob = (TestBean) bf.getBean("bob");
 		assertTrue(bf.containsBean("ann"));
 		assertEquals("External bean must have been satisfied", "Ann", bob.getSpouse().getName());
-	}
-
-	/**
-	 * TODO: test for SJC-17. Ignored while determining if changes need to be
-	 * made to Spring Core to support this.
-	 */
-	@Ignore
-	@Test
-	public void testRequiredAnnotation() {
-		// this is going to throw a BeanCreationException, complaining that
-		// 'alice' hasn't been properly configured
-		new ClassPathXmlApplicationContext("org/springframework/config/java/requiredBean.xml");
-	}
-
-	@Configuration
-	static class RequiredBeanConfig {
-		@Bean
-		public Alice alice() {
-			Alice bean = new Alice();
-			// notice I'm explicitly setting the @Required property with a value
-			bean.setName("alice");
-			return bean;
-		}
-	}
-
-	static class Alice {
-		@SuppressWarnings("unused")
-		private String name;
-
-		@Required
-		public void setName(String name) {
-			this.name = name;
-		}
 	}
 
 }
