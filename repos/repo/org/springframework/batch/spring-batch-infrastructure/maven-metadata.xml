@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.springframework.batch</groupId>
+  <artifactId>spring-batch-infrastructure</artifactId>
+  <version>1.0.0.FINAL</version>
+  <versioning>
+    <versions>
+      <version>1.0.0.FINAL</version>
+    </versions>
+    <lastUpdated>20080328170444</lastUpdated>
+  </versioning>
+</metadata>
