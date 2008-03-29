@@ -2,11 +2,4 @@
 	<aspects>
 		<aspect name="org.springframework.config.java.aspects.RequiredAnnotationMethodInvocationMonitor"/>
     </aspects>
-	<!--
-    -->
-    <!--
-    <weaver>
-        <include within="org.springframework.config.java.process.*"/>
-    </weaver>
-    -->
 </aspectj>
