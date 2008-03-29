@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.0.3.v200801241658]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+		<config>src/test/resources/issues/Sjc54.xml</config>
+		<config>src/test/resources/issues/Sjc55.xml</config>
+		<config>src/test/resources/issues/Sjc60-child.xml</config>
+		<config>src/test/resources/issues/Sjc60-parent.xml</config>
+	</configs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

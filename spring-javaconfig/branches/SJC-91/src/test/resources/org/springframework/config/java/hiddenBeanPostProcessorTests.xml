@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean 
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		
+	<bean 
+		class="org.springframework.config.java.HiddenBeanPostProcessorTests$HasHiddenBeansNeedingPostProcessing" 
+	/>
+	
+	<bean 
+		id="bfpp1" 
+		class="org.springframework.config.java.HiddenBeanPostProcessorTests$RememberingBeanFactoryPostProcessor" 
+	/>
+	
+	<!-- Check that it doesn't get upset with 2 BFPPs -->
+	<bean 
+		id="bfpp2" 
+		class="org.springframework.config.java.HiddenBeanPostProcessorTests$RememberingBeanFactoryPostProcessor" 
+	/>
+	
+	
+</beans>
