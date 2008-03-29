@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+[
+<!ENTITY about-this-document          SYSTEM "chapters/about-this-document.xml">
+<!ENTITY preface                      SYSTEM "chapters/preface.xml">
+<!ENTITY overview                     SYSTEM "chapters/overview.xml">
+<!ENTITY new-and-noteworthy           SYSTEM "chapters/new-and-noteworthy.xml">
+<!ENTITY quick-start                  SYSTEM "chapters/quick-start.xml">
+<!ENTITY creating-bean-definitions    SYSTEM "chapters/creating-bean-definitions.xml">
+<!ENTITY modularizing-configurations  SYSTEM "chapters/modularizing-configurations.xml">
+<!ENTITY using-aspects                SYSTEM "chapters/using-aspects.xml">
+<!ENTITY developing-web-applications  SYSTEM "chapters/developing-web-applications.xml">
+<!ENTITY combining-config-approaches  SYSTEM "chapters/combining-config-approaches.xml">
+<!ENTITY limitations                  SYSTEM "chapters/limitations.xml">
+<!ENTITY dynamic-language-support     SYSTEM "chapters/dynamic-language-support.xml">
+<!ENTITY roadmap                      SYSTEM "chapters/roadmap.xml">
+<!ENTITY tooling                      SYSTEM "chapters/tooling.xml">
+<!ENTITY common-config-scenarios      SYSTEM "chapters/common-config-scenarios.xml">
+<!ENTITY how-javaconfig-works         SYSTEM "chapters/how-javaconfig-works.xml">
+<!ENTITY maven-configs                SYSTEM "chapters/maven-configs.xml">
+<!ENTITY additional-resources         SYSTEM "chapters/additional-resources.xml">
+]>
+<book xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <bookinfo>
+    <title>Spring JavaConfig Reference Guide</title>
+    <releaseinfo>&version;</releaseinfo>
+    <authorgroup>
+      <author>
+        <firstname>Rod</firstname>
+        <surname>Johnson</surname>
+      </author>
+      <author>
+        <firstname>Costin</firstname>
+        <surname>Leau</surname>
+      </author>
+      <author>
+        <firstname>Chris</firstname>
+        <surname>Beams</surname>
+      </author>
+    </authorgroup>
+    <legalnotice>
+      <para>Copies of this document may be made for your own use and for
+      distribution to others, provided that you do not charge any fee for such
+      copies and further provided that each copy contains this Copyright
+      Notice, whether distributed in print or electronically.</para>
+    </legalnotice>
+  </bookinfo>
+
+  <toc />
+
+  &about-this-document;
+  &preface;
+
+  <part id="introduction">
+    <title>Introduction</title>
+    <partintro>
+      <para>In Part I we explain what JavaConfig is, how it fits into the
+      larger Spring configuration landscape, and make the case as to why it is
+      a compelling option. After reading this part you'll be ready to
+      create a basic configuration and evaluate JavaConfig for yourself.
+      Finally, you'll be ready to move on to Part II and explore the
+      JavaConfig API in detail.</para>
+      <para><xref linkend="overview" /></para>
+      <para><xref linkend="new-and-noteworthy-1.0.0.m3" /></para>
+      <para><xref linkend="quick-start" /></para>
+    </partintro>
+    &overview;
+    &new-and-noteworthy;
+    &quick-start;
+  </part>
+
+  <part id="reference">
+    <title>API Reference</title>
+    <partintro>
+      <para>This part of the Reference Guide explains the core functionality
+      of Spring JavaConfig</para>
+
+      <para><xref linkend="creating-bean-definitions" /> describes the
+      fundamental concepts in Spring JavaConfig: the
+      <classname>@Configuration</classname> and <classname>@Bean</classname>
+      annotations, and gives the reader information on how to use them.</para>
+
+      <para><xref linkend="modularizing-configurations" />. For non-trivial uses
+      of Spring JavaConfig, users will want the ability to modularize
+      configurations for reuse, readability and deployment concerns. This
+      section documents the various techniques and features available for
+      meeting these needs.</para>
+
+      <para><xref linkend="using-aspects" />. One of the most powerful features of the
+      Spring IoC container is the ability to add aspect-oriented behavior to
+      plain beans using Spring AOP. JavaConfig also makes the use of aspects
+      possible, and this section details how to do it.</para>
+
+      <para><xref linkend="developing-web-applications" />. Documents
+      JavaConfig's first-class support for use within the web tier with
+      <classname>JavaConfigWebApplicationContext</classname>.</para>
+
+      <para><xref linkend="combining-config-approaches" />. Describes how to
+      use JavaConfig's <classname>ConfigurationPostProcessor</classname> bean
+      post-processor for integrating
+      <classname>@Configuration</classname>-annotated classes within an XML
+      configuration file.</para>
+    </partintro>
+    &creating-bean-definitions;
+    &modularizing-configurations;
+    &using-aspects;
+    &developing-web-applications;
+    &combining-config-approaches;
+  </part>
+
+  <part id="appendices">
+    <title>Appendices</title>
+    &roadmap;
+    <!--
+    &common-config-scenarios;
+    -->
+    &tooling;
+    <!--
+    &dynamic-language-support;
+    &how-javaconfig-works;
+    &limitations;
+    -->
+    &maven-configs;
+    &additional-resources;
+  </part>
+</book>

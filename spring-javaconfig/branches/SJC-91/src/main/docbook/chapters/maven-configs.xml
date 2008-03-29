@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="maven-configs">
+  <title>Maven2 POM configurations</title>
+
+  <para>As mentioned in <xref linkend="quick-start"/>, JavaConfig requires only a
+  minimal set of dependencies for basic (non-AOP) configuration scenarios.
+
+  <note>Please note that this release is not published
+  at the central Maven repository. Instead it is published on Amazon's S3
+  service, like all Spring milestones. To use it, add the following
+  repository to your POM:
+  <programlisting>&lt;repository&gt;
+  &lt;id&gt;spring-milestone&lt;/id&gt;
+  &lt;name&gt;Spring Milestone Repository&lt;/name&gt;
+  &lt;url&gt;http://s3.amazonaws.com/maven.springframework.org/milestone&lt;/url&gt;
+&lt;/repository&gt;</programlisting></note></para>
+
+  <section>
+    <title>Minimal</title>
+
+    <para>This minimal configuration will work for all JavaConfig features
+    that do not involve AOP.</para>
+
+    <para>
+      <programlisting>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;version&gt;&version;&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>AOP</title>
+
+    <para>In an effort to keep the number of dependencies required when using
+    JavaConfig to a minimum, AOP-related dependencies are excluded by default.  Should you
+    wish to use AOP with JavaConfig, modify your Maven2 POM configuration to
+    include the following:</para>
+
+    <para>
+      <programlisting>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;version&gt;&version;&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;asm&lt;/groupId&gt;
+        &lt;artifactId&gt;asm&lt;/artifactId&gt;
+        &lt;version&gt;2.2.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;asm&lt;/groupId&gt;
+        &lt;artifactId&gt;asm-commons&lt;/artifactId&gt;
+        &lt;version&gt;2.2.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aspectj&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectjlib&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aspectj&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectjrt&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;aspectj&lt;/groupId&gt;
+        &lt;artifactId&gt;aspectjweaver&lt;/artifactId&gt;
+        &lt;version&gt;1.5.3&lt;/version&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</programlisting>
+    </para>
+  </section>
+</appendix>

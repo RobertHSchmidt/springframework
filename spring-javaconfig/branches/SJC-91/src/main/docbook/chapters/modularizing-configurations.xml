@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="modularizing-configurations">
+  <title>Modularizing configurations</title>
+
+  <para>While the simplest configuration may be expressed as a single
+  class that exposes several beans, it is often desirable to
+  <emphasis>modularize</emphasis> configurations for reuse and
+  clarity.</para>
+
+  <section>
+    <title>Partitioning bean definitions across multiple
+    <interfacename>@Configuration</interfacename> classes</title>
+
+    <para>The simplest technique for modularizing configurations is to simply split up
+    large <interfacename>@Configuration</interfacename> classes containing many
+    <interfacename>@Bean</interfacename> definitions into multiple smaller classes:
+    <programlisting><lineannotation>// monolithic configuration</lineannotation>
+@Configuration
+public class AppConfig {
+    @Bean
+    public ServiceA serviceA() {
+       <lineannotation>// ...</lineannotation>
+    }
+
+    @Bean
+    public ServiceB serviceB() {
+       <lineannotation>// ...</lineannotation>
+    }
+
+   <lineannotation>// assume many bean definitions follow</lineannotation>
+}</programlisting>
+
+The above configuration class might be supplied as a parameter to <classname>JavaConfigApplicationContext</classname>:
+<programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(AppConfig.class);
+ServiceA serviceA = context.getBean(ServiceA.class);
+ServiceB serviceB = context.getBean(ServiceB.class);</programlisting></para>
+
+<para>We can easily partition this configuration such that bean definitions are
+spread across two classes, instead of one:<programlisting><lineannotation>// partitioned configuration</lineannotation>
+@Configuration
+public class AppConfigA {
+    @Bean
+    public ServiceA serviceA() {
+       <lineannotation>// ...</lineannotation>
+    }
+}
+
+@Configuration
+public class AppConfigB {
+    @Bean
+    public ServiceB serviceB() {
+       <lineannotation>// ...</lineannotation>
+    }
+}</programlisting>
+
+Now simply supply both configuration classes to the constructor of
+<classname>JavaConfigApplicationContext</classname>:
+<programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(AppConfigA.class, AppConfigB.class);
+<lineannotation>// both beans are still available in the resulting application context</lineannotation>
+ServiceA serviceA = context.getBean(ServiceA.class);
+ServiceB serviceB = context.getBean(ServiceB.class);</programlisting></para>
+  </section>
+
+  <section>
+    <title>Referencing externally defined beans with <interfacename>@ExternalBean</interfacename></title>
+
+    <para>One configuration class may need to reference a bean defined in
+    another configuration class (or in XML, for that matter). The
+    <classname>@ExternalBean</classname> annotation provides just such a
+    mechanism. When JavaConfig encounters a method annotated as
+    <classname>@ExternalBean</classname>, it replaces that method
+    definition with a lookup to the enclosing bean factory for a bean with
+    the same name as the method name.</para>
+
+    <programlisting>@Configuration
+public class ConfigOne {
+    @Bean
+    public AccountRepository accountRepository() {
+        <lineannotation>// create and return an <classname>AccountRepository</classname> object</lineannotation>
+    }
+}
+
+@Configuration
+public abstract class ConfigTwo {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl(accountRepository());
+    }
+
+    @ExternalBean
+    public abstract AccountRepository accountRepository();
+}
+</programlisting>
+
+    <para>Given that both these configuration classes are supplied to the
+    application context at runtime, JavaConfig will be able to resolve the
+    '<literal>accountRepository</literal>'
+    <classname>@ExternalBean</classname> by name and everything will
+    'wire-up' accordingly.</para>
+
+    <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(ConfigOne.class, ConfigTwo.class);</programlisting>
+  </section>
+
+  <section>
+    <title>Importing <classname>@Configuration</classname> classes with <classname>@Import</classname></title>
+
+    <para><interfacename>@Import</interfacename> represents JavaConfig's
+    equivalent of XML configuration's <code>&lt;import/&gt;</code> element.
+    One configuration class can import any number of other configuration classes,
+    and their bean definitions will be processed as if locally defined.
+    <programlisting>@Configuration
+public class DataSourceConfig {
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(...);
+    }
+}
+
+@Configuration
+@Import(DataSourceConfig.class)
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public void TransferService transferService() {
+        return new TransferServiceImpl(getBean(DataSource.class);
+    }
+}</programlisting>Importing multiple configurations can be done by supplying an
+    array of classes to the <classname>@Import</classname> annotation
+    <programlisting>@Configuration
+@Import({ DataSourceConfig.class, TransactionConfig.class })
+public class AppConfig extends ConfigurationSupport {
+    <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
+}</programlisting></para>
+  </section>
+
+  <section>
+    <title><classname>ConfigurationSupport</classname></title>
+
+    <para>As a convenience, <classname>@Configuration</classname> classses
+    can extend <classname>ConfigurationSupport</classname>, primarily in
+    order to facilitate easy lookup of beans from the enclosing
+    <classname>BeanFactory</classname> /
+    <classname>ApplicationContext</classname>.</para>
+
+    <programlisting>@Configuration
+public class AppConfig extends ConfigurationSupport {
+    @Bean
+    public Service serviceA() {
+        DataSource dataSource = this.getBean(DataSource.class); <lineannotation>// provided by base class</lineannotation>
+        <lineannotation>// ...</lineannotation>
+    }
+}
+</programlisting>
+  </section>
+
+
+  <section id="externalizing-string-values">
+    <title>Externalizing values with <interfacename>@ExternalValue</interfacename>
+    and <interfacename>@ResourceBundles</interfacename></title>
+
+    <tip><para><emphasis>Important: This functionality may change!</emphasis>
+    We are currently evaluating approaches for best supporting externalized
+    values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
+    for more details.</para></tip>
+
+    <sidebar>
+      <title>What about
+      <classname>PropertyOverrideConfigurer</classname>?</title>
+
+      <para>Those familiar with XML configuration will notice that there
+      is not a direct equivalent for the popular
+      <classname>PropertyOverrideConfigurer</classname>. However, the
+      combination of <classname>@ResourceBundles</classname> and
+      <classname>@ExternalValue</classname> is roughly equivalent to the
+      use of the <classname>PropertyPlaceholderConfigurer</classname>.
+      Just as many users do not wish to store usernames, passwords and
+      other sensitive or environment-specific values in XML, neither would
+      we want to do so in Java configurations. Interestingly, the
+      functionality of <classname>PropertyOverrideConfigurer</classname>
+      is not hard to emulate, either. Simply give the method a default
+      return value.</para>
+    </sidebar>
+
+    <para>Access externally defined string values such as usernames,
+    passwords, and the like using <classname>@ResourceBundles</classname>
+    and <classname>@ExternalValue</classname>.</para>
+
+    <programlisting>@ResourceBundles("classpath:/org/springframework/config/java/simple")
+@Configuration
+public abstract static class ConfigWithPlaceholders {
+    @ExternalValue("datasource.username")
+    public abstract String username();
+
+    @Bean
+    public TestBean testBean() {
+        return new TestBean(username());
+    }
+}
+</programlisting>
+
+    <para>The '<literal>org/springframework/config/java/simple</literal>'
+    argument to <classname>@ResourceBundles</classname> tells JavaConfig
+    that there must be a file in the classpath at
+    <literal>org/springframework/config/java/simple[locale].[properties|xml]</literal>
+    from which key/value pairs can be read. For example:</para>
+
+    <programlisting>datasource.username=scott
+datasource.password=tiger
+...
+</programlisting>
+
+    <para>Multiple values can be supplied to
+    <classname>@ResourceBundles</classname>:</para>
+
+    <programlisting>@ResourceBundles({"classpath:/com/foo/myapp/simple", "classpath:/com/foo/myapp/complex"})
+@Configuration
+public class AppConfig {
+    <lineannotation>// ...</lineannotation>
+}
+</programlisting>
+  </section>
+
+  <section id="nested-configuration-classes">
+    <title>Nesting <classname>@Configuration</classname> classes</title>
+
+    <para>Consider the case of nested
+    <classname>@Configuration</classname> classes: <programlisting>@Configuration
+public class OuterConfig {
+    @Bean
+    public Foo outerBean() {
+        <lineannotation>// ...</lineannotation>
+    }
+
+    @Configuration
+    public static class InnerConfig {
+        @Bean
+        public Bar innerBean() {
+            <lineannotation>// ...</lineannotation>
+        }
+    }
+}
+</programlisting>
+
+    Nested <classname>@Configuration</classname> classes will be
+    processed as child <classname>ApplicationContext</classname>s. Perhaps better said,
+    any declaring (outer) <classname>@Configuration</classname> classes
+    will be processed as parent
+    <interfacename>ApplicationContexts</interfacename>. Using the example
+    above, Instantiate an
+    <interfacename>ApplicationContext</interfacename> using
+    <classname>InnerConfig</classname> as an argument <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(InnerConfig.class);
+context.getBean("innerBean"); <lineannotation>// locally defined beans are available</lineannotation>
+context.getBean("outerBean"); <lineannotation>// as are beans defined in the declaring <classname>OuterConfig</classname> class.</lineannotation>
+</programlisting> Note that when supplying <classname>OuterConfig</classname>
+    as the argument, <classname>InnerConfig</classname> is ignored
+    entirely. If it were to be processed, it would become a child context,
+    but its beans would would be inaccessible (parent contexts have no
+    access to child context beans). <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(OuterConfig.class);
+context.getBean("outerBean"); <lineannotation>// works fine</lineannotation>
+context.getBean("innerBean"); <lineannotation>// throws <classname>NoSuchBeanDefinitionException</classname>!</lineannotation>
+</programlisting></para>
+  </section>
+
+</chapter>

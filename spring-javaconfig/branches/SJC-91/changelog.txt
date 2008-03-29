@@ -1,0 +1,85 @@
+SPRING JAVACONFIG CHANGELOG
+===========================
+http://springframework.org/javaconfig
+
+
+Changes in version 1.0.0.m3 (2008-03-26)
+--------------------------------------
+
+General
+* major update to documentation
+* internal refactoring to eliminate cyclic dependencies & reduce number of classes in public API
+* changed versioning scheme (1.0 -> 1.0.0) to support OSGi conventions
+* bean visibility: private @Bean methods are no longer supported (never worked properly anyway)
+* minimized dependencies
+* abstract @Configuration classes no longer registered unless one @ExternalBean, @ExternalValue or @AutoBean is present
+
+Package org.springframework.config.java.annotation
+* added @Import (works like XML's <import/> element)
+* added @ExternalValue and @ResourceBundles to facilitate externalizing string values
+* added Primary enum to support disambiguation in autowiring cases and when using new type-safe getBean() method
+* @Configuration is now annotated as @Component to support classpath scanning
+* @Bean 'allowOverriding' attribute now defaults to 'true'
+
+Package org.springframework.config.java.annotation
+* removed @SpringAdvice, @SpringAdvisor and related support (favor @Aspect-style)
+
+Package org.springframework.config.java.context
+* renamed ApplicationAnnotationContext to JavaConfigApplicationContext
+* deprecated ApplicationAnnotationContext
+* added type-safe getBean() methods to JavaConfigApplicationContext
+* added JavaConfigWebApplicationContext to facilitate using JavaConfig directly in the web tier
+
+Package org.springframework.config.java.process
+* ConfigurationProcessor now treats any inner @Configuration classes as child application contexts
+
+Package org.springframework.config.java.util
+* eliminated ClassUtils and ScopeUtils by refactoring static methods into the classes that use them
+
+Package org.springframework.config.java.valuesource
+* added ValueSource interface and various implementations to support @ExternalValue functionality mentioned above
+
+
+Changes in version 1.0-m2a (2007-05-10)
+---------------------------------------
+* fixed (a confusing) documentation typo. The binary code is identical to 1.0-m2 (the reason why the jar have the same name).
+
+
+Changes in version 1.0-m2 (2007-05-08)
+--------------------------------------
+
+General
+* added root package org.springframework.config.java
+* refactored classes and restructured packages
+* moved unused/incomplete classses and packages to src/test folder
+
+Package org.springframework.config.java.annotation
+* annotation @ExternalBean added to allow injection of an already defined bean
+* @Bean can forbid the overriding of the resulting bean by other bean definitions. Default is true
+* @Bean.scope property was changed from the Scope enum (which was removed) to a String to allow custom scopes
+
+Package org.springframework.config.java.annotation.aop
+* added @ScopedProxy annotation, the equivalent of <aop:scoped-proxy/> tag
+
+Package org.springframework.config.java.naming
+* the method -> bean name translation is pluggable and used through out the code
+
+Package org.springframework.config.java.process
+* @Bean.metadata is translated into BeanDefinition attribute
+* process returns the number of bean definitions created based on annotations
+* ConfigurationProcessor#process() method refactored into #processClass(Class) and #processBean(String)
+* ConfigurationProcessor constructor has changed requiring only the owning bean factory. The listener registry
+as well as the naming strategy are optional (defaults are being used in case they aren't specified)
+* ConfigurationProcessor implements InitializingBean to allow flexible configuration
+
+Package org.springframework.config.java.support.cglib
+* the cglib code has been improved, only one instance callback being used per processor
+* the backing beanFactory is used for handling bean instances. Scopes are fully supported [SJC-9]
+
+Package org.springframework.config.java.util
+* added new package with two new utility classes: one for pasing the other for specifying Spring 2.0 default scopes
+
+
+Changes in version 1.0-M1 (2006-11-28)
+--------------------------------------
+* Initial release

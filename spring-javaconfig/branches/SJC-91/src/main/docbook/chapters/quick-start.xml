@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="quick-start">
+  <title>Quick start</title>
+
+  <para>This chapter provides a basic tutorial for getting started
+  with JavaConfig. For full details on JavaConfig's capabilities,
+  please refer to <xref linkend="reference" /></para>
+
+  <section>
+    <title>Download JavaConfig</title>
+
+    <para>Like any Java library, you'll first need to get the JavaConfig jar
+    (and the jars it depends on) into your classpath.</para>
+
+    <section>
+      <title>Manual download</title>
+
+      <para>Please visit <ulink url="http://www.springframework.org/javaconfig"/>
+      where you'll find links to zip file distributions.  Three distributions are
+      available:<orderedlist>
+        <listitem><literal>spring-javaconfig-&version;.zip</literal></listitem>
+        <listitem><literal>spring-javaconfig-&version;-with-minimal-dependencies.zip</literal></listitem>
+        <listitem><literal>spring-javaconfig-&version;-with-dependencies.zip</literal></listitem>
+      </orderedlist></para>
+
+      <para>The <literal>-with-minimal-dependencies</literal> zip contains only those
+      jars that are required for basic JavaConfig functionality, while the
+      <literal>-with-dependencies</literal> zip contains all dependencies, including
+      those required for AOP support.</para>
+    </section>
+
+    <section>
+      <title>Maven 2</title>
+
+      <para>Assuming your project uses a Maven2 build infrastructure, using
+      JavaConfig is as simple as adding the following to your POM
+      <programlisting>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;version&gt;&version;&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</programlisting>
+
+      <note>Please note that this release is not published
+      at the central Maven repository. Instead it is published on Amazon's S3
+      service, like all Spring milestones. To use it, add the following
+      repository to your POM:
+      <programlisting>&lt;repository&gt;
+    &lt;id&gt;spring-milestone&lt;/id&gt;
+    &lt;name&gt;Spring Milestone Repository&lt;/name&gt;
+    &lt;url&gt;http://s3.amazonaws.com/maven.springframework.org/milestone&lt;/url&gt;
+&lt;/repository&gt;</programlisting></note>
+
+      <tip>See <xref linkend="maven-configs" /> for more
+      information about using Maven2 with Spring JavaConfig
+      </tip></para>
+    </section>
+
+  </section>
+
+  <section>
+    <title>Create bean definitions</title>
+
+    <para>
+      <programlisting>@Configuration
+public class ApplicationConfig {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl(accountRepository());
+    }
+
+    @Bean
+    public AccountRepository accountRepository() {
+        return new JdbcAccountRepository(dataSource());
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(...);
+    }
+}
+</programlisting>
+    </para>
+  </section>
+
+  <section>
+    <title>Retrieve bean instances</title>
+
+    <para>Let's create a very basic, command-line application to allow
+    users to transfer money from one account to another. <programlisting>public class SimpleTransferApplication {
+    public static void main(String... args) {
+        double amount = new Double(args[0]);
+        int sourceAcctId = new Integer(args[1]);
+        int destAcctId = new Integer(args[2]);
+
+        JavaConfigApplicationContext context = new JavaConfigApplicationContext(ApplicationConfig.class);
+        TransferService transferService = context.getBean(TransferService.class);
+        transferService.transfer(300.00, sourceAcctId, destAccountId);
+    }
+}
+</programlisting></para>
+  </section>
+
+  <section>
+    <title>Summary</title>
+
+    <para>That's it!  You're now ready for <xref linkend="reference"/>, where
+    you'll walk through each of the features of Spring JavaConfig. </para>
+
+    <!--
+    <para>Or, for further 'quick start' information, you may be interested in
+    <xref linkend="common-config-scenarios"/>, which explores several
+    'typical' uses of Spring JavaConfig.</para>
+    -->
+  </section>
+</chapter>

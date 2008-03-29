@@ -1,0 +1,9 @@
+<assembly>
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <componentDescriptors>
+    <componentDescriptor>src/assembly/common.xml</componentDescriptor>
+  </componentDescriptors>
+</assembly>
