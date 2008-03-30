@@ -11,6 +11,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -28,10 +29,45 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 @Aspect
 public class RequiredAnnotationMethodInvocationMonitor {
 
-	public static class RequiredMethodTracker extends ThreadLocal<Set<String>> {
+	public static class InvokedRequiredMethods extends ThreadLocal<Set<String>> {
+
+		public void registerMethodInvocation(Object bean, String className, String methodName) {
+			get().add(fqMethodName(bean, className, methodName));
+		}
+
+		public boolean hasMethodBeenInvoked(Object bean, Method requiredMethod) {
+			return get().contains(
+					fqMethodName(bean, requiredMethod.getDeclaringClass().getName(), requiredMethod.getName()));
+		}
+
+		private String fqMethodName(Object bean, String className, String methodName) {
+			return System.identityHashCode(bean) + ":" + className + "." + methodName;
+		}
+
+		public void interrogateRequiredMethods(final Object bean, final String beanName) {
+			System.out.println("interrogating " + bean);
+
+			ReflectionUtils.doWithMethods(bean.getClass(),
+
+			new MethodCallback() {
+				public void doWith(Method requiredMethod) throws IllegalArgumentException, IllegalAccessException {
+					if (!invokedRequiredMethods.hasMethodBeenInvoked(bean, requiredMethod))
+						throw new BeanInitializationException(format("Method '%s' is required for bean '%s'",
+								requiredMethod.getName(), beanName));
+				}
+			},
+
+			new ReflectionUtils.MethodFilter() {
+				public boolean matches(Method candidate) {
+					return !candidate.getDeclaringClass().equals(Object.class)
+							&& (AnnotationUtils.findAnnotation(candidate, Required.class) != null);
+				}
+			});
+		}
 
 		@Override
 		protected Set<String> initialValue() {
+			System.out.println("THREAD calling initialValue(): " + Thread.currentThread().getName());
 			return new HashSet<String>();
 		}
 
@@ -42,53 +78,14 @@ public class RequiredAnnotationMethodInvocationMonitor {
 
 	}
 
-	private static final RequiredMethodTracker requiredMethodTracker = new RequiredMethodTracker();
-
-	public RequiredAnnotationMethodInvocationMonitor() {
-		System.out.println("what thread is calling me? " + Thread.currentThread().getName());
-	}
+	private static final InvokedRequiredMethods invokedRequiredMethods = new InvokedRequiredMethods();
 
 	@Before("execution(@org.springframework.beans.factory.annotation.Required * *(..))")
 	public void logRequiredMethodInvocation(JoinPoint jp) {
 		System.out.println("logging method invocation: " + jp);
-		String methodName = fqMethodName(jp.getSignature());
-		requiredMethodTracker.get().add(methodName);
-	}
-
-	private static String fqMethodName(Signature signature) {
-		return fqMethodName(signature.getDeclaringTypeName(), signature.getName());
-	}
-
-	private static String fqMethodName(Method method) {
-		return fqMethodName(method.getDeclaringClass().getName(), method.getName());
-	}
-
-	private static String fqMethodName(String className, String methodName) {
-		return className + "." + methodName;
-	}
-
-	private static boolean hasMethodBeenInvoked(Method requiredMethod) {
-		return requiredMethodTracker.get().contains(fqMethodName(requiredMethod));
-	}
-
-	public static void interrogateRequiredMethods(Object bean) {
-		System.out.println("interrogating " + bean);
-
-		ReflectionUtils.doWithMethods(bean.getClass(),
-
-		new MethodCallback() {
-			public void doWith(Method requiredMethod) throws IllegalArgumentException, IllegalAccessException {
-				if (!hasMethodBeenInvoked(requiredMethod))
-					throw new RuntimeException(format("required method %s has not been set!", requiredMethod.getName()));
-			}
-		},
-
-		new ReflectionUtils.MethodFilter() {
-			public boolean matches(Method candidate) {
-				return !candidate.getDeclaringClass().equals(Object.class)
-						&& (AnnotationUtils.findAnnotation(candidate, Required.class) != null);
-			}
-		});
+		Signature signature = jp.getSignature();
+		invokedRequiredMethods.registerMethodInvocation(jp.getTarget(), signature.getDeclaringTypeName(), signature
+				.getName());
 	}
 
 	public static class PostProcessor implements BeanPostProcessor, ApplicationContextAware, ApplicationListener {
@@ -100,7 +97,7 @@ public class RequiredAnnotationMethodInvocationMonitor {
 
 		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 			if (doInterrogate)
-				interrogateRequiredMethods(bean);
+				invokedRequiredMethods.interrogateRequiredMethods(bean, beanName);
 
 			return bean;
 		}
@@ -110,7 +107,7 @@ public class RequiredAnnotationMethodInvocationMonitor {
 		}
 
 		public void onApplicationEvent(ApplicationEvent event) {
-			requiredMethodTracker.get().clear();
+			invokedRequiredMethods.get().clear();
 		}
 
 		public void setApplicationContext(ApplicationContext ctx) throws BeansException {
