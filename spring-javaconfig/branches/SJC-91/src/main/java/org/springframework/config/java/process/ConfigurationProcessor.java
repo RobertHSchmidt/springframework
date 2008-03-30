@@ -400,19 +400,15 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 			// TODO: extract method
 			Configuration config = configurationClass.getAnnotation(Configuration.class);
-			// TODO: always register the bean def, just setInterrogate true /
-			// false.
-			boolean doInterrogate = (config != null && config.checkRequired() == true);
-
-			RootBeanDefinition requiredAnnotationPostProcessor = new RootBeanDefinition();
-			Class<?> beanClass = RequiredAnnotationBeanPostProcessor.class;
-			String beanName = beanClass.getName() + "#0";
-			requiredAnnotationPostProcessor.setBeanClass(beanClass);
-			requiredAnnotationPostProcessor.setResourceDescription("ensures @Required methods have been invoked");
-			requiredAnnotationPostProcessor.getPropertyValues().addPropertyValue("interrogateRequiredMethods",
-					doInterrogate);
-			((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(beanName,
-					requiredAnnotationPostProcessor);
+			if (config != null && config.checkRequired() == true) {
+				RootBeanDefinition requiredAnnotationPostProcessor = new RootBeanDefinition();
+				Class<?> beanClass = RequiredAnnotationBeanPostProcessor.class;
+				String beanName = beanClass.getName() + "#0";
+				requiredAnnotationPostProcessor.setBeanClass(beanClass);
+				requiredAnnotationPostProcessor.setResourceDescription("ensures @Required methods have been invoked");
+				((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(beanName,
+						requiredAnnotationPostProcessor);
+			}
 
 			generateBeanDefinitions(configurationBeanName, configurationClass);
 

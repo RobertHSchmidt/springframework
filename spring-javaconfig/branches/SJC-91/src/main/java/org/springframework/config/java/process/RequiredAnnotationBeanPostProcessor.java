@@ -38,40 +38,22 @@ import org.springframework.config.java.aspects.RequiredMethodInvocationTracker;
  * 
  * @author Chris Beams
  */
-class RequiredAnnotationBeanPostProcessor implements BeanPostProcessor /*, ApplicationContextAware, ApplicationListener */{
-	private boolean doInterrogate = false;
-
+class RequiredAnnotationBeanPostProcessor implements BeanPostProcessor {
 	private final RequiredMethodInvocationRegistry invocationRegistry = RequiredMethodInvocationTracker
 			.getInvocationRegistry();
 
+	/** no-op */
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
 
+	/**
+	 * Checks {@link RequiredMethodInvocationRegistry} to ensure that this
+	 * bean's required methods have been invoked during dependency injection
+	 */
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (doInterrogate)
-			invocationRegistry.interrogateRequiredMethods(bean, beanName);
-
+		invocationRegistry.interrogateRequiredMethods(bean, beanName);
 		return bean;
 	}
 
-	/**
-	 * Whether to actually check Required methods during post-processing. If
-	 * {@link Configuration#checkRequired()} is set to true, this property will
-	 * ultimately be set to true as well.
-	 */
-	public void setInterrogateRequiredMethods(boolean b) {
-		this.doInterrogate = b;
-	}
-
-	/*
-	public void onApplicationEvent(ApplicationEvent event) {
-	if (event instanceof ContextRefreshedEvent)
-		invocationRegistry.clear();
-	}
-
-	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-	((ConfigurableApplicationContext) ctx).addApplicationListener(this);
-	}
-		*/
 }
