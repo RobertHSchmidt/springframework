@@ -29,7 +29,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 @Aspect
 public class RequiredAnnotationMethodInvocationMonitor {
 
-	public static class InvokedRequiredMethods extends ThreadLocal<Set<String>> {
+	private static class InvokedRequiredMethods extends ThreadLocal<Set<String>> {
 
 		@Override
 		protected Set<String> initialValue() {
