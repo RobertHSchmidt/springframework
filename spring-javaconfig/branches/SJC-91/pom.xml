@@ -149,6 +149,11 @@
                 <executions>
                   <execution>
                     <id>compile</id>
+                    <configuration>
+                      <includes>
+                        <include>**/RequiredAnnotationMethodInvocationMonitor.java</include>
+                      </includes>
+                    </configuration>
                     <goals>
                       <goal>compile</goal>
                     </goals>
@@ -157,7 +162,6 @@
                     <id>test-compile</id>
                     <configuration>
                       <!--
-                      <weaveMainSourceFolder>true</weaveMainSourceFolder>
                       <includes>
                         <include>**/RequiredAnnotationMethodInvocationMonitor.java</include>
                       </includes>
@@ -174,28 +178,6 @@
                   </execution>
                </executions>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                    <includes>
-                        <include>**/RequiredAnnotationMethodInvocationMonitor.java</include>
-                    </includes>
-                    <outxml>true</outxml>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-               </executions>
-            </plugin>
-            -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -208,7 +190,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <!--
+                    <!-- enable this line for load-time weaving (and comment out the aspectj-maven-plugin <plugin/> above)
                     <argLine>-javaagent:${settings.localRepository}/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
                     -->
                     <forkMode>once</forkMode>
