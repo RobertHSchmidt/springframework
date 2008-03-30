@@ -16,6 +16,7 @@
 package org.springframework.config.java;
 
 import static org.junit.Assert.*;
+import static org.springframework.config.java.test.Assert.assertBeanDefinitionCount;
 
 import org.junit.After;
 import org.junit.Before;
@@ -139,7 +140,7 @@ public class LifecycleTests {
 		configurationProcessor.processClass(Config.class);
 		appCtx.refresh();
 
-		assertEquals(3, appCtx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(appCtx, 3);
 		assertEquals(0, AwareBean.INITIALIZED);
 
 		String name = "simple";

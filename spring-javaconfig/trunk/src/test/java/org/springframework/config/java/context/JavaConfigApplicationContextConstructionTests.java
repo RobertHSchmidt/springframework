@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.springframework.config.java.test.Assert.assertBeanDefinitionCount;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +66,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	public void testConstructionWithSingleClassAndSingleBasePackage() {
 		ctx = new JavaConfigApplicationContext(new Class<?>[] { SimpleConfiguration.class },
 				new String[] { "org/springframework/config/java/testing" });
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(5));
+		assertBeanDefinitionCount(ctx, 5);
 	}
 
 	// strange to think someone would want to do this, but it's legal
@@ -74,7 +75,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsLegal() {
 		ctx = new JavaConfigApplicationContext();
 		ctx.refresh();
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(0));
+		assertBeanDefinitionCount(ctx, 0);
 	}
 
 	@Test
@@ -111,7 +112,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	@Test
 	public void testConstructionWithMultipleClassNames() {
 		ctx = new JavaConfigApplicationContext(SimpleConfiguration.class, ComplexConfiguration.class);
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(7));
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	/**
@@ -122,7 +123,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	public void testConstructionWithSingleBasePackage() {
 		String packageName = ComplexConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(packageName);
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(2));
+		assertBeanDefinitionCount(ctx, 2);
 	}
 
 	@Test
@@ -131,7 +132,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 				.getName();
 		String packageName2 = org.springframework.config.java.complex.ComplexConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(packageName1, packageName2);
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
+		assertBeanDefinitionCount(ctx, 6);
 	}
 
 	@RunWith(Parameterized.class)
@@ -157,7 +158,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 		public void testConstructionWithWildcardBasePackage() {
 			context = new JavaConfigApplicationContext(basePackage);
 
-			assertThat(context.getBeanDefinitionCount(), equalTo(2));
+			assertBeanDefinitionCount(context, 2);
 		}
 	}
 
@@ -166,7 +167,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(new Class<?>[] { ComplexConfiguration.class }, new String[] { pkg1 });
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
+		assertBeanDefinitionCount(ctx, 6);
 	}
 
 	private ClassPathXmlApplicationContext createSimpleXmlApplicationContext() {

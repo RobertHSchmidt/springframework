@@ -15,7 +15,9 @@
  */
 package org.springframework.config.java.context;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.springframework.config.java.test.Assert.assertBeanDefinitionCount;
 
 import org.junit.After;
 import org.junit.Ignore;
@@ -63,7 +65,7 @@ public final class JavaConfigApplicationContextTests {
 		int classesInPackage = 2;
 		int beansInClasses = 2;
 
-		assertEquals(classesInPackage + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (classesInPackage + beansInClasses));
 	}
 
 	/**
@@ -74,7 +76,7 @@ public final class JavaConfigApplicationContextTests {
 	public void testScanningPackageDoesNotIncludeInnerConfigurationClasses() {
 		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/complex");
 
-		assertEquals(2, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, 2);
 	}
 
 	@Test
@@ -84,7 +86,7 @@ public final class JavaConfigApplicationContextTests {
 		int classesInPackage = 2;
 		int beansInClasses = 1;
 
-		assertEquals(classesInPackage + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (classesInPackage + beansInClasses));
 	}
 
 	// ------------------------------------------------------------------------
@@ -96,7 +98,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 2;
 		int beansInClasses = 2;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import(OtherConfiguration.class)
@@ -125,7 +127,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 2;
 		int beansInClasses = 3;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import(DataSourceConfig.class)
@@ -159,7 +161,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 3;
 		int beansInClasses = 3;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import(SecondLevel.class)
@@ -199,7 +201,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 3;
 		int beansInClasses = 2;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import( { LeftConfig.class, RightConfig.class })
@@ -267,7 +269,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 2;
 		int beansInClasses = 2;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Configuration
@@ -299,7 +301,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 0;
 		int beansInClasses = 0;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Test
@@ -310,7 +312,7 @@ public final class JavaConfigApplicationContextTests {
 		int configClasses = 2;
 		int beansInClasses = 2;
 
-		assertEquals(configClasses + beansInClasses, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	// ------------------------------------------------------------------------
@@ -321,7 +323,7 @@ public final class JavaConfigApplicationContextTests {
 		ctx.setBasePackages("org.springframework.config.java.context.forscanning.a");
 		ctx.refresh();
 
-		assertEquals(2, ctx.getBeanDefinitionCount());
+		assertBeanDefinitionCount(ctx, 2);
 	}
 
 	// TODO: complete this testing

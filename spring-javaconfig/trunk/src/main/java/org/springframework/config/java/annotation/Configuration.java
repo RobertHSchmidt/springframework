@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
 
 /**
@@ -80,5 +81,11 @@ public @interface Configuration {
 	 * Do we autowire with aspects from the enclosing factory scope?
 	 */
 	boolean useFactoryAspects() default false;
+
+	/**
+	 * Do we check {@link Required @Required} methods to make sure they've been
+	 * called?
+	 */
+	boolean checkRequired() default false;
 
 }
