@@ -1,13 +1,44 @@
 package issues;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import junit.framework.AssertionFailedError;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.aspects.RequiredAnnotationMethodInvocationMonitor;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * SJC-91 deals with a compatibility issue between JavaConfig and Spring Core -
+ * checking {@link Required @Required} annotations. This is difficult to do in
+ * JavaConfig because the user has programmatic control over the objects during
+ * dependency injection time. The only way to track whether Required methods
+ * have been invoked is to do bytecode weaving, and so this has been done using
+ * AspectJ
+ * 
+ * @see RequiredAnnotationMethodInvocationMonitor
+ * 
+ * IMPORTANT:
+ * 
+ * Some tests herein will fail if aspect weaving has not been performed. If
+ * failures are occuring in your IDE, you should turn on load time weaving with
+ * VM args:
+ * 
+ * -javaagent:/path/to/.m2/repository/aspectj/aspectjweaver/1.5.3/aspectjweaver-1.5.3.jar
+ * -Daj.weaving.verbose=true
+ * 
+ * If, on the other hand, failures occur via the maven build (which should
+ * always be doing build-time weaving), something more serious is going on.
+ * Either the aspectj-maven-plugin has gotten misconfigured or something is
+ * actually broken with processing Required annotations.
+ */
 public class Sjc91Tests {
 	private JavaConfigApplicationContext ctx;
 
@@ -16,11 +47,25 @@ public class Sjc91Tests {
 		ctx = new JavaConfigApplicationContext();
 	}
 
+	// -----------------------------------------------
+
 	@Test
 	public void valid() {
 		ctx.addConfigClass(ValidConfig.class);
 		ctx.refresh();
 	}
+
+	@Configuration(checkRequired = true)
+	static class ValidConfig {
+		public @Bean
+		Alice alice() {
+			Alice alice = new Alice();
+			alice.setLocation("tea party");
+			return alice;
+		}
+	}
+
+	// -----------------------------------------------
 
 	@Test(expected = BeanCreationException.class)
 	public void invalid() {
@@ -28,27 +73,163 @@ public class Sjc91Tests {
 		ctx.refresh();
 	}
 
+	@Configuration(checkRequired = true)
+	static class InvalidConfig {
+		public @Bean
+		Alice alice() {
+			Alice alice = new Alice();
+			// alice.setLocation("tea party");
+			return alice;
+		}
+	}
+
+	// -----------------------------------------------
+
+	@Test
+	public void checkRequiredExplicitlyFalse() {
+		ctx.addConfigClass(CheckRequiredExplicitlyFalseConfig.class);
+		ctx.refresh();
+	}
+
+	@Configuration(checkRequired = false)
+	static class CheckRequiredExplicitlyFalseConfig {
+		@Bean
+		public Alice alice() {
+			Alice alice = new Alice();
+			return alice;
+		}
+	}
+
+	// -----------------------------------------------
+
+	@Test
+	public void checkRequiredDefault() {
+		ctx.addConfigClass(CheckRequiredDefaultConfig.class);
+		ctx.refresh();
+	}
+
+	@Configuration
+	static class CheckRequiredDefaultConfig {
+		@Bean
+		public Alice alice() {
+			Alice alice = new Alice();
+			return alice;
+		}
+	}
+
+	// -----------------------------------------------
+
+	@Test
+	public void checkRequiredWithNoAnnotation() {
+		ctx.addConfigClass(CheckRequiredWithNoConfigurationAnnotationConfig.class);
+		ctx.refresh();
+	}
+
+	static class CheckRequiredWithNoConfigurationAnnotationConfig {
+		@Bean
+		public Alice alice() {
+			Alice alice = new Alice();
+			return alice;
+		}
+	}
+
+	// -----------------------------------------------
+
+	/**
+	 * The process for tracking whether required methods have been set on a
+	 * given bean must be fine-grained enough to differentiate between different
+	 * object instances
+	 */
+	@Test(expected = BeanCreationException.class)
+	public void multipleBeansOfSameType() {
+		ctx.addConfigClass(MultipleBeansOfSameTypeConfig.class);
+		ctx.refresh();
+	}
+
+	@Configuration(checkRequired = true)
+	static class MultipleBeansOfSameTypeConfig {
+
+		@Bean
+		public Alice alice1() {
+			Alice alice = new Alice();
+			alice.setLocation("queen's court");
+			return alice;
+		}
+
+		@Bean
+		public Alice alice2() {
+			return new Alice();
+		}
+
+		@Bean
+		public Alice alice3() {
+			Alice alice = new Alice();
+			alice.setLocation("looking glass");
+			return alice;
+		}
+	}
+
+	// -----------------------------------------------
+
+	/**
+	 * JavaConfig and Spring Core should throw the same exception and message
+	 * when detecting uncalled Required methods.
+	 */
+	@Test
+	public void compareRequiredAnnotationExceptionMessages() {
+		Throwable coreEx = getCoreSpringRequiredAnnotationException();
+		Throwable sjcEx = getJavaConfigRequiredAnnotationException();
+
+		// ensure that the exception thrown by both frameworks is the same
+		// if it is not, also dump the stack trace for clarity to the developer
+		if (!coreEx.getClass().equals(sjcEx.getClass())) {
+			sjcEx.printStackTrace();
+			assertEquals(coreEx.getClass(), sjcEx.getClass());
+		}
+
+		String coreMsg = coreEx.getMessage();
+		String sjcMsg = sjcEx.getMessage();
+
+		// If core spring changes its required-property message, JavaConfig
+		// should change its own as well (not likely to occur, of course).
+		assertEquals("Core Spring message is different than expected",
+				"Property 'location' is required for bean 'alice'", coreMsg);
+		assertEquals("JavaConfig message is different than expected",
+				"Method 'setLocation' is required for bean 'alice'", sjcMsg);
+	}
+
+	private Throwable getCoreSpringRequiredAnnotationException() {
+		try {
+			new ClassPathXmlApplicationContext("Sjc91Tests.xml", getClass());
+		}
+		catch (BeanCreationException t) {
+			Throwable rootCause = t.getRootCause();
+			assertEquals("Root cause of exception in Core Spring should have been a BeanInitializationException",
+					BeanInitializationException.class, rootCause.getClass());
+			return rootCause;
+		}
+		catch (Throwable t) {
+			fail("Core Spring should have thrown a BeanCreationException, but actually got: " + t);
+		}
+
+		throw new AssertionFailedError("Core Spring should have thrown an exception");
+	}
+
+	private Throwable getJavaConfigRequiredAnnotationException() {
+		try {
+			ctx.addConfigClass(InvalidConfig.class);
+			ctx.refresh();
+		}
+		catch (Throwable t) {
+			return t.getCause();
+		}
+
+		throw new AssertionFailedError("JavaConfig should have thrown an exception");
+	}
+
 }
 
-@Configuration(checkRequired = true)
-class ValidConfig {
-	public @Bean
-	Alice alice() {
-		Alice alice = new Alice();
-		alice.setLocation("tea party");
-		return alice;
-	}
-}
-
-@Configuration(checkRequired = true)
-class InvalidConfig {
-	public @Bean
-	Alice alice() {
-		Alice alice = new Alice();
-		// alice.setLocation("tea party");
-		return alice;
-	}
-}
+// --------------------------------------
 
 class Alice {
 	private String location;
