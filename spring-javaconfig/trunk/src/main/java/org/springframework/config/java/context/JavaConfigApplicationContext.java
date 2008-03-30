@@ -343,6 +343,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	protected void finishRefresh() {
 		closedForConfiguration = true;
+		super.finishRefresh();
 	}
 
 	@Override

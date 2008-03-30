@@ -398,6 +398,18 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 			enhanceConfigurationClassAndUpdateBeanDefinition(configurationClass, configurationBeanName);
 
+			// TODO: extract method
+			Configuration config = configurationClass.getAnnotation(Configuration.class);
+			if (config != null && config.checkRequired() == true) {
+				RootBeanDefinition requiredAnnotationPostProcessor = new RootBeanDefinition();
+				Class<?> beanClass = RequiredAnnotationBeanPostProcessor.class;
+				String beanName = beanClass.getName() + "#0";
+				requiredAnnotationPostProcessor.setBeanClass(beanClass);
+				requiredAnnotationPostProcessor.setResourceDescription("ensures @Required methods have been invoked");
+				((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(beanName,
+						requiredAnnotationPostProcessor);
+			}
+
 			generateBeanDefinitions(configurationBeanName, configurationClass);
 
 			return;

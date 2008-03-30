@@ -18,16 +18,13 @@ package org.springframework.config.java;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.weaver.tools.PointcutPrimitive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.framework.Advised;
@@ -213,10 +210,6 @@ public class AspectJConfigurationProcessorTests {
 
 	@Test
 	public void testPointcutExpressionWithPointcutReference() throws Exception {
-		Set<PointcutPrimitive> supportedPrimitives = new HashSet<PointcutPrimitive>();
-		supportedPrimitives.add(PointcutPrimitive.EXECUTION);
-		supportedPrimitives.add(PointcutPrimitive.ARGS);
-		supportedPrimitives.add(PointcutPrimitive.REFERENCE);
 		// TODO can hold state in pointcut parser
 		// PointcutParser parser = new PointcutParser(supportedPrimitives);
 		// PointcutExpression expression = parser.parsePointcutExpression("foo",

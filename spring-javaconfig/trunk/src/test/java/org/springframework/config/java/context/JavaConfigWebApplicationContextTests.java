@@ -17,6 +17,7 @@ package org.springframework.config.java.context;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.springframework.config.java.test.Assert.assertBeanDefinitionCount;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +62,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { "com.foo.NotExist" });
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(0));
+		assertBeanDefinitionCount(ctx, 0);
 	}
 
 	// this should process the inner class and the outer class, creating a
@@ -107,7 +108,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(classes);
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(2));
+		assertBeanDefinitionCount(ctx, 2);
 	}
 
 	@Test
@@ -115,7 +116,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { class1, class1 });
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(2));
+		assertBeanDefinitionCount(ctx, 2);
 	}
 
 	@Test
@@ -125,7 +126,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { ComplexConfiguration.class.getName(), pkg1 });
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
+		assertBeanDefinitionCount(ctx, 6);
 	}
 
 	@Test
@@ -134,7 +135,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { "org.springframework.config.java.*ple*" });
 		ctx.refresh();
 
-		assertThat(ctx.getBeanDefinitionCount(), equalTo(6));
+		assertBeanDefinitionCount(ctx, 6);
 	}
 
 	@Configuration

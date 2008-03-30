@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.javaconfig</groupId>
     <artifactId>spring-javaconfig</artifactId>
@@ -141,6 +140,40 @@
         </extensions>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <configuration>
+                  <source>1.5</source>
+                  <target>1.5</target>
+                </configuration>
+                <executions>
+                  <execution>
+                    <id>compile</id>
+                    <configuration>
+                      <includes>
+                        <include>org/springframework/config/java/aspects/*.java</include>
+                      </includes>
+                    </configuration>
+                    <goals>
+                      <goal>compile</goal>
+                    </goals>
+                  </execution>
+                  <execution>
+                    <id>test-compile</id>
+                    <configuration>
+                      <excludes>
+                        <exclude>org/springframework/config/java/**/*.java</exclude>
+                        <exclude>issues/Sjc57Tests.java</exclude>
+                        <exclude>issues/Sjc55Tests.java</exclude>
+                      </excludes>
+                    </configuration>
+                    <goals>
+                      <goal>test-compile</goal>
+                    </goals>
+                  </execution>
+               </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.5</source>
@@ -152,6 +185,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
+                    <!-- enable this line for load-time weaving (and comment out the aspectj-maven-plugin <plugin/> above)
+                    <argLine>-javaagent:${settings.localRepository}/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
+                    -->
                     <forkMode>once</forkMode>
                     <includes>
                         <include>**/*Tests.java</include>
@@ -307,10 +343,12 @@
                     <groupId>avalon-framework</groupId>
                     <artifactId>avalon-framework</artifactId>
                 </exclusion>
+                <!--
                 <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
+                -->
             </exclusions>
             <optional>false</optional>
         </dependency>
@@ -379,19 +417,19 @@
         <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjlib</artifactId>
-            <version>1.5.3</version>
+            <version>${aspectj.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-            <version>1.5.3</version>
+            <version>${aspectj.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.5.3</version>
+            <version>${aspectj.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -403,7 +441,7 @@
 
         <!-- test-scoped dependencies -->
         <dependency>
-            <!-- required in order to make available @javax.annotation.Required -->
+            <!-- required in order to make available @javax.annotation.Resource -->
             <groupId>javaee</groupId>
             <artifactId>javaee-api</artifactId>
             <version>5</version>
@@ -532,5 +570,6 @@
     </repositories>
     <properties>
         <spring.version>2.5</spring.version>
+        <aspectj.version>1.5.3</aspectj.version>
     </properties>
 </project>
