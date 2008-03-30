@@ -202,6 +202,15 @@ public class Sjc91Tests {
 
 	// -----------------------------------------------
 
+	@Test
+	public void enablingCheckRequiredWithoutAspectJWeavingShouldThrowHelpfulException() {
+		// not really possible at this time. Relying on the user reading the
+		// reference docs or javadoc on Configuration#checkRequired() to
+		// understand that weaving must be enabled.
+	}
+
+	// -----------------------------------------------
+
 	/**
 	 * JavaConfig and Spring Core should throw the same exception and message
 	 * when detecting uncalled Required methods.
@@ -257,7 +266,6 @@ public class Sjc91Tests {
 
 		throw new AssertionFailedError("JavaConfig should have thrown an exception");
 	}
-
 }
 
 // --------------------------------------
