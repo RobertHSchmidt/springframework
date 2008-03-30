@@ -23,30 +23,36 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 /**
- * Not thread-safe!
- * 
  * @author Chris Beams
  */
 @Aspect
 public class RequiredAnnotationMethodInvocationMonitor {
-	private static final Set<String> methodsInvoked = new HashSet<String>();
 
-	private static boolean instantiatedByLoadTimeWeaver = false;
+	public static class RequiredMethodTracker extends ThreadLocal<Set<String>> {
+
+		@Override
+		protected Set<String> initialValue() {
+			return new HashSet<String>();
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName();
+		}
+
+	}
+
+	private static final RequiredMethodTracker requiredMethodTracker = new RequiredMethodTracker();
 
 	public RequiredAnnotationMethodInvocationMonitor() {
-		if (instantiatedByLoadTimeWeaver)
-			throw new IllegalStateException("should be instantiated once and only once by aspectj weaver");
-
 		System.out.println("what thread is calling me? " + Thread.currentThread().getName());
-
-		instantiatedByLoadTimeWeaver = true;
 	}
 
 	@Before("execution(@org.springframework.beans.factory.annotation.Required * *(..))")
 	public void logRequiredMethodInvocation(JoinPoint jp) {
 		System.out.println("logging method invocation: " + jp);
 		String methodName = fqMethodName(jp.getSignature());
-		methodsInvoked.add(methodName);
+		requiredMethodTracker.get().add(methodName);
 	}
 
 	private static String fqMethodName(Signature signature) {
@@ -62,7 +68,7 @@ public class RequiredAnnotationMethodInvocationMonitor {
 	}
 
 	private static boolean hasMethodBeenInvoked(Method requiredMethod) {
-		return methodsInvoked.contains(fqMethodName(requiredMethod));
+		return requiredMethodTracker.get().contains(fqMethodName(requiredMethod));
 	}
 
 	public static void interrogateRequiredMethods(Object bean) {
@@ -93,11 +99,8 @@ public class RequiredAnnotationMethodInvocationMonitor {
 		}
 
 		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-			if (doInterrogate) {
-				if (!instantiatedByLoadTimeWeaver)
-					throw new IllegalStateException("load time weaving has not been enabled!");
+			if (doInterrogate)
 				interrogateRequiredMethods(bean);
-			}
 
 			return bean;
 		}
@@ -107,7 +110,7 @@ public class RequiredAnnotationMethodInvocationMonitor {
 		}
 
 		public void onApplicationEvent(ApplicationEvent event) {
-			methodsInvoked.clear();
+			requiredMethodTracker.get().clear();
 		}
 
 		public void setApplicationContext(ApplicationContext ctx) throws BeansException {

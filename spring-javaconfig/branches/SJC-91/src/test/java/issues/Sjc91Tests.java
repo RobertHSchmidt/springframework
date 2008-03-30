@@ -30,7 +30,7 @@ public class Sjc91Tests {
 
 }
 
-@Configuration(checkRequired = false)
+@Configuration(checkRequired = true)
 class ValidConfig {
 	public @Bean
 	Alice alice() {
