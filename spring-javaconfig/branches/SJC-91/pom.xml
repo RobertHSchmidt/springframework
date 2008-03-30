@@ -156,16 +156,17 @@
                   <execution>
                     <id>test-compile</id>
                     <configuration>
+                      <!--
                       <weaveMainSourceFolder>true</weaveMainSourceFolder>
                       <includes>
                         <include>**/RequiredAnnotationMethodInvocationMonitor.java</include>
                       </includes>
-                      <!--
+                      -->
                       <excludes>
                         <exclude>org/springframework/config/java/**/*.java</exclude>
                         <exclude>issues/Sjc57Tests.java</exclude>
+                        <exclude>issues/Sjc55Tests.java</exclude>
                       </excludes>
-                      -->
                     </configuration>
                     <goals>
                       <goal>test-compile</goal>
