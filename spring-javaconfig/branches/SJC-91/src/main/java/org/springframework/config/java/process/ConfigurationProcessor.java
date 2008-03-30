@@ -43,7 +43,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.aspects.RequiredAnnotationMethodInvocationMonitor;
 import org.springframework.config.java.core.AutoBeanMethodProcessor;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
@@ -406,10 +405,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			boolean doInterrogate = (config != null && config.checkRequired() == true);
 
 			RootBeanDefinition requiredAnnotationPostProcessor = new RootBeanDefinition();
-			Class<?> beanClass = RequiredAnnotationMethodInvocationMonitor.PostProcessor.class;
+			Class<?> beanClass = RequiredAnnotationBeanPostProcessor.class;
 			String beanName = beanClass.getName() + "#0";
 			requiredAnnotationPostProcessor.setBeanClass(beanClass);
-			requiredAnnotationPostProcessor.setResourceDescription("ensures any @Required properties have been set");
+			requiredAnnotationPostProcessor.setResourceDescription("ensures @Required methods have been invoked");
 			requiredAnnotationPostProcessor.getPropertyValues().addPropertyValue("interrogateRequiredMethods",
 					doInterrogate);
 			((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(beanName,

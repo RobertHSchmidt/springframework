@@ -1,7 +1,6 @@
 package issues;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import junit.framework.AssertionFailedError;
 
 import org.junit.Before;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.aspects.RequiredAnnotationMethodInvocationMonitor;
+import org.springframework.config.java.aspects.RequiredMethodInvocationTracker;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -23,7 +22,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * have been invoked is to do bytecode weaving, and so this has been done using
  * AspectJ
  * 
- * @see RequiredAnnotationMethodInvocationMonitor
+ * @see RequiredMethodInvocationTracker
  * 
  * IMPORTANT:
  * 
@@ -50,16 +49,17 @@ public class Sjc91Tests {
 	// -----------------------------------------------
 
 	@Test
-	public void valid() {
-		ctx.addConfigClass(ValidConfig.class);
+	public void completeBeanInjectionShouldNotThrow() {
+		ctx.addConfigClass(CompleteBeanInjectionConfig.class);
 		ctx.refresh();
 	}
 
 	@Configuration(checkRequired = true)
-	static class ValidConfig {
-		public @Bean
-		Alice alice() {
+	static class CompleteBeanInjectionConfig {
+		@Bean
+		public Alice alice() {
 			Alice alice = new Alice();
+			// set the required method - this makes it 'complete'
 			alice.setLocation("tea party");
 			return alice;
 		}
@@ -68,16 +68,17 @@ public class Sjc91Tests {
 	// -----------------------------------------------
 
 	@Test(expected = BeanCreationException.class)
-	public void invalid() {
-		ctx.addConfigClass(InvalidConfig.class);
+	public void incompleteBeanInjectionShouldThrow() {
+		ctx.addConfigClass(IncompleteBeanInjectionConfig.class);
 		ctx.refresh();
 	}
 
 	@Configuration(checkRequired = true)
-	static class InvalidConfig {
-		public @Bean
-		Alice alice() {
+	static class IncompleteBeanInjectionConfig {
+		@Bean
+		public Alice alice() {
 			Alice alice = new Alice();
+			// don't set the required method - this makes it incomplete
 			// alice.setLocation("tea party");
 			return alice;
 		}
@@ -120,7 +121,7 @@ public class Sjc91Tests {
 	// -----------------------------------------------
 
 	@Test
-	public void checkRequiredWithNoAnnotation() {
+	public void checkRequiredWithNoConfigurationAnnotation() {
 		ctx.addConfigClass(CheckRequiredWithNoConfigurationAnnotationConfig.class);
 		ctx.refresh();
 	}
@@ -156,6 +157,7 @@ public class Sjc91Tests {
 			return alice;
 		}
 
+		// this one should cause an exception
 		@Bean
 		public Alice alice2() {
 			return new Alice();
@@ -167,6 +169,35 @@ public class Sjc91Tests {
 			alice.setLocation("looking glass");
 			return alice;
 		}
+	}
+
+	// -----------------------------------------------
+
+	/**
+	 * Create two application contexts, where the first initializes a bean of
+	 * type Alice successfully (sets all required methods) and follow this up
+	 * with a second context that misconfigures an Alice bean. Expect an
+	 * exception from the second. This test proves that the registry tracking
+	 * mechanism is fine-grained enough to know the difference between different
+	 * object instances. It is similar to the {@link #multipleBeansOfSameType()}
+	 * test.
+	 */
+	@Test
+	public void subsequentApplicationContextsShouldNotConflict() {
+		boolean threw = false;
+
+		// first should be fine
+		new JavaConfigApplicationContext(CompleteBeanInjectionConfig.class);
+
+		// second should throw
+		try {
+			new JavaConfigApplicationContext(IncompleteBeanInjectionConfig.class);
+		}
+		catch (BeanCreationException ex) {
+			threw = true;
+		}
+
+		assertTrue("second context should have thrown", threw);
 	}
 
 	// -----------------------------------------------
@@ -217,7 +248,7 @@ public class Sjc91Tests {
 
 	private Throwable getJavaConfigRequiredAnnotationException() {
 		try {
-			ctx.addConfigClass(InvalidConfig.class);
+			ctx.addConfigClass(IncompleteBeanInjectionConfig.class);
 			ctx.refresh();
 		}
 		catch (Throwable t) {
