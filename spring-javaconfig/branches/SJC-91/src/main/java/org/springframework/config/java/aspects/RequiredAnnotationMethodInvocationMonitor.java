@@ -31,17 +31,14 @@ public class RequiredAnnotationMethodInvocationMonitor {
 
 	public static class InvokedRequiredMethods extends ThreadLocal<Set<String>> {
 
+		@Override
+		protected Set<String> initialValue() {
+			System.out.println("THREAD calling initialValue(): " + Thread.currentThread().getName());
+			return new HashSet<String>();
+		}
+
 		public void registerMethodInvocation(Object bean, String className, String methodName) {
-			get().add(fqMethodName(bean, className, methodName));
-		}
-
-		public boolean hasMethodBeenInvoked(Object bean, Method requiredMethod) {
-			return get().contains(
-					fqMethodName(bean, requiredMethod.getDeclaringClass().getName(), requiredMethod.getName()));
-		}
-
-		private String fqMethodName(Object bean, String className, String methodName) {
-			return System.identityHashCode(bean) + ":" + className + "." + methodName;
+			get().add(qualifyMethodName(bean, className, methodName));
 		}
 
 		public void interrogateRequiredMethods(final Object bean, final String beanName) {
@@ -65,10 +62,17 @@ public class RequiredAnnotationMethodInvocationMonitor {
 			});
 		}
 
-		@Override
-		protected Set<String> initialValue() {
-			System.out.println("THREAD calling initialValue(): " + Thread.currentThread().getName());
-			return new HashSet<String>();
+		public void clear() {
+			get().clear();
+		}
+
+		private boolean hasMethodBeenInvoked(Object bean, Method requiredMethod) {
+			return get().contains(
+					qualifyMethodName(bean, requiredMethod.getDeclaringClass().getName(), requiredMethod.getName()));
+		}
+
+		private String qualifyMethodName(Object bean, String className, String methodName) {
+			return System.identityHashCode(bean) + ":" + className + "." + methodName;
 		}
 
 		@Override
@@ -107,7 +111,7 @@ public class RequiredAnnotationMethodInvocationMonitor {
 		}
 
 		public void onApplicationEvent(ApplicationEvent event) {
-			invokedRequiredMethods.get().clear();
+			invokedRequiredMethods.clear();
 		}
 
 		public void setApplicationContext(ApplicationContext ctx) throws BeansException {
