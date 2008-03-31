@@ -44,13 +44,19 @@ public class Configuration {
 	public Configuration(Properties userProps) {
 		home = userProps.getProperty(HOME_KEY);
 		host = userProps.getProperty(HOST_KEY);
+		port = Integer.valueOf(userProps.getProperty(PORT_KEY)).intValue();
+
+		home.trim();
+		host.trim();
+
 		try {
-			host = InetAddress.getByName(host).getHostAddress();
+			// get localhost
+			if (host.length() < 1)
+				host = InetAddress.getLocalHost().getHostName();
 		}
 		catch (UnknownHostException ex) {
-			throw new IllegalArgumentException("unknown host " + host, ex);
+			throw (RuntimeException) new IllegalArgumentException("unknown host " + host).initCause(ex);
 		}
-		port = Integer.valueOf(userProps.getProperty(PORT_KEY)).intValue();
 	}
 
 	/**

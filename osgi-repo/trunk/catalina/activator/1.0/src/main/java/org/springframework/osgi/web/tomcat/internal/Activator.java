@@ -101,7 +101,8 @@ public class Activator implements BundleActivator {
 					server = createCatalinaServer(config);
 
 					server.start();
-					log.info("Succesfully started " + ServerInfo.getServerInfo());
+					log.info("Succesfully started " + ServerInfo.getServerInfo() + " @ " + config.getHost() + ":"
+							+ config.getPort() + ", home = " + config.getHome());
 
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
@@ -158,14 +159,6 @@ public class Activator implements BundleActivator {
 		// add listener(s) (removed since it only works on 6.0.x+ )
 		// embedded.addLifecycleListener(new JasperListener());
 
-		// create engine
-		Engine engine = embedded.createEngine();
-		engine.setDefaultHost(configuration.getHost());
-		engine.setName("Catalina");
-
-		// engine -> server
-		embedded.addEngine(engine);
-
 		// create host
 		StandardHost host = new StandardHost();
 		host.setName(configuration.getHost());
@@ -178,11 +171,21 @@ public class Activator implements BundleActivator {
 		//host.setWorkDir(workDir);
 		host.setUnpackWARs(false);
 
+		// create engine
+		Engine engine = embedded.createEngine();
+		engine.setDefaultHost(host.getName());
+		engine.setName("Catalina");
+
 		// add the host -> engine
 		engine.addChild(host);
 
+		// engine -> server
+		embedded.addEngine(engine);
+
 		// create a plain HTTP server (no HTTPS)
 		Connector http = embedded.createConnector(configuration.getHost(), configuration.getPort(), false);
+		http.setEnableLookups(false);
+
 		embedded.addConnector(http);
 
 		// everything is configured, return the server
