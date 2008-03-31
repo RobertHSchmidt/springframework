@@ -16,6 +16,8 @@
 
 package org.springframework.osgi.web.jetty.internal;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -74,6 +76,9 @@ public class Activator implements BundleActivator {
 
 			public void run() {
 				log.info("Starting Jetty " + Server.getVersion() + " ...", null, null);
+
+				// create logging directory first
+				createLoggingDirectory();
 
 				// default startup procedure
 				ClassLoader cl = Activator.class.getClassLoader();
@@ -148,7 +153,7 @@ public class Activator implements BundleActivator {
 	private ServiceRegistration publishServerAsAService(Server server) {
 		Properties props = new Properties();
 		// put some extra properties to easily identify the service
-		props.put(Constants.SERVICE_VENDOR, "Spring Framework");
+		props.put(Constants.SERVICE_VENDOR, "Spring Dynamic Modules");
 		props.put(Constants.SERVICE_DESCRIPTION, "Jetty " + Server.getVersion());
 		props.put(Constants.BUNDLE_VERSION, Server.getVersion());
 		props.put(Constants.BUNDLE_NAME, bundleContext.getBundle().getSymbolicName());
@@ -161,5 +166,20 @@ public class Activator implements BundleActivator {
 			Attributes.class.getName(), HandlerContainer.class.getName(), Handler.class.getName(),
 			LifeCycle.class.getName() };
 		return bundleContext.registerService(classes, server, props);
+	}
+
+	private void createLoggingDirectory() {
+		try {
+			File logs = new File(".", "logs");
+			if (!logs.exists())
+				logs.mkdir();
+			String path = logs.getCanonicalPath();
+			System.setProperty("jetty.logs", path);
+			log.info("Created Jetty logging folder " + path, null, null);
+		}
+		catch (IOException ex) {
+			log.warn("Cannot create logging folder", ex);
+		}
+
 	}
 }
