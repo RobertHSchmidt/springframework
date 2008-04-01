@@ -15,12 +15,12 @@
     <section>
       <title>Manual download</title>
 
-      <para>Please visit <ulink url="http://www.springframework.org/javaconfig"/>
+      <para>Please visit <ulink url="&homepageUrl;"/>
       where you'll find links to zip file distributions.  Three distributions are
       available:<orderedlist>
-        <listitem><literal>spring-javaconfig-&version;.zip</literal></listitem>
-        <listitem><literal>spring-javaconfig-&version;-with-minimal-dependencies.zip</literal></listitem>
-        <listitem><literal>spring-javaconfig-&version;-with-dependencies.zip</literal></listitem>
+        <listitem><literal>&artifactId;-&version;.zip</literal></listitem>
+        <listitem><literal>&artifactId;-&version;-with-minimal-dependencies.zip</literal></listitem>
+        <listitem><literal>&artifactId;-&version;-with-dependencies.zip</literal></listitem>
       </orderedlist></para>
 
       <para>The <literal>-with-minimal-dependencies</literal> zip contains only those
@@ -36,8 +36,8 @@
       JavaConfig is as simple as adding the following to your POM
       <programlisting>&lt;dependencies&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;groupId&gt;&groupId;&lt;/groupId&gt;
+        &lt;artifactId&gt;&artifactId;&lt;/artifactId&gt;
         &lt;version&gt;&version;&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
