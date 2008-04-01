@@ -13,7 +13,7 @@
         Spring's versatility and metadata based internal handling of bean definitions means alternatives to XML config
         are easy to implement.
     </description>
-    <url>http://www.springframework.org/javaconfig</url>
+    <url>http://springframework.org/javaconfig</url>
     <issueManagement>
         <system>JIRA</system>
         <url>http://jira.springframework.com/browse/SJC</url>
@@ -241,6 +241,18 @@
                         <entity>
                             <name>version</name>
                             <value>${pom.version}</value>
+                        </entity>
+                        <entity>
+                            <name>groupId</name>
+                            <value>${pom.groupId}</value>
+                        </entity>
+                        <entity>
+                            <name>artifactId</name>
+                            <value>${pom.artifactId}</value>
+                        </entity>
+                        <entity>
+                            <name>homepageUrl</name>
+                            <value>${pom.url}</value>
                         </entity>
                         <entity>
                             <name>refdoc</name>

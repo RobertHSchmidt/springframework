@@ -24,8 +24,8 @@
     <para>
       <programlisting>&lt;dependencies&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;groupId&gt;&groupId;&lt;/groupId&gt;
+        &lt;artifactId&gt;&artifactId;&lt;/artifactId&gt;
         &lt;version&gt;&version;&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
@@ -44,8 +44,8 @@
     <para>
       <programlisting>&lt;dependencies&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.javaconfig&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-javaconfig&lt;/artifactId&gt;
+        &lt;groupId&gt;&groupId;&lt;/groupId&gt;
+        &lt;artifactId&gt;&artifactId;&lt;/artifactId&gt;
         &lt;version&gt;&version;&lt;/version&gt;
     &lt;/dependency&gt;
     &lt;dependency&gt;
