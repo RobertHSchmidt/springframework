@@ -1,23 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.springframework.config.java</groupId>
+    <parent>
+        <groupId>org.springframework.config.java</groupId>
+        <artifactId>spring-javaconfig-samples</artifactId>
+        <version>1.0.0.m4-SNAPSHOT</version>
+    </parent>
+    <name>Spring JavaConfig Samples: @Required Processing</name>
     <artifactId>spring-javaconfig-samples-atrequired</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0.m4-SNAPSHOT</version>
-    <name>Spring JavaConfig Samples: @Required Processing</name>
-
     <build>
         <plugins>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-
             <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -44,86 +37,56 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.3</version>
                 <configuration>
                     <!-- enable this line for load-time weaving (and comment out the aspectj-maven-plugin <plugin/> above)
                     -->
-                        <argLine>-javaagent:${settings.localRepository}/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
-                    <forkMode>once</forkMode>
-                    <includes>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/Abstract*.java</exclude>
-                    </excludes>
-                    <systemProperties>
-                        <!-- The following is a workaround for an issue with Cobertura where reports always
-                            result in 100% coverage. See http://jira.codehaus.org/browse/MCOBERTURA-61 -->
-                        <property>
-                            <name>net.sourceforge.cobertura.datafile</name>
-                            <value>target/cobertura/cobertura.ser</value>
-                        </property>
-                    </systemProperties>
+                    <argLine>-javaagent:${settings.localRepository}/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>2.5.2</version>
+            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.javaconfig</groupId>
             <artifactId>spring-javaconfig</artifactId>
-            <version>1.0.0.m4-SNAPSHOT</version>
+            <version>${pom.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjlib</artifactId>
-            <version>1.5.3</version>
+            <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-            <version>1.5.3</version>
+            <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.5.3</version>
+            <version>${aspectj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.12</version>
+            <version>${log4j.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
-    <repositories>
-        <repository>
-            <id>spring-milestone</id>
-            <name>Spring Milestone Repository</name>
-            <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
-        </repository>
-    </repositories>
-
-    <properties>
-        <aspectj.version>1.5.3</aspectj.version>
-    </properties>
 </project>
