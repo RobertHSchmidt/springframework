@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.javaconfig</groupId>
     <artifactId>spring-javaconfig</artifactId>
@@ -7,10 +8,10 @@
     <name>Spring JavaConfig</name>
     <version>1.0.0.m4-SNAPSHOT</version>
     <description>
-        The Spring JavaConfig project provides a type-safe, pure-Java option for configuring Spring
-        Application Contexts. While most people currently use XML to configure bean definitions in their Application
-        Contexts, Spring's versatility and metadata based internal handling of bean definitions means alternatives to
-        XML config are easy to implement.
+        The Spring JavaConfig project provides a type-safe, pure-Java option for configuring Spring Application
+        Contexts. While most people currently use XML to configure bean definitions in their Application Contexts,
+        Spring's versatility and metadata based internal handling of bean definitions means alternatives to XML config
+        are easy to implement.
     </description>
     <url>http://www.springframework.org/javaconfig</url>
     <issueManagement>
@@ -66,8 +67,12 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk</connection>
-        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk</developerConnection>
+        <connection>
+            scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/spring-javaconfig/trunk
+        </developerConnection>
         <url>http://fisheye3.cenqua.com/browse/springframework/spring-javaconfig/trunk</url>
     </scm>
     <organization>
@@ -75,11 +80,11 @@
         <url>http://www.springframework.org</url>
     </organization>
     <profiles>
-    <!-- profile used for building:
-         1) spring-javaconfig-${version}.zip (minimal)
-         2) spring-javaconfig-${version}-with-dependencies.zip
-         2) spring-javaconfig-${version}-with-minimal-dependencies.zip
-         execute with `mvn -P release javadoc:javadoc docbkx:generate-pdf docbkx:generate-html install` -->
+        <!-- profile used for building:
+            1) spring-javaconfig-${version}.zip (minimal)
+            2) spring-javaconfig-${version}-with-dependencies.zip
+            2) spring-javaconfig-${version}-with-minimal-dependencies.zip
+            execute with `mvn -P release javadoc:javadoc docbkx:generate-pdf docbkx:generate-html install` -->
         <profile>
             <id>release</id>
             <build>
@@ -120,7 +125,7 @@
                                 </goals>
                                 <configuration>
                                     <descriptors>
-                                      <descriptor>src/assembly/with-dependencies.xml</descriptor>
+                                        <descriptor>src/assembly/with-dependencies.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -261,7 +266,8 @@
                                 <include name="**/*.jpg" />
                             </fileset>
                         </copy>
-                        <move file="target/site/reference/pdf/index.pdf" tofile="target/site/reference/pdf/spring-javaconfig-reference.pdf" failonerror="false" />
+                        <move file="target/site/reference/pdf/index.pdf"
+                            tofile="target/site/reference/pdf/spring-javaconfig-reference.pdf" failonerror="false" />
                     </postProcess>
                 </configuration>
             </plugin>
@@ -307,10 +313,10 @@
                     <artifactId>avalon-framework</artifactId>
                 </exclusion>
                 <!--
-                <exclusion>
+                    <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
-                </exclusion>
+                    </exclusion>
                 -->
             </exclusions>
             <optional>false</optional>
