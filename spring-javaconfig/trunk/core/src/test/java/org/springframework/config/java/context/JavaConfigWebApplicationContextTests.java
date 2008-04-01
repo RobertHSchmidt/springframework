@@ -26,7 +26,6 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.complex.ComplexConfiguration;
 import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.servlet.DispatcherServlet;
 
 public class JavaConfigWebApplicationContextTests {
 
@@ -94,8 +93,9 @@ public class JavaConfigWebApplicationContextTests {
 	/**
 	 * Tests that a JavaConfigWebApplicationContext must have refresh() called
 	 * on it before being used. refresh() is called as part of the lifecycle of
-	 * {@link DispatcherServlet} and {@link ContextLoaderListener}. Typically
-	 * users would not manually instantiate this class.
+	 * {@link org.springframework.web.servlet.DispatcherServlet} and
+	 * {@link ContextLoaderListener}. Typically users would not manually
+	 * instantiate this class.
 	 */
 	@Test(expected = IllegalStateException.class)
 	public void testManualRefreshRequired() {
