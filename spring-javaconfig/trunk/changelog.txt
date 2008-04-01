@@ -3,6 +3,19 @@ SPRING JAVACONFIG CHANGELOG
 http://springframework.org/javaconfig
 
 
+Changes in version 1.0.0.m4 (2008-??-??)
+--------------------------------------
+
+General
+* changed maven groupId to match root package (org.springframework.javaconfig -> org.springframework.config.java)
+* added support for checking @Required parameters (requires AspectJ weaving)
+* added META-INF/aop.xml to support AspectJ load-time-weaving (see above item)
+* modularized Maven build to support sub-projects.  See samples/atrequired for an example of how to check @Required
+
+Package org.springframework.config.java.aspects
+* added this new package to contain framework aspects.  Currently contains just one: RequiredMethodInvocationTracker
+
+
 Changes in version 1.0.0.m3 (2008-03-26)
 --------------------------------------
 
