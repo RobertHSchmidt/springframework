@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <name>Spring JavaConfig</name>
     <groupId>org.springframework.config.java</groupId>
     <artifactId>spring-javaconfig-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Spring JavaConfig</name>
     <version>1.0.0.m4-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <description>
         The Spring JavaConfig project provides a type-safe, pure-Java option for configuring Spring Application
         Contexts. While most people currently use XML to configure bean definitions in their Application Contexts,
         Spring's versatility and metadata based internal handling of bean definitions means alternatives to XML config
         are easy to implement.
     </description>
-    <url>http://www.springframework.org/javaconfig</url>
+    <url>http://springframework.org/javaconfig</url>
     <issueManagement>
         <system>JIRA</system>
         <url>http://jira.springframework.com/browse/SJC</url>
@@ -79,12 +79,42 @@
         <name>Spring Framework</name>
         <url>http://www.springframework.org</url>
     </organization>
-
     <modules>
         <module>core</module>
         <module>samples</module>
     </modules>
-
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.aws</groupId>
+                <artifactId>spring-aws-maven</artifactId>
+                <version>1.2.2</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/Abstract*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <distributionManagement>
         <downloadUrl>http://www.springframework.org/javaconfig</downloadUrl>
         <repository>
@@ -134,5 +164,7 @@
     <properties>
         <spring.version>2.5</spring.version>
         <aspectj.version>1.5.3</aspectj.version>
+        <log4j.version>1.2.12</log4j.version>
+        <junit.version>4.4</junit.version>
     </properties>
 </project>
