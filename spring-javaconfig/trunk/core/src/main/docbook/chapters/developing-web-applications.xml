@@ -13,10 +13,6 @@
     no Spring XML bean definitions whatsoever:
 
     <programlisting>&lt;web-app&gt;
-    <lineannotation>&lt;!-- Bootstrap the root application context as usual using <literal>ContextLoaderListener</literal> --&gt;</lineannotation>
-    &lt;listener&gt;
-        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
-    &lt;/listener&gt;
     <lineannotation>&lt;!-- Configure <literal>ContextLoaderListener</literal> to use <literal>JavaConfigWebApplicationContext</literal>
          instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
     &lt;context-param&gt;
@@ -30,6 +26,11 @@
         &lt;param-value&gt;example.RootApplicationConfig&lt;/param-value&gt;
     &lt;/context-param&gt;
 
+    <lineannotation>&lt;!-- Bootstrap the root application context as usual using <literal>ContextLoaderListener</literal> --&gt;</lineannotation>
+    &lt;listener&gt;
+        &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+    
     <lineannotation>&lt;!-- Declare a Spring MVC <literal>DispatcherServlet</literal> as usual --&gt;</lineannotation>
     &lt;servlet&gt;
         &lt;servlet-name&gt;test&lt;/servlet-name&gt;
