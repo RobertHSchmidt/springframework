@@ -70,6 +70,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -642,8 +643,11 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		if (ctorCount > 1)
 			throw new IllegalArgumentException("@Configuration classes may declare zero or one constructors. Found " + ctorCount + " on " + clazz.getName());
 
+		LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+
 		if (ctorCount == 1 && ctors[0].getParameterTypes().length > 0) {
 			Constructor<?> ctor = ctors[0];
+
 
 			ResourceBundles rbs = clazz.getAnnotation(ResourceBundles.class);
 			ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
@@ -652,11 +656,15 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
 
 			ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
+			String[] parameterNames = paramNameDiscoverer.getParameterNames(ctor);
 
 			Annotation[][] pAnnotations = ctor.getParameterAnnotations();
 			for (int i = 0; i < pAnnotations.length; i++) {
 				ExternalValue pAnno = (ExternalValue) pAnnotations[i][0];
 				String name = pAnno.value();
+				if("".equals(name)) {
+					name = parameterNames[i];
+				}
 				String value = valueSource.getString(name);
 				ctorValues.addIndexedArgumentValue(i, value);
 			}
