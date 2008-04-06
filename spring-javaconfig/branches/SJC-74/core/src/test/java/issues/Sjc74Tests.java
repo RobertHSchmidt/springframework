@@ -3,7 +3,6 @@ package issues;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.annotation.Bean;
@@ -57,18 +56,17 @@ public class Sjc74Tests {
 
 	// ----------------------------------------------------
 
-	@Ignore
 	public @Test void externalValueConstructorParameterAnnotationWithDefaultValueUsesParameterName() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(ConstructorParameterAnnotationWithDefaultValue.class);
 		String username = ctx.getBean(String.class);
-		assertEquals("scott", username);
+		assertEquals("alice", username);
 	}
 
 	@Configuration
 	@ResourceBundles("classpath:issues/Sjc74Tests")
 	static class ConstructorParameterAnnotationWithDefaultValue {
 		private final String username;
-		public ConstructorParameterAnnotationWithDefaultValue(@ExternalValue String username) { this.username = username; }
+		public ConstructorParameterAnnotationWithDefaultValue(@ExternalValue String usernameParam) { this.username = usernameParam; }
 		public @Bean String username() { return username; }
 	}
 
