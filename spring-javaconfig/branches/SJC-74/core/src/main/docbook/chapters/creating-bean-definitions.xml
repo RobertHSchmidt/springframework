@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="creating-bean-definitions">
+  <title>Creating and using bean definitions</title>
+
+  <section>
+    <title>
+      <classname>@Configuration</classname>
+    </title>
+
+    <para>Annotating a class with the
+    <classname>@Configuration</classname> annotation indicates that the
+    class will be used by JavaConfig as a source of bean
+    definitions.</para>
+
+    <para>An application may make use of just one
+    <classname>@Configuration</classname>-annotated class, or many.
+    <classname>@Configuration</classname> can be considered the equivalent
+    of XML's <code>&lt;beans/&gt;</code> element. Like
+    <code>&lt;beans/&gt;</code>, it provides an opportunity to explicitly
+        set defaults for all enclosed bean definitions. <programlisting>@Configuration(defaultAutowire = Autowire.BY_TYPE, defaultLazy = Lazy.FALSE)
+public class DataSourceConfiguration {
+    <lineannotation>// bean definitions follow</lineannotation>
+}
+</programlisting> Because the semantics of the attributes to the
+    <classname>@Configuration</classname> annotation are 1:1 with the
+    attributes to the <code>&lt;beans/&gt;</code> element, this
+    documentation defers to the
+    <ulink url="&refdoc;/beans.html#beans-definition">
+    beans-definition section</ulink>  of Chapter 3, IoC from the Core Spring
+    documentation.</para>
+  </section>
+
+  <section id="bean">
+    <title>
+      <classname>@Bean</classname>
+    </title>
+
+    <para><classname>@Bean</classname> is a method-level annotation and
+    a direct analog of the XML <code>&lt;bean/&gt;</code> element.  The annotation
+    supports most of the attributes offered by <code>&lt;bean/&gt;</code> such as
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-lifecycle-initializingbean">init-method</ulink></literal>,
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-lifecycle-disposablebean">destroy-method</ulink></literal>,
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-autowire">autowiring</ulink></literal>,
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-lazy-init">lazy-init</ulink></literal>,
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-dependencies">dependency-check</ulink></literal>,
+    <literal><ulink url="&refdoc;/beans.html#beans-factory-dependson">depends-on</ulink></literal>
+    and <literal><ulink url="&refdoc;/beans.html#beans-factory-scopes">scope</ulink></literal>.</para>
+
+    <section id="declaring-a-bean">
+      <title>Declaring a bean</title>
+
+      <para>To declare a bean, simply annotate a method with the
+      <classname>@Bean</classname> annotation.  When JavaConfig encounters
+      such a method, it will execute that method and register the return value
+      as a bean within a <interfacename>BeanFactory</interfacename>.  By default,
+      the bean name will be that of the method name (see
+      <link linkend="bean-naming">bean naming</link> for details on how to
+      customize this behavior).</para>
+
+      <programlisting>@Configuration
+public class AppConfig {
+    @Bean
+    public TransferService transferService() {
+        return new TransferServiceImpl();
+    }
+}
+</programlisting>
+
+      The above is exactly equivalent to the following <literal>appConfig.xml</literal>:
+      <programlisting>&lt;beans&gt;
+    &lt;bean name=&quot;transferService&quot; class=&quot;com.acme.TransferServiceImpl&quot;/&gt;
+&lt;/beans&gt;
+</programlisting>
+
+      Both will result in a bean named <literal>transferService</literal> being
+      available in the <literal>BeanFactory</literal>/<literal>ApplicationContext</literal>,
+      bound to an object instance of type <classname>TransferServiceImpl</classname>:
+      <programlisting>transferService => com.acme.TransferService</programlisting>
+      See <xref linkend="javaconfigapplicationcontext"/> for details about
+      instantiating and using an <interfacename>ApplicationContext</interfacename>
+      with JavaConfig.
+    </section>
+
+    <section id="aware-interfaces">
+      <title>Using <literal>*Aware</literal> interfaces</title>
+
+       The standard set of <literal>*Aware</literal> interfaces such as
+       <interfacename><ulink url="&refdoc;/beans.html#beans-factory-aware-beanfactoryaware">BeanFactoryAware</ulink></interfacename>,
+       <interfacename><ulink url="&refdoc;/beans.html#beans-factory-aware-beannameaware">BeanNameAware</ulink></interfacename>,
+       <interfacename><ulink url="&refdoc;/beans.html#context-functionality-messagesource">MessageSourceAware</ulink></interfacename>,
+       <interfacename><ulink url="&refdoc;/beans.html#context-functionality-events">ApplicationContextAware</ulink></interfacename>,
+       etc. are fully supported.  Consider an example class that implements
+       <interfacename>BeanFactoryAware</interfacename>:
+
+       <programlisting>public class AwareBean implements BeanFactoryAware {
+
+    private BeanFactory factory;
+
+    <lineannotation>// <interfacename>BeanFactoryAware</interfacename> setter (called by Spring during bean instantiation)</lineannotation>
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.factory = beanFactory;
+    }
+
+    public void close(){
+        <lineannotation>// do clean-up</lineannotation>
+    }
+}</programlisting>
+
+      <para>Also, the <ulink url="&refdoc;/beans.html#beans-factory-nature">lifecycle</ulink>
+      callback methods are fully supported.</para>
+    </section>
+
+    <section id="bean-visibility">
+      <title>Bean visibility</title>
+
+      <para>A feature unique to JavaConfig feature is <emphasis>bean visibility</emphasis>.
+      JavaConfig uses standard Java method visibility modifiers to determine if
+      the bean ultimately returned from a method can be accessed by an owning
+      application context / bean factory.</para>
+
+      <para>Consider the following configuration:</para>
+
+      <programlisting>@Configuration
+public abstract class VisibilityConfiguration {
+
+  @Bean
+  public Bean publicBean() {
+     Bean bean = new Bean();
+     bean.setDependency(hiddenBean());
+     return bean;
+  }
+
+  @Bean
+  protected HiddenBean hiddenBean() {
+     return new Bean("protected bean");
+  }
+
+  @Bean
+  HiddenBean secretBean() {
+     Bean bean = new Bean("package-private bean");
+     <lineannotation>// hidden beans can access beans defined in the 'owning' context</lineannotation>
+     bean.setDependency(outsideBean());
+  }
+
+  @ExternalBean
+  public abstract Bean outsideBean()
+}</programlisting>
+
+    <para>Let's bootstrap the above configuration within a traditional XML
+    configuration (for more information on mixing configuration strategies see <xref
+    linkend="combining-config-approaches"/>). The application context being instantiated
+    agaist the XML file will be the 'owning' or 'enclosing' application context, and
+    will not be able to 'see' the hidden beans:</para>
+
+    <programlisting>&lt;beans&gt;
+ <lineannotation>&lt;!-- the configuration above --&gt;</lineannotation>
+ &lt;bean class="my.java.config.VisibilityConfiguration"/&gt;
+
+ <lineannotation>&lt;!-- Java Configuration post processor --&gt;</lineannotation>
+ &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/&gt;
+
+ &lt;bean id="mainBean" class="my.company.Bean"&gt;
+    <lineannotation>&lt;!-- this will work --&gt;</lineannotation>
+    &lt;property name="dependency" ref="publicBean"/&gt;
+    <lineannotation>&lt;!-- this will *not* work --&gt;</lineannotation>
+    &lt;property name="anotherDependency" ref="hiddenBean"/&gt;
+ &lt;/bean&gt;
+&lt;/beans&gt;</programlisting>
+
+      <para>As JavaConfig encounters the <classname>VisibilityConfiguration</classname>
+      class, it will create 3 beans : <literal>publicBean</literal>,
+      <literal>hiddenBean</literal> and <literal>secretBean</literal>. All of
+      them can see each other however, beans created in the 'owning' application
+      context (the application context that bootstraps JavaConfig) will see only
+      <literal>publicBean</literal>. Both <literal>hiddenBean</literal> and
+      <literal>secretBean</literal> can be accessed only by beans created inside
+      <literal>VisibilityConfiguration</literal>.</para>
+
+      <para>Any <interfacename>@Bean</interfacename> annotated method, which is not
+      <literal>public</literal> (i.e. with <literal>protected</literal> or
+      default visibility), will create a 'hidden' bean.  Note that due to technical
+      limitations, <literal>private</literal> <interfacename>@Bean</interfacename> methods
+      are not supported.</para>
+
+      <para>In the example above, <literal>mainBean</literal> has been
+      configured with both <literal>publicBean</literal> and
+      <literal>hiddenBean</literal>. However, since the latter is (as the name
+      imply) hidden, at runtime Spring will throw:</para>
+
+      <programlisting>org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'hiddenBean' is defined
+ ...</programlisting>
+
+      <para>To provide the visibility functionality, JavaConfig takes advantage
+      of the application context <ulink
+      url="&refdoc;/beans.html">hierarchy</ulink>
+      provided by the Spring container, placing all hidden beans for a
+      particular configuration class inside a child application context. Thus,
+      the hidden beans can access beans defined in the parent (or owning)
+      context but not the other way around.</para>
+    </section>
+
+
+    <section id="bean-scoping">
+      <title>Bean scoping</title>
+
+      <section id="available-scopes">
+        <title>Using <interfacename>@Bean</interfacename>'s <literal>scope</literal> attribute</title>
+
+        <para>JavaConfig makes available each of the four standard scopes specified in
+        <ulink url="&refdoc;/beans.html#beans-factory-scopes">Section 3.4, "Bean Scopes"</ulink>
+        of the Spring reference documentation.</para>
+
+        <para>The <classname>DefaultScopes</classname> class provides string
+        constants for each of these four scopes.  SINGLETON is the default, and
+        can be overridden by supplying the <literal>scope</literal> attribute
+        to <interfacename>@Bean</interfacename> annotation:
+
+        <programlisting>@Configuration
+public class MyConfiguration {
+    @Bean(scope=DefaultScopes.PROTOTYPE)
+    public Encryptor encryptor() {
+        <lineannotation>// ...</lineannotation>
+    }
+}</programlisting></para>
+      </section>
+
+      <section id="scoped-proxy">
+        <title><interfacename>@ScopedProxy</interfacename></title>
+
+        <para>Spring offers a convenient way of working with scoped dependencies
+        through <ulink
+        url="&refdoc;/beans.html#beans-factory-scopes-other-injection">
+        scoped proxies</ulink>. The easiest way to create such a proxy when using the XML
+        configuration, is the <literal>&lt;aop:scoped-proxy/&gt;</literal>
+        element. JavaConfig offers as alternative the <interfacename>@ScopedProxy</interfacename>
+        annotation which provides the same semantics and configuration options.</para>
+
+        <para>If we were to port the the XML reference documentation scoped proxy example
+        (see link above) to JavaConfig, it would look like the following:</para>
+
+        <programlisting><lineannotation>// a HTTP Session-scoped bean exposed as a proxy</lineannotation>
+@Bean(scope = DefaultScopes.SESSION)
+@ScopedProxy
+public UserPreferences userPreferences() {
+   return new UserPreferences();
+}
+
+@Bean
+public Service userService() {
+   UserService service = new SimpleUserService();
+   <lineannotation>// a reference to the proxied 'userPreferences' bean</lineannotation>
+   service.seUserPreferences(userPreferences());
+   return service;
+}</programlisting>
+      </section>
+
+      <section id="method-injection-obsolete">
+        <title>Method injection</title>
+        <para>As noted in the Core documentation,
+        <ulink url="&refdoc;/beans.html#beans-factory-method-injection">method injection</ulink>
+        is an advanced feature that should be comparatively rarely used.  When using
+        XML configuration, it is required in cases where a singleton-scoped bean has
+        a dependency on a prototype-scoped bean.  In JavaConfig, however, it is a
+        (somewhat) simpler proposition:</para>
+
+        <programlisting>@Bean
+public MyAbstractSingleton mySingleton(){
+    return new MyAbstractSingleton(myDependencies()){
+        public MyPrototype createMyPrototype(){
+            return new MyPrototype(someOtherDependency());
+            <lineannotation>// or alternatively return <methodname>myPrototype()</methodname> -- this is some <interfacename>@Bean</interfacename> or <interfacename>@ExternalBean</interfacename> method...</lineannotation>
+        }
+    }
+}</programlisting>
+      </section>
+    </section>
+
+    <section id="bean-naming">
+      <title>Bean naming</title>
+      <para>By default, JavaConfig uses a <interfacename>@Bean</interfacename>
+      method's name as the name of the resulting bean.  This functionality can
+      be overridden, however, using the <interfacename>BeanNamingStrategy</interfacename>
+      extension point.<programlisting>&lt;beans&gt;
+    &lt;bean class="org.springframework.config.java.process.ConfigurationPostProcessor"&gt;
+        &lt;property name="namingStrategy"&gt;
+            &lt;bean class="my.custom.NamingStrategy"/&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;</programlisting>
+      <note>Overriding the bean naming strategy is currently
+      only supported by XML configuration of
+      <classname>ConfigurationPostProcessor</classname>.  In future
+      revisions, it will be possible to specify BeanNamingStrategy directly on
+      <classname>JavaConfigApplicationContext</classname>. Watch
+      <ulink url="http://jira.springframework.org/browse/SJC-86">SJC-86</ulink>
+      for details.</note></para>
+
+      <para>For more details, see the API documentation on <interfacename>BeanNamingStrategy</interfacename>.</para>
+
+      <para>For more information on integrating JavaConfig and XML, see <xref linkend="combining-config-approaches"/></para>
+    </section>
+  </section>
+
+  <!--
+  <section id="autobean">
+      <title>Autowiring support with <interfacename>@AutoBean</interfacename></title>
+      <para><emphasis>Work in progress - see
+      <ulink url="http://jira.springframework.org/browse/SJC-62">SJC-62</ulink>,
+      <ulink url="http://jira.springframework.org/browse/SJC-70">SJC-70</ulink>,
+      <ulink url="http://jira.springframework.org/browse/SJC-85">SJC-85</ulink>
+      </emphasis></para>
+  </section>
+  -->
+
+  <section id="javaconfigapplicationcontext">
+    <title>
+      <classname>JavaConfigApplicationContext</classname>
+    </title>
+
+    <para><classname>JavaConfigApplicationContext</classname> provides
+    direct access to the beans defined by
+    <classname>@Configuration</classname>-annotated classes. For more
+    information on the ApplicationContext API in general, please refer to
+    the <ulink url="&refdoc;beans.html#beans-introduction">Core Spring
+    documentation</ulink>.</para>
+
+    <section id="construction-options">
+      <title>Construction Options</title>
+
+      <para>Instantiating the
+      <classname>JavaConfigApplicationContext</classname> can be done by
+      supplying <classname>@Configuration</classname>-annotated class
+      literals to the constructor, and/or strings representing packages to
+      scan for <classname>@Configuration</classname>-annotated
+      classes.</para>
+
+      <section>
+        <title>Construction by class literal</title>
+
+        <para>Each of the class literals supplied to the constructor will
+        be processed, and for each <classname>@Bean</classname>-annotated
+        method encountered, JavaConfig will create a bean definition and
+        ultimately instantiate and initialize the bean.</para>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(AppConfig.class);
+Service service = context.getBean(Service.class);
+</programlisting>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext(AppConfig.class, DataConfig.class);
+Service service = context.getBean(Service.class);
+</programlisting>
+      </section>
+
+      <section>
+        <title>Construction by base package</title>
+
+        <para>Base packages will be scanned for the existence of any
+        <classname>@Configuration</classname>-annotated classes. Any
+        candidate classes will then be processed much as if they had been
+        supplied directly as class literals to the constructor.</para>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext("**/configuration/**/*.class");
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+
+        <programlisting>JavaConfigApplicationContext context =
+    new JavaConfigApplicationContext("**/configuration/**/*.class", "**/other/*Config.class);
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+      </section>
+
+      <section>
+        <title>Post-construction configuration</title>
+
+        <para>When one or more classes/packages are used during
+        construction, a
+        <classname>JavaConfigApplicationContext</classname> cannot be
+        further configured. If post-construction configuration is
+        preferred or required, use either the no-arg constructor,
+        configure by calling setters, then manually refresh the context.
+        After the call to <methodname>refresh()</methodname>, the context
+        will be 'closed for configuration'.</para>
+
+        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext();
+context.setParent(otherConfig);
+context.setConfigClasses(AppConfig.class, DataConfig.class);
+context.setBasePackages("**/configuration/**/*.class");
+context.refresh();
+Service service = (Service) context.getBean("serviceA");
+</programlisting>
+      </section>
+    </section>
+
+    <note>
+      <para>Whenever multiple packages and/or classes are used to
+      instantiate a <classname>JavaConfigApplicationContext</classname>,
+      <emphasis>order matters</emphasis>. This is important when
+      considering what happens if two configuration classes define a bean
+      with the same name. The last-specified class wins.</para>
+    </note>
+
+    <section id="accessing-beans">
+      <title>Accessing beans with <methodname>getBean()</methodname></title>
+
+      <para><classname>JavaConfigApplicationContext</classname> provides several
+      variants of the <methodname>getBean()</methodname> method for accessing beans.
+      </para>
+
+      <section id="typesafe-getbean">
+        <title>Type-safe access</title>
+        <para>The preferred method for accessing beans is with the type-safe
+        <methodname>getBean()</methodname> method.</para>
+
+        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Service service = context.getBean(Service.class);</programlisting>
+
+        <section id="disambiguation">
+          <title>Disambuguation options</title>
+          <para>If more than one bean of type <interfacename>Service</interfacename> had been defined
+          in the example above, the call to <methodname>getBean()</methodname> would have thrown an
+          exception indicating an ambiguity that the container could not resolve.
+          In these cases, the user has a number of options for disambiguation:</para>
+
+          <section id="primary-bean">
+            <title>Indicating a <interfacename>@Bean</interfacename> as <literal>primary</literal></title>
+            <para>Like Spring's XML configuration, JavaConfig allows for
+            specifying a given <interfacename>@Bean</interfacename> as <literal>primary</literal>:
+            <programlisting>@Configuration
+public class MyConfig {
+    @Bean(primary=Primary.TRUE)
+    public Service myService() {
+        return new Service();
+    }
+
+    @Bean
+    public Service backupService() {
+        return new Service();
+    }
+}</programlisting>After this modification, all calls to <methodname>getBean(Service.class)</methodname>
+            will return the <literal>primary</literal> bean
+            <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+<lineannotation>// returns the <methodname>myService()</methodname> primary bean</lineannotation>
+Service service = context.getBean(Service.class);</programlisting></para>
+          </section>
+
+          <section id="disambiguation-by-bean-name">
+            <title>Disambiguation by bean name</title>
+            <para>JavaConfig provides a <methodname>getBean()</methodname> variant
+            that accepts both a class and a bean name for cases just such as these.
+            <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Service service = context.getBean(Service.class, "myService");</programlisting>
+            Because bean ids must be unique, this call guarantees that the ambiguity cannot occur.</para>
+          </section>
+
+          <section id="retrieve-all-instances">
+            <title>Retrieve all beans of a given type</title>
+            <para>It is also reasonable to call the <methodname>getBeansOfType()</methodname>
+            method in order to return all beans that implement a given interface:
+            <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Map matchingBeans = context.getBeansOfType(Service.class);</programlisting>
+            Note that this latter approach is actually a feature of the Core Spring Framework's
+            <classname>AbstractApplicationContext</classname> (which <classname>JavaConfigApplicationContext</classname> extends)
+            and is not type-safe, in that the returned <interfacename>Map</interfacename> is not parameterized.</para>
+          </section>
+        </section>
+      </section>
+
+      <section id="string-based-access">
+          <title>String-based access</title>
+          <para>Beans may be accessed via the traditional string-based <literal>getBean()</literal>
+          API as well.  Of course this is not type-safe and requires casting, but avoids any
+          potential ambiguity entirely:
+        <programlisting>JavaConfigApplicationContext context = new JavaConfigApplicationContext(...);
+Service service = (Service) context.getBean("myService");</programlisting></para>
+      </section>
+    </section>
+  </section>
+</chapter>
+
