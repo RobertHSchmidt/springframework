@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="tooling">
+  <title>Visualizing configurations with Spring IDE</title>
+
+  <para><ulink url="http://springide.org">Spring IDE</ulink>  supports JavaConfig.
+  At the time of this writing, however, support is limited to configurations
+  that are 'bootstrapped' via XML (see <xref linkend="javaconfig-and-xml" />).
+  Stay tuned to Spring IDE's
+  <ulink url="http://jira.springframework.org/browse/IDE/component/10365">javaconfig.core component</ulink>
+  in JIRA for updates on progress.
+  Follow (link to Spring IDE jira) for updates on progress here.
+  <ulink url="http://springide.org/blog/2007/05/18/support-for-spring-javaconfig/">Click for screenshot</ulink>
+  </para>
+</appendix>

@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+
+<project name="petclinic-javaconfig" basedir="." default="usage">
+
+	<property name="name" value="petclinic" />
+
+	<property name="war.dir" value="war" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value=".classes" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="docs.dir" value="${war.dir}/docs" />
+	<property name="webclasses.dir" value="${war.dir}/WEB-INF/classes" />
+	<property name="weblib.dir" value="${war.dir}/WEB-INF/lib" />
+	<property name="dist.dir" value="dist" />
+	<property name="db.dir" value="db" />
+	<property name="tmp.dir" value="${dist.dir}/tmp" />
+
+	<property name="testsrc.dir" value="test" />
+	<property name="testbuild.dir" value=".testclasses" />
+	<property name="testreports.dir" value="junit-reports" />
+	<property name="testhtml.dir" value="${testreports.dir}/html" />
+
+	<property name="spring.root" value="../.." />
+
+	<property file="build.properties" />
+
+
+	<path id="master-classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>	
+	</path>
+
+
+	<path id="build-classpath">
+		<fileset dir="${tmp.dir}/WEB-INF/lib">
+			<include name="**/*.jar"/>
+		</fileset>	
+	</path>
+
+
+	<path id="test-classpath">
+	</path>
+
+
+	<target name="usage">
+
+		<echo message="" />
+		<echo message="PetClinic Java Config build file" />
+		<echo message="------------------------------------------------------" />
+		<echo message="" />
+		<echo message="Available targets are:" />
+		<echo message="" />
+		<echo message="dist    --> Add JavaConfig files to a normal Petclinic war" />
+		<echo message="clean   --> Cleanup" />
+		<echo message="" />
+
+	</target>
+
+
+	<target name="dist" depends="warfile">
+		<!--
+			Delegate to warfile target by depending on it. dist is just to offer
+			a generic target name across all Spring sample apps that may be used
+			for autobuilds testing.
+		-->
+
+
+	</target>
+
+	<target name="clean" description="Cleanup">
+		<delete dir="${tmp.dir}" />
+		<delete dir="${build.dir}"/>
+	</target>
+
+    <!-- Groovy compiler ant target -->
+	<taskdef name="groovyc"
+         classname="org.codehaus.groovy.ant.Groovyc"
+         classpathref="master-classpath"/>
+
+
+
+	<target name="warfile" description="Add JavaConfig files to the petclinic war" depends="clean">
+
+		<mkdir dir="${tmp.dir}" />
+
+		<!-- unpack jar original Petclinic Jar -->
+		<unjar dest="${tmp.dir}" src="dist/petclinic.war" />
+
+	    <!-- move javaconfig dist jar inside the war -->
+		<copy todir="${tmp.dir}/WEB-INF/lib/" overwrite="true">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		
+		<!-- build the files using the unpacked jars -->
+        <mkdir dir="${build.dir}" />
+   
+		<javac destdir="${build.dir}" source="1.5" target="1.5" debug="true"
+				deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+			<classpath refid="build-classpath"/>
+		</javac>
+		<!--
+        <java classname="org.codehaus.groovy.ant.Groovyc">
+            <classpath refid="build-classpath" />
+            <arg value="${build.dir}" />
+            <arg value="${src.dir}" />
+        </java> 
+        -->
+		
+		<groovyc srcdir="${src.dir}"  destdir="${build.dir}" classpathref="build-classpath" />
+		
+		<!-- pack the built classes as a jar -->
+		<jar destfile="${tmp.dir}/WEB-INF/lib/java-configs.jar" basedir="${build.dir}"/>
+		
+		<!-- copy the rest of the files in one folder -->
+		<copy todir="${tmp.dir}/" overwrite="true">
+			<fileset dir="${war.dir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		
+        <!-- pack the petclinic-javaconfig jar -->
+		<jar destfile="${dist.dir}/petclinic-javaconfig.war" basedir="${tmp.dir}" />
+
+		<delete dir="${tmp.dir}" failonerror="false"/>
+	</target>
+
+</project>
