@@ -44,6 +44,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.MalformedJavaConfigurationException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
@@ -635,43 +636,76 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	}
 
 	public static void processExternalValueConstructorArgs(RootBeanDefinition beanDef, ResourceLoader resourceLoader) {
-		/* begin copy-and-paste for SJC-74 */
-		// @Configuration classes must have exactly zero or one constructors
 		Class<?> clazz = beanDef.getBeanClass();
 		Constructor<?>[] ctors = clazz.getConstructors();
 		int ctorCount = ctors.length;
+
+		// to avoid ambiguity, @Configuration classes may declare only one ctor
 		if (ctorCount > 1)
-			throw new IllegalArgumentException("@Configuration classes may declare zero or one constructors. Found " + ctorCount + " on " + clazz.getName());
+			throw new MalformedJavaConfigurationException(
+					format("@Configuration classes may declare zero or one constructors. " +
+							"Found %d constructors declared on [%s]", ctorCount, clazz.getName()));
 
+		// are we dealing with a default or no-arg constructor?
+		if(ctorCount == 0 || ctors[0].getParameterTypes().length == 0)
+			return;
+
+		Constructor<?> ctor = ctors[0];
 		LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+		ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
+		String[] parameterNames = paramNameDiscoverer.getParameterNames(ctor);
 
-		if (ctorCount == 1 && ctors[0].getParameterTypes().length > 0) {
-			Constructor<?> ctor = ctors[0];
+		Annotation[][] params = ctor.getParameterAnnotations();
+		for (int p = 0; p < params.length; p++) {
+			Annotation[] pAnnotations = params[p];
+			ExternalValue pExternalValue = null;
 
-
-			ResourceBundles rbs = clazz.getAnnotation(ResourceBundles.class);
-			ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-			ms.setResourceLoader(resourceLoader);
-			ms.setBasenames(rbs.value());
-			MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
-
-			ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
-			String[] parameterNames = paramNameDiscoverer.getParameterNames(ctor);
-
-			Annotation[][] pAnnotations = ctor.getParameterAnnotations();
-			for (int i = 0; i < pAnnotations.length; i++) {
-				ExternalValue pAnno = (ExternalValue) pAnnotations[i][0];
-				String name = pAnno.value();
-				if("".equals(name)) {
-					name = parameterNames[i];
+			// the param may have multiple annotations - find @ExternalValue
+			for(int a=0; a < pAnnotations.length; a++) {
+				if(pAnnotations[a].annotationType().equals(ExternalValue.class)) {
+					pExternalValue = (ExternalValue) pAnnotations[a];
+					break;
 				}
-				String value = valueSource.getString(name);
-				ctorValues.addIndexedArgumentValue(i, value);
 			}
 
-			beanDef.setConstructorArgumentValues(ctorValues);
+			if(pExternalValue == null)
+				throw new MalformedJavaConfigurationException(
+						format("constructor parameters must be annotated with @ExternalValue. " +
+								"offending constructor: [%s] parameter: [%s]", ctor.getName(), parameterNames[p]));
+
+			String name = pExternalValue.value();
+
+			if("".equals(name))
+				name = parameterNames[p];
+
+			String value = getValueSource(clazz, resourceLoader).getString(name);
+			ctorValues.addIndexedArgumentValue(p, value);
 		}
-		/* end copy-and-paste for SJC-74 */
+
+		beanDef.setConstructorArgumentValues(ctorValues);
+	}
+
+	// TODO: this method should cache the valueSource if it's already been created.
+	private static MessageSourceValueSource getValueSource(Class<?> clazz, ResourceLoader resourceLoader) {
+		// if @ExternalValue has been supplied for one or more params,
+		// @ResourceBundles must exist at the class level
+		ResourceBundles rbs = clazz.getAnnotation(ResourceBundles.class);
+		if(rbs == null)
+			throw new MalformedJavaConfigurationException(
+					format("configurations that declare constructors with @ExternalValue " +
+							"parameters must declare @ResourceBundles with at " +
+							"least one basename. offending configuration class: [%s]", clazz.getName()));
+
+		String[] basenames = rbs.value();
+		if(basenames.length == 0)
+			throw new MalformedJavaConfigurationException("@ResourceBundles must supply at least one basename");
+
+		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
+		ms.setResourceLoader(resourceLoader);
+		ms.setBasenames(basenames);
+		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
+
+		return valueSource;
 	}
 
 }
