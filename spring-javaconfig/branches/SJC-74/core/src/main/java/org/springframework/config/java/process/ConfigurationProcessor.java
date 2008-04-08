@@ -640,6 +640,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		Constructor<?>[] ctors = clazz.getConstructors();
 		int ctorCount = ctors.length;
 
+		// TODO: pick up here for SJC-74 - need to qualify up front which constructor of
+		// potentially many can be used for ExternalValue wiring.  Consider a constructor-
+		// level annotation indicating default naming for all params?
+
 		// to avoid ambiguity, @Configuration classes may declare only one ctor
 		if (ctorCount > 1)
 			throw new MalformedJavaConfigurationException(
