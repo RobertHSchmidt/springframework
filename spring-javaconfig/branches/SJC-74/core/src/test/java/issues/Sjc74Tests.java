@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.MalformedJavaConfigurationException;
 import org.springframework.config.java.annotation.Bean;
@@ -18,65 +19,71 @@ import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * 
  * need to test:
  * 
- *  ExternalValue as constructor-param
+ *  [*] ExternalValue as constructor-param
  * 
- *  ExternalValue as Bean method-param
+ *  [ ] ExternalValue as Bean method-param
  *
- *  ExternalValue directly on field?
+ *  [ ] ExternalValue directly on field?
  * 
  * 
  * prove that this works in conjunction with:
  * 
- * 	base package scanning
+ * 	[ ] base package scanning
  * 
- * 	class literal
+ * 	[*] class literal
  * 
- * 	passing Import annotation
+ * 	[ ] passing Import annotation
  * 
- * 	JavaConfigWebApplicationContext
+ * 	[ ] JavaConfigWebApplicationContext
+ * 
+ *  [ ] XML (ConfigurationPostProcessor)
  * 
  * 
- * Bagus ResourceBundles path throws an exception (doesn't currently)
+ * [ ] What happens when there's more than one constructor? (it's an ambiguity for
+ *     SJC and thus an error) Actually: should probably look for one that has all
+ *     ExternalValue-annotated params
  * 
- * What happens when constructor args are not annotatated? (it should be an
- * error)
+ * [ ] (see above) account for the fact that a Configuration class might legitimately
+ *     have multiple constructors in the case of being bootstrapped from XML.  this
+ *     is an edge case to say the least, but nevertheless.  Also, in the case of XML
+ *     bootstrapping, the ExternalValue params may (will?) be supplied by XML.
+ *     Create some tests around this.
  * 
- * What happens when a constructor is private? (error - bad for CGLIB)
+ * [ ] What happens when I supply a body for an ExternalMethod? (should return that
+ *     value as a default if there's no property value found (this is a diff issue)
  * 
- * What happens when a constructor is private? (error - bad for CGLIB)
+ * [ ] Consider swapping default MessageSourceValueSource for PropertiesValueSource
+ *     (is locale really necessary?  Probably mostly confuses people)
  * 
- * What happens when there's more than one constructor? (it's an ambiguity for
- * SJC and thus an error)
+ * [ ] Bogus ResourceBundles path throws an exception (doesn't currently)
+ *     What happens when the ResourceBundles path(s) don't resolve?  Perhaps
+ *     this can be improved if we go the PropertiesValueSource route? (see above)
  * 
- * What happens when I override an ExternalBean method in a subclass? What if I
- * don't annotate it? (should work anyway, as it's Inherited)
+ * [ ] TODO: create new feature issue regarding supporting custom registration of
+ *     PropertyEditors (equiv. of CustomPropetyEditorConfigurer in XML)
  * 
- * What happens when I supply a body for an ExternalMethod? (should return that
- * value as a default if there's no property value found
+ * [ ] What happens when I override an ExternalBean method in a subclass? What if I
+ *     don't annotate it? (should work anyway, as it's Inherited)
+ *     TODO: this is really a different issue, right?
  * 
- * What happens if I forget to supply ResourceBundles?
+ * [*] What happens when the ExternalValue is not a String? (should trigger looking
+ *     for a proper PropertyEditor)
  * 
- * What happens when the ResourceBundles path(s) don't resolve?
+ * [*] What happens when I subclass a Configuration that's already annotated with
+ *     ResourceBundles? (should be inherited? what if I 'add' one in the subclass?)
  * 
- * What happens when the ExternalValue is not a String? (should trigger looking
- * for a proper PropertyEditor)
+ * [*] What happens if I forget to supply ResourceBundles?
  * 
- * What happens when I subclass a Configuration that's already annotated with
- * ResourceBundles? (should be inherited? what if I 'add' one in the subclass?)
+ * [*] What happens when constructor args are not annotatated? (it should be an error)
  * 
- * TODO: decide what exception to throw when configuration class is malformed
- * (i.e.: multiple constructors exist, non-annotated constructor params, etc)
- * 
- * TODO: account for the fact that a Configuration class might legitimately have
- * multiple constructors in the case of being bootstrapped from XML.  this is an
- * edge case to say the least, but nevertheless.  Also, in the case of XML
- * bootstrapping, the ExternalValue params may (will?) be supplied by XML.  Create
- * some tests around this.
+ * [*] What happens when a constructor is private? (error - bad for CGLIB)
  * 
  * @author Chris Beams
  */
@@ -86,6 +93,20 @@ public class Sjc74Tests {
 
 	public @Before void initContext() {
 		ctx = new JavaConfigApplicationContext();
+	}
+
+
+	// ----------------------------------------------------
+	// Happy path - a well-formed configuration with a single constructor
+	// ----------------------------------------------------
+	public @Test void wellFormed() {
+		new JavaConfigApplicationContext(SingleConstructorConfig.class);
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class SingleConstructorConfig {
+		public SingleConstructorConfig(@ExternalValue("database.url") String url) {
+		}
 	}
 
 
@@ -106,16 +127,20 @@ public class Sjc74Tests {
 
 
 	// ----------------------------------------------------
-	// Happy path - a well-formed configuration with a single constructor
+	// What happens if a constructor is private?
+	// (not strictly related to SJC-74)
 	// ----------------------------------------------------
-	public @Test void oneConstructorAllowed() {
-		new JavaConfigApplicationContext(SingleConstructorConfig.class);
+	@Test(expected=BeanCreationException.class)
+	public void privateConstructor() {
+		ctx.addConfigClass(PrivateConstructor.class);
+		ctx.refresh();
 	}
 
-	@ResourceBundles("classpath:issues/Sjc74Tests")
-	static class SingleConstructorConfig {
-		public SingleConstructorConfig(@ExternalValue("database.url") String url) {
-		}
+
+	static class PrivateConstructor {
+		private final String username;
+		private PrivateConstructor(@ExternalValue String username) { this.username = username; }
+		public @Bean String username() { return username; }
 	}
 
 
@@ -131,6 +156,25 @@ public class Sjc74Tests {
 	static class ConstructorParamAnnotationsOmitted {
 		public ConstructorParamAnnotationsOmitted(String foo) { }
 		public @Bean String username() { return "foo"; }
+	}
+
+
+	// ----------------------------------------------------
+	// What happens if constructor params are non-String types?
+	// TODO: should also be tested for method- and field- level
+	// ----------------------------------------------------
+	@Test
+	public void nonStringExternalValue() {
+		ctx.addConfigClass(NonStringExternalValue.class);
+		ctx.refresh();
+		assertEquals(100, ctx.getBean(Cache.class).size);
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class NonStringExternalValue {
+		private final int cacheSize;
+		public NonStringExternalValue(@ExternalValue int cacheSize) { this.cacheSize = cacheSize; }
+		public @Bean Cache cache() { return new Cache(cacheSize); }
 	}
 
 
@@ -358,8 +402,42 @@ public class Sjc74Tests {
 		public @Bean String foo() { return "foo"; }
 	}
 
+
+	// ----------------------------------------------------
+	// What happens in XML bootstrapping cases?
+	// ----------------------------------------------------
+	@Test
+	public void bootstrapFromXml() {
+		ApplicationContext ctx =
+			new ClassPathXmlApplicationContext("Sjc74Tests.xml", getClass());
+		Cache cache = (Cache) ctx.getBean("cache");
+		assertEquals(1000, cache.size);
+		assertEquals("DefaultCacheName", cache.name);
+	}
+
+	@Test
+	public void bootstrapFromJava() {
+		ctx.addConfigClass(BootstrapThisConfigFromXml.class);
+		ctx.refresh();
+		assertEquals(100, ctx.getBean(Cache.class).size);
+		assertEquals("CustomCacheName", ctx.getBean(Cache.class).name);
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class BootstrapThisConfigFromXml {
+		private final int cacheSize;
+		private String cacheName = "DefaultCacheName";
+		public BootstrapThisConfigFromXml(int cacheSize) { this.cacheSize = cacheSize; }
+		public BootstrapThisConfigFromXml(@ExternalValue int cacheSize, @ExternalValue String cacheName) {
+			this(cacheSize);
+			this.cacheName = cacheName;
+		}
+		public @Bean Cache cache() { return new Cache(cacheSize, cacheName); }
+	}
 }
 
+
+// --- types used in multiple tests above ---------
 
 interface IDataSource { }
 
@@ -383,3 +461,11 @@ class SimpleDataSource implements IDataSource, InitializingBean {
 			throw new IllegalStateException("password was not set");
 	}
 }
+
+class Cache {
+	final int size;
+	String name;
+	public Cache(int size) { this.size = size; }
+	public Cache(int size, String name) { this(size); this.name = name; }
+}
+
