@@ -251,8 +251,7 @@ public class Sjc74Tests {
 			this.url = url;
 		}
 
-		public @Bean
-		SimpleDataSource dataSource() {
+		public @Bean SimpleDataSource dataSource() {
 			return new SimpleDataSource(url, "username", "password");
 		}
 	}
@@ -348,17 +347,105 @@ public class Sjc74Tests {
 	// ----------------------------------------------------
 	// What happens if multiple constructors are specified?
 	// ----------------------------------------------------
-	@Test(expected = MalformedJavaConfigurationException.class)
-	public void multipleConstructorsNotAllowed() {
-		ctx.addConfigClass(MultiConstructorConfig.class);
+	@Test
+	public void multipleConstructorsWithNoArg() {
+		ctx.addConfigClass(MultiConstructorWithNoArg.class);
 		ctx.refresh();
 	}
 
+	// this is a well-formed configuration because it exposes a no-arg constructor
 	@Configuration
-	static class MultiConstructorConfig {
-		public MultiConstructorConfig(String one, String two) { }
-		public MultiConstructorConfig(String one, String two, String three) { }
+	static class MultiConstructorWithNoArg {
+		public MultiConstructorWithNoArg() { }
+		public MultiConstructorWithNoArg(String one, String two) { }
+		public MultiConstructorWithNoArg(String one, String two, String three) { }
 		public @Bean String foo() { return "foo"; }
+	}
+
+	@Test(expected = MalformedJavaConfigurationException.class)
+	public void multipleConstructorsButNoCandidates() {
+		ctx.addConfigClass(MultiConstructorWithoutExternalValueOrNoArg.class);
+		ctx.refresh();
+	}
+
+	// this is a malformed configuration because it does not expose at least one
+	// constructor that either a) is no-arg or b) has all @ExternalValue parameters
+	@Configuration
+	static class MultiConstructorWithoutExternalValueOrNoArg {
+		public MultiConstructorWithoutExternalValueOrNoArg(String one, String two) { }
+		public MultiConstructorWithoutExternalValueOrNoArg(String one, String two, String three) { }
+		public @Bean String foo() { return "foo"; }
+	}
+
+	@Test
+	public void multipleConstructorsWithSingleButAmbiguousCandidate() {
+		ctx.addConfigClass(MultiConstructorWithSingleButAmbiguousCandidate.class);
+		ctx.refresh();
+		assertEquals("CustomCacheName", ctx.getBean("cacheName"));
+	}
+
+	@Configuration
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class MultiConstructorWithSingleButAmbiguousCandidate {
+		private String cacheName;
+
+		// the first two constructors are type-ambiguous at runtime and the second
+		// will be mis-set with ExternalValues intended for the first if explicit
+		// type information is not provided by ConfigurationProcessor
+		public MultiConstructorWithSingleButAmbiguousCandidate(@ExternalValue int cacheSize, @ExternalValue String cacheName) { this.cacheName = cacheName; }
+		public MultiConstructorWithSingleButAmbiguousCandidate(String one, String two) { }
+		public MultiConstructorWithSingleButAmbiguousCandidate(String one, String two, String three) { }
+		public @Bean String cacheName() { return cacheName; }
+	}
+
+	@Test
+	public void multipleConstructorsWithSingleCandidate() {
+		ctx.addConfigClass(MultiConstructorWithSingleCandidate.class);
+		ctx.refresh();
+		assertEquals("CustomCacheName", ctx.getBean("cacheName"));
+	}
+
+	@Configuration
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class MultiConstructorWithSingleCandidate {
+		private String cacheName;
+		public MultiConstructorWithSingleCandidate(@ExternalValue int cacheSize, @ExternalValue String cacheName) { this.cacheName = cacheName; }
+		public MultiConstructorWithSingleCandidate(String one, String two, String three) { }
+		public @Bean String cacheName() { return cacheName; }
+	}
+
+
+	@Test(expected=MalformedJavaConfigurationException.class)
+	public void multipleConstructorsWithMultipleCandidate() {
+		ctx.addConfigClass(MultiConstructorWithMultipleCandidates.class);
+		ctx.refresh();
+		assertEquals("CustomCacheName", ctx.getBean("cacheName"));
+	}
+
+	// configuration is malformed, because it would be ambiguous to JavaConfig
+	// which constructor to call (they both request ExternalValue parameters)
+	@Configuration
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class MultiConstructorWithMultipleCandidates {
+		private String cacheName;
+		public MultiConstructorWithMultipleCandidates(@ExternalValue String cacheName) { this.cacheName = cacheName; }
+		public MultiConstructorWithMultipleCandidates(@ExternalValue String one, @ExternalValue String two) { }
+		public @Bean String cacheName() { return cacheName; }
+	}
+
+	@Test(expected=MalformedJavaConfigurationException.class)
+	public void multipleConstructorsWithPartialCandidate() {
+		ctx.addConfigClass(MultiConstructorWithPartialCandidate.class);
+		ctx.refresh();
+		assertEquals("CustomCacheName", ctx.getBean("cacheName"));
+	}
+
+	@Configuration
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class MultiConstructorWithPartialCandidate {
+		private String cacheName;
+		public MultiConstructorWithPartialCandidate(@ExternalValue String cacheName, String two) { this.cacheName = cacheName; }
+		public @Bean String cacheName() { return cacheName; }
 	}
 
 
