@@ -181,7 +181,7 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * 
  * @author Chris Beams
  */
-public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements TypeSafeBeanFactory {
+public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements ConfigurableJavaConfigApplicationContext {
 
 	private Class<?>[] configClasses;
 
@@ -352,9 +352,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 			for (Class<?> cz : configClasses) {
 				if (ConfigurationProcessor.isConfigurationClass(cz)) {
 					RootBeanDefinition beanDef = new RootBeanDefinition(cz, true);
-
 					ConfigurationProcessor.processExternalValueConstructorArgs(beanDef, this);
-
 					beanFactory.registerBeanDefinition(cz.getName(), beanDef);
 				}
 			}

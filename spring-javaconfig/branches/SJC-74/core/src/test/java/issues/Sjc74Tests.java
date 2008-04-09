@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.MalformedJavaConfigurationException;
 import org.springframework.config.java.annotation.Bean;
@@ -18,7 +17,7 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -87,20 +86,23 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @author Chris Beams
  */
-public class Sjc74Tests {
+public abstract class Sjc74Tests {
 
-	private JavaConfigApplicationContext ctx;
+	private ConfigurableJavaConfigApplicationContext ctx;
 
 	public @Before void initContext() {
-		ctx = new JavaConfigApplicationContext();
+		ctx = newContext();
 	}
+
+	protected abstract ConfigurableJavaConfigApplicationContext newContext();
 
 
 	// ----------------------------------------------------
 	// Happy path - a well-formed configuration with a single constructor
 	// ----------------------------------------------------
 	public @Test void wellFormed() {
-		new JavaConfigApplicationContext(SingleConstructorConfig.class);
+		ctx.addConfigClass(SingleConstructorConfig.class);
+		ctx.refresh();
 	}
 
 	@ResourceBundles("classpath:issues/Sjc74Tests")
@@ -122,24 +124,6 @@ public class Sjc74Tests {
 	static class ResourceBundlesOmitted {
 		private final String username;
 		public ResourceBundlesOmitted(@ExternalValue String username) { this.username = username; }
-		public @Bean String username() { return username; }
-	}
-
-
-	// ----------------------------------------------------
-	// What happens if a constructor is private?
-	// (not strictly related to SJC-74)
-	// ----------------------------------------------------
-	@Test(expected=BeanCreationException.class)
-	public void privateConstructor() {
-		ctx.addConfigClass(PrivateConstructor.class);
-		ctx.refresh();
-	}
-
-
-	static class PrivateConstructor {
-		private final String username;
-		private PrivateConstructor(@ExternalValue String username) { this.username = username; }
 		public @Bean String username() { return username; }
 	}
 
@@ -207,8 +191,8 @@ public class Sjc74Tests {
 	// param without any value (should use param name)
 	// ----------------------------------------------------
 	public @Test void externalValueConstructorParameterAnnotationWithDefaultValueUsesParameterName() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
-				ConstructorParameterAnnotationWithDefaultValue.class);
+		ctx.addConfigClass(ConstructorParameterAnnotationWithDefaultValue.class);
+		ctx.refresh();
 		String username = ctx.getBean(String.class);
 		assertEquals("alice", username);
 	}
@@ -230,7 +214,8 @@ public class Sjc74Tests {
 	// What happens if one config imports another that declares a constructor?
 	// ----------------------------------------------------
 	public @Test void importClassWithExternalValueConstructorArgs() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(ImporterConfig.class);
+		ctx.addConfigClass(ImporterConfig.class);
+		ctx.refresh();
 		SimpleDataSource ds = ctx.getBean(SimpleDataSource.class);
 		assertNotNull(ds);
 		assertEquals("jdbc:url", ds.url);
@@ -260,7 +245,8 @@ public class Sjc74Tests {
 	// What happens if multiple constructor arguments (3) are passed?
 	// ----------------------------------------------------
 	public @Test void threeConstructorArgs() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(OrderServiceConfig.class);
+		ctx.addConfigClass(OrderServiceConfig.class);
+		ctx.refresh();
 		OrderService orderService = ctx.getBean(OrderService.class);
 		assertNotNull(orderService);
 
@@ -316,7 +302,8 @@ public class Sjc74Tests {
 	// What happens if multiple constructor arguments (2) are passed?
 	// ----------------------------------------------------
 	public @Test void testTwoConstructorArgs() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(OrderServiceConfig2.class);
+		ctx.addConfigClass(OrderServiceConfig2.class);
+		ctx.refresh();
 		SimpleDataSource ds = ctx.getBean(SimpleDataSource.class);
 		assertEquals("jdbc:url", ds.url);
 		assertEquals("scott", ds.username);
