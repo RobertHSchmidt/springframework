@@ -638,23 +638,50 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	public static void processExternalValueConstructorArgs(RootBeanDefinition beanDef, ResourceLoader resourceLoader) {
 		Class<?> clazz = beanDef.getBeanClass();
 		Constructor<?>[] ctors = clazz.getConstructors();
-		int ctorCount = ctors.length;
 
-		// TODO: pick up here for SJC-74 - need to qualify up front which constructor of
-		// potentially many can be used for ExternalValue wiring.  Consider a constructor-
-		// level annotation indicating default naming for all params?
-
-		// to avoid ambiguity, @Configuration classes may declare only one ctor
-		if (ctorCount > 1)
-			throw new MalformedJavaConfigurationException(
-					format("@Configuration classes may declare zero or one constructors. " +
-							"Found %d constructors declared on [%s]", ctorCount, clazz.getName()));
-
-		// are we dealing with a default or no-arg constructor?
-		if(ctorCount == 0 || ctors[0].getParameterTypes().length == 0)
+		// use the default constructor!
+		if(ctors.length == 0)
 			return;
 
-		Constructor<?> ctor = ctors[0];
+		List<Constructor<?>> candidateCtors = new ArrayList<Constructor<?>>();
+
+		CONSTRUCTORS:
+			for(Constructor<?> ctor : ctors) {
+				Annotation[][] params = ctor.getParameterAnnotations();
+
+				for(int p=0; p<params.length; p++) {
+					boolean pHasAnnotation = false;
+					Annotation[] pAnnotations = params[p];
+
+					for(int a=0; a<pAnnotations.length; a++)
+						if(pAnnotations[a].annotationType().equals(ExternalValue.class))
+							pHasAnnotation = true;
+
+					if(!pHasAnnotation)
+						continue CONSTRUCTORS;
+				}
+
+				candidateCtors.add(ctor);
+			}
+
+
+		int candidateCtorCount = candidateCtors.size();
+
+		if (candidateCtorCount == 0)
+			throw new MalformedJavaConfigurationException(
+					format("@Configuration classes must declare zero or one constructors " +
+							"that accept @ExternalValue parameters. Found %d constructors " +
+							"but none were candidates for @ExternalValue injection.  Perhaps " +
+							"one or more parameters do not have the @ExternalValue annotation?",
+							ctors.length));
+
+		if(candidateCtorCount > 1)
+			throw new MalformedJavaConfigurationException(
+					format("@Configuration classes may declare zero or one constructors " +
+							"that take @ExternalValue parameters. Found %d constructors " +
+							"declared on [%s]", candidateCtorCount, clazz.getName()));
+
+		Constructor<?> ctor = candidateCtors.get(0);
 		LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
 		ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
 		String[] parameterNames = paramNameDiscoverer.getParameterNames(ctor);
@@ -672,10 +699,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				}
 			}
 
-			if(pExternalValue == null)
-				throw new MalformedJavaConfigurationException(
-						format("constructor parameters must be annotated with @ExternalValue. " +
-								"offending constructor: [%s] parameter: [%s]", ctor.getName(), parameterNames[p]));
+			// possibility of being null should have been eliminated by logic above
+			Assert.notNull(pExternalValue,
+					format("constructor param [%s(%s)] does not contain expected" +
+							"@ExternalValue annotation", ctor.getName(), parameterNames[p]));
 
 			String name = pExternalValue.value();
 
@@ -683,7 +710,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				name = parameterNames[p];
 
 			String value = getValueSource(clazz, resourceLoader).getString(name);
-			ctorValues.addIndexedArgumentValue(p, value);
+			ctorValues.addIndexedArgumentValue(p, value, ctor.getParameterTypes()[p].getName());
 		}
 
 		beanDef.setConstructorArgumentValues(ctorValues);
