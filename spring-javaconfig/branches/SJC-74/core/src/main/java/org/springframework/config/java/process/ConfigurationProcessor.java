@@ -548,6 +548,40 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		// Create a bean definition from the method
 		RootBeanDefinition rbd = new RootBeanDefinition(beanCreationMethod.getReturnType());
 
+		// resolve any @ExternalValue parameters
+		ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
+		Annotation[][] allParamAnnotations = beanCreationMethod.getParameterAnnotations();
+		for(int a=0; a<allParamAnnotations.length; a++) {
+			Annotation[] pAnnotations = allParamAnnotations[a];
+			ExternalValue pExternalValue = null;
+
+			for(Annotation pAnno : pAnnotations)
+				if(pAnno.annotationType().equals(ExternalValue.class))
+					pExternalValue = (ExternalValue) pAnno;
+
+			if(pExternalValue == null) {
+				LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+				String[] parameterNames = paramNameDiscoverer.getParameterNames(beanCreationMethod);
+				throw new IllegalArgumentException(
+						format("@Bean method parameters must be annotated with @ExternalValue. " +
+								"Offending parameter: %s.%s(%s)",
+								beanCreationMethod.getDeclaringClass().getName(),
+								beanCreationMethod.getName(),
+								parameterNames[a]));
+			}
+
+			ValueSource valueSource = getValueSource(configurerClass, resourceLoader);
+			String valueName = pExternalValue.value();
+			if("".equals(valueName)) {
+				LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+				valueName = paramNameDiscoverer.getParameterNames(beanCreationMethod)[a];
+			}
+			Class<?> paramType = beanCreationMethod.getParameterTypes()[a];
+			Object value = valueSource.resolve(valueName, paramType);
+			ctorValues.addIndexedArgumentValue(a, value, paramType.getName());
+		}
+		rbd.setConstructorArgumentValues(ctorValues);
+
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
 		rbd.setFactoryBeanName(configurerBeanName);
 		// tag the bean definition
