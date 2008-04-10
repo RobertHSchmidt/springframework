@@ -23,16 +23,25 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to identify an external value on a method; can also be used
- * at the parameter level for {@link Bean @Bean} methods
+ * at the parameter level for {@link Bean @Bean} methods and
+ * {@link Configuration @Configuration} constructors.
+ * 
+ * @see ResourceBundles
  *
  * @author Rod Johnson
  * @author Chris Beams
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD })
+@Target({ ElementType.METHOD, ElementType.PARAMETER })
 @Inherited
 public @interface ExternalValue {
 
+	/**
+	 * Indicates the property name to be looked up in associated
+	 * {@link ResourceBundles ResourceBundle(s)} if left empty,
+	 * value will default to the name of the annotated parameter
+	 * or method
+	 */
 	String value() default "";
 
 }
