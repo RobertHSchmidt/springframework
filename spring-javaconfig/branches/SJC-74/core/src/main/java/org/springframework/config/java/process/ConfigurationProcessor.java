@@ -635,8 +635,15 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		return false;
 	}
 
-	public static void processExternalValueConstructorArgs(RootBeanDefinition beanDef, ResourceLoader resourceLoader) {
-		Class<?> clazz = beanDef.getBeanClass();
+	public static void processExternalValueConstructorArgs(AbstractBeanDefinition beanDef, ResourceLoader resourceLoader) {
+		String clazzName = beanDef.getBeanClassName();
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(clazzName);
+		}
+		catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 		Constructor<?>[] ctors = clazz.getConstructors();
 
 		// use the default constructor!

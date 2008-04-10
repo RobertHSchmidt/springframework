@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -362,6 +363,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 			for (String location : basePackages) {
 				Set<BeanDefinition> beandefs = scanner.findCandidateComponents(location);
 				for (BeanDefinition bd : beandefs) {
+					ConfigurationProcessor.processExternalValueConstructorArgs((AbstractBeanDefinition) bd, this);
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
 				}
 			}

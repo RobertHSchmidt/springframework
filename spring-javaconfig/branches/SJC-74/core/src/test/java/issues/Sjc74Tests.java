@@ -34,26 +34,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * prove that this works in conjunction with:
  * 
- * 	[ ] base package scanning
+ * 	[*] base package scanning
  * 
  * 	[*] class literal
  * 
- * 	[ ] passing Import annotation
+ * 	[*] passing Import annotation
  * 
- * 	[ ] JavaConfigWebApplicationContext
+ * 	[*] JavaConfigWebApplicationContext
  * 
- *  [ ] XML (ConfigurationPostProcessor)
+ *  [*] XML (ConfigurationPostProcessor)
  * 
- * 
- * [ ] What happens when there's more than one constructor? (it's an ambiguity for
- *     SJC and thus an error) Actually: should probably look for one that has all
- *     ExternalValue-annotated params
- * 
- * [ ] (see above) account for the fact that a Configuration class might legitimately
- *     have multiple constructors in the case of being bootstrapped from XML.  this
- *     is an edge case to say the least, but nevertheless.  Also, in the case of XML
- *     bootstrapping, the ExternalValue params may (will?) be supplied by XML.
- *     Create some tests around this.
  * 
  * [ ] What happens when I supply a body for an ExternalMethod? (should return that
  *     value as a default if there's no property value found (this is a diff issue)
@@ -74,6 +64,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * [*] What happens when the ExternalValue is not a String? (should trigger looking
  *     for a proper PropertyEditor)
+ * 
+ * [*] What happens when there's more than one constructor? (it's an ambiguity for
+ *     SJC and thus an error) Actually: should probably look for one that has all
+ *     ExternalValue-annotated params
+ * 
+ * [*] (see above) account for the fact that a Configuration class might legitimately
+ *     have multiple constructors in the case of being bootstrapped from XML.  this
+ *     is an edge case to say the least, but nevertheless.  Also, in the case of XML
+ *     bootstrapping, the ExternalValue params may (will?) be supplied by XML.
+ *     Create some tests around this.
  * 
  * [*] What happens when I subclass a Configuration that's already annotated with
  *     ResourceBundles? (should be inherited? what if I 'add' one in the subclass?)
@@ -508,6 +508,16 @@ public abstract class Sjc74Tests {
 		}
 		public @Bean Cache cache() { return new Cache(cacheSize, cacheName); }
 	}
+
+	// ----------------------------------------------------
+	// Works in conjunction with base package scanning?
+	// ----------------------------------------------------
+	public @Test void wellFormedWithBasePackageScanning() {
+		ctx.setBasePackages(issues.sjc74.scanning.WellFormedConfig.class.getPackage().getName());
+		ctx.refresh();
+		assertEquals("jdbc:url", ctx.getBean("url"));
+	}
+
 }
 
 
