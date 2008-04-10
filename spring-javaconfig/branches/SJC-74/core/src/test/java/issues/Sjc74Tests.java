@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  *  [*] ExternalValue as constructor-param
  * 
- *  [ ] ExternalValue as Bean method-param
+ *  [*] ExternalValue as Bean method-param
  *
  *  [ ] ExternalValue directly on field?
  * 
@@ -517,6 +517,98 @@ public abstract class Sjc74Tests {
 		ctx.refresh();
 		assertEquals("jdbc:url", ctx.getBean("url"));
 	}
+
+
+	// ====================================================
+	// @ExternalValue as bean-method param
+	// ====================================================
+
+	// ----------------------------------------------------
+	// Well-formed
+	// ----------------------------------------------------
+	public @Test void externalValueBeanMethodParam() {
+		ctx.addConfigClass(ExternalValueBeanMethodParam.class);
+		ctx.refresh();
+		assertEquals("jdbc:url", ctx.getBean("url"));
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class ExternalValueBeanMethodParam {
+		public @Bean String url(@ExternalValue("database.url") String url) {
+			return url;
+		}
+	}
+
+	// ----------------------------------------------------
+	// Malformed: omit @ExternalValue from parameter
+	// ----------------------------------------------------
+	@Test(expected=IllegalArgumentException.class)
+	public void externalValueAnnotationOmitted() {
+		ctx.addConfigClass(ExternalValueAnnotationOmitted.class);
+		ctx.refresh();
+		assertEquals("jdbc:url", ctx.getBean("url"));
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class ExternalValueAnnotationOmitted {
+		public @Bean String url(String url) {
+			return url;
+		}
+	}
+
+	// ----------------------------------------------------
+	// Malformed: omit one @ExternalValue from just one parameter
+	// ----------------------------------------------------
+	@Test(expected=IllegalArgumentException.class)
+	public void externalValueAnnotationOmittedOnJustOneParam() {
+		ctx.addConfigClass(ExternalValueAnnotationOmittedOnJustOneParam.class);
+		ctx.refresh();
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class ExternalValueAnnotationOmittedOnJustOneParam {
+		public @Bean String url(@ExternalValue("database.url") String url, String bogus) {
+			return url;
+		}
+	}
+
+	// ----------------------------------------------------
+	// Well Formed: omit value from @ExternalValue (should default to parameter name)
+	// ----------------------------------------------------
+	@Test
+	public void externalValueAnnotationPresentButValueOmitted() {
+		ctx.addConfigClass(ExternalValuePresentButValueOmitted.class);
+		ctx.refresh();
+		assertEquals("alice", ctx.getBean("name"));
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class ExternalValuePresentButValueOmitted {
+		public @Bean String name(@ExternalValue String usernameParam) {
+			return usernameParam;
+		}
+	}
+
+	// ----------------------------------------------------
+	// Well Formed: multiple @ExternalValue parameters (all defaulting to param names)
+	// ----------------------------------------------------
+	@Test
+	public void multipleExternalValueParameters() {
+		ctx.addConfigClass(MultipleExternalValueParameters.class);
+		ctx.refresh();
+		assertEquals("alice", ctx.getBean(Object[].class)[0]);
+		assertEquals(100, ctx.getBean(Object[].class)[1]);
+	}
+
+	@ResourceBundles("classpath:issues/Sjc74Tests")
+	static class MultipleExternalValueParameters {
+		public @Bean Object[] params(@ExternalValue String usernameParam, @ExternalValue int cacheSize) {
+			// just return a tuple of the injected values for easy testing
+			return new Object[] { usernameParam, cacheSize };
+		}
+	}
+
+
 
 }
 
