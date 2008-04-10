@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -120,6 +121,7 @@ implements ConfigurableJavaConfigApplicationContext {
 			Set<BeanDefinition> beandefs = scanner.findCandidateComponents(basePackage);
 			if (beandefs.size() > 0) {
 				for (BeanDefinition bd : beandefs) {
+					ConfigurationProcessor.processExternalValueConstructorArgs((AbstractBeanDefinition)bd, this);
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
 				}
 			}
@@ -160,7 +162,17 @@ implements ConfigurableJavaConfigApplicationContext {
 	}
 
 	public void setBasePackages(String... basePackages) {
-		throw new UnsupportedOperationException();
+		String[] configLocations = getConfigLocations();
+		int nLocations = configLocations == null ? 0 : configLocations.length;
+		String[] newConfigLocations = new String[nLocations+basePackages.length];
+
+		for(int i=0; i<nLocations; i++)
+			newConfigLocations[i] = configLocations[i];
+
+		for(int i=0; i<basePackages.length; i++)
+			newConfigLocations[nLocations+i] = basePackages[i];
+
+		this.setConfigLocations(newConfigLocations);
 	}
 
 	public void setConfigClasses(Class<?>... classes) {
