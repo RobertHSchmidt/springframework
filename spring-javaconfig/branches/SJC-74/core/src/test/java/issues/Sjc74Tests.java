@@ -88,6 +88,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public abstract class Sjc74Tests {
 
+	public static class Sjc74JavaConfigApplicationContextTests extends Sjc74Tests {
+		@Override
+		protected ConfigurableJavaConfigApplicationContext newContext() {
+			return new org.springframework.config.java.context.JavaConfigApplicationContext();
+		}
+	}
+
+	public static class Sjc74JavaConfigWebApplicationContextTests extends Sjc74Tests {
+		@Override
+		protected ConfigurableJavaConfigApplicationContext newContext() {
+			return new org.springframework.config.java.context.JavaConfigWebApplicationContext();
+		}
+	}
+
 	private ConfigurableJavaConfigApplicationContext ctx;
 
 	public @Before void initContext() {
