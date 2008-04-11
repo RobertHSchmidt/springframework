@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter id="new-and-noteworthy-1.0.0.m3">
-  <title>New &amp; Noteworthy in 1.0.0.m3</title>
+<chapter id="new-and-noteworthy">e>
+  <section id="new-and-noteworthy-1.0.0.m3">
+  	  <title>New &amp; Noteworthy in 1.0.0.m3</title>
 
-  <section>
-    <title><classname>AnnotationApplicationContext</classname> deprecated</title>
+  	  <section>
+    	<title><classname>AnnotationApplicationContext</classname> deprecated</title>
 
-    <para><classname>AnnotationApplicationContext</classname> presented a
-    naming conflict with Spring 2.5's Annotation-Driven Configuration. To
-    avoid this problem it has been renamed to
-    <classname>JavaConfigApplicationContext</classname>. Beyond the
-    renaming, <classname>JavaConfigApplicationContext</classname> has
-    several new features worth discussing. See below for details.
-    <emphasis><classname>AnnotationApplicationContext</classname> will be
-    removed entirely in JavaConfig 1.0.0.rc1</emphasis></para>
+        <para><classname>AnnotationApplicationContext</classname> presented a
+        naming conflict with Spring 2.5's Annotation-Driven Configuration. To
+        avoid this problem it has been renamed to
+        <classname>JavaConfigApplicationContext</classname>. Beyond the
+        renaming, <classname>JavaConfigApplicationContext</classname> has
+        several new features worth discussing. See below for details.
+        <emphasis><classname>AnnotationApplicationContext</classname> will be
+        removed entirely in JavaConfig 1.0.0.rc1</emphasis></para>
+    
+        <para>See <xref linkend="javaconfigapplicationcontext" /></para>
+      </section>
 
-    <para>See <xref linkend="javaconfigapplicationcontext" /></para>
-  </section>
-
-  <section>
-    <title>Type-safety improvements</title>
-
-    <para><classname>JavaConfigApplicationContext</classname>,
-    <classname>JavaConfigWebApplicationContext</classname> and the
-    <classname>ConfigurationSupport</classname> base class now all expose
-    type-safe <methodname>getBean</methodname> methods, allowing for
-    looking up beans by type, rather than by name. <programlisting>@Configuration
+      <section>
+        <title>Type-safety improvements</title>
+    
+        <para><classname>JavaConfigApplicationContext</classname>,
+        <classname>JavaConfigWebApplicationContext</classname> and the
+        <classname>ConfigurationSupport</classname> base class now all expose
+        type-safe <methodname>getBean</methodname> methods, allowing for
+        looking up beans by type, rather than by name. <programlisting>@Configuration
 public class AppConfig {
     @Bean
     public TransferService transferService() {
@@ -49,17 +50,17 @@ public class SimpleApp {
     }
 }
 </programlisting> See <xref linkend="typesafe-getbean" /> for details.</para>
-  </section>
+  	  </section>
 
-  <section>
-    <title>First-class support for JavaConfig in the web tier</title>
+  	  <section>
+    	<title>First-class support for JavaConfig in the web tier</title>
 
-    <para>By popular demand, a
-    <interfacename>WebApplicationContext</interfacename> variant of
-    <classname>JavaConfigApplicationContext</classname> has been created.
-    This allows for seamless bootstrapping of JavaConfig bean definitions
-    within web.xml requiring no Spring XML whatsoever.
-    <programlisting>&lt;web-app&gt;
+        <para>By popular demand, a
+        <interfacename>WebApplicationContext</interfacename> variant of
+        <classname>JavaConfigApplicationContext</classname> has been created.
+        This allows for seamless bootstrapping of JavaConfig bean definitions
+        within web.xml requiring no Spring XML whatsoever.
+        <programlisting>&lt;web-app&gt;
     <lineannotation>&lt;!-- Configure <literal>ContextLoaderListener</literal> to use <literal>JavaConfigWebApplicationContext</literal>
          instead of the default <literal>XmlWebApplicationContext</literal> --&gt;</lineannotation>
     &lt;context-param&gt;
@@ -183,36 +184,36 @@ public class AppConfig extends ConfigurationSupport {
     }
 }
 </programlisting>Importing multiple configurations can be done by supplying an
-    array of classes to the <classname>@Import</classname> annotation
-    <programlisting>@Configuration
+    	array of classes to the <classname>@Import</classname> annotation
+    	<programlisting>@Configuration
 @Import({ DataSourceConfig.class, TransactionConfig.class })
 public class AppConfig extends ConfigurationSupport {
     <lineannotation>// bean definitions here can reference bean definitions in <classname>DataSourceConfig</classname> or <classname>TransactionConfig</classname></lineannotation>
 }
 </programlisting></para>
 
-    <para>See <xref linkend="importing-configurations" /> for full
-    details.</para>
-  </section>
+        <para>See <xref linkend="importing-configurations" /> for full
+        details.</para>
+      </section>
+    
+      <section id="m3-external-value">
+        <title>Support for externalizing string values with
+        <classname>@ExternalValue</classname></title>
 
-  <section>
-    <title>Support for externalizing string values with
-    <classname>@ExternalValue</classname></title>
+        <para><emphasis>Important: This functionality may change!</emphasis>.
+        We are currently evaluating approaches for best supporting externalized
+        values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
+        for more details.</para>
 
-    <para><emphasis>Important: This functionality may change!</emphasis>.
-    We are currently evaluating approaches for best supporting externalized
-    values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
-    for more details.</para>
-
-    <para>Somewhat similar to the way that
-    <classname>@ExternalBean</classname> makes it possible to reference
-    beans defined outside of the current
-    <classname>@Configuration</classname>,
-    <classname>@ExternalBean</classname> allows for accessing externalized
-    string values in properties files. This is ideal for use when
-    configuring up infrastructural resources with properties that may
-    change at deployment time, or otherwise need to be externally
-    accessible for modification. <programlisting>@Configuration
+        <para>Somewhat similar to the way that
+        <classname>@ExternalBean</classname> makes it possible to reference
+        beans defined outside of the current
+        <classname>@Configuration</classname>,
+        <classname>@ExternalBean</classname> allows for accessing externalized
+        string values in properties files. This is ideal for use when
+        configuring up infrastructural resources with properties that may
+        change at deployment time, or otherwise need to be externally
+        accessible for modification. <programlisting>@Configuration
 @ResourceBundles("classpath:/com/myapp/datasource")
 public abstract class AppConfig {
     @Bean
@@ -240,6 +241,69 @@ password=tiger
 jdbc.url=...
 </programlisting> See <xref linkend="externalizing-string-values" /> for full
     details</para>
+  	</section>
+  </section>
+  <section id="new-and-noteworthy-1.0.0.m4">
+  	  <title>New &amp; Noteworthy in 1.0.0.m4</title>
+  	  <section>
+  	  	<title>Additional targets for @ExternalValue</title>
+  	  	<para>Building on <link linkend="m3-external-value">1.0.0.m3's support for externalizing values</link>
+  	  	using <interfacename>@ExternalValue</interfacename> and <interfacename>@ResourceBundles</interfacename>,
+  	  	<interfacename>@ExternalValue</interfacename> may now be annotated on
+  	  	<interfacename>@Configuration</interfacename> class constructor parameters
+  	  	and <interfacename>@Bean</interfacename> method parameters:
+  	  	<programlisting>@Configuration
+@ResourceBundles("classpath:/com/myco/db")
+public class InfrastructureConfig {
+	private final String url;
+	private final String username;
+	private final String password;
+	public InfrastructureConfig(@ExternalValue("datasource.url") url,
+	                            @ExternalValue("datasource.username") username,
+	                            @ExternalValue("datasource.password") password) {
+		this.url = url;
+		this.username = username;
+		this.password = password;
+	}
+	
+	public @Bean DataSource dataSource() {
+		return new DriverManagerDataSource(url, username, password);
+	}
+}</programlisting>
+	  Where <literal>db.properties</literal> must be defined as:
+<programlisting>datasource.url=jdbc:mydriver:url
+datasource.username=scott
+datasource.password=tiger</programlisting></para>
+	  <para>Or:
+	  <programlisting>@Configuration
+@ResourceBundles("classpath:/com/myco/db")
+public class ApplicationConfig {
+	public @Bean AccountService accountService(@ExternalValue("datasource.url") url,
+	                                           @ExternalValue("datasource.username") username,
+	                                           @ExternalValue("datasource.password") password) {
+		DataSource dataSource = DriverManagerDataSource(url, username, password);
+		AccountRepository accountRepository = new JdbcAccountRepository(dataSource);
+		return new AccountServiceImpl(accountRepository);
+	}
+}</programlisting>
+	  Of course, if the value parameter to <interfacename>@ExternalValue</interfacename> is
+	  omitted, JavaConfig will default to looking up a value based on the name of the parameter:
+	  <programlisting>@Configuration
+@ResourceBundles("classpath:/com/myco/db")
+public class ApplicationConfig {
+	public @Bean AccountService accountService(@ExternalValue url,
+	                                           @ExternalValue username,
+	                                           @ExternalValue password) {
+		DataSource dataSource = DriverManagerDataSource(url, username, password);
+		AccountRepository accountRepository = new JdbcAccountRepository(dataSource);
+		return new AccountServiceImpl(accountRepository);
+	}
+}</programlisting>
+	  In the above, <literal>db.properties</literal> must be defined as:
+<programlisting>url=jdbc:mydriver:url
+username=scott
+password=tiger</programlisting></para>
+    </section>
   </section>
 </chapter>
 
