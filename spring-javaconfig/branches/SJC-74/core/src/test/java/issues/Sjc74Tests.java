@@ -11,13 +11,13 @@ import java.lang.annotation.Target;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.config.java.MalformedJavaConfigurationException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
