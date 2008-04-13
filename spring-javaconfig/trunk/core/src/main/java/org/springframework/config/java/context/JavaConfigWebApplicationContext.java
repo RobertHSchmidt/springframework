@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -41,13 +42,13 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  * 
  * @author Chris Beams
  */
-public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext implements
-		TypeSafeBeanFactory {
+public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext
+implements ConfigurableJavaConfigApplicationContext {
 
 	private Log log = LogFactory.getLog(getClass());
 
 	private final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningConfigurationProviderFactory()
-			.getProvider(this);
+	.getProvider(this);
 
 	private ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
 
@@ -71,7 +72,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 				}
 				else {
 					String message = "[%s] is not a valid configuration class. "
-							+ "Perhaps you forgot to annotate your bean creation methods with @Bean?";
+						+ "Perhaps you forgot to annotate your bean creation methods with @Bean?";
 					log.warn(format(message, cz));
 				}
 			}
@@ -111,20 +112,23 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
 		for (Class<?> cz : configClasses) {
-			beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+			RootBeanDefinition beanDef = new RootBeanDefinition(cz, true);
+			ConfigurationProcessor.processExternalValueConstructorArgs(beanDef, this);
+			beanFactory.registerBeanDefinition(cz.getName(), beanDef);
 		}
 
 		for (String basePackage : basePackages) {
 			Set<BeanDefinition> beandefs = scanner.findCandidateComponents(basePackage);
 			if (beandefs.size() > 0) {
 				for (BeanDefinition bd : beandefs) {
+					ConfigurationProcessor.processExternalValueConstructorArgs((AbstractBeanDefinition)bd, this);
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
 				}
 			}
 			else {
 				String message = "[%s] is either specifying a configuration class that does not exist "
-						+ "or is a base package pattern that does not match any configuration classes. "
-						+ "No bean definitions were found as a result of processing this configLocation";
+					+ "or is a base package pattern that does not match any configuration classes. "
+					+ "No bean definitions were found as a result of processing this configLocation";
 				log.warn(format(message, basePackage));
 			}
 		}
@@ -145,6 +149,34 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	public <T> T getBean(Class<T> type, String beanName) {
 		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type, beanName);
+	}
+
+	public void addConfigClass(Class<?> cls) {
+		String[] configLocations = getConfigLocations();
+		int nLocations = configLocations == null ? 0 : configLocations.length;
+		String[] newConfigLocations = new String[nLocations+1];
+		for(int i=0; i<nLocations; i++)
+			newConfigLocations[i] = configLocations[i];
+		newConfigLocations[newConfigLocations.length-1] = cls.getName();
+		this.setConfigLocations(newConfigLocations);
+	}
+
+	public void setBasePackages(String... basePackages) {
+		String[] configLocations = getConfigLocations();
+		int nLocations = configLocations == null ? 0 : configLocations.length;
+		String[] newConfigLocations = new String[nLocations+basePackages.length];
+
+		for(int i=0; i<nLocations; i++)
+			newConfigLocations[i] = configLocations[i];
+
+		for(int i=0; i<basePackages.length; i++)
+			newConfigLocations[nLocations+i] = basePackages[i];
+
+		this.setConfigLocations(newConfigLocations);
+	}
+
+	public void setConfigClasses(Class<?>... classes) {
+		throw new UnsupportedOperationException();
 	}
 
 }

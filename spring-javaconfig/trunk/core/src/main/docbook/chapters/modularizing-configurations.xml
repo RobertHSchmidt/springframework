@@ -11,9 +11,9 @@
     <title>Partitioning bean definitions across multiple
     <interfacename>@Configuration</interfacename> classes</title>
 
-    <para>The simplest technique for modularizing configurations is to simply split up
-    large <interfacename>@Configuration</interfacename> classes containing many
-    <interfacename>@Bean</interfacename> definitions into multiple smaller classes:
+    <para>The simplest technique for modularizing configurations is to split up
+    a single <interfacename>@Configuration</interfacename> class into multiple
+    smaller classes:
     <programlisting><lineannotation>// monolithic configuration</lineannotation>
 @Configuration
 public class AppConfig {
@@ -158,11 +158,6 @@ public class AppConfig extends ConfigurationSupport {
     <title>Externalizing values with <interfacename>@ExternalValue</interfacename>
     and <interfacename>@ResourceBundles</interfacename></title>
 
-    <tip><para><emphasis>Important: This functionality may change!</emphasis>
-    We are currently evaluating approaches for best supporting externalized
-    values.  See <ulink url="http://jira.springframework.org/browse/SJC-74">SJC-74</ulink>
-    for more details.</para></tip>
-
     <sidebar>
       <title>What about
       <classname>PropertyOverrideConfigurer</classname>?</title>
@@ -170,22 +165,17 @@ public class AppConfig extends ConfigurationSupport {
       <para>Those familiar with XML configuration will notice that there
       is not a direct equivalent for the popular
       <classname>PropertyOverrideConfigurer</classname>. However, the
-      combination of <classname>@ResourceBundles</classname> and
-      <classname>@ExternalValue</classname> is roughly equivalent to the
-      use of the <classname>PropertyPlaceholderConfigurer</classname>.
-      Just as many users do not wish to store usernames, passwords and
-      other sensitive or environment-specific values in XML, neither would
-      we want to do so in Java configurations. Interestingly, the
-      functionality of <classname>PropertyOverrideConfigurer</classname>
-      is not hard to emulate, either. Simply give the method a default
-      return value.</para>
+      combined use of JavaConfig's <classname>@ResourceBundles</classname> and
+      <classname>@ExternalValue</classname> is roughly equivalent.</para>
     </sidebar>
 
     <para>Access externally defined string values such as usernames,
     passwords, and the like using <classname>@ResourceBundles</classname>
     and <classname>@ExternalValue</classname>.</para>
-
-    <programlisting>@ResourceBundles("classpath:/org/springframework/config/java/simple")
+    
+    <section>
+		<title><interfacename>@ExternalValue</interfacename> methods</title>
+    	<programlisting>@ResourceBundles("classpath:/com/acme/db")
 @Configuration
 public abstract static class ConfigWithPlaceholders {
     @ExternalValue("datasource.username")
@@ -195,29 +185,37 @@ public abstract static class ConfigWithPlaceholders {
     public TestBean testBean() {
         return new TestBean(username());
     }
-}
-</programlisting>
+}</programlisting>
 
-    <para>The '<literal>org/springframework/config/java/simple</literal>'
-    argument to <classname>@ResourceBundles</classname> tells JavaConfig
-    that there must be a file in the classpath at
-    <literal>org/springframework/config/java/simple[locale].[properties|xml]</literal>
-    from which key/value pairs can be read. For example:</para>
+    	<para>The '<literal>org/springframework/config/java/simple</literal>'
+        argument to <classname>@ResourceBundles</classname> tells JavaConfig
+        that there must be a file in the classpath at
+        <literal>com/acme/db[locale].[properties|xml]</literal>
+        from which key/value pairs can be read. For example:</para>
 
-    <programlisting>datasource.username=scott
+    	<programlisting>datasource.username=scott
 datasource.password=tiger
-...
-</programlisting>
+...</programlisting>
 
-    <para>Multiple values can be supplied to
-    <classname>@ResourceBundles</classname>:</para>
+        <para>Multiple values can be supplied to
+        <classname>@ResourceBundles</classname>:</para>
 
-    <programlisting>@ResourceBundles({"classpath:/com/foo/myapp/simple", "classpath:/com/foo/myapp/complex"})
+    	<programlisting>@ResourceBundles({"classpath:/com/foo/myapp/simple", "classpath:/com/foo/myapp/complex"})
 @Configuration
 public class AppConfig {
     <lineannotation>// ...</lineannotation>
-}
-</programlisting>
+}</programlisting>
+	</section>
+	
+	<section>
+		<title><interfacename>@ExternalValue</interfacename> parameters
+		to <interfacename>@Bean</interfacename> methods</title>
+	</section>
+	
+	<section>
+		<title><interfacename>@ExternalValue</interfacename> parameters
+		to <interfacename>@Configuration</interfacename> constructors</title>
+	</section>
   </section>
 
   <section id="nested-configuration-classes">

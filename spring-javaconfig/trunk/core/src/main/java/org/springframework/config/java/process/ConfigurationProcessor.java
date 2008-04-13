@@ -18,6 +18,8 @@ package org.springframework.config.java.process;
 import static java.lang.String.format;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -43,6 +46,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.core.AutoBeanMethodProcessor;
 import org.springframework.config.java.core.BeanMethodReturnValueProcessor;
 import org.springframework.config.java.core.BeanNameTrackingDefaultListableBeanFactory;
@@ -55,6 +60,7 @@ import org.springframework.config.java.enhancement.cglib.CglibConfigurationEnhan
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.valuesource.CompositeValueSource;
+import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -63,6 +69,8 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
@@ -177,7 +185,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 			@Override
 			protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException,
-					BeansException {
+			BeansException {
 				// do nothing
 			}
 
@@ -358,6 +366,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		configurationBeanDefinition.setBeanClass(configurationClass);
 		configurationBeanDefinition.setResourceDescription("class-based configuration bean definition");
 
+		processExternalValueConstructorArgs(configurationBeanDefinition, this.getResourceLoader());
+
 		Assert.isInstanceOf(DefaultListableBeanFactory.class, owningBeanFactory);
 
 		((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(configBeanName,
@@ -491,7 +501,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	private void enhanceConfigurationClassAndUpdateBeanDefinition(Class<?> configurationClass,
 			String configurationBeanName) {
 		AbstractBeanDefinition definition = (AbstractBeanDefinition) owningBeanFactory
-				.getBeanDefinition(configurationBeanName);
+		.getBeanDefinition(configurationBeanName);
 
 		// update the configuration bean definition first
 		Class<?> enhancedClass = configurationEnhancer.enhanceConfiguration(configurationClass);
@@ -536,6 +546,40 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 		// Create a bean definition from the method
 		RootBeanDefinition rbd = new RootBeanDefinition(beanCreationMethod.getReturnType());
+
+		// resolve any @ExternalValue parameters
+		ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
+		Annotation[][] allParamAnnotations = beanCreationMethod.getParameterAnnotations();
+		for(int a=0; a<allParamAnnotations.length; a++) {
+			Annotation[] pAnnotations = allParamAnnotations[a];
+			ExternalValue pExternalValue = null;
+
+			for(Annotation pAnno : pAnnotations)
+				if(pAnno.annotationType().equals(ExternalValue.class))
+					pExternalValue = (ExternalValue) pAnno;
+
+			if(pExternalValue == null) {
+				LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+				String[] parameterNames = paramNameDiscoverer.getParameterNames(beanCreationMethod);
+				throw new IllegalArgumentException(
+						format("@Bean method parameters must be annotated with @ExternalValue. " +
+								"Offending parameter: %s.%s(%s)",
+								beanCreationMethod.getDeclaringClass().getName(),
+								beanCreationMethod.getName(),
+								parameterNames[a]));
+			}
+
+			ValueSource valueSource = getValueSource(configurerClass, resourceLoader);
+			String valueName = pExternalValue.value();
+			if("".equals(valueName)) {
+				LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+				valueName = paramNameDiscoverer.getParameterNames(beanCreationMethod)[a];
+			}
+			Class<?> paramType = beanCreationMethod.getParameterTypes()[a];
+			Object value = valueSource.resolve(valueName, paramType);
+			ctorValues.addIndexedArgumentValue(a, value, paramType.getName());
+		}
+		rbd.setConstructorArgumentValues(ctorValues);
 
 		rbd.setFactoryMethodName(beanCreationMethod.getName());
 		rbd.setFactoryBeanName(configurerBeanName);
@@ -597,7 +641,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 			return false;
 
 		return candidateConfigurationClass.isAnnotationPresent(Configuration.class)
-				|| !StandardBeanMethodProcessor.findBeanCreationMethods(candidateConfigurationClass).isEmpty();
+		|| !StandardBeanMethodProcessor.findBeanCreationMethods(candidateConfigurationClass).isEmpty();
 	}
 
 	/**
@@ -622,6 +666,117 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 					return true;
 
 		return false;
+	}
+
+	public static void processExternalValueConstructorArgs(AbstractBeanDefinition beanDef, ResourceLoader resourceLoader) {
+		String clazzName = beanDef.getBeanClassName();
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(clazzName);
+		}
+		catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		Constructor<?>[] ctors = clazz.getConstructors();
+
+		// use the default constructor!
+		if(ctors.length == 0)
+			return;
+
+		List<Constructor<?>> candidateCtors = new ArrayList<Constructor<?>>();
+
+		CONSTRUCTORS:
+			for(Constructor<?> ctor : ctors) {
+				Annotation[][] params = ctor.getParameterAnnotations();
+
+				for(int p=0; p<params.length; p++) {
+					boolean pHasAnnotation = false;
+					Annotation[] pAnnotations = params[p];
+
+					for(int a=0; a<pAnnotations.length; a++)
+						if(pAnnotations[a].annotationType().equals(ExternalValue.class))
+							pHasAnnotation = true;
+
+					if(!pHasAnnotation)
+						continue CONSTRUCTORS;
+				}
+
+				candidateCtors.add(ctor);
+			}
+
+
+		int candidateCtorCount = candidateCtors.size();
+
+		if (candidateCtorCount == 0)
+			throw new MalformedJavaConfigurationException(
+					format("@Configuration classes must declare zero or one constructors " +
+							"that accept @ExternalValue parameters. Found %d constructors " +
+							"but none were candidates for @ExternalValue injection.  Perhaps " +
+							"one or more parameters do not have the @ExternalValue annotation?",
+							ctors.length));
+
+		if(candidateCtorCount > 1)
+			throw new MalformedJavaConfigurationException(
+					format("@Configuration classes may declare zero or one constructors " +
+							"that take @ExternalValue parameters. Found %d constructors " +
+							"declared on [%s]", candidateCtorCount, clazz.getName()));
+
+		Constructor<?> ctor = candidateCtors.get(0);
+		LocalVariableTableParameterNameDiscoverer paramNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+		ConstructorArgumentValues ctorValues = new ConstructorArgumentValues();
+		String[] parameterNames = paramNameDiscoverer.getParameterNames(ctor);
+
+		Annotation[][] params = ctor.getParameterAnnotations();
+		for (int p = 0; p < params.length; p++) {
+			Annotation[] pAnnotations = params[p];
+			ExternalValue pExternalValue = null;
+
+			// the param may have multiple annotations - find @ExternalValue
+			for(int a=0; a < pAnnotations.length; a++) {
+				if(pAnnotations[a].annotationType().equals(ExternalValue.class)) {
+					pExternalValue = (ExternalValue) pAnnotations[a];
+					break;
+				}
+			}
+
+			// possibility of being null should have been eliminated by logic above
+			Assert.notNull(pExternalValue,
+					format("constructor param [%s(%s)] does not contain expected" +
+							"@ExternalValue annotation", ctor.getName(), parameterNames[p]));
+
+			String name = pExternalValue.value();
+
+			if("".equals(name))
+				name = parameterNames[p];
+
+			String value = getValueSource(clazz, resourceLoader).getString(name);
+			ctorValues.addIndexedArgumentValue(p, value, ctor.getParameterTypes()[p].getName());
+		}
+
+		beanDef.setConstructorArgumentValues(ctorValues);
+	}
+
+	// TODO: this method should cache the valueSource if it's already been created.
+	private static MessageSourceValueSource getValueSource(Class<?> clazz, ResourceLoader resourceLoader) {
+		// if @ExternalValue has been supplied for one or more params,
+		// @ResourceBundles must exist at the class level
+		ResourceBundles rbs = clazz.getAnnotation(ResourceBundles.class);
+		if(rbs == null)
+			throw new MalformedJavaConfigurationException(
+					format("configurations that declare constructors with @ExternalValue " +
+							"parameters must declare @ResourceBundles with at " +
+							"least one basename. offending configuration class: [%s]", clazz.getName()));
+
+		String[] basenames = rbs.value();
+		if(basenames.length == 0)
+			throw new MalformedJavaConfigurationException("@ResourceBundles must supply at least one basename");
+
+		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
+		ms.setResourceLoader(resourceLoader);
+		ms.setBasenames(basenames);
+		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
+
+		return valueSource;
 	}
 
 }
