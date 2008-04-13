@@ -305,6 +305,10 @@ public class ApplicationConfig {
 username=scott
 password=tiger</programlisting></para>
     </section>
+    <section>
+  	  <title>Support for checking <interfacename>@Required</interfacename> parameters</title>
+  	  <para>TODO</para>
+    </section> 
   </section>
 </chapter>
 
