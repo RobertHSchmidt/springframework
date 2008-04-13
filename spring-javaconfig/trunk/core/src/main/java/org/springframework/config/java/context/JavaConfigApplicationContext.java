@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -181,7 +182,7 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * 
  * @author Chris Beams
  */
-public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements TypeSafeBeanFactory {
+public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements ConfigurableJavaConfigApplicationContext {
 
 	private Class<?>[] configClasses;
 
@@ -190,7 +191,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	private boolean closedForConfiguration = false;
 
 	private final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningConfigurationProviderFactory()
-			.getProvider(this);
+	.getProvider(this);
 
 	/**
 	 * requires calling refresh()
@@ -351,7 +352,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		if (configClasses != null && configClasses.length > 0) {
 			for (Class<?> cz : configClasses) {
 				if (ConfigurationProcessor.isConfigurationClass(cz)) {
-					beanFactory.registerBeanDefinition(cz.getName(), new RootBeanDefinition(cz, true));
+					RootBeanDefinition beanDef = new RootBeanDefinition(cz, true);
+					ConfigurationProcessor.processExternalValueConstructorArgs(beanDef, this);
+					beanFactory.registerBeanDefinition(cz.getName(), beanDef);
 				}
 			}
 		}
@@ -360,11 +363,13 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 			for (String location : basePackages) {
 				Set<BeanDefinition> beandefs = scanner.findCandidateComponents(location);
 				for (BeanDefinition bd : beandefs) {
+					ConfigurationProcessor.processExternalValueConstructorArgs((AbstractBeanDefinition) bd, this);
 					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
 				}
 			}
 		}
 	}
+
 
 	/**
 	 * Register the default post processors used for parsing Spring classes.
