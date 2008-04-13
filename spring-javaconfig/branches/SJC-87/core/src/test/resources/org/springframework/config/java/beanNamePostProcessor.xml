@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+
+	<bean 
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		
+	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+	
+		<property name="beanNames" value="test*"/>
+		
+		<property name="interceptorNames">
+			<list>
+				<value>countingBeforeAdvice</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="countingBeforeAdvice"
+		class="org.springframework.aop.framework.CountingBeforeAdvice" />
+		
+	<bean 
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$PostProcessedConfig" >
+		
+	</bean>
+	
+	<bean id="externalNotAdvisedByAspectWithinConfig"
+		class="org.springframework.config.java.ConfigurationPostProcessorTests$AdvisedByConfig" />
+	
+	
+</beans>
