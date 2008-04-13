@@ -1,1 +1,0 @@
-put petclinic.war (from Spring distribution) inside this folder
