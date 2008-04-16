@@ -1,4 +1,5 @@
-package issues;
+package org.springframework.config.java.model;
+
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -12,24 +13,28 @@ import org.springframework.util.ClassUtils;
 /**
  * {@link JavaConfigBeanDefinitionReader} implementation primarily designed for refactoring
  * purposes while moving JavaConfig fram Java reflection-based class parsing to ASM-based class
- * parsing.
+ * parsing. "Legacy" because it simply bootstraps JavaConfig's {@link ConfigurationProcessor} in
+ * order to call its
+ * {@link ConfigurationProcessor#processConfigurationBean(String, Class) processConfigurationBean}
+ * method.
  * 
  * @see AsmJavaConfigBeanDefinitionReader
+ * @see RefactoredReflectiveJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */
-public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
+public class LegacyReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
 	private final ConfigurationProcessor processor;
 	private final String configurationBeanName;
 
-	public ReflectiveJavaConfigBeanDefinitionReader(ConfigurationProcessor processor, String configurationBeanName) {
+	public LegacyReflectiveJavaConfigBeanDefinitionReader(ConfigurationProcessor processor, String configurationBeanName) {
 		super(new DefaultListableBeanFactory());
 		this.processor = processor;
 		this.configurationBeanName = configurationBeanName;
 	}
 
-	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
+	public LegacyReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
 		this(new ConfigurationProcessor((ConfigurableListableBeanFactory)registry), configurationBeanName);
 	}
 

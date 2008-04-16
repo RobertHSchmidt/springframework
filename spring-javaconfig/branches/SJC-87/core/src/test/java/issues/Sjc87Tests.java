@@ -3,8 +3,6 @@ package issues;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,7 +19,8 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
-import org.springframework.config.java.annotation.ResourceBundles;
+import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
+import org.springframework.config.java.model.LegacyReflectiveJavaConfigBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -124,12 +123,11 @@ public abstract class Sjc87Tests {
 	public static class ReflectiveSjc87Tests extends Sjc87Tests {
 		@Override
 		protected JavaConfigBeanDefinitionReader getBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
-			return new ReflectiveJavaConfigBeanDefinitionReader(registry, configurationBeanName);
+			return new LegacyReflectiveJavaConfigBeanDefinitionReader(registry, configurationBeanName);
 		}
 	}
 
 	public @Test void populateAndRenderModel() {
-
 		Resource classResource = new ClassPathResource(ClassUtils.convertClassNameToResourcePath(MyConfig.class.getName()));
 
 		BeanFactory bf = new DefaultListableBeanFactory();
@@ -152,8 +150,6 @@ public abstract class Sjc87Tests {
 		String username2 = (String) bf.getBean("username");
 		assertSame(username, username2);
 	}
-
-
 	@Configuration
 	public static class Config {
 		/*
@@ -177,152 +173,8 @@ public abstract class Sjc87Tests {
 	}
 }
 
-/**
- * Populates a given {@link BeanDefinitionRegistry} based on metadata within a
- * given {@link JavaConfigurationModel}
- *
- * @author Chris Beams
- */
-class JavaConfigurationModelBeanDefinitionGenerator {
 
-	/**
-	 * @param registry
-	 * @param model
-	 * @return number of bean definitions generated
-	 */
-	public int generateBeanDefinitionsFromModel(BeanDefinitionRegistry registry, JavaConfigurationModel model) {
 
-		int initialBeanDefCount = registry.getBeanDefinitionNames().length;
-
-		for(ConfigurationClass configClass : model.getConfigurationClasses()) {
-			String configClassName = configClass.getClassName();
-			RootBeanDefinition configBeanDef = new RootBeanDefinition();
-			configBeanDef.setBeanClassName(configClassName);
-			// @Configuration classes' bean names are always their fully-qualified classname
-			registry.registerBeanDefinition(configClassName, configBeanDef);
-
-			for(BeanMethod beanMethod : configClass.getBeanMethods()) {
-				RootBeanDefinition beanDef = new RootBeanDefinition();
-				beanDef.setFactoryBeanName(configClassName);
-				beanDef.setFactoryMethodName(beanMethod.getMethodName());
-				// TODO: plug in NamingStrategy here
-				registry.registerBeanDefinition(beanMethod.getMethodName(), beanDef);
-			}
-		}
-
-		return registry.getBeanDefinitionNames().length - initialBeanDefCount;
-	}
-
-}
-
-/**
- * An abstract representation of a set of user-provided "Configuration classes",
- * usually but not necessarily annotated with {@link Configuration @Configuration}.
- * The model is populated with a
- * {@link org.springframework.config.java.process.ConfigurationProcessor} implementation,
- * which may be reflection-based or ASM-based.  Once a model has been populated, it
- * can then be rendered out to a set of BeanDefinitions.  The model provides an important
- * layer of indirection between the complexity of parsing a set of classes and the complexity
- * of representing the contents of those classes as BeanDefinitions.
- *
- * @author Chris Beams
- */
-class JavaConfigurationModel {
-	private Set<ConfigurationClass> configurationClasses = new LinkedHashSet<ConfigurationClass>();
-
-	/**
-	 * Add a {@link Configuration @Configuration} class to the model.  Classes
-	 * may be added at will and without any particular validation.  Malformed
-	 * classes will be caught and errors processed during a later phase.
-	 * 
-	 * @param configurationClass user-supplied Configuration class
-	 */
-	public void addConfigurationClass(ConfigurationClass configurationClass) {
-		configurationClasses.add(configurationClass);
-	}
-
-	public ConfigurationClass[] getConfigurationClasses() {
-		return configurationClasses.toArray(new ConfigurationClass[] {});
-	}
-}
-
-/**
- * Abstract representation of a user-definied {@link Configuration @Configuration}
- * class.  Includes a set of Bean methods, AutoBean methods, ExternalBean methods,
- * ExternalValue methods, etc.  Includes all such methods defined in the ancestry of
- * the class, in a 'flattened-out' manner.  Note that each BeanMethod representation
- * does still contain source information about where it was originally detected (for
- * the purpose of tooling with Spring IDE).
- * @author cbeams
- *
- */
-class ConfigurationClass {
-	private String className;
-	private Set<BeanMethod> beanMethods = new LinkedHashSet<BeanMethod>();
-	private ConfigurationClass importedBy;
-	private Set<ResourceBundles> resourceBundles = new LinkedHashSet<ResourceBundles>();
-
-	/**
-	 * bean methods may be locally declared within this class, or discovered
-	 * in a superclass.  The contract for processing overlapping bean methods
-	 * is a last-in-wins model, so it is important that any configuration
-	 * class processor is careful to add bean methods in a superclass-first,
-	 * top-down fashion.
-	 */
-	public void addBeanMethod(BeanMethod beanMethod) {
-		beanMethods.add(beanMethod);
-	}
-
-	public BeanMethod[] getBeanMethods() {
-		return beanMethods.toArray(new BeanMethod[] { });
-	}
-
-	/**
-	 * ResourceBundles may be locally declared on on this class, or discovered
-	 * in a superclass.  The contract for processing multiple ResourceBundles
-	 * annotations will be to combine them all into a single list of basenames
-	 * with duplicates eliminated. This list will be ordered according to the
-	 * order in which the ResourceBundles were added.  Therefore it is important
-	 * that any configuration class processor is careful to add ResourceBundles
-	 * in a superclass-first, top-down fashion.  In this way, the most concrete
-	 * class will have precedence and thus be able to 'override' superclass behavior
-	 */
-	public void addResourceBundle(ResourceBundles resourceBundle) {
-		resourceBundles.add(resourceBundle);
-	}
-
-	/** fully-qualified classname for this Configuration class */
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	/** must declare at least one Bean method, etc */
-	public boolean isWellFormed() {
-		return true;
-	}
-}
-
-class BeanMethod {
-	private Bean beanAnnotation;
-	private final String methodName;
-
-	public BeanMethod(String methodName) {
-		this.methodName = methodName;
-	}
-
-	public Bean getBeanAnnotation() {
-		return beanAnnotation;
-	}
-
-	public String getMethodName() {
-		return methodName;
-	}
-
-}
 
 @Configuration class MyConfig {
 	public @Bean String username() {

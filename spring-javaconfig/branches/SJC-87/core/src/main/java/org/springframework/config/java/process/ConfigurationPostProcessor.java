@@ -15,14 +15,14 @@
  */
 package org.springframework.config.java.process;
 
-import issues.JavaConfigBeanDefinitionReader;
-import issues.ReflectiveJavaConfigBeanDefinitionReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
+import org.springframework.config.java.model.LegacyReflectiveJavaConfigBeanDefinitionReader;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -147,7 +147,7 @@ ApplicationContextAware {
 
 		processor.afterPropertiesSet();
 
-		return new ReflectiveJavaConfigBeanDefinitionReader(processor, beanName);
+		return new LegacyReflectiveJavaConfigBeanDefinitionReader(processor, beanName);
 	}
 
 }
