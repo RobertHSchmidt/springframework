@@ -393,7 +393,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * @return
 	 * @throws BeanDefinitionStoreException
 	 */
-	void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
+	public void processConfigurationBean(String configurationBeanName, Class<?> configurationClass) {
 		boolean isEntryPoint = false;
 		if (beanDefsGenerated == -1) {
 			isEntryPoint = true;
