@@ -21,6 +21,15 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.io.Resource;
 
+/**
+ * Will eventually be an ASM-based implementation to be swapped in during the switchover from
+ * reflection. See SJC-87.
+ * 
+ * @see LegacyReflectiveJavaConfigBeanDefinitionReader
+ * @see RefactoredReflectiveJavaConfigBeanDefinitionReader
+ * 
+ * @author Chris Beams
+ */
 public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
 	protected AsmJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
@@ -38,11 +47,11 @@ public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDef
 
 		model.addConfigurationClass(configClass);
 
-		JavaConfigurationModelBeanDefinitionGenerator modelToBeanGen =
-			new JavaConfigurationModelBeanDefinitionGenerator();
+		BeanDefinitionJavaConfigurationModelRenderer modelToBeanGen =
+			new BeanDefinitionJavaConfigurationModelRenderer(this.getRegistry());
 
 
-		return modelToBeanGen.generateBeanDefinitionsFromModel(this.getRegistry(), model);
+		return modelToBeanGen.renderModel(model);
 	}
 
 }
