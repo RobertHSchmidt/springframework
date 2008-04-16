@@ -15,6 +15,9 @@
  */
 package org.springframework.config.java.process;
 
+import issues.JavaConfigBeanDefinitionReader;
+import issues.ReflectiveJavaConfigBeanDefinitionReader;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -26,7 +29,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.ClassUtils;
 
 /**
  * Post processor for use in a bean factory that can process multiple
@@ -46,7 +51,7 @@ import org.springframework.core.io.ResourceLoader;
  * @author Costin Leau
  */
 public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware,
-		ApplicationContextAware {
+ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -118,25 +123,31 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ord
 			// get the class
 			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
 			if (clazz != null && ConfigurationProcessor.isConfigurationClass(clazz, configurationListenerRegistry)) {
-				ConfigurationProcessor processor;
-				if (this.applicationContext != null)
-					processor = new ConfigurationProcessor(this.applicationContext);
-				else
-					processor = new ConfigurationProcessor(beanFactory);
-
-				if (configurationListenerRegistry != null)
-					processor.setConfigurationListenerRegistry(configurationListenerRegistry);
-
-				if (namingStrategy != null)
-					processor.setBeanNamingStrategy(namingStrategy);
-
-				if (this.resourceLoader != null)
-					processor.setResourceLoader(resourceLoader);
-
-				processor.afterPropertiesSet();
-				processor.processConfigurationBean(beanName, clazz);
+				JavaConfigBeanDefinitionReader beanDefinitionReader = getJavaConfigBeanDefinitionReader(beanName, beanFactory);
+				beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(ClassUtils.convertClassNameToResourcePath(clazz.getName())));
 			}
 		}
+	}
+
+	private JavaConfigBeanDefinitionReader getJavaConfigBeanDefinitionReader(String beanName, ConfigurableListableBeanFactory beanFactory) {
+		ConfigurationProcessor processor;
+		if (this.applicationContext != null)
+			processor = new ConfigurationProcessor(this.applicationContext);
+		else
+			processor = new ConfigurationProcessor(beanFactory);
+
+		if (configurationListenerRegistry != null)
+			processor.setConfigurationListenerRegistry(configurationListenerRegistry);
+
+		if (namingStrategy != null)
+			processor.setBeanNamingStrategy(namingStrategy);
+
+		if (this.resourceLoader != null)
+			processor.setResourceLoader(resourceLoader);
+
+		processor.afterPropertiesSet();
+
+		return new ReflectiveJavaConfigBeanDefinitionReader(processor, beanName);
 	}
 
 }

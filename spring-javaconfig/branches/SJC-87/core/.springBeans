@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.0.3.v200801241658]]></pluginVersion>
+	<pluginVersion><![CDATA[2.0.4.v200802202100]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -11,7 +11,7 @@
 		<config>src/test/resources/issues/Sjc55.xml</config>
 		<config>src/test/resources/issues/Sjc60-child.xml</config>
 		<config>src/test/resources/issues/Sjc60-parent.xml</config>
-		<config>src/test/resources/issues/Sjc91Tests.xml</config>
+		<config>src/test/resources/issues/Sjc87Tests.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
