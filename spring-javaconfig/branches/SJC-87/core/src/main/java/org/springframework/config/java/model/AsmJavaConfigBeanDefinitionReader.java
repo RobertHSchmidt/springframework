@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package issues;
+package org.springframework.config.java.model;
+
+// import issues.MyConfig;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -29,7 +31,7 @@ public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDef
 		JavaConfigurationModel model = new JavaConfigurationModel();
 
 		ConfigurationClass configClass = new ConfigurationClass();
-		configClass.setClassName(MyConfig.class.getName());
+		// configClass.setClassName(MyConfig.class.getName());
 
 		BeanMethod beanMethod = new BeanMethod("username");
 		configClass.addBeanMethod(beanMethod);

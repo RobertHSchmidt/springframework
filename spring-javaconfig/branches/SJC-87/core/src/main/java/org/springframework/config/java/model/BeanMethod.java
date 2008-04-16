@@ -13,10 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package issues;
+package org.springframework.config.java.model;
 
-import org.springframework.beans.factory.support.BeanDefinitionReader;
+import org.springframework.config.java.annotation.Bean;
 
-public interface JavaConfigBeanDefinitionReader extends BeanDefinitionReader {
+public class BeanMethod {
+	private Bean beanAnnotation;
+	private final String methodName;
+
+	public BeanMethod(String methodName) {
+		this.methodName = methodName;
+	}
+
+	public Bean getBeanAnnotation() {
+		return beanAnnotation;
+	}
+
+	public String getMethodName() {
+		return methodName;
+	}
 
 }
