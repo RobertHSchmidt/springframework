@@ -1,7 +1,8 @@
 package org.springframework.config.java.model;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import static java.lang.String.format;
+
+import java.util.ArrayList;
 
 import org.springframework.config.java.annotation.Configuration;
 
@@ -15,23 +16,60 @@ import org.springframework.config.java.annotation.Configuration;
  * layer of indirection between the complexity of parsing a set of classes and the complexity
  * of representing the contents of those classes as BeanDefinitions.
  *
+ * <p>Interface follows the builder pattern for method chaining.
+ *
  * @author Chris Beams
  */
 public class JavaConfigurationModel {
-	private Set<ConfigurationClass> configurationClasses = new LinkedHashSet<ConfigurationClass>();
+
+	/** list is used because order and collection equality matters. */
+	private ArrayList<ConfigurationClass> configurationClasses = new ArrayList<ConfigurationClass>();
 
 	/**
 	 * Add a {@link Configuration @Configuration} class to the model.  Classes
 	 * may be added at will and without any particular validation.  Malformed
 	 * classes will be caught and errors processed during a later phase.
-	 * 
+	 *
 	 * @param configurationClass user-supplied Configuration class
 	 */
-	public void addConfigurationClass(ConfigurationClass configurationClass) {
+	public JavaConfigurationModel addConfigurationClass(ConfigurationClass configurationClass) {
 		configurationClasses.add(configurationClass);
+		return this;
 	}
 
 	public ConfigurationClass[] getConfigurationClasses() {
 		return configurationClasses.toArray(new ConfigurationClass[] {});
 	}
+
+	@Override
+	public String toString() {
+		return format("{%s:configurationClasses=%s}", getClass().getSimpleName(), configurationClasses);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((configurationClasses == null) ? 0 : configurationClasses.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JavaConfigurationModel other = (JavaConfigurationModel) obj;
+		if (configurationClasses == null) {
+			if (other.configurationClasses != null)
+				return false;
+		}
+		else if (!configurationClasses.equals(other.configurationClasses))
+			return false;
+		return true;
+	}
+
 }
