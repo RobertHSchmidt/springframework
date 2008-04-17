@@ -22,9 +22,15 @@ import org.springframework.config.java.annotation.Bean;
 public class BeanMethod {
 	private Bean beanAnnotation;
 	private final String methodName;
+	private int modifiers;
 
 	public BeanMethod(String methodName) {
 		this.methodName = methodName;
+	}
+
+	public BeanMethod(String name, int modifiers) {
+		this(name);
+		this.modifiers = modifiers;
 	}
 
 	public Bean getBeanAnnotation() {
@@ -35,16 +41,23 @@ public class BeanMethod {
 		return methodName;
 	}
 
+	/** Decipher with {@link java.lang.reflect.Modifier} */
+	public int getModifiers() {
+		return modifiers;
+	}
+
 	@Override
 	public String toString() {
-		return format("{%s:methodName=%s}", getClass().getSimpleName(), methodName);
+		return format("{%s:methodName=%s,modifiers=%d}", getClass().getSimpleName(), methodName, modifiers);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((beanAnnotation == null) ? 0 : beanAnnotation.hashCode());
 		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
+		result = prime * result + modifiers;
 		return result;
 	}
 
@@ -57,11 +70,19 @@ public class BeanMethod {
 		if (getClass() != obj.getClass())
 			return false;
 		BeanMethod other = (BeanMethod) obj;
+		if (beanAnnotation == null) {
+			if (other.beanAnnotation != null)
+				return false;
+		}
+		else if (!beanAnnotation.equals(other.beanAnnotation))
+			return false;
 		if (methodName == null) {
 			if (other.methodName != null)
 				return false;
 		}
 		else if (!methodName.equals(other.methodName))
+			return false;
+		if (modifiers != other.modifiers)
 			return false;
 		return true;
 	}
