@@ -210,14 +210,14 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	public @Test void publicBeanMethodModifierIsSupported() {
 		class Config {
 			public @Bean TestBean a() { return new TestBean(); }
-			final @Bean TestBean b() { return new TestBean(); }
+			public final @Bean TestBean b() { return new TestBean(); }
 		}
 		configClass = Config.class;
 		targetModel
 			.addConfigurationClass(
 				new ConfigurationClass(Config.class.getName())
 					.addBeanMethod(new BeanMethod("a", Modifier.PUBLIC))
-					.addBeanMethod(new BeanMethod("b", Modifier.FINAL))
+					.addBeanMethod(new BeanMethod("b", Modifier.PUBLIC + Modifier.FINAL))
     			)
     		;
 	}
