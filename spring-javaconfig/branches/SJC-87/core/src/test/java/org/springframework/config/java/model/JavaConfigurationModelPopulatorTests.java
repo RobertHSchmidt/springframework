@@ -2,13 +2,15 @@ package org.springframework.config.java.model;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Modifier;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.Import;
 
 /**
  * Integration test for {@link JavaConfigurationModelPopulator} implementations.
@@ -34,7 +36,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	private JavaConfigurationModelPopulator populator;
 
 	/**
-	 * Each concrete subclass must implement this method in order to receive a call back in
+	 * Each concrete subclass must implement this method in order to receive a callback in
 	 * {@link #initializeModelsAndPopulator()}
 	 */
 	protected abstract JavaConfigurationModelPopulator newPopulator(JavaConfigurationModel model);
@@ -71,10 +73,8 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	}
 
 	public @Test void beanMethodsAreRecognized() {
-		@Configuration class Config {
-			@Bean TestBean alice() {
-				return new TestBean("alice");
-			}
+		class Config {
+			@Bean TestBean alice() { return new TestBean(); }
 		}
 		configClass = Config.class;
 
@@ -85,12 +85,8 @@ public abstract class JavaConfigurationModelPopulatorTests {
 
 	public @Test void nonBeanMethodsAreIgnored() {
 		@Configuration class Config {
-			@Bean TestBean alice() {
-				return new TestBean("alice");
-			}
-			TestBean knave() {
-				return new TestBean("knave");
-			}
+			@Bean TestBean alice() { return new TestBean(); }
+			TestBean knave() { return new TestBean(); }
 		}
 		configClass = Config.class;
 
@@ -99,49 +95,136 @@ public abstract class JavaConfigurationModelPopulatorTests {
 				.addBeanMethod(new BeanMethod("alice")));
 	}
 
-	/* it's not necessarily important to preserve order of @Bean methods
-	 * within a given class, but it will be important when dealing with
-	 * @Import.  TODO: write this test
-	 */
-	@Ignore // not possible with java reflection. getDeclaredClasses does not preserve order
-	public @Test void beanMethodOrderIsPreservedA() {
-		@Configuration class Config {
-			@Bean TestBean alice() {
-				return new TestBean("alice");
-			}
-			@Bean TestBean knave() {
-				return new TestBean("knave");
-			}
-		}
-		configClass = Config.class;
+
+	class BeanMethodOrderConfig {
+		@Bean TestBean alice() { return new TestBean(); }
+		@Bean TestBean knave() { return new TestBean(); }
+	}
+	public @Test void beanMethodOrderIsNotSignificantA() {
+		configClass = BeanMethodOrderConfig.class;
 
 		targetModel.addConfigurationClass(
-			new ConfigurationClass(Config.class.getName())
+			new ConfigurationClass(BeanMethodOrderConfig.class.getName())
 				.addBeanMethod(new BeanMethod("alice"))
-				.addBeanMethod(new BeanMethod("knave")));
+				.addBeanMethod(new BeanMethod("knave"))
+			);
+	}
+	public @Test void beanMethodOrderIsNotSignificantB() {
+		configClass = BeanMethodOrderConfig.class;
+
+		targetModel.addConfigurationClass(
+			new ConfigurationClass(BeanMethodOrderConfig.class.getName())
+				.addBeanMethod(new BeanMethod("knave"))
+				.addBeanMethod(new BeanMethod("alice"))
+			);
 	}
 
-	@Ignore // not possible with java reflection. getDeclaredClasses does not preserve order
-	public @Test void beanMethodOrderIsPreservedB() {
-		@Configuration class Config {
-			@Bean TestBean knave() {
-				return new TestBean("knave");
-			}
-			@Bean TestBean alice() {
-				return new TestBean("alice");
-			}
+	public @Test void importIsRecognized() {
+		class Imported {
+			@Bean TestBean alice() { return new TestBean(); }
+		}
+
+		@Import(Imported.class)
+		class Config {
+			@Bean TestBean knave() { return new TestBean(); }
 		}
 		configClass = Config.class;
 
-		targetModel.addConfigurationClass(
-			new ConfigurationClass(Config.class.getName())
-				.addBeanMethod(new BeanMethod("knave"))
-				.addBeanMethod(new BeanMethod("alice")));
+		targetModel
+			.addConfigurationClass(
+				new ConfigurationClass(Imported.class.getName())
+					.addBeanMethod(new BeanMethod("alice")))
+			.addConfigurationClass(
+				new ConfigurationClass(Config.class.getName())
+					.addBeanMethod(new BeanMethod("knave")))
+		;
+	}
+
+	public @Test void multipleImportsAreSupported() {
+		class Imported1 { @Bean TestBean alice() { return new TestBean(); } }
+		class Imported2 { @Bean TestBean queen() { return new TestBean(); } }
+		@Import({Imported1.class, Imported2.class})
+		class Config { @Bean TestBean knave() { return new TestBean(); } }
+		configClass = Config.class;
+
+		targetModel
+			.addConfigurationClass(
+				new ConfigurationClass(Imported1.class.getName())
+					.addBeanMethod(new BeanMethod("alice")))
+			.addConfigurationClass(
+				new ConfigurationClass(Imported2.class.getName())
+					.addBeanMethod(new BeanMethod("queen")))
+			.addConfigurationClass(
+				new ConfigurationClass(Config.class.getName())
+					.addBeanMethod(new BeanMethod("knave")))
+		;
+	}
+
+	public @Test void nestedImportsAreSupported() {
+		class Imported2 { @Bean TestBean queen() { return new TestBean(); } }
+		@Import(Imported2.class)
+		class Imported1 { @Bean TestBean alice() { return new TestBean(); } }
+		@Import(Imported1.class)
+		class Config { @Bean TestBean knave() { return new TestBean(); } }
+		configClass = Config.class;
+
+		targetModel
+			.addConfigurationClass(
+				new ConfigurationClass(Imported2.class.getName())
+					.addBeanMethod(new BeanMethod("queen")))
+			.addConfigurationClass(
+				new ConfigurationClass(Imported1.class.getName())
+					.addBeanMethod(new BeanMethod("alice")))
+			.addConfigurationClass(
+				new ConfigurationClass(Config.class.getName())
+					.addBeanMethod(new BeanMethod("knave")))
+		;
+	}
+
+	public @Test void nestedImportsAreProcessedDepthFirst() {
+		class Imported3 { @Bean TestBean rabbit() { return new TestBean(); } }
+		class Imported2 { @Bean TestBean queen() { return new TestBean(); } }
+		@Import(Imported2.class)
+		class Imported1 { @Bean TestBean alice() { return new TestBean(); } }
+		@Import({Imported1.class, Imported3.class})
+		class Config { @Bean TestBean knave() { return new TestBean(); } }
+		configClass = Config.class;
+
+		targetModel
+			.addConfigurationClass(
+				new ConfigurationClass(Imported2.class.getName())
+					.addBeanMethod(new BeanMethod("queen")))
+			.addConfigurationClass(
+				new ConfigurationClass(Imported1.class.getName())
+					.addBeanMethod(new BeanMethod("alice")))
+			.addConfigurationClass(
+				new ConfigurationClass(Imported3.class.getName())
+					.addBeanMethod(new BeanMethod("rabbit")))
+			.addConfigurationClass(
+				new ConfigurationClass(Config.class.getName())
+					.addBeanMethod(new BeanMethod("knave")))
+		;
+	}
+
+
+	public @Test void publicBeanMethodModifierIsSupported() {
+		class Config {
+			public @Bean TestBean a() { return new TestBean(); }
+			final @Bean TestBean b() { return new TestBean(); }
+		}
+		configClass = Config.class;
+		targetModel
+			.addConfigurationClass(
+				new ConfigurationClass(Config.class.getName())
+					.addBeanMethod(new BeanMethod("a", Modifier.PUBLIC))
+					.addBeanMethod(new BeanMethod("b", Modifier.FINAL))
+    			)
+    		;
 	}
 
 
 	// -----------------------------------------------
-	// Concrete test implementations (one per implementation of JavaConfigurationModelPopulator)
+	// Concrete test case implementations (one per implementation of JavaConfigurationModelPopulator)
 	// -----------------------------------------------
 	public static class ReflectiveJavaConfigurationModelPopulatorTests extends JavaConfigurationModelPopulatorTests {
 		@Override

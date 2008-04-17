@@ -68,7 +68,8 @@ public class JavaConfigurationModelTests {
 		assertThat(modelA, not(equalTo(modelB)));
 	}
 
-	public @Test void differentlyOrderedDeepModelsAreNotEqual() {
+	/** @see {@link JavaConfigurationModelPopulatorTests#beanMethodOrderIsNotSignificantA() */
+	public @Test void differentBeanMethodOrderingDoesNotAffectEquality() {
 		JavaConfigurationModel modelA = new JavaConfigurationModel()
 			.addConfigurationClass(new ConfigurationClass("classA")
 				.addBeanMethod(new BeanMethod("methodA"))
@@ -85,7 +86,7 @@ public class JavaConfigurationModelTests {
 				.addBeanMethod(new BeanMethod("methodD")) // only difference!
 				.addBeanMethod(new BeanMethod("methodC")));
 
-		assertThat(modelA, not(equalTo(modelB)));
+		assertThat(modelA, equalTo(modelB));
 	}
 
 }

@@ -4,6 +4,7 @@ package org.springframework.config.java.model;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ResourceBundles;
@@ -26,8 +27,8 @@ public class ConfigurationClass {
 	private String className;
 	private ConfigurationClass importedBy;
 
-	/** list is used because order matters. see {@link #addBeanMethod(BeanMethod)} */
-	private ArrayList<BeanMethod> beanMethods = new ArrayList<BeanMethod>();
+	/** set is used because order does not matter. see {@link #addBeanMethod(BeanMethod)} */
+	private HashSet<BeanMethod> beanMethods = new HashSet<BeanMethod>();
 
 	/** list is used because order matters. see {@link #addResourceBundle(ResourceBundles)} */
 	private ArrayList<ResourceBundles> resourceBundles = new ArrayList<ResourceBundles>();
@@ -46,10 +47,7 @@ public class ConfigurationClass {
 
 	/**
 	 * bean methods may be locally declared within this class, or discovered
-	 * in a superclass.  The contract for processing overlapping bean methods
-	 * is a last-in-wins model, so it is important that any configuration
-	 * class processor is careful to add bean methods in a superclass-first,
-	 * top-down fashion.
+	 * in a superclass.  order is insignificant.
 	 */
 	public ConfigurationClass addBeanMethod(BeanMethod beanMethod) {
 		beanMethods.add(beanMethod);
