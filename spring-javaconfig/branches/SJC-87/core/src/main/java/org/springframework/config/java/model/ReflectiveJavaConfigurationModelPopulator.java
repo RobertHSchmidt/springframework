@@ -6,7 +6,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.core.annotation.AnnotationUtils;
 
 
-public class ReflectiveJavaConfigurationModelPopulator {
+public class ReflectiveJavaConfigurationModelPopulator implements JavaConfigurationModelPopulator {
 
 	private final JavaConfigurationModel model;
 
@@ -14,7 +14,8 @@ public class ReflectiveJavaConfigurationModelPopulator {
 		this.model = model;
 	}
 
-	public void addToModel(Class<?> classLiteral) {
+	public void addToModel(Object obj) {
+		Class<?> classLiteral = (Class<?>) obj;
 		ConfigurationClass configClass = new ConfigurationClass(classLiteral.getName());
 
 		for(Method method : classLiteral.getDeclaredMethods()) {
