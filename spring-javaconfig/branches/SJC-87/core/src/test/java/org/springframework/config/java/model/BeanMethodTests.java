@@ -10,7 +10,7 @@ import java.lang.reflect.Modifier;
 import org.junit.Test;
 
 
-public class BeanMethodTest {
+public class BeanMethodTests {
 	public @Test void equivalentMethodsAreEqual() {
 		BeanMethod methodA = new BeanMethod("foo");
 		BeanMethod methodB = new BeanMethod("foo");
