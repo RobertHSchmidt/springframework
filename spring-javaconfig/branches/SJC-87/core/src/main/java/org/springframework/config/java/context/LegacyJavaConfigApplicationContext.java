@@ -183,7 +183,7 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * @author Chris Beams
  */
 public class LegacyJavaConfigApplicationContext extends AbstractRefreshableApplicationContext
-										  implements ConfigurableJavaConfigApplicationContext {
+										        implements ConfigurableJavaConfigApplicationContext {
 
 	private Class<?>[] configClasses;
 
