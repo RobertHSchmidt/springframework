@@ -33,11 +33,11 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 
 		for(Method method : classLiteral.getDeclaredMethods()) {
 			if(findAnnotation(method, Bean.class) != null) {
-				configClass.addBeanMethod(new BeanMethod(method.getName(), method.getModifiers()));
+				configClass.add(new BeanMethod(method.getName(), method.getModifiers()));
 			}
 		}
 
-		model.addConfigurationClass(configClass);
+		model.add(configClass);
 	}
 
 }

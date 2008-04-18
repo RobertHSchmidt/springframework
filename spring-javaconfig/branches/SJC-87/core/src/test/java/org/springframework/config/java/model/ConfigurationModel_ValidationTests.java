@@ -17,7 +17,7 @@ public class ConfigurationModel_ValidationTests {
 
 	public @Test void validateCascadesToChildObjects() {
 		// configuration class is invalid (no beans defined), so should bubble up as an error at the top level
-		ValidationErrors errors = new ConfigurationModel().addConfigurationClass(new ConfigurationClass("a")).validate();
+		ValidationErrors errors = new ConfigurationModel().add(new ConfigurationClass("a")).validate();
 		assertTrue("should have reflected nested errors", errors.size() > 0);
 	}
 

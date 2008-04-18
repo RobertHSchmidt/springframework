@@ -28,10 +28,10 @@ public class ConfigurationClass {
 	private final String className;
 	private ConfigurationClass importedBy;
 
-	/** set is used because order does not matter. see {@link #addBeanMethod(BeanMethod)} */
+	/** set is used because order does not matter. see {@link #add(BeanMethod)} */
 	private HashSet<BeanMethod> beanMethods = new HashSet<BeanMethod>();
 
-	/** list is used because order matters. see {@link #addResourceBundle(ResourceBundles)} */
+	/** list is used because order matters. see {@link #add(ResourceBundles)} */
 	private ArrayList<ResourceBundles> resourceBundles = new ArrayList<ResourceBundles>();
 
 	/**
@@ -48,7 +48,7 @@ public class ConfigurationClass {
 	 * bean methods may be locally declared within this class, or discovered
 	 * in a superclass.  order is insignificant.
 	 */
-	public ConfigurationClass addBeanMethod(BeanMethod beanMethod) {
+	public ConfigurationClass add(BeanMethod beanMethod) {
 		beanMethods.add(beanMethod);
 		return this;
 	}
@@ -67,7 +67,7 @@ public class ConfigurationClass {
 	 * in a superclass-first, top-down fashion.  In this way, the most concrete
 	 * class will have precedence and thus be able to 'override' superclass behavior
 	 */
-	public ConfigurationClass addResourceBundle(ResourceBundles resourceBundle) {
+	public ConfigurationClass add(ResourceBundles resourceBundle) {
 		resourceBundles.add(resourceBundle);
 		return this;
 	}

@@ -42,9 +42,9 @@ public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDef
 		ConfigurationClass configClass = new ConfigurationClass("c");
 
 		BeanMethod beanMethod = new BeanMethod("username");
-		configClass.addBeanMethod(beanMethod);
+		configClass.add(beanMethod);
 
-		model.addConfigurationClass(configClass);
+		model.add(configClass);
 
 		BeanDefinitionRegisteringConfigurationModelRenderer modelToBeanGen =
 			new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry());

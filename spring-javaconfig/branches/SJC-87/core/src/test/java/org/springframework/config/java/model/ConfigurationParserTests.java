@@ -67,8 +67,7 @@ public abstract class ConfigurationParserTests {
 		class Config { }
 		configClass = Config.class;
 
-		expectedModel.addConfigurationClass(
-			new ConfigurationClass(Config.class.getName()));
+		expectedModel.add(new ConfigurationClass(Config.class.getName()));
 	}
 
 	public @Test void beanMethodsAreRecognized() {
@@ -77,9 +76,9 @@ public abstract class ConfigurationParserTests {
 		}
 		configClass = Config.class;
 
-		expectedModel.addConfigurationClass(
+		expectedModel.add(
 			new ConfigurationClass(Config.class.getName())
-				.addBeanMethod(new BeanMethod("alice")));
+				.add(new BeanMethod("alice")));
 	}
 
 	public @Test void nonBeanMethodsAreIgnored() {
@@ -89,9 +88,9 @@ public abstract class ConfigurationParserTests {
 		}
 		configClass = Config.class;
 
-		expectedModel.addConfigurationClass(
+		expectedModel.add(
 			new ConfigurationClass(Config.class.getName())
-				.addBeanMethod(new BeanMethod("alice")));
+				.add(new BeanMethod("alice")));
 	}
 
 
@@ -102,19 +101,19 @@ public abstract class ConfigurationParserTests {
 	public @Test void beanMethodOrderIsNotSignificantA() {
 		configClass = BeanMethodOrderConfig.class;
 
-		expectedModel.addConfigurationClass(
+		expectedModel.add(
 			new ConfigurationClass(BeanMethodOrderConfig.class.getName())
-				.addBeanMethod(new BeanMethod("alice"))
-				.addBeanMethod(new BeanMethod("knave"))
+				.add(new BeanMethod("alice"))
+				.add(new BeanMethod("knave"))
 			);
 	}
 	public @Test void beanMethodOrderIsNotSignificantB() {
 		configClass = BeanMethodOrderConfig.class;
 
-		expectedModel.addConfigurationClass(
+		expectedModel.add(
 			new ConfigurationClass(BeanMethodOrderConfig.class.getName())
-				.addBeanMethod(new BeanMethod("knave"))
-				.addBeanMethod(new BeanMethod("alice"))
+				.add(new BeanMethod("knave"))
+				.add(new BeanMethod("alice"))
 			);
 	}
 
@@ -130,12 +129,8 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.addConfigurationClass(
-				new ConfigurationClass(Imported.class.getName())
-					.addBeanMethod(new BeanMethod("alice")))
-			.addConfigurationClass(
-				new ConfigurationClass(Config.class.getName())
-					.addBeanMethod(new BeanMethod("knave")))
+			.add(new ConfigurationClass(Imported.class.getName()).add(new BeanMethod("alice")))
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
 		;
 	}
 
@@ -147,15 +142,9 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.addConfigurationClass(
-				new ConfigurationClass(Imported1.class.getName())
-					.addBeanMethod(new BeanMethod("alice")))
-			.addConfigurationClass(
-				new ConfigurationClass(Imported2.class.getName())
-					.addBeanMethod(new BeanMethod("queen")))
-			.addConfigurationClass(
-				new ConfigurationClass(Config.class.getName())
-					.addBeanMethod(new BeanMethod("knave")))
+			.add(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
+			.add(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
 		;
 	}
 
@@ -168,15 +157,9 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.addConfigurationClass(
-				new ConfigurationClass(Imported2.class.getName())
-					.addBeanMethod(new BeanMethod("queen")))
-			.addConfigurationClass(
-				new ConfigurationClass(Imported1.class.getName())
-					.addBeanMethod(new BeanMethod("alice")))
-			.addConfigurationClass(
-				new ConfigurationClass(Config.class.getName())
-					.addBeanMethod(new BeanMethod("knave")))
+			.add(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))
+			.add(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
 		;
 	}
 
@@ -190,18 +173,10 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.addConfigurationClass(
-				new ConfigurationClass(Imported2.class.getName())
-					.addBeanMethod(new BeanMethod("queen")))
-			.addConfigurationClass(
-				new ConfigurationClass(Imported1.class.getName())
-					.addBeanMethod(new BeanMethod("alice")))
-			.addConfigurationClass(
-				new ConfigurationClass(Imported3.class.getName())
-					.addBeanMethod(new BeanMethod("rabbit")))
-			.addConfigurationClass(
-				new ConfigurationClass(Config.class.getName())
-					.addBeanMethod(new BeanMethod("knave")))
+			.add(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))
+			.add(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
+			.add(new ConfigurationClass(Imported3.class.getName()).add(new BeanMethod("rabbit")))
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
 		;
 	}
 
@@ -214,11 +189,11 @@ public abstract class ConfigurationParserTests {
 		}
 		configClass = Config.class;
 		expectedModel
-			.addConfigurationClass(
+			.add(
 				new ConfigurationClass(Config.class.getName())
-					.addBeanMethod(new BeanMethod("a", Modifier.PUBLIC))
-					.addBeanMethod(new BeanMethod("b", Modifier.PUBLIC + Modifier.FINAL))
-					.addBeanMethod(new BeanMethod("c", Modifier.PRIVATE + Modifier.STRICT))
+					.add(new BeanMethod("a", Modifier.PUBLIC))
+					.add(new BeanMethod("b", Modifier.PUBLIC + Modifier.FINAL))
+					.add(new BeanMethod("c", Modifier.PRIVATE + Modifier.STRICT))
     			)
     		;
 	}
