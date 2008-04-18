@@ -24,12 +24,13 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * Factory that encapsulates instantiation and configuration logic necessary to
  * create a {@link ClassPathScanningCandidateComponentProvider} able to select
  * JavaConfig &#64Configuration classes properly.
- * 
+ *
  * TODO: make this a static method on {@link JavaConfigApplicationContext}
- * 
+ *
  * @author Chris Beams
  */
-class ClassPathScanningConfigurationProviderFactory {
+// TODO: return to package-private
+public class ClassPathScanningConfigurationProviderFactory {
 
 	/**
 	 * Return a new provider instance configured to treat as candidates only
@@ -43,9 +44,9 @@ class ClassPathScanningConfigurationProviderFactory {
 	 * from scanning selection process requires callers to explicitly reference
 	 * nested classes. Doing this allows guarantees the preservation of the
 	 * context hierarchy/nested class semantics.
-	 * 
+	 *
 	 * <p/>TODO: implement caching?
-	 * 
+	 *
 	 * <p/>TODO: we currently advertise that &#Configuration is optional, and
 	 * that the only hard requirement for a Configuration class is that it
 	 * expose one or more non-private non-final methods annotated with &#64Bean.
@@ -55,7 +56,7 @@ class ClassPathScanningConfigurationProviderFactory {
 	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
 	 * directly. Should probably come back and address this inconsistency just
 	 * by making a note in the docs about it.
-	 * 
+	 *
 	 * @param resourceLoader
 	 * @return new {@link ClassPathScanningCandidateComponentProvider}
 	 */

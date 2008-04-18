@@ -38,18 +38,18 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * JavaConfig. Note that it is not strictly required that a configuration class
  * be annotated with &#064Configuration, but rather that it exposes at least one
  * non-private method annotated with &#064Bean.
- * 
+ *
  * <h3>Example</h3>
- * 
+ *
  * <pre class="code">
  * JavaConfigApplicationContext context = new JavaConfigApplicationContext(AppConfig.class, DataConfig.class);
- * 
+ *
  * AccountService accountService = (AccountService) context.getBean(&quot;accountService&quot;);
  * </pre>
- * 
+ *
  * Where <code>AppConfig</code> and <code>DataConfig</code> are defined as
  * follows:
- * 
+ *
  * <pre class="code">
  * &#064;Configuration
  * public abstract class AppConfig {
@@ -68,9 +68,9 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  *     }
  * }
  * </pre>
- * 
+ *
  * <h2>Construction</h2>
- * 
+ *
  * <p/> The eight available constructors for
  * <code>JavaConfigApplicationContext</code> are divided into two categories:
  * <ol>
@@ -93,9 +93,9 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * </ul>
  * </li>
  * </ol>
- * 
+ *
  * In the former set, the following code would be valid:
- * 
+ *
  * <pre class="code">
  * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
  * ctx.setConfigClasses(Config1.class, Config2.class);
@@ -104,7 +104,7 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * ctx.refresh();
  * Service myService = (Service) ctx.getBean(&quot;service&quot;);
  * </pre>
- * 
+ *
  * Note that the caller must manually invoke {@link #refresh() refresh} to
  * advise the context that configuration is complete. In most cases, users will
  * not want to be burdened with having to remember to do this, so the latter six
@@ -115,16 +115,16 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * {@link #setParent(ApplicationContext) setParent} are invalid and will result
  * in an exception. Simply said, after instantiation with one of the convenience
  * constructors, the context is 'closed for configuration':
- * 
+ *
  * <pre class="code">
  * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
- * 
+ *
  * Service myService = (Service) ctx.getBean(&quot;service&quot;);
  * </pre>
- * 
- * 
+ *
+ *
  * <h2>Type-safe access to beans</h2>
- * 
+ *
  * To ensure refactorability and avoid string-based bean lookups, it is
  * recommended that users take advantage of
  * <code>JavaConfigApplicationContext</code>'s type-safe <code>getBean</code>
@@ -133,22 +133,22 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  * <li>{@link #getBean(Class)}</li>
  * <li>{@link #getBean(Class, String)}</li>
  * </ul>
- * 
+ *
  * The examples above become more elegant using these methods:
- * 
+ *
  * <pre class="code">
  * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
- * 
+ *
  * Service myService = ctx.getBean(Service.class); // no casting required!
  * </pre>
- * 
+ *
  * Of course, if multiple beans of type <code>Service</code> exist in the
  * context, the call above becomes ambiguous. Disambiguation can happen in one
  * of two ways:
  * <ol>
  * <li>Declare one bean as
  * {@link org.springframework.config.java.annotation.Primary}
- * 
+ *
  * <pre class="code">
  * &#064;Configuration
  * public class AppConfig {
@@ -162,27 +162,28 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  *     }
  * }
  * </pre>
- * 
+ *
  * </li>
- * 
+ *
  * <li>Use the name-qualified {@link #getBean(Class, String)} variant
- * 
+ *
  * <pre class="code">
  * JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
- * 
+ *
  * Service testService = ctx.getBean(Service.class, &quot;testService&quot;);
  * </pre>
- * 
+ *
  * </li>
  * </ol>
- * 
- * 
+ *
+ *
  * @see org.springframework.config.java.annotation.Configuration
  * @see org.springframework.config.java.annotation.Bean
- * 
+ *
  * @author Chris Beams
  */
-public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext implements ConfigurableJavaConfigApplicationContext {
+public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext
+										  implements ConfigurableJavaConfigApplicationContext {
 
 	private Class<?>[] configClasses;
 
@@ -195,7 +196,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * requires calling refresh()
-	 * 
+	 *
 	 * TODO: finish doc
 	 */
 	public JavaConfigApplicationContext() {
@@ -204,9 +205,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * requires calling refresh()
-	 * 
+	 *
 	 * TODO: finish doc
-	 * 
+	 *
 	 * @param parent
 	 */
 	public JavaConfigApplicationContext(ApplicationContext parent) {
@@ -235,10 +236,10 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * TODO: Document
-	 * 
+	 *
 	 * @see #prepareRefresh()
 	 * @see #finishRefresh()
-	 * 
+	 *
 	 * @param parent
 	 * @param classes
 	 * @param basePackages
@@ -279,7 +280,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 * processed by this context. May only be called on a context still 'open
 	 * for configuration' meaning that the user will need to manually call
 	 * refresh() after all classes have been added.
-	 * 
+	 *
 	 * @param cls
 	 */
 	public void addConfigClass(Class<?> cls) {
@@ -373,7 +374,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * Register the default post processors used for parsing Spring classes.
-	 * 
+	 *
 	 * @see JavaConfigBeanFactoryPostProcessorRegistry
 	 */
 	protected void registerDefaultPostProcessors() {
@@ -390,15 +391,15 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * Reverse the contents of <var>array</var>.
-	 * 
+	 *
 	 * <p/>This method is used for reversing the order of classes passed into
 	 * constructors of
 	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
 	 * or {@link org.springframework.config.java.annotation.Import}.
-	 * 
+	 *
 	 * <p/>TODO: shouldn't actually be necessary. Root out the real issue with
 	 * ordering
-	 * 
+	 *
 	 * @see ConfigurationProcessor#reverse()
 	 * @param array - array to reverse
 	 * @return reverse of <var>array</var>, null if <var>array</var> is null.
