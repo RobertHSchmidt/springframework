@@ -36,9 +36,9 @@ public class BeanDefinitionJavaConfigurationModelRenderer {
 			for(BeanMethod beanMethod : configClass.getBeanMethods()) {
 				RootBeanDefinition beanDef = new RootBeanDefinition();
 				beanDef.setFactoryBeanName(configClassName);
-				beanDef.setFactoryMethodName(beanMethod.getMethodName());
+				beanDef.setFactoryMethodName(beanMethod.getName());
 				// TODO: plug in NamingStrategy here
-				registry.registerBeanDefinition(beanMethod.getMethodName(), beanDef);
+				registry.registerBeanDefinition(beanMethod.getName(), beanDef);
 			}
 		}
 

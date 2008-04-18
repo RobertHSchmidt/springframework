@@ -10,7 +10,7 @@ import org.junit.Test;
  *
  * @author Chris Beams
  */
-public class JavaConfigurationModelTests {
+public class JavaConfigurationModel_EquivalenceTests {
 
 
 	public @Test void emptyModelsAreEqual() {
@@ -22,7 +22,7 @@ public class JavaConfigurationModelTests {
 
 	public @Test void emptyVsNonEmptyModelsAreNotEqual() {
 		JavaConfigurationModel empty = new JavaConfigurationModel();
-		JavaConfigurationModel nonEmpty = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass());
+		JavaConfigurationModel nonEmpty = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
 
 		assertThat(empty, not(equalTo(nonEmpty)));
 	}
