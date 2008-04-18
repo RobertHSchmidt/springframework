@@ -33,7 +33,7 @@ public class ConfigurationModel {
 	 *
 	 * @param configurationClass user-supplied Configuration class
 	 */
-	public ConfigurationModel addConfigurationClass(ConfigurationClass configurationClass) {
+	public ConfigurationModel add(ConfigurationClass configurationClass) {
 		configurationClasses.add(configurationClass);
 		return this;
 	}

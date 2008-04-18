@@ -22,7 +22,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 	}
 
 	public @Test void renderModel() {
-		model.addConfigurationClass(new ConfigurationClass("com.acme.OrderConfig").addBeanMethod(new BeanMethod("order")));
+		model.add(new ConfigurationClass("com.acme.OrderConfig").add(new BeanMethod("order")));
 		model.assertIsValid();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
