@@ -28,16 +28,16 @@ public class RefactoredReflectiveJavaConfigBeanDefinitionReader extends Abstract
 		}
 
 		// initialize a new model
-		JavaConfigurationModel model = new JavaConfigurationModel();
+		ConfigurationModel model = new ConfigurationModel();
 
 		// populate model reflectively
-		ReflectiveJavaConfigurationModelPopulator modelPopulator =
-			new ReflectiveJavaConfigurationModelPopulator(model);
-		modelPopulator.addToModel(configurationClass);
+		ReflectingConfigurationParser modelPopulator =
+			new ReflectingConfigurationParser(model);
+		modelPopulator.parse(configurationClass);
 
 		// render model as BeanDefinitions within this.registry
-		BeanDefinitionJavaConfigurationModelRenderer modelRenderer =
-			new BeanDefinitionJavaConfigurationModelRenderer(this.getRegistry());
+		BeanDefinitionRegisteringConfigurationModelRenderer modelRenderer =
+			new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry());
 		modelRenderer.renderModel(model);
 
 		return this.getRegistry().getBeanDefinitionCount() - initialBeanDefinitionCount;

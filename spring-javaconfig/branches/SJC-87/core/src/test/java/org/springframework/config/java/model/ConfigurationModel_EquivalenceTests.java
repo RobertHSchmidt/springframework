@@ -10,67 +10,67 @@ import org.junit.Test;
  *
  * @author Chris Beams
  */
-public class JavaConfigurationModel_EquivalenceTests {
+public class ConfigurationModel_EquivalenceTests {
 
 
 	public @Test void emptyModelsAreEqual() {
-		JavaConfigurationModel modelA = new JavaConfigurationModel();
-		JavaConfigurationModel modelB = new JavaConfigurationModel();
+		ConfigurationModel modelA = new ConfigurationModel();
+		ConfigurationModel modelB = new ConfigurationModel();
 
 		assertThat(modelA, equalTo(modelB));
 	}
 
 	public @Test void emptyVsNonEmptyModelsAreNotEqual() {
-		JavaConfigurationModel empty = new JavaConfigurationModel();
-		JavaConfigurationModel nonEmpty = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
+		ConfigurationModel empty = new ConfigurationModel();
+		ConfigurationModel nonEmpty = new ConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
 
 		assertThat(empty, not(equalTo(nonEmpty)));
 	}
 
 	public @Test void equivalentModelsAreEqual() {
-		JavaConfigurationModel modelA = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
-		JavaConfigurationModel modelB = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
+		ConfigurationModel modelA = new ConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
+		ConfigurationModel modelB = new ConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
 
 		assertThat(modelA, equalTo(modelB));
 	}
 
 	public @Test void nonEquivalentModelsAreNotEqual() {
-		JavaConfigurationModel modelA = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
-		JavaConfigurationModel modelB = new JavaConfigurationModel().addConfigurationClass(new ConfigurationClass("b"));
+		ConfigurationModel modelA = new ConfigurationModel().addConfigurationClass(new ConfigurationClass("a"));
+		ConfigurationModel modelB = new ConfigurationModel().addConfigurationClass(new ConfigurationClass("b"));
 
 		assertThat(modelA, not(equalTo(modelB)));
 	}
 
 	public @Test void equivalentDeepModelsAreEqual() {
 		class util {
-			JavaConfigurationModel createDeepModel() {
-				return new JavaConfigurationModel()
+			ConfigurationModel createDeepModel() {
+				return new ConfigurationModel()
 					.addConfigurationClass(new ConfigurationClass("classX")
 						.addBeanMethod(new BeanMethod("methodX")));
 			}
 		}
-		JavaConfigurationModel modelA = new util().createDeepModel();
-		JavaConfigurationModel modelB = new util().createDeepModel();
+		ConfigurationModel modelA = new util().createDeepModel();
+		ConfigurationModel modelB = new util().createDeepModel();
 
 		assertThat(modelA, not(sameInstance(modelB)));
 		assertThat(modelA, equalTo(modelB));
 	}
 
 	public @Test void differentlyOrderedModelsAreNotEqual() {
-		JavaConfigurationModel modelA = new JavaConfigurationModel()
+		ConfigurationModel modelA = new ConfigurationModel()
 			.addConfigurationClass(new ConfigurationClass("classA"))
 			.addConfigurationClass(new ConfigurationClass("classB"));
 
-		JavaConfigurationModel modelB = new JavaConfigurationModel()
+		ConfigurationModel modelB = new ConfigurationModel()
 			.addConfigurationClass(new ConfigurationClass("classB"))
 			.addConfigurationClass(new ConfigurationClass("classA"));
 
 		assertThat(modelA, not(equalTo(modelB)));
 	}
 
-	/** @see {@link JavaConfigurationModelPopulatorTests#beanMethodOrderIsNotSignificantA() */
+	/** @see {@link ConfigurationParserTests#beanMethodOrderIsNotSignificantA() */
 	public @Test void differentBeanMethodOrderingDoesNotAffectEquality() {
-		JavaConfigurationModel modelA = new JavaConfigurationModel()
+		ConfigurationModel modelA = new ConfigurationModel()
 			.addConfigurationClass(new ConfigurationClass("classA")
 				.addBeanMethod(new BeanMethod("methodA"))
 				.addBeanMethod(new BeanMethod("methodB")))
@@ -78,7 +78,7 @@ public class JavaConfigurationModel_EquivalenceTests {
 				.addBeanMethod(new BeanMethod("methodC"))
 				.addBeanMethod(new BeanMethod("methodD")));
 
-		JavaConfigurationModel modelB = new JavaConfigurationModel()
+		ConfigurationModel modelB = new ConfigurationModel()
 			.addConfigurationClass(new ConfigurationClass("classA")
 				.addBeanMethod(new BeanMethod("methodA"))
 				.addBeanMethod(new BeanMethod("methodB")))
