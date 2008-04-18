@@ -15,8 +15,7 @@
  */
 package org.springframework.config.java.context;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.springframework.config.java.test.Assert.assertBeanDefinitionCount;
 
 import org.junit.After;
@@ -31,7 +30,6 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.model.JavaConfigApplicationContextTests.XJavaConfigApplicationContext;
 import org.springframework.config.java.simple.EmptySimpleConfiguration;
 import org.springframework.config.java.support.ConfigurationSupport;
 
@@ -42,7 +40,7 @@ import org.springframework.config.java.support.ConfigurationSupport;
  */
 public final class JavaConfigApplicationContextTests {
 
-	protected XJavaConfigApplicationContext ctx;
+	protected JavaConfigApplicationContext ctx;
 
 	@After
 	public void tearDown() {
@@ -58,9 +56,21 @@ public final class JavaConfigApplicationContextTests {
 		ctx = null;
 	}
 
+	static class SimpleConfig { public @Bean TestBean alice() { return new TestBean("alice"); } }
+	public @Test void singleClass() {
+		ctx = new JavaConfigApplicationContext(SimpleConfig.class);
+
+		TestBean alice = ctx.getBean(TestBean.class);
+
+		assertNotNull(alice);
+		assertEquals("alice", alice.getName());
+		// prove singleton semantics are respected
+		assertSame(alice, ctx.getBean(TestBean.class));
+	}
+
 	@Test
 	public void testReadSimplePackage() {
-		ctx = new XJavaConfigApplicationContext("/org/springframework/config/java/simple");
+		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/simple");
 
 		int classesInPackage = 2;
 		int beansInClasses = 2;
@@ -74,14 +84,14 @@ public final class JavaConfigApplicationContextTests {
 	 */
 	@Test
 	public void testScanningPackageDoesNotIncludeInnerConfigurationClasses() {
-		ctx = new XJavaConfigApplicationContext("/org/springframework/config/java/complex");
+		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/complex");
 
 		assertBeanDefinitionCount(ctx, 2);
 	}
 
 	@Test
 	public void testReadClassesByName() {
-		ctx = new XJavaConfigApplicationContext(ComplexConfiguration.class, EmptySimpleConfiguration.class);
+		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, EmptySimpleConfiguration.class);
 
 		int classesInPackage = 2;
 		int beansInClasses = 1;
@@ -93,7 +103,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testProcessImports() {
-		ctx = new XJavaConfigApplicationContext(ConfigurationWithImportAnnotation.class);
+		ctx = new JavaConfigApplicationContext(ConfigurationWithImportAnnotation.class);
 
 		int configClasses = 2;
 		int beansInClasses = 2;
@@ -122,7 +132,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testImportAnnotationWithTwoLevelRecursion() {
-		ctx = new XJavaConfigApplicationContext(AppConfig.class);
+		ctx = new JavaConfigApplicationContext(AppConfig.class);
 
 		int configClasses = 2;
 		int beansInClasses = 3;
@@ -156,7 +166,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testImportAnnotationWithThreeLevelRecursion() {
-		ctx = new XJavaConfigApplicationContext(FirstLevel.class);
+		ctx = new JavaConfigApplicationContext(FirstLevel.class);
 
 		int configClasses = 3;
 		int beansInClasses = 3;
@@ -196,7 +206,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testImportAnnotationWithMultipleArguments() {
-		ctx = new XJavaConfigApplicationContext(WithMultipleArgumentsToImportAnnotation.class);
+		ctx = new JavaConfigApplicationContext(WithMultipleArgumentsToImportAnnotation.class);
 
 		int configClasses = 3;
 		int beansInClasses = 2;
@@ -231,7 +241,7 @@ public final class JavaConfigApplicationContextTests {
 	public void testImportAnnotationWithMultipleArgumentsResultingInDuplicateBeanDefinition() {
 		boolean threw = false;
 		try {
-			ctx = new XJavaConfigApplicationContext(WithMultipleArgumentsThatWillCauseDuplication.class);
+			ctx = new JavaConfigApplicationContext(WithMultipleArgumentsThatWillCauseDuplication.class);
 		}
 		catch (IllegalStateException e) {
 			threw = true;
@@ -264,7 +274,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testImportAnnotationOnInnerClasses() {
-		ctx = new XJavaConfigApplicationContext(OuterConfig.InnerConfig.class);
+		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
 
 		int configClasses = 2;
 		int beansInClasses = 2;
@@ -296,7 +306,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testAbstractConfigurationDoesNotGetProcessed() {
-		ctx = new XJavaConfigApplicationContext(AbstractConfigurationToIgnore.class);
+		ctx = new JavaConfigApplicationContext(AbstractConfigurationToIgnore.class);
 
 		int configClasses = 0;
 		int beansInClasses = 0;
@@ -306,7 +316,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testAbstrectConfigurationWithExternalBeanDoesGetProcessed() {
-		ctx = new XJavaConfigApplicationContext(ExternalBeanConfiguration.class,
+		ctx = new JavaConfigApplicationContext(ExternalBeanConfiguration.class,
 				ExternalBeanProvidingConfiguration.class);
 
 		int configClasses = 2;
@@ -319,7 +329,7 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testOpenEndedConstructionSupplyingBasePackagesBeforeRefresh() {
-		ctx = new XJavaConfigApplicationContext();
+		ctx = new JavaConfigApplicationContext();
 		ctx.setBasePackages("org.springframework.config.java.context.forscanning.a");
 		ctx.refresh();
 
