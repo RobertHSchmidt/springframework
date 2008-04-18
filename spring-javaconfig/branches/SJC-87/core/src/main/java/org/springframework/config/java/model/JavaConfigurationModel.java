@@ -72,4 +72,16 @@ public class JavaConfigurationModel {
 		return true;
 	}
 
+	public ValidationErrors validate() {
+		ValidationErrors errors = new ValidationErrors();
+
+		if(configurationClasses.isEmpty())
+			errors.add(ValidationError.MODEL_IS_EMPTY);
+
+		for(ConfigurationClass configClass : configurationClasses)
+			configClass.validate(errors);
+
+		return errors;
+	}
+
 }

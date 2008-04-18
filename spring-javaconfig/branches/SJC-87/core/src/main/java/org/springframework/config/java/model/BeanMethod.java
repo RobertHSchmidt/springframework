@@ -20,16 +20,32 @@ import static java.lang.String.format;
 import org.springframework.config.java.annotation.Bean;
 
 public class BeanMethod {
-	private Bean beanAnnotation;
-	private final String methodName;
-	private int modifiers;
+	private static final Bean defaultBeanAnnotation;
+	private final String name;
+	private final Bean beanAnnotation;
+	private final int modifiers;
 
-	public BeanMethod(String methodName) {
-		this.methodName = methodName;
+	// hack required to get an instance of @Bean for defaulting purposes
+	static {
+		try {
+    		class c { @Bean void m() { } }
+    		defaultBeanAnnotation = c.class.getDeclaredMethod("m").getAnnotation(Bean.class);
+		} catch (NoSuchMethodException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
-	public BeanMethod(String name, int modifiers) {
-		this(name);
+	/** for testing convenience */
+	BeanMethod(String name) { this(name, defaultBeanAnnotation); }
+
+	/** for testing convenience */
+	BeanMethod(String name, int modifiers) { this(name, defaultBeanAnnotation, modifiers); }
+
+	public BeanMethod(String name, Bean beanAnno) { this(name, beanAnno, 0); }
+
+	public BeanMethod(String methodName, Bean beanAnno, int modifiers) {
+		this.name = methodName;
+		this.beanAnnotation = beanAnno;
 		this.modifiers = modifiers;
 	}
 
@@ -37,18 +53,19 @@ public class BeanMethod {
 		return beanAnnotation;
 	}
 
-	public String getMethodName() {
-		return methodName;
+	public String getName() {
+		return name;
 	}
 
-	/** Decipher with {@link java.lang.reflect.Modifier} */
+	/** @see java.lang.reflect.Modifier */
 	public int getModifiers() {
 		return modifiers;
 	}
 
 	@Override
 	public String toString() {
-		return format("{%s:methodName=%s,modifiers=%d}", getClass().getSimpleName(), methodName, modifiers);
+		return format("{%s:methodName=%s,beanAnnotation=%s,modifiers=%d}",
+				       getClass().getSimpleName(), name, beanAnnotation, modifiers);
 	}
 
 	@Override
@@ -56,7 +73,7 @@ public class BeanMethod {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((beanAnnotation == null) ? 0 : beanAnnotation.hashCode());
-		result = prime * result + ((methodName == null) ? 0 : methodName.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + modifiers;
 		return result;
 	}
@@ -76,11 +93,11 @@ public class BeanMethod {
 		}
 		else if (!beanAnnotation.equals(other.beanAnnotation))
 			return false;
-		if (methodName == null) {
-			if (other.methodName != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
 		}
-		else if (!methodName.equals(other.methodName))
+		else if (!name.equals(other.name))
 			return false;
 		if (modifiers != other.modifiers)
 			return false;

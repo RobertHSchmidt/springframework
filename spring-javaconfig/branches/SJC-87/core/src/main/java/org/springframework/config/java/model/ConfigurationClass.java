@@ -24,7 +24,7 @@ import org.springframework.config.java.annotation.ResourceBundles;
  * @author Chris Beams
  */
 public class ConfigurationClass {
-	private String className;
+	private final String className;
 	private ConfigurationClass importedBy;
 
 	/** set is used because order does not matter. see {@link #addBeanMethod(BeanMethod)} */
@@ -33,16 +33,13 @@ public class ConfigurationClass {
 	/** list is used because order matters. see {@link #addResourceBundle(ResourceBundles)} */
 	private ArrayList<ResourceBundles> resourceBundles = new ArrayList<ResourceBundles>();
 
-	/** no-arg constructor */
-	public ConfigurationClass() { }
-
 	/**
 	 * Creates a new ConfigurationClass named <var>className</var>
 	 * @param className fully-qualified Configuration class being represented
 	 * @see #setClassName(String)
 	 */
 	public ConfigurationClass(String className) {
-		this.setClassName(className);
+		this.className = className;
 	}
 
 	/**
@@ -73,19 +70,15 @@ public class ConfigurationClass {
 		return this;
 	}
 
-	/** fully-qualified classname for this Configuration class */
-	public ConfigurationClass setClassName(String className) {
-		this.className = className;
-		return this;
-	}
-
 	public String getClassName() {
 		return className;
 	}
 
 	/** must declare at least one Bean method, etc */
-	public boolean isWellFormed() {
-		return true;
+	public ValidationErrors validate(ValidationErrors errors) {
+		if(beanMethods.isEmpty())
+			errors.add(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN);
+		return errors;
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 
 /**
@@ -84,7 +83,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	}
 
 	public @Test void nonBeanMethodsAreIgnored() {
-		@Configuration class Config {
+		class Config {
 			@Bean TestBean alice() { return new TestBean(); }
 			TestBean knave() { return new TestBean(); }
 		}
@@ -207,10 +206,11 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	}
 
 
-	public @Test void publicBeanMethodModifierIsSupported() {
+	public @Test void variousBeanMethodModifiersAreSupported() {
 		class Config {
 			public @Bean TestBean a() { return new TestBean(); }
 			public final @Bean TestBean b() { return new TestBean(); }
+			private strictfp @Bean TestBean c() { return new TestBean(); }
 		}
 		configClass = Config.class;
 		targetModel
@@ -218,6 +218,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 				new ConfigurationClass(Config.class.getName())
 					.addBeanMethod(new BeanMethod("a", Modifier.PUBLIC))
 					.addBeanMethod(new BeanMethod("b", Modifier.PUBLIC + Modifier.FINAL))
+					.addBeanMethod(new BeanMethod("c", Modifier.PRIVATE + Modifier.STRICT))
     			)
     		;
 	}
