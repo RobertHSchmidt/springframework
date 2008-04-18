@@ -86,24 +86,24 @@ public class InnerClassTests {
 	// class, the declaring class isn't a @Configuration.
 	@Test
 	public void testMultipleOuterConfigurationClassesThrowsExceptionOnlyIfOuterIsConfiguration() {
-		new JavaConfigApplicationContext(Outermost.class, Out.In.class);
+		new LegacyJavaConfigApplicationContext(Outermost.class, Out.In.class);
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testMultipleOuterConfigurationClassesThrowsException() {
-		new JavaConfigApplicationContext(Outermost.Middle.class, Out.In.class);
+		new LegacyJavaConfigApplicationContext(Outermost.Middle.class, Out.In.class);
 	}
 
 	@Test
 	public void testParentageWorks() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Out.In.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Out.In.class);
 		assertNotNull(ctx.getParent());
 		assertEquals("outer", ((TestBean) ctx.getBean("outer")).getName());
 	}
 
 	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void testCannotSeeInnerConfigurationBeansFromOuterConfigurationContext() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Out.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Out.class);
 		ctx.getBean("inner"); // should throw, parents can't see child beans
 	}
 
@@ -134,19 +134,19 @@ public class InnerClassTests {
 
 	@Test
 	public void foo3() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Parent.class, Child.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Parent.class, Child.class);
 		Assert.assertEquals("child", ctx.getBean("name"));
 	}
 
 	@Test
 	public void foo2() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Child2.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Child2.class);
 		Assert.assertEquals("child", ctx.getBean("name"));
 	}
 
 	@Test
 	public void testProcessingInnerClassIncludesOuterClass() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Innermost.class);
 		ctx.getBean("innermostBean");
 		ctx.getBean("middleBean"); // this throws
 		ctx.getBean("outermostBean"); // this throws
@@ -154,7 +154,7 @@ public class InnerClassTests {
 
 	@Test
 	public void testBeanOverride() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Innermost.class);
 		assertThat(((String) ctx.getBean("name")), equalTo("innermost"));
 	}
 
@@ -175,9 +175,9 @@ public class InnerClassTests {
 
 	@Test
 	public void testBeanDefs() {
-		JavaConfigApplicationContext one = new JavaConfigApplicationContext(One.class);
-		JavaConfigApplicationContext two = new JavaConfigApplicationContext(one);
-		JavaConfigApplicationContext three = new JavaConfigApplicationContext(Three.class);
+		LegacyJavaConfigApplicationContext one = new LegacyJavaConfigApplicationContext(One.class);
+		LegacyJavaConfigApplicationContext two = new LegacyJavaConfigApplicationContext(one);
+		LegacyJavaConfigApplicationContext three = new LegacyJavaConfigApplicationContext(Three.class);
 
 		two.setConfigClasses(Two.class);
 		two.setParent(three);
@@ -188,7 +188,7 @@ public class InnerClassTests {
 	@Ignore
 	@Test
 	public void foo() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Innermost.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Innermost.class);
 		int actual = BeanFactoryUtils.countBeansIncludingAncestors(ctx);
 		assertTrue("expected actual > 5, got " + actual, actual > 5);
 	}

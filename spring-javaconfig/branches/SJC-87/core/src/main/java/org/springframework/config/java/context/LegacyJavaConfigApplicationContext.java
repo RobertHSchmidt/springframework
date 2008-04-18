@@ -182,7 +182,7 @@ import org.springframework.context.support.AbstractRefreshableApplicationContext
  *
  * @author Chris Beams
  */
-public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext
+public class LegacyJavaConfigApplicationContext extends AbstractRefreshableApplicationContext
 										  implements ConfigurableJavaConfigApplicationContext {
 
 	private Class<?>[] configClasses;
@@ -199,7 +199,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 *
 	 * TODO: finish doc
 	 */
-	public JavaConfigApplicationContext() {
+	public LegacyJavaConfigApplicationContext() {
 		this((ApplicationContext) null);
 	}
 
@@ -210,27 +210,27 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 *
 	 * @param parent
 	 */
-	public JavaConfigApplicationContext(ApplicationContext parent) {
+	public LegacyJavaConfigApplicationContext(ApplicationContext parent) {
 		super(parent);
 	}
 
-	public JavaConfigApplicationContext(String... basePackages) {
+	public LegacyJavaConfigApplicationContext(String... basePackages) {
 		this(null, null, basePackages);
 	}
 
-	public JavaConfigApplicationContext(Class<?>... classes) {
+	public LegacyJavaConfigApplicationContext(Class<?>... classes) {
 		this(null, classes, null);
 	}
 
-	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>... classes) {
+	public LegacyJavaConfigApplicationContext(ApplicationContext parent, Class<?>... classes) {
 		this(parent, classes, null);
 	}
 
-	public JavaConfigApplicationContext(ApplicationContext parent, String... basePackages) {
+	public LegacyJavaConfigApplicationContext(ApplicationContext parent, String... basePackages) {
 		this(parent, null, basePackages);
 	}
 
-	public JavaConfigApplicationContext(Class<?>[] classes, String[] basePackages) {
+	public LegacyJavaConfigApplicationContext(Class<?>[] classes, String[] basePackages) {
 		this(null, classes, basePackages);
 	}
 
@@ -244,7 +244,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 * @param classes
 	 * @param basePackages
 	 */
-	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>[] classes, String[] basePackages) {
+	public LegacyJavaConfigApplicationContext(ApplicationContext parent, Class<?>[] classes, String[] basePackages) {
 		super(parent);
 
 		// TODO: what happens if a class is supplied in classes, but that same
@@ -339,7 +339,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		}
 
 		if (outerConfig != null)
-			this.setParent(new JavaConfigApplicationContext(outerConfig));
+			this.setParent(new LegacyJavaConfigApplicationContext(outerConfig));
 	}
 
 	@Override
@@ -394,7 +394,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	 *
 	 * <p/>This method is used for reversing the order of classes passed into
 	 * constructors of
-	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
+	 * {@link org.springframework.config.java.context.LegacyJavaConfigApplicationContext}
 	 * or {@link org.springframework.config.java.annotation.Import}.
 	 *
 	 * <p/>TODO: shouldn't actually be necessary. Root out the real issue with

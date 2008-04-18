@@ -36,7 +36,7 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  * JavaConfig ApplicationContext implementation for use in the web tier. May be
  * supplied as the {@literal commandClass} parameter to Spring MVC's
  * DispatcherServlet
- * @see JavaConfigApplicationContext
+ * @see LegacyJavaConfigApplicationContext
  * @see org.springframework.web.context.WebApplicationContext
  * @see org.springframework.web.servlet.DispatcherServlet
  * 
@@ -98,7 +98,7 @@ implements ConfigurableJavaConfigApplicationContext {
 		}
 
 		if (outerConfig != null)
-			this.setParent(new JavaConfigApplicationContext(outerConfig));
+			this.setParent(new LegacyJavaConfigApplicationContext(outerConfig));
 	}
 
 	/**

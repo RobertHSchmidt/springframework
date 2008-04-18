@@ -25,7 +25,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * create a {@link ClassPathScanningCandidateComponentProvider} able to select
  * JavaConfig &#64Configuration classes properly.
  *
- * TODO: make this a static method on {@link JavaConfigApplicationContext}
+ * TODO: make this a static method on {@link LegacyJavaConfigApplicationContext}
  *
  * @author Chris Beams
  */
@@ -53,7 +53,7 @@ public class ClassPathScanningConfigurationProviderFactory {
 	 * This implementation currently violates that, because it will only select
 	 * those classes that are annotated at the class level with &#Configuration.
 	 * Note that the contract is still respected when instantiating
-	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
+	 * {@link org.springframework.config.java.context.LegacyJavaConfigApplicationContext}
 	 * directly. Should probably come back and address this inconsistency just
 	 * by making a note in the docs about it.
 	 *

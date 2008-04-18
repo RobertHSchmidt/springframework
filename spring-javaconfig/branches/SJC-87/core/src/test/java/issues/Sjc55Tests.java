@@ -33,7 +33,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -125,7 +125,7 @@ public class Sjc55Tests {
 	@Ignore
 	@Test
 	public void test() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(MyConfig.class);
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(MyConfig.class);
 		TestBean foo = ctx.getBean(TestBean.class);
 		MyAspect aspect = ctx.getBean(MyAspect.class);
 

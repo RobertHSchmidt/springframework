@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * SJC-70 revealed the fact that {@link AutoBean} methods do not execute their
@@ -37,7 +37,7 @@ public class Sjc70Tests {
 	@Ignore
 	@Test
 	public void autoBeanMethodsShouldFavorMethodBodyIfPresent() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(
 				ConfigurationAnnotatedAutoBeanConfiguration.class);
 
 		// fails, can't find default constructor
@@ -48,7 +48,7 @@ public class Sjc70Tests {
 	@Ignore
 	@Test
 	public void autoBeanConstructorWiringWorksWhenMethodIsAbstract() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(
 				ConstructorInjectingAutoBeanConfiguration.class);
 
 		// fails, can't find default constructor
@@ -59,7 +59,7 @@ public class Sjc70Tests {
 	@Ignore
 	@Test
 	public void nonConfigurationAnnotatedClassDeclaringOnlyAutoBeanMethodsMustBeEligibleForProcessing() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(
 				NonConfigurationAnnotatedAutoBeanConfiguration.class);
 
 		// fails, config class was never processed because it wasn't recognized

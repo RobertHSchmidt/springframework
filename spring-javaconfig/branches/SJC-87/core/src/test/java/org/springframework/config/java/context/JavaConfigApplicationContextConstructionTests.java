@@ -38,13 +38,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Tests that excercise the various constructors on
- * {@link JavaConfigApplicationContext}.
+ * {@link LegacyJavaConfigApplicationContext}.
  * 
  * @author Chris Beams
  */
 public final class JavaConfigApplicationContextConstructionTests {
 
-	private JavaConfigApplicationContext ctx;
+	private LegacyJavaConfigApplicationContext ctx;
 
 	@After
 	public void nullOutContext() {
@@ -64,7 +64,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test
 	public void testConstructionWithSingleClassAndSingleBasePackage() {
-		ctx = new JavaConfigApplicationContext(new Class<?>[] { SimpleConfiguration.class },
+		ctx = new LegacyJavaConfigApplicationContext(new Class<?>[] { SimpleConfiguration.class },
 				new String[] { "org/springframework/config/java/testing" });
 		assertBeanDefinitionCount(ctx, 5);
 	}
@@ -73,14 +73,14 @@ public final class JavaConfigApplicationContextConstructionTests {
 	// nonetheless
 	@Test
 	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsLegal() {
-		ctx = new JavaConfigApplicationContext();
+		ctx = new LegacyJavaConfigApplicationContext();
 		ctx.refresh();
 		assertBeanDefinitionCount(ctx, 0);
 	}
 
 	@Test
 	public void testOpenEndedConstructionWithParentApplicationContextAndSingleClass() {
-		ctx = new JavaConfigApplicationContext();
+		ctx = new LegacyJavaConfigApplicationContext();
 		ctx.setParent(createSimpleXmlApplicationContext());
 		ctx.setConfigClasses(ComplexConfiguration.class);
 		ctx.refresh();
@@ -95,7 +95,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test(expected = IllegalStateException.class)
 	public void testOpenEndedConstructionWithoutCallingRefreshThrowsException() {
-		ctx = new JavaConfigApplicationContext();
+		ctx = new LegacyJavaConfigApplicationContext();
 		ctx.setParent(createSimpleXmlApplicationContext());
 		ctx.setConfigClasses(ComplexConfiguration.class);
 
@@ -104,14 +104,14 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test(expected = IllegalStateException.class)
 	public void testSetParentAfterConstructionThrowsException() {
-		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, SimpleConfiguration.class);
+		ctx = new LegacyJavaConfigApplicationContext(ComplexConfiguration.class, SimpleConfiguration.class);
 		ctx.setConfigClasses(SimpleConfiguration.class);
 		ctx.setParent(createSimpleXmlApplicationContext());
 	}
 
 	@Test
 	public void testConstructionWithMultipleClassNames() {
-		ctx = new JavaConfigApplicationContext(SimpleConfiguration.class, ComplexConfiguration.class);
+		ctx = new LegacyJavaConfigApplicationContext(SimpleConfiguration.class, ComplexConfiguration.class);
 		assertBeanDefinitionCount(ctx, 7);
 	}
 
@@ -122,7 +122,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	@Test
 	public void testConstructionWithSingleBasePackage() {
 		String packageName = ComplexConfiguration.class.getPackage().getName();
-		ctx = new JavaConfigApplicationContext(packageName);
+		ctx = new LegacyJavaConfigApplicationContext(packageName);
 		assertBeanDefinitionCount(ctx, 2);
 	}
 
@@ -131,7 +131,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 		String packageName1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage()
 				.getName();
 		String packageName2 = org.springframework.config.java.complex.ComplexConfiguration.class.getPackage().getName();
-		ctx = new JavaConfigApplicationContext(packageName1, packageName2);
+		ctx = new LegacyJavaConfigApplicationContext(packageName1, packageName2);
 		assertBeanDefinitionCount(ctx, 6);
 	}
 
@@ -139,7 +139,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	public static class BasePackageWildcardTests {
 		private final String basePackage;
 
-		private JavaConfigApplicationContext context;
+		private LegacyJavaConfigApplicationContext context;
 
 		@Parameters
 		public static Collection<String[]> validWildcardValues() {
@@ -156,7 +156,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 		@Test
 		public void testConstructionWithWildcardBasePackage() {
-			context = new JavaConfigApplicationContext(basePackage);
+			context = new LegacyJavaConfigApplicationContext(basePackage);
 
 			assertBeanDefinitionCount(context, 2);
 		}
@@ -165,7 +165,7 @@ public final class JavaConfigApplicationContextConstructionTests {
 	@Test
 	public void testConstructionWithMixOfClassesAndBasePackages() {
 		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
-		ctx = new JavaConfigApplicationContext(new Class<?>[] { ComplexConfiguration.class }, new String[] { pkg1 });
+		ctx = new LegacyJavaConfigApplicationContext(new Class<?>[] { ComplexConfiguration.class }, new String[] { pkg1 });
 
 		assertBeanDefinitionCount(ctx, 6);
 	}

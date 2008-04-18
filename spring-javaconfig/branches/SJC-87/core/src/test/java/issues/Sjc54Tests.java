@@ -20,7 +20,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -43,7 +43,7 @@ public class Sjc54Tests {
 	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void repro() {
 		ApplicationContext pac = new ClassPathXmlApplicationContext("issues/Sjc54.xml");
-		JavaConfigApplicationContext applicationContext = new JavaConfigApplicationContext();
+		LegacyJavaConfigApplicationContext applicationContext = new LegacyJavaConfigApplicationContext();
 		applicationContext.setConfigClasses(ServicesBeanRepository.class, SystemBeanRepository.class);
 		applicationContext.setParent(pac);
 		applicationContext.refresh();
