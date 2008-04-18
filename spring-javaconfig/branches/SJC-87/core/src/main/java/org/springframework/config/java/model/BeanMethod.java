@@ -17,7 +17,10 @@ package org.springframework.config.java.model;
 
 import static java.lang.String.format;
 
+import java.lang.reflect.Modifier;
+
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.util.Assert;
 
 public class BeanMethod {
 	private static final Bean defaultBeanAnnotation;
@@ -43,23 +46,34 @@ public class BeanMethod {
 
 	public BeanMethod(String name, Bean beanAnno) { this(name, beanAnno, 0); }
 
-	public BeanMethod(String methodName, Bean beanAnno, int modifiers) {
-		this.name = methodName;
-		this.beanAnnotation = beanAnno;
-		this.modifiers = modifiers;
-	}
+	public BeanMethod(String name, Bean beanAnno, int modifiers) {
+		Assert.hasText(name);
+		this.name = name;
 
-	public Bean getBeanAnnotation() {
-		return beanAnnotation;
+		Assert.notNull(beanAnno);
+		this.beanAnnotation = beanAnno;
+
+		Assert.isTrue(modifiers >= 0, "modifiers must be non-negative: " + modifiers);
+		this.modifiers = modifiers;
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public Bean getBeanAnnotation() {
+		return beanAnnotation;
+	}
+
 	/** @see java.lang.reflect.Modifier */
 	public int getModifiers() {
 		return modifiers;
+	}
+
+	public ValidationErrors validate(ValidationErrors errors) {
+		if(Modifier.isPrivate(modifiers))
+			errors.add(ValidationError.BEAN_METHOD_MAY_NOT_BE_PRIVATE);
+		return errors;
 	}
 
 	@Override
