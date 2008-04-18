@@ -23,7 +23,7 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 	 * @param model
 	 * @return number of bean definitions generated
 	 */
-	public int renderModel(ConfigurationModel model) {
+	public int render(ConfigurationModel model) {
 		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getConfigurationClasses()) {

@@ -8,9 +8,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 
-public class RefactoredReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
+public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
-	public RefactoredReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
+	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		super(registry);
 	}
 
@@ -30,15 +30,11 @@ public class RefactoredReflectiveJavaConfigBeanDefinitionReader extends Abstract
 		// initialize a new model
 		ConfigurationModel model = new ConfigurationModel();
 
-		// populate model reflectively
-		ReflectingConfigurationParser modelPopulator =
-			new ReflectingConfigurationParser(model);
-		modelPopulator.parse(configurationClass);
+		// populate model using reflection
+		new ReflectingConfigurationParser(model).parse(configurationClass);
 
 		// render model as BeanDefinitions within this.registry
-		BeanDefinitionRegisteringConfigurationModelRenderer modelRenderer =
-			new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry());
-		modelRenderer.renderModel(model);
+		new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry()).render(model);
 
 		return this.getRegistry().getBeanDefinitionCount() - initialBeanDefinitionCount;
 	}

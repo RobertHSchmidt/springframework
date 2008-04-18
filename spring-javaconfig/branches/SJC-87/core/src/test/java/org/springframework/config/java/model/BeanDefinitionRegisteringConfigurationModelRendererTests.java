@@ -41,7 +41,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 
 		replay(registry);
 
-		assertEquals(2, renderer.renderModel(model));
+		assertEquals(2, renderer.render(model));
 
 		verify(registry);
 	}
