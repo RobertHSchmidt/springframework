@@ -25,8 +25,8 @@ import org.springframework.core.io.Resource;
  * Will eventually be an ASM-based implementation to be swapped in during the switchover from
  * reflection. See SJC-87.
  *
- * @see LegacyReflectiveJavaConfigBeanDefinitionReader
- * @see RefactoredReflectiveJavaConfigBeanDefinitionReader
+ * @see LegacyReflectingJavaConfigBeanDefinitionReader
+ * @see ReflectingJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */
@@ -50,7 +50,7 @@ public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDef
 			new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry());
 
 
-		return modelToBeanGen.renderModel(model);
+		return modelToBeanGen.render(model);
 	}
 
 }

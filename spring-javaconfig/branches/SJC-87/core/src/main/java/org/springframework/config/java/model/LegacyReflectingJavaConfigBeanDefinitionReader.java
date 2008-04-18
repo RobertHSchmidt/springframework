@@ -19,22 +19,22 @@ import org.springframework.util.ClassUtils;
  * method.
  * 
  * @see AsmJavaConfigBeanDefinitionReader
- * @see RefactoredReflectiveJavaConfigBeanDefinitionReader
+ * @see ReflectingJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */
-public class LegacyReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
+public class LegacyReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
 	private final ConfigurationProcessor processor;
 	private final String configurationBeanName;
 
-	public LegacyReflectiveJavaConfigBeanDefinitionReader(ConfigurationProcessor processor, String configurationBeanName) {
+	public LegacyReflectingJavaConfigBeanDefinitionReader(ConfigurationProcessor processor, String configurationBeanName) {
 		super(new DefaultListableBeanFactory());
 		this.processor = processor;
 		this.configurationBeanName = configurationBeanName;
 	}
 
-	public LegacyReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
+	public LegacyReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
 		this(new ConfigurationProcessor((ConfigurableListableBeanFactory)registry), configurationBeanName);
 	}
 

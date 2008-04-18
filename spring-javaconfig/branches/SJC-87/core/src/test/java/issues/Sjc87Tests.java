@@ -20,7 +20,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
-import org.springframework.config.java.model.LegacyReflectiveJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.model.LegacyReflectingJavaConfigBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -123,7 +123,7 @@ public abstract class Sjc87Tests {
 	public static class ReflectiveSjc87Tests extends Sjc87Tests {
 		@Override
 		protected JavaConfigBeanDefinitionReader getBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
-			return new LegacyReflectiveJavaConfigBeanDefinitionReader(registry, configurationBeanName);
+			return new LegacyReflectingJavaConfigBeanDefinitionReader(registry, configurationBeanName);
 		}
 	}
 
