@@ -8,35 +8,42 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 
+/**
+ * Not safe for use with tooling (Spring IDE); being developed as a bridge during refactoring to ASM.
+ *
+ * @author Chris Beams
+ */
 public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		super(registry);
 	}
 
-	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
-		int initialBeanDefinitionCount = this.getRegistry().getBeanDefinitionCount();
-		final Class<?> configurationClass;
-
-		// load resource as class
-		try {
-			// TODO: what if the resource is not a ClassPathResource?
-			configurationClass = Class.forName(ClassUtils.convertResourcePathToClassName(((ClassPathResource)resource).getPath()));
-		}
-		catch (ClassNotFoundException ex) {
-			throw new BeanDefinitionStoreException(format("could not load resource as class [%s]", resource), ex);
-		}
+	public int loadBeanDefinitions(Resource configClass) throws BeanDefinitionStoreException {
+		BeanDefinitionRegistry registry = this.getRegistry();
+		int initialBeanDefinitionCount = registry.getBeanDefinitionCount();
 
 		// initialize a new model
 		ConfigurationModel model = new ConfigurationModel();
 
-		// populate model using reflection
-		new ReflectingConfigurationParser(model).parse(configurationClass);
+		// parse the class and populate the model using reflection
+		new ReflectingConfigurationParser(model).parse(loadClassFromResource(configClass));
 
-		// render model as BeanDefinitions within this.registry
-		new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry()).render(model);
+		// render model by creating BeanDefinitions based on the model and registering them within registry
+		new BeanDefinitionRegisteringConfigurationModelRenderer(registry).render(model);
 
-		return this.getRegistry().getBeanDefinitionCount() - initialBeanDefinitionCount;
+		return registry.getBeanDefinitionCount() - initialBeanDefinitionCount;
+	}
+
+	private Class<?> loadClassFromResource(Resource configClass) throws BeanDefinitionStoreException {
+		// load resource as class
+		try {
+			// TODO: what if the resource is not a ClassPathResource?
+			return Class.forName(ClassUtils.convertResourcePathToClassName(((ClassPathResource)configClass).getPath()));
+		}
+		catch (ClassNotFoundException ex) {
+			throw new BeanDefinitionStoreException(format("could not load class from resource [%s]", configClass), ex);
+		}
 	}
 
 }
