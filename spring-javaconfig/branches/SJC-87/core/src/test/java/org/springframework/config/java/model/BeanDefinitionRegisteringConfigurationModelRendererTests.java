@@ -8,17 +8,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
-public class BeanDefinitionJavaConfigurationModelRendererTests {
+public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 
-	private BeanDefinitionJavaConfigurationModelRenderer renderer;
+	private BeanDefinitionRegisteringConfigurationModelRenderer renderer;
 	private BeanDefinitionRegistry registry;
-	private JavaConfigurationModel model;
+	private ConfigurationModel model;
 
 	@Before
 	public void setUp() {
 		registry = createMock(BeanDefinitionRegistry.class);
-		renderer = new BeanDefinitionJavaConfigurationModelRenderer(registry);
-		model = new JavaConfigurationModel();
+		renderer = new BeanDefinitionRegisteringConfigurationModelRenderer(registry);
+		model = new ConfigurationModel();
 	}
 
 	public @Test void renderModel() {

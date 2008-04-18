@@ -37,7 +37,7 @@ public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDef
 	}
 
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
-		JavaConfigurationModel model = new JavaConfigurationModel();
+		ConfigurationModel model = new ConfigurationModel();
 
 		ConfigurationClass configClass = new ConfigurationClass("c");
 
@@ -46,8 +46,8 @@ public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDef
 
 		model.addConfigurationClass(configClass);
 
-		BeanDefinitionJavaConfigurationModelRenderer modelToBeanGen =
-			new BeanDefinitionJavaConfigurationModelRenderer(this.getRegistry());
+		BeanDefinitionRegisteringConfigurationModelRenderer modelToBeanGen =
+			new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry());
 
 
 		return modelToBeanGen.renderModel(model);

@@ -8,24 +8,28 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Import;
 
 
+/**
+ * Parses configuration class literals using java reflection, writing the results
+ * out to a {@link ConfigurationModel} object.
+ *
+ * @author Chris Beams
+ */
+public class ReflectingConfigurationParser implements ConfigurationParser {
 
+	private final ConfigurationModel model;
 
-public class ReflectiveJavaConfigurationModelPopulator implements JavaConfigurationModelPopulator {
-
-	private final JavaConfigurationModel model;
-
-	public ReflectiveJavaConfigurationModelPopulator(JavaConfigurationModel model) {
+	public ReflectingConfigurationParser(ConfigurationModel model) {
 		this.model = model;
 	}
 
-	public void addToModel(Object obj) {
-		Class<?> classLiteral = (Class<?>) obj;
+	public void parse(Object configurationSource) {
+		Class<?> classLiteral = (Class<?>) configurationSource;
 		ConfigurationClass configClass = new ConfigurationClass(classLiteral.getName());
 
 		Import importAnno = findAnnotation(classLiteral, Import.class);
 		if(importAnno != null)
 			for(Class<?> classToImport : importAnno.value())
-				addToModel(classToImport);
+				parse(classToImport);
 
 		for(Method method : classLiteral.getDeclaredMethods()) {
 			if(findAnnotation(method, Bean.class) != null) {

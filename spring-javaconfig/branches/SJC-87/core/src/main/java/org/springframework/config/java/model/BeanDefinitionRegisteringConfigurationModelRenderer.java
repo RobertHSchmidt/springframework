@@ -5,16 +5,16 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 /**
- * Renders a given {@link JavaConfigurationModel} as bean definitions to be registered on-the-fly
- * within a given {@link BeanDefinitionRegistry}.
+ * Renders a given {@link ConfigurationModel} as bean definitions to be
+ * registered on-the-fly with a given {@link BeanDefinitionRegistry}.
  *
  * @author Chris Beams
  */
-public class BeanDefinitionJavaConfigurationModelRenderer {
+public class BeanDefinitionRegisteringConfigurationModelRenderer {
 
 	private final BeanDefinitionRegistry registry;
 
-	public BeanDefinitionJavaConfigurationModelRenderer(BeanDefinitionRegistry registry) {
+	public BeanDefinitionRegisteringConfigurationModelRenderer(BeanDefinitionRegistry registry) {
 		this.registry = registry;
 	}
 
@@ -23,7 +23,7 @@ public class BeanDefinitionJavaConfigurationModelRenderer {
 	 * @param model
 	 * @return number of bean definitions generated
 	 */
-	public int renderModel(JavaConfigurationModel model) {
+	public int renderModel(ConfigurationModel model) {
 		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getConfigurationClasses()) {

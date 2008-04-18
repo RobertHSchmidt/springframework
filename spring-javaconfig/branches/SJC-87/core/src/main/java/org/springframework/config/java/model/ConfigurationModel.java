@@ -21,7 +21,7 @@ import org.springframework.config.java.process.MalformedJavaConfigurationExcepti
  *
  * @author Chris Beams
  */
-public class JavaConfigurationModel {
+public class ConfigurationModel {
 
 	/** list is used because order and collection equality matters. */
 	private ArrayList<ConfigurationClass> configurationClasses = new ArrayList<ConfigurationClass>();
@@ -33,7 +33,7 @@ public class JavaConfigurationModel {
 	 *
 	 * @param configurationClass user-supplied Configuration class
 	 */
-	public JavaConfigurationModel addConfigurationClass(ConfigurationClass configurationClass) {
+	public ConfigurationModel addConfigurationClass(ConfigurationClass configurationClass) {
 		configurationClasses.add(configurationClass);
 		return this;
 	}
@@ -81,7 +81,7 @@ public class JavaConfigurationModel {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		JavaConfigurationModel other = (JavaConfigurationModel) obj;
+		ConfigurationModel other = (ConfigurationModel) obj;
 		if (configurationClasses == null) {
 			if (other.configurationClasses != null)
 				return false;

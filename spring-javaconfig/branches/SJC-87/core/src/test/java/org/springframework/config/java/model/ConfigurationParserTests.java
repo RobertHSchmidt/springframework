@@ -12,50 +12,50 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Import;
 
 /**
- * Integration test for {@link JavaConfigurationModelPopulator} implementations.
+ * Integration test for {@link ConfigurationParser} implementations.
  *
  * <p>Contract for each test:
  * <ul>
  * <li>define a configuration class and assign that class literal to <tt>configClass</tt></li>
- * <li>populate <tt>targetModel</tt> with the expected results of processing <tt>configClass</tt></li>
+ * <li>populate <tt>expectedModel</tt> with the expected results of processing <tt>configClass</tt></li>
  * </ul>
  *
- * {@link #initializeModelsAndPopulator()} will initialize model objects and call back to
- * {@link newPopulator()} to instantiate a new populator.
+ * {@link #initializeModelsAndParser()} will initialize model objects and call back to
+ * {@link newPopulator()} to instantiate a new parser.
  * {@link #populateResultModelAndCompareToTargetModel()} will ensure that the result of processing
- * <tt>configClass</tt> against the populator produces a model equivalent to <tt>targetModel</tt>
+ * <tt>configClass</tt> against the parser produces a model equivalent to <tt>expectedModel</tt>
  *
  * @author Chris Beams
  */
-public abstract class JavaConfigurationModelPopulatorTests {
+public abstract class ConfigurationParserTests {
 
 	private Class<?> configClass;
-	private JavaConfigurationModel resultModel;
-	private JavaConfigurationModel targetModel;
-	private JavaConfigurationModelPopulator populator;
+	private ConfigurationModel actualModel;
+	private ConfigurationModel expectedModel;
+	private ConfigurationParser parser;
 
 	/**
 	 * Each concrete subclass must implement this method in order to receive a callback in
-	 * {@link #initializeModelsAndPopulator()}
+	 * {@link #initializeModelsAndParser()}
 	 */
-	protected abstract JavaConfigurationModelPopulator newPopulator(JavaConfigurationModel model);
+	protected abstract ConfigurationParser newParser(ConfigurationModel model);
 
 	@Before
-	public void initializeModelsAndPopulator() {
-		resultModel = new JavaConfigurationModel();
-		targetModel = new JavaConfigurationModel();
-		populator = newPopulator(resultModel);
+	public void initializeModelsAndParser() {
+		actualModel = new ConfigurationModel();
+		expectedModel = new ConfigurationModel();
+		parser = newParser(actualModel);
 	}
 
 	@After
 	public void populateResultModelAndCompareToTargetModel() {
 		assertNotNull("configClass has not been set for this test", configClass);
-		assertTrue("targetModel has not been populated for this test",
-				targetModel.getConfigurationClasses().length > 0);
+		assertTrue("expectedModel has not been populated for this test",
+				expectedModel.getConfigurationClasses().length > 0);
 
-		populator.addToModel(configClass);
+		parser.parse(configClass);
 
-		assertEquals("models were not equivalent", targetModel, resultModel);
+		assertEquals("models were not equivalent", expectedModel, actualModel);
 	}
 
 
@@ -67,7 +67,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		class Config { }
 		configClass = Config.class;
 
-		targetModel.addConfigurationClass(
+		expectedModel.addConfigurationClass(
 			new ConfigurationClass(Config.class.getName()));
 	}
 
@@ -77,7 +77,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		}
 		configClass = Config.class;
 
-		targetModel.addConfigurationClass(
+		expectedModel.addConfigurationClass(
 			new ConfigurationClass(Config.class.getName())
 				.addBeanMethod(new BeanMethod("alice")));
 	}
@@ -89,7 +89,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		}
 		configClass = Config.class;
 
-		targetModel.addConfigurationClass(
+		expectedModel.addConfigurationClass(
 			new ConfigurationClass(Config.class.getName())
 				.addBeanMethod(new BeanMethod("alice")));
 	}
@@ -102,7 +102,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	public @Test void beanMethodOrderIsNotSignificantA() {
 		configClass = BeanMethodOrderConfig.class;
 
-		targetModel.addConfigurationClass(
+		expectedModel.addConfigurationClass(
 			new ConfigurationClass(BeanMethodOrderConfig.class.getName())
 				.addBeanMethod(new BeanMethod("alice"))
 				.addBeanMethod(new BeanMethod("knave"))
@@ -111,7 +111,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	public @Test void beanMethodOrderIsNotSignificantB() {
 		configClass = BeanMethodOrderConfig.class;
 
-		targetModel.addConfigurationClass(
+		expectedModel.addConfigurationClass(
 			new ConfigurationClass(BeanMethodOrderConfig.class.getName())
 				.addBeanMethod(new BeanMethod("knave"))
 				.addBeanMethod(new BeanMethod("alice"))
@@ -129,7 +129,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		}
 		configClass = Config.class;
 
-		targetModel
+		expectedModel
 			.addConfigurationClass(
 				new ConfigurationClass(Imported.class.getName())
 					.addBeanMethod(new BeanMethod("alice")))
@@ -146,7 +146,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		class Config { @Bean TestBean knave() { return new TestBean(); } }
 		configClass = Config.class;
 
-		targetModel
+		expectedModel
 			.addConfigurationClass(
 				new ConfigurationClass(Imported1.class.getName())
 					.addBeanMethod(new BeanMethod("alice")))
@@ -167,7 +167,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		class Config { @Bean TestBean knave() { return new TestBean(); } }
 		configClass = Config.class;
 
-		targetModel
+		expectedModel
 			.addConfigurationClass(
 				new ConfigurationClass(Imported2.class.getName())
 					.addBeanMethod(new BeanMethod("queen")))
@@ -189,7 +189,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 		class Config { @Bean TestBean knave() { return new TestBean(); } }
 		configClass = Config.class;
 
-		targetModel
+		expectedModel
 			.addConfigurationClass(
 				new ConfigurationClass(Imported2.class.getName())
 					.addBeanMethod(new BeanMethod("queen")))
@@ -213,7 +213,7 @@ public abstract class JavaConfigurationModelPopulatorTests {
 			private strictfp @Bean TestBean c() { return new TestBean(); }
 		}
 		configClass = Config.class;
-		targetModel
+		expectedModel
 			.addConfigurationClass(
 				new ConfigurationClass(Config.class.getName())
 					.addBeanMethod(new BeanMethod("a", Modifier.PUBLIC))
@@ -227,18 +227,18 @@ public abstract class JavaConfigurationModelPopulatorTests {
 	// -----------------------------------------------
 	// Concrete test case implementations (one per implementation of JavaConfigurationModelPopulator)
 	// -----------------------------------------------
-	public static class ReflectiveJavaConfigurationModelPopulatorTests extends JavaConfigurationModelPopulatorTests {
+	public static class ReflectingConfigurationParserTests extends ConfigurationParserTests {
 		@Override
-		protected JavaConfigurationModelPopulator newPopulator(JavaConfigurationModel model) {
-			return new ReflectiveJavaConfigurationModelPopulator(model);
+		protected ConfigurationParser newParser(ConfigurationModel model) {
+			return new ReflectingConfigurationParser(model);
 		}
 	}
 
 	/* TODO: implement and uncomment
-	public static class AsmJavaConfigurationModelPopulatorTests extends JavaConfigurationModelPopulatorTests {
+	public static class AsmConfigurationParserTests extends JavaConfigurationModelPopulatorTests {
 		@Override
-		protected JavaConfigurationModelPopulator<?> newPopulator(JavaConfigurationModel model) {
-			return new AsmJavaConfigurationModelPopulator(model);
+		protected ConfigurationParser newParser(ConfigurationModel model) {
+			return new AsmConfigurationParser(model);
 		}
 	}
 	*/
