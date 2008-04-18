@@ -21,7 +21,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * SJC-54 revealed a bug wherein abstract Configurations would not be processed
@@ -33,11 +33,11 @@ import org.springframework.config.java.context.JavaConfigApplicationContext;
  * @author Chris Beams
  */
 public class Sjc56Tests {
-	private JavaConfigApplicationContext ctx;
+	private LegacyJavaConfigApplicationContext ctx;
 
 	@Before
 	public void initContext() {
-		ctx = new JavaConfigApplicationContext();
+		ctx = new LegacyJavaConfigApplicationContext();
 		ctx.addConfigClass(InfrastructureConfig.class);
 	}
 

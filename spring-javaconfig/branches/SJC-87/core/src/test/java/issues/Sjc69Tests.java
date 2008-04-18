@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * SJC-69 revaled a bug in the way addConfigClass() works with regard to bean
@@ -68,7 +68,7 @@ public class Sjc69Tests {
 		}
 	}
 
-	public static class MySpringContext extends JavaConfigApplicationContext {
+	public static class MySpringContext extends LegacyJavaConfigApplicationContext {
 		public MySpringContext() {
 			super();
 			addConfigClass(MyConfigA.class);
@@ -93,7 +93,7 @@ public class Sjc69Tests {
 	@Ignore
 	@Test
 	public void reproWithJavaConfigApplicationContext() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext();
 		ctx.addConfigClass(MyConfigA.class);
 		ctx.addConfigClass(MyConfigB.class);
 		ctx.refresh();
@@ -107,7 +107,7 @@ public class Sjc69Tests {
 	 */
 	@Test
 	public void workaround() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext();
 		ctx.addConfigClass(MyConfigB.class);
 		ctx.addConfigClass(MyConfigA.class); // reversed
 		ctx.refresh();

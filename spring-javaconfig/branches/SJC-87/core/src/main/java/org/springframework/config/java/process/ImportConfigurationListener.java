@@ -43,13 +43,13 @@ class ImportConfigurationListener extends ConfigurationListenerSupport {
 	 * 
 	 * <p/>This method is used for reversing the order of classes passed into
 	 * constructors of
-	 * {@link org.springframework.config.java.context.JavaConfigApplicationContext}
+	 * {@link org.springframework.config.java.context.LegacyJavaConfigApplicationContext}
 	 * or {@link org.springframework.config.java.annotation.Import}.
 	 * 
 	 * <p/>TODO: shouldn't actually be necessary. Root out the real issue with
 	 * ordering
 	 * 
-	 * @see org.springframework.config.java.context.JavaConfigApplicationContext#reverse()
+	 * @see org.springframework.config.java.context.LegacyJavaConfigApplicationContext#reverse()
 	 * @param array - array to reverse
 	 * @return reverse of <var>array</var>, null if <var>array</var> is null.
 	 */

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -76,8 +76,8 @@ public class GetBeansOfTypeTests {
 
 	@Test
 	public void testGetBeansOfType() throws Exception {
-		ApplicationContext propertiesContext = new JavaConfigApplicationContext(PropertiesConfig.class);
-		ApplicationContext anotherContext = new JavaConfigApplicationContext(propertiesContext, AnotherConfig.class);
+		ApplicationContext propertiesContext = new LegacyJavaConfigApplicationContext(PropertiesConfig.class);
+		ApplicationContext anotherContext = new LegacyJavaConfigApplicationContext(propertiesContext, AnotherConfig.class);
 
 		String[] names = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(anotherContext, Properties.class);
 		assertEquals(2, names.length);
@@ -95,7 +95,7 @@ public class GetBeansOfTypeTests {
 
 	@Test
 	public void testGetBeansFromJavaAndXml() throws Exception {
-		JavaConfigApplicationContext propertiesContext = new JavaConfigApplicationContext(PropertiesConfig.class);
+		LegacyJavaConfigApplicationContext propertiesContext = new LegacyJavaConfigApplicationContext(PropertiesConfig.class);
 		ApplicationContext xmlCtx = new ClassPathXmlApplicationContext(
 				new String[] { "org/springframework/config/java/simpleCtx.xml" }, propertiesContext);
 		String names[] = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(xmlCtx, Point.class);

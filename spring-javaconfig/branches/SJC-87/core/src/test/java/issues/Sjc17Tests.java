@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * SJC-17 demonstrates the fact that JavaConfig's approach to programmatic bean
@@ -23,7 +23,7 @@ import org.springframework.config.java.context.JavaConfigApplicationContext;
 public class Sjc17Tests {
 	@Test(expected = BeanCreationException.class)
 	public void proveIncompatibility() {
-		new JavaConfigApplicationContext(ApplicationConfiguration.class);
+		new LegacyJavaConfigApplicationContext(ApplicationConfiguration.class);
 	}
 }
 

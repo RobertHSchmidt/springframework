@@ -32,7 +32,7 @@ public abstract class Sjc74Tests {
 	public static class Sjc74JavaConfigApplicationContextTests extends Sjc74Tests {
 		@Override
 		protected ConfigurableJavaConfigApplicationContext newContext() {
-			return new org.springframework.config.java.context.JavaConfigApplicationContext();
+			return new org.springframework.config.java.context.LegacyJavaConfigApplicationContext();
 		}
 	}
 

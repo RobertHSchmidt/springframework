@@ -24,7 +24,7 @@ import org.springframework.config.java.AspectTests.PropertyChangeTracker;
 import org.springframework.config.java.AspectTests.Service;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * SJC-57 revealed a bug where Reusable aspects (@Aspect-annotated
@@ -42,7 +42,7 @@ public class Sjc57Tests {
 	@Ignore
 	@Test
 	public void testReusableAspect() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(StandaloneAppConfig.class,
+		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(StandaloneAppConfig.class,
 				PropertyChangeTracker.class);
 		PropertyChangeTracker changeTracker = ctx.getBean(PropertyChangeTracker.class);
 

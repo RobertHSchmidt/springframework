@@ -34,7 +34,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * Annotation-aware application context that looks for classes annotated with
  * the Configuration annotation and registers the beans they define.
  * 
- * @deprecated - Favor use of {@link JavaConfigApplicationContext}. This class
+ * @deprecated - Favor use of {@link LegacyJavaConfigApplicationContext}. This class
  * will be eliminated before the 1.0 release of JavaConfig
  * @author Costin Leau
  * @author Rod Johnson

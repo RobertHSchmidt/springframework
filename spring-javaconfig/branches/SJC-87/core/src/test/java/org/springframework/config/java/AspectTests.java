@@ -29,7 +29,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * This test showcases the most up-to-date techniques for using aspects within
@@ -47,7 +47,7 @@ public class AspectTests {
 	 */
 	@Test
 	public void testApplicationOfSimpleAspect() {
-		JavaConfigApplicationContext context = new JavaConfigApplicationContext(ConfigWithAspects.class);
+		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(ConfigWithAspects.class);
 		TestBean foo = context.getBean(TestBean.class);
 		assertThat(foo.getName(), equalTo("foo"));
 
@@ -114,8 +114,8 @@ public class AspectTests {
 		// that AppConfig uses the @Import annotation to pull in our
 		// 'standalone aspect' PropertyChangeTracker. Notice how
 		// PropertyChangeTracker is a Configuration? Doesn't that seem strange?
-		JavaConfigApplicationContext ctx;
-		ctx = new JavaConfigApplicationContext(AppConfig.class);
+		LegacyJavaConfigApplicationContext ctx;
+		ctx = new LegacyJavaConfigApplicationContext(AppConfig.class);
 
 		// grab out the aspect/configuration bean from the context, we'll
 		// introspect it to see if the advice method executed in a moment
