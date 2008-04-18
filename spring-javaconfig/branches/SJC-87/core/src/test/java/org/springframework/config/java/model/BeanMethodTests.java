@@ -2,8 +2,7 @@ package org.springframework.config.java.model;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.lang.reflect.Modifier;
 
@@ -11,6 +10,10 @@ import org.junit.Test;
 
 
 public class BeanMethodTests {
+
+	// ------------------------------
+	// Equivalence tests
+	// ------------------------------
 	public @Test void equivalentMethodsAreEqual() {
 		BeanMethod methodA = new BeanMethod("foo");
 		BeanMethod methodB = new BeanMethod("foo");
@@ -37,11 +40,17 @@ public class BeanMethodTests {
 
 		int modifiers = method.getModifiers();
 
-		assertFalse(Modifier.isPublic(modifiers));
-		assertFalse(Modifier.isPrivate(modifiers));
-		assertFalse(Modifier.isProtected(modifiers));
-		assertFalse(Modifier.isFinal(modifiers));
-		assertFalse(Modifier.isStatic(modifiers));
-		assertFalse(Modifier.isAbstract(modifiers));
+		// 0 signifies 'no modifiers' - see java.lang.reflect.Modifier
+		assertEquals(0, modifiers);
+	}
+
+	// ------------------------------
+	// Validation tests
+	// ------------------------------
+
+	public @Test void privateBeanMethodsAreNotValid() {
+		ValidationErrors errors = new BeanMethod("foo", Modifier.PRIVATE).validate(new ValidationErrors());
+		assertTrue(errors.size() > 0);
+		assertTrue(errors.contains(ValidationError.BEAN_METHOD_MAY_NOT_BE_PRIVATE));
 	}
 }

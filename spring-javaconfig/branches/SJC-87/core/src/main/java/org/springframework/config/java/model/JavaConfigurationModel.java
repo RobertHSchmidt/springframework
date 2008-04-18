@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 /**
  * An abstract representation of a set of user-provided "Configuration classes",
@@ -41,6 +42,24 @@ public class JavaConfigurationModel {
 		return configurationClasses.toArray(new ConfigurationClass[] {});
 	}
 
+	public ValidationErrors validate() {
+		ValidationErrors errors = new ValidationErrors();
+
+		if(configurationClasses.isEmpty())
+			errors.add(ValidationError.MODEL_IS_EMPTY);
+
+		for(ConfigurationClass configClass : configurationClasses)
+			configClass.validate(errors);
+
+		return errors;
+	}
+
+	public void assertIsValid() {
+		ValidationErrors errors = validate();
+		if(errors.size() > 0)
+			throw new MalformedJavaConfigurationException(errors.toString());
+	}
+
 	@Override
 	public String toString() {
 		return format("{%s:configurationClasses=%s}", getClass().getSimpleName(), configurationClasses);
@@ -72,16 +91,5 @@ public class JavaConfigurationModel {
 		return true;
 	}
 
-	public ValidationErrors validate() {
-		ValidationErrors errors = new ValidationErrors();
-
-		if(configurationClasses.isEmpty())
-			errors.add(ValidationError.MODEL_IS_EMPTY);
-
-		for(ConfigurationClass configClass : configurationClasses)
-			configClass.validate(errors);
-
-		return errors;
-	}
 
 }

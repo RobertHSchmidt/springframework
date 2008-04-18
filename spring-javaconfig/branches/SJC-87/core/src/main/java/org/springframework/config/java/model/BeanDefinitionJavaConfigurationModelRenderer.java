@@ -24,7 +24,7 @@ public class BeanDefinitionJavaConfigurationModelRenderer {
 	 * @return number of bean definitions generated
 	 */
 	public int renderModel(JavaConfigurationModel model) {
-		int initialBeanDefCount = registry.getBeanDefinitionNames().length;
+		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getConfigurationClasses()) {
 			String configClassName = configClass.getClassName();
@@ -42,7 +42,7 @@ public class BeanDefinitionJavaConfigurationModelRenderer {
 			}
 		}
 
-		return registry.getBeanDefinitionNames().length - initialBeanDefCount;
+		return registry.getBeanDefinitionCount() - initialBeanDefCount;
 	}
 
 }

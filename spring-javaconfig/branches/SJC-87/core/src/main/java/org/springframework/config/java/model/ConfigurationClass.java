@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ResourceBundles;
+import org.springframework.util.Assert;
 
 /**
  * Abstract representation of a user-definied {@link Configuration @Configuration}
@@ -39,6 +40,7 @@ public class ConfigurationClass {
 	 * @see #setClassName(String)
 	 */
 	public ConfigurationClass(String className) {
+		Assert.hasText(className);
 		this.className = className;
 	}
 
