@@ -353,7 +353,7 @@ public class LegacyJavaConfigApplicationContext extends AbstractRefreshableAppli
 		if (configClasses != null && configClasses.length > 0) {
 			for (Class<?> cz : configClasses) {
 				if (ConfigurationProcessor.isConfigurationClass(cz)) {
-					RootBeanDefinition beanDef = new RootBeanDefinition(cz, true);
+					RootBeanDefinition beanDef = new RootBeanDefinition(cz);
 					ConfigurationProcessor.processExternalValueConstructorArgs(beanDef, this);
 					beanFactory.registerBeanDefinition(cz.getName(), beanDef);
 				}
