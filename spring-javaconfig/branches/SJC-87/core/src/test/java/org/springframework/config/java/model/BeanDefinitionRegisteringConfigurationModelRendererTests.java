@@ -6,7 +6,9 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 
 public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 
@@ -21,19 +23,26 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		model = new ConfigurationModel();
 	}
 
-	public @Test void renderModel() {
-		model.add(new ConfigurationClass("com.acme.OrderConfig").add(new BeanMethod("order")));
+	public @Test void render() {
+		String configClassName = "com.acme.OrderConfig";
+		String beanName = "order";
+
+		// create a simple configuration model
+		model.add(new ConfigurationClass(configClassName).add(new BeanMethod(beanName)));
 		model.assertIsValid();
 
+		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
 
-		registry.registerBeanDefinition("com.acme.OrderConfig",
-			rootBeanDefinition("com.acme.OrderConfig").getBeanDefinition());
+		RootBeanDefinition configBeanDef = new RootBeanDefinition();
+		configBeanDef.setBeanClassName(configClassName);
+		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+		registry.registerBeanDefinition(configClassName, configBeanDef);
 		expectLastCall();
 
-		registry.registerBeanDefinition("order",
+		registry.registerBeanDefinition(beanName,
 			rootBeanDefinition((String)null)
-				.setFactoryBean("com.acme.OrderConfig", "order")
+				.setFactoryBean(configClassName, beanName)
 				.getBeanDefinition());
 		expectLastCall();
 
@@ -41,6 +50,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 
 		replay(registry);
 
+		// execute assertions and verifications
 		assertEquals(2, renderer.render(model));
 
 		verify(registry);

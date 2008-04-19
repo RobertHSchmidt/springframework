@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.util.Assert;
 
-// TODO: refactor with BeanMethod to arrive at a common abstraction.  Consider parameterizing
+// TODO: refactor with BeanMethod to arrive at a common abstraction. consider parameterizing.
 public class ExternalBeanMethod {
 
 	private static final ExternalBean defaultAnno;
@@ -16,6 +16,8 @@ public class ExternalBeanMethod {
 	private final int modifiers;
 
 	// hack required to get an instance of @ExternalBean for defaulting purposes
+	// TODO: create a generic util method that acceps a prototype class and a given
+	//       annotation literal, have it return the target annotation instance
 	static {
 		try {
     		class c { @ExternalBean void m() { } }
@@ -29,7 +31,7 @@ public class ExternalBeanMethod {
 	/** for testing convenience */
 	ExternalBeanMethod(String name, int modifiers) { this(name, defaultAnno, modifiers); }
 
-	public ExternalBeanMethod(String name, ExternalBean beanAnno) { this(name, beanAnno, 0); }
+	public ExternalBeanMethod(String name, ExternalBean metadata) { this(name, metadata, 0); }
 
 	public ExternalBeanMethod(String name, ExternalBean metadata, int modifiers) {
 		Assert.hasText(name);

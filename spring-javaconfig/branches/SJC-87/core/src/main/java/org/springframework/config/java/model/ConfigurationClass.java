@@ -27,6 +27,21 @@ import org.springframework.util.Assert;
  * @author Chris Beams
  */
 public class ConfigurationClass {
+
+	/**
+	 * Used as metadata on {@link org.springframework.beans.factory.config.BeanDefinition}
+	 * to indicate that a bean is a {@link Configuration @Configuration} class
+	 * and therefore a candidate for enhancement.
+	 *
+	 * <p>TODO: find a better name
+	 *
+	 * @see org.springframework.beans.factory.config.BeanDefinition
+	 * @see org.springframework.core.AttributeAccessor#getAttribute(String)
+	 * @see org.springframework.config.java.model.ConfigurationParser
+	 * @see org.springframework.config.java.model.ConfigurationEnhancingBeanFactoryPostProcessor
+	 */
+	public static final String BEAN_ATTR_NAME = "isJavaConfigurationClass";
+
 	private final String name;
 	private ConfigurationClass importedBy;
 	private final int modifiers;

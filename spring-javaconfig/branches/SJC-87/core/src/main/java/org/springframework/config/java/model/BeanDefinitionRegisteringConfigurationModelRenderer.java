@@ -1,6 +1,7 @@
 package org.springframework.config.java.model;
 
 
+import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
@@ -30,6 +31,8 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 			String configClassName = configClass.getName();
 			RootBeanDefinition configBeanDef = new RootBeanDefinition();
 			configBeanDef.setBeanClassName(configClassName);
+			// mark this bean def with metadata indicating that it is a configuration bean
+			configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
 			// @Configuration classes' bean names are always their fully-qualified classname
 			registry.registerBeanDefinition(configClassName, configBeanDef);
 

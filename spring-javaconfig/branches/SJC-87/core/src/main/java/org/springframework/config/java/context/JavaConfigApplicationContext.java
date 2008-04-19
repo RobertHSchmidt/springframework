@@ -41,6 +41,12 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	@Override
+	protected void prepareRefresh() {
+		super.prepareRefresh();
+		addBeanFactoryPostProcessor(new ConfigurationEnhancingBeanFactoryPostProcessor(this));
+	}
+
+	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
 		BeanDefinitionReader reader = new ReflectingJavaConfigBeanDefinitionReader(beanFactory);
 		for(ClassPathResource configClassResource : configClassResources)
