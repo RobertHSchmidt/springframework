@@ -29,6 +29,9 @@ public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 		// parse the class and populate the model using reflection
 		new ReflectingConfigurationParser(model).parse(loadClassFromResource(configClass));
 
+		// is the model valid? TODO: perhaps should go into the parse() method above
+		model.assertIsValid();
+
 		// render model by creating BeanDefinitions based on the model and registering them within registry
 		new BeanDefinitionRegisteringConfigurationModelRenderer(registry).render(model);
 

@@ -15,14 +15,16 @@
  */
 package org.springframework.config.java.simple;
 
+import org.springframework.beans.TestBean;
+import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 
 /**
- * 
+ *
  * @author Rod Johnson
- * 
+ *
  */
 @Configuration
-public class EmptySimpleConfiguration {
-
+public class SimpleConfigurationWithOneBean {
+	public @Bean TestBean testBean() { return new TestBean(); }
 }

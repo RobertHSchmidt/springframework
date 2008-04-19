@@ -30,7 +30,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.simple.EmptySimpleConfiguration;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
+import org.springframework.config.java.simple.SimpleConfigurationWithOneBean;
 import org.springframework.config.java.support.ConfigurationSupport;
 
 /**
@@ -73,7 +74,7 @@ public final class JavaConfigApplicationContextTests {
 		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/simple");
 
 		int classesInPackage = 2;
-		int beansInClasses = 2;
+		int beansInClasses = 3;
 
 		assertBeanDefinitionCount(ctx, (classesInPackage + beansInClasses));
 	}
@@ -91,10 +92,10 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testReadClassesByName() {
-		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, EmptySimpleConfiguration.class);
+		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, SimpleConfigurationWithOneBean.class);
 
 		int classesInPackage = 2;
-		int beansInClasses = 1;
+		int beansInClasses = 2;
 
 		assertBeanDefinitionCount(ctx, (classesInPackage + beansInClasses));
 	}
@@ -169,20 +170,18 @@ public final class JavaConfigApplicationContextTests {
 		ctx = new JavaConfigApplicationContext(FirstLevel.class);
 
 		int configClasses = 3;
-		int beansInClasses = 3;
+		int beansInClasses = 5;
 
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import(SecondLevel.class)
 	@Configuration
-	static class FirstLevel {
-	}
+	static class FirstLevel { public @Bean TestBean m() { return new TestBean(); } }
 
 	@Import(ThirdLevel.class)
 	@Configuration
-	static class SecondLevel {
-	}
+	static class SecondLevel { public @Bean TestBean n() { return new TestBean(); } }
 
 	@Configuration
 	static class ThirdLevel {
@@ -209,30 +208,20 @@ public final class JavaConfigApplicationContextTests {
 		ctx = new JavaConfigApplicationContext(WithMultipleArgumentsToImportAnnotation.class);
 
 		int configClasses = 3;
-		int beansInClasses = 2;
+		int beansInClasses = 3;
 
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import( { LeftConfig.class, RightConfig.class })
 	@Configuration
-	static class WithMultipleArgumentsToImportAnnotation {
-	}
+	static class WithMultipleArgumentsToImportAnnotation { public @Bean TestBean m() { return new TestBean(); } }
 
 	@Configuration
-	static class LeftConfig {
-		@Bean
-		public ITestBean left() {
-			return new TestBean();
-		}
-	}
+	static class LeftConfig { public @Bean ITestBean left() { return new TestBean(); } }
 
 	@Configuration
-	static class RightConfig {
-		@Bean
-		public ITestBean right() {
-			return new TestBean();
-		}
+	static class RightConfig { public @Bean ITestBean right() { return new TestBean(); }
 	}
 
 	// ------------------------------------------------------------------------
@@ -243,7 +232,7 @@ public final class JavaConfigApplicationContextTests {
 		try {
 			ctx = new JavaConfigApplicationContext(WithMultipleArgumentsThatWillCauseDuplication.class);
 		}
-		catch (IllegalStateException e) {
+		catch (MalformedJavaConfigurationException e) {
 			threw = true;
 		}
 		assertTrue("Did not detect duplication and throw as expected", threw);
@@ -304,18 +293,13 @@ public final class JavaConfigApplicationContextTests {
 
 	// ------------------------------------------------------------------------
 
-	@Test
+	@Test(expected=MalformedJavaConfigurationException.class)
 	public void testAbstractConfigurationDoesNotGetProcessed() {
 		ctx = new JavaConfigApplicationContext(AbstractConfigurationToIgnore.class);
-
-		int configClasses = 0;
-		int beansInClasses = 0;
-
-		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Test
-	public void testAbstrectConfigurationWithExternalBeanDoesGetProcessed() {
+	public void testAbstractConfigurationWithExternalBeanDoesGetProcessed() {
 		ctx = new JavaConfigApplicationContext(ExternalBeanConfiguration.class,
 				ExternalBeanProvidingConfiguration.class);
 

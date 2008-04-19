@@ -72,14 +72,15 @@ public class BeanMethod {
 
 	public ValidationErrors validate(ValidationErrors errors) {
 		if(Modifier.isPrivate(modifiers))
-			errors.add(ValidationError.BEAN_METHOD_MAY_NOT_BE_PRIVATE);
+			// TODO: needs to have reference to parent class for better diagnostics
+			errors.add(ValidationError.METHOD_MAY_NOT_BE_PRIVATE + ": " + this.getName());
 		return errors;
 	}
 
 	@Override
 	public String toString() {
-		return format("{%s:methodName=%s,beanAnnotation=%s,modifiers=%d}",
-				       getClass().getSimpleName(), name, beanAnnotation, modifiers);
+		return format("%s: name=%s; modifiers=%d",
+				       getClass().getSimpleName(), name, modifiers);
 	}
 
 	@Override

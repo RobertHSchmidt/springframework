@@ -39,7 +39,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Tests that excercise the various constructors on
  * {@link LegacyJavaConfigApplicationContext}.
- * 
+ *
  * @author Chris Beams
  */
 public final class JavaConfigApplicationContextConstructionTests {
@@ -128,11 +128,11 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test
 	public void testConstructionWithMultipleBasePackages() {
-		String packageName1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage()
+		String packageName1 = org.springframework.config.java.simple.SimpleConfigurationWithOneBean.class.getPackage()
 				.getName();
 		String packageName2 = org.springframework.config.java.complex.ComplexConfiguration.class.getPackage().getName();
 		ctx = new LegacyJavaConfigApplicationContext(packageName1, packageName2);
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	@RunWith(Parameterized.class)
@@ -164,10 +164,10 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test
 	public void testConstructionWithMixOfClassesAndBasePackages() {
-		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
+		String pkg1 = org.springframework.config.java.simple.SimpleConfigurationWithOneBean.class.getPackage().getName();
 		ctx = new LegacyJavaConfigApplicationContext(new Class<?>[] { ComplexConfiguration.class }, new String[] { pkg1 });
 
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	private ClassPathXmlApplicationContext createSimpleXmlApplicationContext() {

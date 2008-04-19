@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 
 /**
@@ -71,9 +72,7 @@ public abstract class ConfigurationParserTests {
 	}
 
 	public @Test void beanMethodsAreRecognized() {
-		class Config {
-			@Bean TestBean alice() { return new TestBean(); }
-		}
+		class Config { @Bean TestBean alice() { return new TestBean(); } }
 		configClass = Config.class;
 
 		expectedModel.add(
@@ -118,14 +117,9 @@ public abstract class ConfigurationParserTests {
 	}
 
 	public @Test void importIsRecognized() {
-		class Imported {
-			@Bean TestBean alice() { return new TestBean(); }
-		}
-
+		class Imported { @Bean TestBean alice() { return new TestBean(); } }
 		@Import(Imported.class)
-		class Config {
-			@Bean TestBean knave() { return new TestBean(); }
-		}
+		class Config { @Bean TestBean knave() { return new TestBean(); } }
 		configClass = Config.class;
 
 		expectedModel
@@ -196,6 +190,20 @@ public abstract class ConfigurationParserTests {
 					.add(new BeanMethod("c", Modifier.PRIVATE + Modifier.STRICT))
     			)
     		;
+	}
+
+	public @Test void externalBeanMethodsAreSupported() {
+		class Config {
+			@Bean TestBean bean() { return new TestBean(); }
+			@ExternalBean TestBean extbean() { return new TestBean(); }
+		}
+		configClass = Config.class;
+		expectedModel
+			.add(
+				new ConfigurationClass(Config.class.getName())
+					.add(new BeanMethod("bean"))
+					.add(new ExternalBeanMethod("extbean"))
+				);
 	}
 
 

@@ -27,7 +27,7 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getConfigurationClasses()) {
-			String configClassName = configClass.getClassName();
+			String configClassName = configClass.getName();
 			RootBeanDefinition configBeanDef = new RootBeanDefinition();
 			configBeanDef.setBeanClassName(configClassName);
 			// @Configuration classes' bean names are always their fully-qualified classname
