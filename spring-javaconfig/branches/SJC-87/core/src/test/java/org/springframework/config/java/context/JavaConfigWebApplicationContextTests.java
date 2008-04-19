@@ -46,12 +46,14 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.refresh();
 	}
 
-	@Test(expected = NullPointerException.class)
+	// this test used to throw NullPointerException, but upon
+	// upgrading to 2.5.3 it no longer does.
+	@Test
 	public void testSetConfigLocationsWithNullArray() {
 		ctx.setConfigLocations(null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testSetConfigLocationsWithArrayContainingNullElement() {
 		ctx.setConfigLocations(new String[] { class1, null });
 	}

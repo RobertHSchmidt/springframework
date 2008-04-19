@@ -1,5 +1,6 @@
 package org.springframework.config.java.context;
 
+import static java.lang.String.format;
 import static org.springframework.util.ClassUtils.convertClassNameToResourcePath;
 
 import java.io.IOException;
@@ -28,6 +29,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	// TODO: should be LinkedHashSet?
 	private ArrayList<ClassPathResource> configClassResources = new ArrayList<ClassPathResource>();
 
+	/** context is configurable until refresh() is called */
+	private boolean openForConfiguration = true;
+
 	public JavaConfigApplicationContext() { }
 
 	public JavaConfigApplicationContext(Class<?>... configClasses) {
@@ -40,10 +44,22 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		refresh();
 	}
 
+	public JavaConfigApplicationContext(Class<?>[] classes, String[] packages) {
+		addConfigClasses(classes);
+		addBasePackages(packages);
+		refresh();
+	}
+
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
 		addBeanFactoryPostProcessor(new ConfigurationEnhancingBeanFactoryPostProcessor(this));
+	}
+
+	@Override
+	protected void finishRefresh() {
+		super.finishRefresh();
+		openForConfiguration = false;
 	}
 
 	@Override
@@ -54,14 +70,25 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	public void addConfigClasses(Class<?>... classes) {
+		assertOpenForConfiguration("addConfigClasses");
 		for(Class<?> configClass : classes)
 			addConfigClassAsResource(configClass.getName());
 	}
 
 	public void addBasePackages(String... basePackages) {
+		assertOpenForConfiguration("addBasePackages");
 		for (String basePackage : basePackages)
 			for(BeanDefinition beanDef : scanner.findCandidateComponents(basePackage))
 				addConfigClassAsResource(beanDef.getBeanClassName());
+	}
+
+	private void assertOpenForConfiguration(String attemptedMethod) {
+		if(!openForConfiguration)
+    		throw new IllegalStateException(format(
+    				"context is closed for configuration. %s() must be called " +
+    				"before refresh(), consider using the no-arg constructor for %s",
+    				attemptedMethod, this.getClass().getSimpleName()
+    			));
 	}
 
 	private void addConfigClassAsResource(String fqClassName) {
@@ -82,7 +109,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	public <T> T getBean(Class<T> type, String beanName) {
-		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type);
+		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type, beanName);
 	}
 
 }
