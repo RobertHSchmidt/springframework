@@ -5,6 +5,7 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
 import java.lang.reflect.Method;
 
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 
 
@@ -22,9 +23,15 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 		this.model = model;
 	}
 
+	/**
+	 * Parse <var>configurationSource</var>, populating <tt>model</tt>.
+	 *
+	 * @param configurationSource class literal to be parsed via reflection
+	 */
 	public void parse(Object configurationSource) {
 		Class<?> classLiteral = (Class<?>) configurationSource;
-		ConfigurationClass configClass = new ConfigurationClass(classLiteral.getName());
+		ConfigurationClass configClass =
+			new ConfigurationClass(classLiteral.getName(), classLiteral.getModifiers());
 
 		Import importAnno = findAnnotation(classLiteral, Import.class);
 		if(importAnno != null)
@@ -32,9 +39,13 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 				parse(classToImport);
 
 		for(Method method : classLiteral.getDeclaredMethods()) {
-			if(findAnnotation(method, Bean.class) != null) {
-				configClass.add(new BeanMethod(method.getName(), method.getModifiers()));
-			}
+			Bean bean = findAnnotation(method, Bean.class);
+			if(bean != null)
+				configClass.add(new BeanMethod(method.getName(), bean, method.getModifiers()));
+
+			ExternalBean extBean = findAnnotation(method, ExternalBean.class);
+			if(extBean != null)
+				configClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
 		}
 
 		model.add(configClass);

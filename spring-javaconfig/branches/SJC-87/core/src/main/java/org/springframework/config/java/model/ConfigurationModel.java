@@ -45,11 +45,20 @@ public class ConfigurationModel {
 	public ValidationErrors validate() {
 		ValidationErrors errors = new ValidationErrors();
 
+		// user must specify at least one configuration
 		if(configurationClasses.isEmpty())
-			errors.add(ValidationError.MODEL_IS_EMPTY);
+			errors.add(ValidationError.MODEL_IS_EMPTY.toString());
 
+		// each individual configuration class must be well-formed
 		for(ConfigurationClass configClass : configurationClasses)
 			configClass.validate(errors);
+
+		// catch errors that happen across configurations
+		for(int i=0; i<configurationClasses.size(); i++)
+			for(BeanMethod finalBeanMethod : configurationClasses.get(i).getFinalBeanMethods())
+				for(int j=i+1; j<configurationClasses.size(); j++)
+					if(configurationClasses.get(j).containsBeanMethod(finalBeanMethod.getName()))
+						errors.add(ValidationError.ILLEGAL_BEAN_OVERRIDE.toString());
 
 		return errors;
 	}
@@ -62,7 +71,8 @@ public class ConfigurationModel {
 
 	@Override
 	public String toString() {
-		return format("{%s:configurationClasses=%s}", getClass().getSimpleName(), configurationClasses);
+		return format("%s: configurationClasses=%s",
+				      getClass().getSimpleName(), configurationClasses);
 	}
 
 	@Override

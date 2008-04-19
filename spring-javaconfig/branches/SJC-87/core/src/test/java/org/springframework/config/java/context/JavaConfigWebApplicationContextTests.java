@@ -121,12 +121,12 @@ public class JavaConfigWebApplicationContextTests {
 
 	@Test
 	public void testConstructionWithMixOfClassesAndBasePackages() {
-		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
+		String pkg1 = org.springframework.config.java.simple.SimpleConfigurationWithOneBean.class.getPackage().getName();
 
 		ctx.setConfigLocations(new String[] { ComplexConfiguration.class.getName(), pkg1 });
 		ctx.refresh();
 
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	@Test
@@ -135,7 +135,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { "org.springframework.config.java.*ple*" });
 		ctx.refresh();
 
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	@Configuration
