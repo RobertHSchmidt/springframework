@@ -4,6 +4,7 @@ package org.springframework.config.java.model;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.annotation.Primary;
 
 /**
  * Renders a given {@link ConfigurationModel} as bean definitions to be
@@ -40,6 +41,8 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 				RootBeanDefinition beanDef = new RootBeanDefinition();
 				beanDef.setFactoryBeanName(configClassName);
 				beanDef.setFactoryMethodName(beanMethod.getName());
+				if(beanMethod.getBeanAnnotation().primary() == Primary.TRUE)
+					beanDef.setPrimary(true);
 				// TODO: plug in NamingStrategy here
 				registry.registerBeanDefinition(beanMethod.getName(), beanDef);
 			}

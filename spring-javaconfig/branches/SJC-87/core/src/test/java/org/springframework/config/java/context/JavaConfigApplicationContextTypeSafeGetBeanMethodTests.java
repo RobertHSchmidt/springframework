@@ -28,12 +28,12 @@ import org.springframework.config.java.annotation.Primary;
 
 public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 
-	private LegacyJavaConfigApplicationContext ctx;
+	private ConfigurableJavaConfigApplicationContext ctx;
 
 	/** happy path */
 	@Test
 	public void testGetBeanOfTypeT() {
-		ctx = new LegacyJavaConfigApplicationContext(SingleBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(SingleBeanConfig.class);
 
 		TestBean testBean = ctx.getBean(TestBean.class);
 
@@ -43,7 +43,7 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 
 	@Test(expected = AmbiguousBeanLookupException.class)
 	public void testGetBeanByTypeWithMultipleCanditates() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
 		ctx.getBean(TestBean.class); // will throw
 	}
 
@@ -54,44 +54,44 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 	 */
 	@Test
 	public void testDisambiguationBySubclass() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
 		ctx.getBean(MyTestBean.class);
 	}
 
 	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void testNoSuchBeanDefinitionException() {
-		ctx = new LegacyJavaConfigApplicationContext(SingleBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(SingleBeanConfig.class);
 		ctx.getBean(String.class);
 	}
 
 	@Test
 	public void testDisambiguationByPrimaryDesignation() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfigWithPrimary.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfigWithPrimary.class);
 		ctx.getBean(TestBean.class);
 	}
 
 	@Test(expected = MultiplePrimaryBeanDefinitionException.class)
 	public void testCannotDisambiguateWithMultiplePrimaryDesignations() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfigWithMultiplePrimaries.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfigWithMultiplePrimaries.class);
 		ctx.getBean(TestBean.class);
 	}
 
 	@Test
 	public void testDisambiguateByProvidingQualifyingBeanName() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
 		TestBean serviceA = ctx.getBean(TestBean.class, "serviceA");
 		assertNotNull(serviceA);
 	}
 
 	@Test(expected = BeanNotOfRequiredTypeException.class)
 	public void testDisambiguateByProvidingQualifyingBeanNameWithWrongClassName() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
 		ctx.getBean(String.class, "serviceA"); // throws
 	}
 
 	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void testDisambiguateByProvidingQualifyingBeanNameWithWrongBeanName() {
-		ctx = new LegacyJavaConfigApplicationContext(MultiBeanConfig.class);
+		ctx = new JavaConfigApplicationContext(MultiBeanConfig.class);
 		ctx.getBean(TestBean.class, "serviceX"); // throws
 	}
 
