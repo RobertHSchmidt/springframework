@@ -162,7 +162,7 @@
         </repository>
     </repositories>
     <properties>
-        <spring.version>2.5</spring.version>
+        <spring.version>2.5.3</spring.version>
         <aspectj.version>1.5.3</aspectj.version>
         <log4j.version>1.2.12</log4j.version>
         <junit.version>4.4</junit.version>
