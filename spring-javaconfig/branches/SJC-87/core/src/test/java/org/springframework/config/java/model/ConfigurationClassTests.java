@@ -123,4 +123,23 @@ public class ConfigurationClassTests {
 		assertTrue(errors.get(0).contains(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN.toString()));
 	}
 
+	/** See JavaDoc for {@link ConfigurationClass#getSelfAndAllImports()} */
+	public @Test void getSelfAndAllImports() {
+		ConfigurationClass A = new ConfigurationClass("A");
+		ConfigurationClass B = new ConfigurationClass("B");
+		ConfigurationClass Y = new ConfigurationClass("Y");
+		ConfigurationClass Z = new ConfigurationClass("Z");
+		ConfigurationClass M = new ConfigurationClass("M");
+
+		A.addImportedClass(B);
+		Y.addImportedClass(Z);
+
+		M.addImportedClass(A);
+		M.addImportedClass(Y);
+
+		ConfigurationClass[] expected = new ConfigurationClass[] { B, A, Z, Y, M };
+
+		assertArrayEquals(expected, M.getSelfAndAllImports().toArray());
+	}
+
 }

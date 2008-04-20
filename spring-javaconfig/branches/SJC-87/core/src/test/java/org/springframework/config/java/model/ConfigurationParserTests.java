@@ -123,9 +123,8 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.add(new ConfigurationClass(Imported.class.getName()).add(new BeanMethod("alice")))
-			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
-		;
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave"))
+				.addImportedClass(new ConfigurationClass(Imported.class.getName()).add(new BeanMethod("alice"))));
 	}
 
 	public @Test void multipleImportsAreSupported() {
@@ -136,10 +135,9 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.add(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
-			.add(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))
-			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
-		;
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave"))
+				.addImportedClass(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
+				.addImportedClass(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen"))));
 	}
 
 	public @Test void nestedImportsAreSupported() {
@@ -151,13 +149,12 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.add(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))
-			.add(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
-			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
-		;
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave"))
+				.addImportedClass(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice"))
+					.addImportedClass(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))));
 	}
 
-	public @Test void nestedImportsAreProcessedDepthFirst() {
+	public @Test void nestedImportsAreSupported2() {
 		class Imported3 { @Bean TestBean rabbit() { return new TestBean(); } }
 		class Imported2 { @Bean TestBean queen() { return new TestBean(); } }
 		@Import(Imported2.class)
@@ -167,13 +164,12 @@ public abstract class ConfigurationParserTests {
 		configClass = Config.class;
 
 		expectedModel
-			.add(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen")))
-			.add(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice")))
-			.add(new ConfigurationClass(Imported3.class.getName()).add(new BeanMethod("rabbit")))
-			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave")))
-		;
+			.add(new ConfigurationClass(Config.class.getName()).add(new BeanMethod("knave"))
+				.addImportedClass(new ConfigurationClass(Imported1.class.getName()).add(new BeanMethod("alice"))
+					.addImportedClass(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen"))))
+				.addImportedClass(new ConfigurationClass(Imported3.class.getName()).add(new BeanMethod("rabbit"))))
+			;
 	}
-
 
 	public @Test void variousBeanMethodModifiersAreSupported() {
 		class Config {

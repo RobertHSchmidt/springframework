@@ -30,13 +30,17 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 	 */
 	public void parse(Object configurationSource) {
 		Class<?> classLiteral = (Class<?>) configurationSource;
+		model.add(doParse(classLiteral));
+	}
+
+	private ConfigurationClass doParse(Class<?> classLiteral) {
 		ConfigurationClass configClass =
 			new ConfigurationClass(classLiteral.getName(), classLiteral.getModifiers());
 
 		Import importAnno = findAnnotation(classLiteral, Import.class);
 		if(importAnno != null)
 			for(Class<?> classToImport : importAnno.value())
-				parse(classToImport);
+				configClass.addImportedClass(doParse(classToImport));
 
 		for(Method method : classLiteral.getDeclaredMethods()) {
 			Bean bean = findAnnotation(method, Bean.class);
@@ -48,7 +52,7 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 				configClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
 		}
 
-		model.add(configClass);
+		return configClass;
 	}
 
 }

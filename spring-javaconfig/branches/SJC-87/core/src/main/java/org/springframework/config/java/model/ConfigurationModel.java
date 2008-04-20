@@ -38,9 +38,30 @@ public class ConfigurationModel {
 		return this;
 	}
 
+	/**
+	 * Return configuration classes that have been directly added to this model.
+	 * @see #getAllConfigurationClasses()
+	 */
 	public ConfigurationClass[] getConfigurationClasses() {
 		return configurationClasses.toArray(new ConfigurationClass[] {});
 	}
+
+	/**
+	 * Return all configuration classes, including all imported configuration classes.
+	 * This method should be generally preferred over {@link #getConfigurationClasses()}
+	 * @see #getConfigurationClasses()
+	 */
+	public ConfigurationClass[] getAllConfigurationClasses() {
+		// TODO: perhaps using a LinkedHashSet here can solve the problem of duplication?
+		// (see todo at top of class)
+		ArrayList<ConfigurationClass> allConfigClasses = new ArrayList<ConfigurationClass>();
+
+		for(ConfigurationClass configClass : configurationClasses)
+			allConfigClasses.addAll(configClass.getSelfAndAllImports());
+
+		return allConfigClasses.toArray(new ConfigurationClass[allConfigClasses.size()]);
+	}
+
 
 	public ValidationErrors validate() {
 		ValidationErrors errors = new ValidationErrors();
