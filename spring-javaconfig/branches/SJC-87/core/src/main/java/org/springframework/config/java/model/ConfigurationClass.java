@@ -6,6 +6,7 @@ import static org.springframework.util.ClassUtils.getShortName;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
@@ -43,7 +44,6 @@ public class ConfigurationClass {
 	public static final String BEAN_ATTR_NAME = "isJavaConfigurationClass";
 
 	private final String name;
-	private ConfigurationClass importedBy;
 	private final int modifiers;
 
 	/** set is used because order does not matter. see {@link #add(BeanMethod)} */
@@ -54,6 +54,10 @@ public class ConfigurationClass {
 
 	/** list is used because order matters. see {@link #add(ResourceBundles)} */
 	private ArrayList<ResourceBundles> resourceBundles = new ArrayList<ResourceBundles>();
+
+	// TODO: may need to be a LinkedHashSet to avoid duplicates while preserving original insertion order
+	// problem: LinkedHashSet#equals() does not respect insertion order.
+	private ArrayList<ConfigurationClass> importedClasses = new ArrayList<ConfigurationClass>();
 
 	/**
 	 * Creates a new ConfigurationClass named <var>className</var>
@@ -81,15 +85,58 @@ public class ConfigurationClass {
 		return this;
 	}
 
+	public BeanMethod[] getBeanMethods() {
+		return beanMethods.toArray(new BeanMethod[beanMethods.size()]);
+	}
+
+	public BeanMethod[] getFinalBeanMethods() {
+		ArrayList<BeanMethod> finalBeanMethods = new ArrayList<BeanMethod>();
+		for(BeanMethod beanMethod : beanMethods)
+			if(beanMethod.getBeanAnnotation().allowOverriding() == false)
+				finalBeanMethods.add(beanMethod);
+
+		return finalBeanMethods.toArray(new BeanMethod[finalBeanMethods.size()]);
+	}
+
+	public boolean containsBeanMethod(String beanMethodName) {
+		Assert.hasText(beanMethodName, "beanMethodName must be non-empty");
+		for(BeanMethod beanMethod : beanMethods)
+			if(beanMethod.getName().equals(beanMethodName))
+				return true;
+		return false;
+	}
+
 	public ConfigurationClass add(ExternalBeanMethod method) {
 		externalBeanMethods.add(method);
 		return this;
 	}
 
-
-	public BeanMethod[] getBeanMethods() {
-		return beanMethods.toArray(new BeanMethod[] { });
+	public ConfigurationClass addImportedClass(ConfigurationClass importedClass) {
+		importedClasses.add(importedClass);
+		return this;
 	}
+
+	/**
+	 * Returns a properly-ordered collection of this configuration class and
+	 * all classes it imports, recursively. Ordering is depth-first, then breadth
+	 * such that in the case of a configuration class M that imports classes A and Y
+	 * and A imports B and Y imports Z, the contents and order of the resulting
+	 * collection will be [B, A, Z, Y, M].  This ordering is significant, because the
+	 * most specific class (where M is most specific) should have precedence when it comes
+	 * to bean overriding.  In the example above, if M implements a bean (method) named
+	 * 'foo' and A implements the same, M's method should 'win' in terms of which bean
+	 * will actually resolve upon a call to getBean().
+	 */
+	public Collection<ConfigurationClass> getSelfAndAllImports() {
+		ArrayList<ConfigurationClass> selfAndAllImports = new ArrayList<ConfigurationClass>();
+
+		for(ConfigurationClass importedClass : importedClasses)
+			selfAndAllImports.addAll(importedClass.getSelfAndAllImports());
+
+		selfAndAllImports.add(this);
+		return selfAndAllImports;
+	}
+
 
 	/**
 	 * ResourceBundles may be locally declared on on this class, or discovered
@@ -114,23 +161,6 @@ public class ConfigurationClass {
 		return modifiers;
 	}
 
-
-	public BeanMethod[] getFinalBeanMethods() {
-		ArrayList<BeanMethod> finalBeanMethods = new ArrayList<BeanMethod>();
-		for(BeanMethod beanMethod : beanMethods)
-			if(beanMethod.getBeanAnnotation().allowOverriding() == false)
-				finalBeanMethods.add(beanMethod);
-
-		return finalBeanMethods.toArray(new BeanMethod[finalBeanMethods.size()]);
-	}
-
-	public boolean containsBeanMethod(String beanMethodName) {
-		Assert.hasText(beanMethodName, "beanMethodName must be non-empty");
-		for(BeanMethod beanMethod : beanMethods)
-			if(beanMethod.getName().equals(beanMethodName))
-				return true;
-		return false;
-	}
 
 
 	/** must declare at least one Bean method, etc */
@@ -158,7 +188,7 @@ public class ConfigurationClass {
 		int result = 1;
 		result = prime * result + ((beanMethods == null) ? 0 : beanMethods.hashCode());
 		result = prime * result + ((externalBeanMethods == null) ? 0 : externalBeanMethods.hashCode());
-		result = prime * result + ((importedBy == null) ? 0 : importedBy.hashCode());
+		result = prime * result + ((importedClasses == null) ? 0 : importedClasses.hashCode());
 		result = prime * result + modifiers;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((resourceBundles == null) ? 0 : resourceBundles.hashCode());
@@ -186,11 +216,11 @@ public class ConfigurationClass {
 		}
 		else if (!externalBeanMethods.equals(other.externalBeanMethods))
 			return false;
-		if (importedBy == null) {
-			if (other.importedBy != null)
+		if (importedClasses == null) {
+			if (other.importedClasses != null)
 				return false;
 		}
-		else if (!importedBy.equals(other.importedBy))
+		else if (!importedClasses.equals(other.importedClasses))
 			return false;
 		if (modifiers != other.modifiers)
 			return false;

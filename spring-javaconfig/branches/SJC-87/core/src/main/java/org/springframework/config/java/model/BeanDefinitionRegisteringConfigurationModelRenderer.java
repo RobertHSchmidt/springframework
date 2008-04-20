@@ -28,7 +28,7 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 	public int render(ConfigurationModel model) {
 		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
-		for(ConfigurationClass configClass : model.getConfigurationClasses()) {
+		for(ConfigurationClass configClass : model.getAllConfigurationClasses()) {
 			String configClassName = configClass.getName();
 			RootBeanDefinition configBeanDef = new RootBeanDefinition();
 			configBeanDef.setBeanClassName(configClassName);
