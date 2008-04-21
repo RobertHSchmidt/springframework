@@ -71,14 +71,16 @@ public class ConfigurationModel {
 			errors.add(ValidationError.MODEL_IS_EMPTY.toString());
 
 		// each individual configuration class must be well-formed
+		// note that each configClass validates its imports recursively on validate()
 		for(ConfigurationClass configClass : configurationClasses)
 			configClass.validate(errors);
 
-		// catch errors that happen across configurations
-		for(int i=0; i<configurationClasses.size(); i++)
-			for(BeanMethod finalBeanMethod : configurationClasses.get(i).getFinalBeanMethods())
-				for(int j=i+1; j<configurationClasses.size(); j++)
-					if(configurationClasses.get(j).containsBeanMethod(finalBeanMethod.getName()))
+		// catch errors that happen across configurations (including imports)
+		ConfigurationClass[] allClasses = getAllConfigurationClasses();
+		for(int i=0; i<allClasses.length; i++)
+			for(BeanMethod finalBeanMethod : allClasses[i].getFinalBeanMethods())
+				for(int j=i+1; j<allClasses.length; j++)
+					if(allClasses[j].containsBeanMethod(finalBeanMethod.getName()))
 						errors.add(ValidationError.ILLEGAL_BEAN_OVERRIDE.toString());
 
 		return errors;

@@ -65,6 +65,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		verify(registry);
 	}
 
+	// TODO: promote these classes to src/main, replace all other instances of code like this
 	public static interface MethodAnnotationPrototype { void targetMethod(); }
 	public static <A extends Annotation> A extractAnnotation(Class<A> targetAnno, Class<? extends MethodAnnotationPrototype> prototype) {
 		try {

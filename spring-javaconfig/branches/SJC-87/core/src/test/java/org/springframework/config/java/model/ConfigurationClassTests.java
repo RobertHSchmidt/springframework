@@ -84,6 +84,17 @@ public class ConfigurationClassTests {
     		ConfigurationClass c1 = new ConfigurationClass("a");
     		Assert.assertThat(c1, not(equalTo(null)));
 		}
+
+		{ // is declaring class considered when evaluating equality?
+			ConfigurationClass c1 = new ConfigurationClass("c").setDeclaringClass(new PotentialConfigurationClass("p"));
+			ConfigurationClass c2 = new ConfigurationClass("c");
+			Assert.assertThat(c1, not(equalTo(c2)));
+			c2.setDeclaringClass(new PotentialConfigurationClass("p"));
+			Assert.assertThat(c1, equalTo(c2));
+			Assert.assertThat(c2, equalTo(c1));
+			c2.getDeclaringClass().add(new BeanMethod("f"));
+			Assert.assertThat(c1, not(equalTo(c2)));
+		}
 	}
 
 	public @Test void containsBeanMethod() {
@@ -105,12 +116,27 @@ public class ConfigurationClassTests {
 		} catch (IllegalArgumentException ex) { /* expected */ }
 	}
 
-	public @Test void validateMustDeclareAtLeastOneBean() {
+	// valid configurations must declare at least one bean
+	public @Test void validateConfigurationMustDeclareAtLeastOneBean() {
 		ConfigurationClass configClass = new ConfigurationClass("a");
 		ValidationErrors errors = new ValidationErrors();
 		configClass.validate(errors);
 		assertTrue(errors.size() > 0);
 		assertTrue(errors.get(0).contains(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString()));
+	}
+
+	// as an exception to the above, a configuration may be empty of @Bean methods if it imports another configuration
+	// of course, any imported configuration will be subject to the same rules.
+	public @Test void validateConfigurationMustDeclareAtLeastOneBeanOrImport() {
+		ConfigurationClass configClass =
+			new ConfigurationClass("c1")
+				.addImportedClass(
+					new ConfigurationClass("c2")
+						.add(new BeanMethod("m")));
+
+		ValidationErrors errors = new ValidationErrors();
+		configClass.validate(errors);
+		assertTrue("expected no errors but instead got: " + errors, errors.size() == 0);
 	}
 
 	public @Test void validateAbstractConfigurationsNotValid() {
@@ -121,6 +147,18 @@ public class ConfigurationClassTests {
 		configClass.validate(errors);
 		assertTrue("expected errors during validation", errors.size() > 0);
 		assertTrue(errors.get(0).contains(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN.toString()));
+	}
+
+	public @Test void validationCascadesToImportedClasses() {
+		configClass
+			.add(new BeanMethod("m"))
+			// import an non-well-formed configuration class (no bean methods)
+			.addImportedClass(new ConfigurationClass("i"));
+
+		ValidationErrors errors = new ValidationErrors();
+		configClass.validate(errors);
+		assertTrue("expected errors during validation", errors.size() > 0);
+		assertTrue(errors.get(0).contains(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString()));
 	}
 
 	/** See JavaDoc for {@link ConfigurationClass#getSelfAndAllImports()} */

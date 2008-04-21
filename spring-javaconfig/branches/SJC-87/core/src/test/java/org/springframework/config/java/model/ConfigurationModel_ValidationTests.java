@@ -21,10 +21,6 @@ public class ConfigurationModel_ValidationTests {
 		assertTrue("should have reflected nested errors", errors.size() > 0);
 	}
 
-	/**
-	 * TODO: this is probably unnecessary duplication
-	 * @see {@link ConfigurationClassTests#getFinalBeanMethods()}
-	 */
 	public @Test void validationChecksForIllegalBeanOverrides() {
 		ConfigurationModel model = new ConfigurationModel()
 			.add(new ConfigurationClass("a").add(new BeanMethod("m")))
@@ -34,9 +30,28 @@ public class ConfigurationModel_ValidationTests {
 
 		try {
     		model.assertIsValid();
-    		fail("should have thrown, model is invalid");
+    		fail("should have thrown exception - configuration " +
+				 "class 'c' illegally overrides final bean method 'm' declared in class 'b'");
 		} catch (MalformedJavaConfigurationException ex) {
-			// all good
+			assertTrue("got unexpected exception message: " + ex.getMessage(),
+				ex.getMessage().contains(ValidationError.ILLEGAL_BEAN_OVERRIDE.toString()));
+		}
+	}
+
+	public @Test void validationChecksForIllegalBeanOverridesIncludingImports() {
+		ConfigurationModel model = new ConfigurationModel()
+			.add(new ConfigurationClass("a").add(new BeanMethod("m")))
+			.add(new ConfigurationClass("b").add(new BeanMethod("m", BeanMethodTests.FINAL_BEAN_ANNOTATION)))
+			.add(new ConfigurationClass("c").addImportedClass(new ConfigurationClass("i").add(new BeanMethod("m"))))
+		;
+
+		try {
+    		model.assertIsValid();
+    		fail("should have thrown exception - imported configuration " +
+				 "class 'i' illegally overrides bean method 'm' declared in class 'b'");
+		} catch (MalformedJavaConfigurationException ex) {
+			assertTrue("got unexpected exception message: " + ex.getMessage(),
+				ex.getMessage().contains(ValidationError.ILLEGAL_BEAN_OVERRIDE.toString()));
 		}
 	}
 
