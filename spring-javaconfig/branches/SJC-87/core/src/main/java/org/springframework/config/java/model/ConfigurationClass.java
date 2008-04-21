@@ -59,6 +59,8 @@ public class ConfigurationClass {
 	// problem: LinkedHashSet#equals() does not respect insertion order.
 	private ArrayList<ConfigurationClass> importedClasses = new ArrayList<ConfigurationClass>();
 
+	private ConfigurationClass declaringClass;
+
 	/**
 	 * Creates a new ConfigurationClass named <var>className</var>
 	 * @param name fully-qualified Configuration class being represented
@@ -137,6 +139,16 @@ public class ConfigurationClass {
 		return selfAndAllImports;
 	}
 
+	public ConfigurationClass setDeclaringClass(ConfigurationClass configurationClass) {
+		this.declaringClass = configurationClass;
+		return this;
+	}
+
+	public ConfigurationClass getDeclaringClass() {
+		return declaringClass;
+	}
+
+
 
 	/**
 	 * ResourceBundles may be locally declared on on this class, or discovered
@@ -165,7 +177,12 @@ public class ConfigurationClass {
 
 	/** must declare at least one Bean method, etc */
 	public ValidationErrors validate(ValidationErrors errors) {
-		if(beanMethods.isEmpty())
+		// recurse through all imported classes
+		for(ConfigurationClass importedClass : importedClasses)
+			importedClass.validate(errors);
+
+		// a configuration class must declare at least one @Bean OR import at least one other configuration
+		if(importedClasses.isEmpty() && beanMethods.isEmpty())
 			errors.add(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString() + ": " + name);
 
 		// if the class is abstract and declares no @ExternalBean methods, it is malformed
@@ -187,6 +204,7 @@ public class ConfigurationClass {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((beanMethods == null) ? 0 : beanMethods.hashCode());
+		result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
 		result = prime * result + ((externalBeanMethods == null) ? 0 : externalBeanMethods.hashCode());
 		result = prime * result + ((importedClasses == null) ? 0 : importedClasses.hashCode());
 		result = prime * result + modifiers;
@@ -209,6 +227,12 @@ public class ConfigurationClass {
 				return false;
 		}
 		else if (!beanMethods.equals(other.beanMethods))
+			return false;
+		if (declaringClass == null) {
+			if (other.declaringClass != null)
+				return false;
+		}
+		else if (!declaringClass.equals(other.declaringClass))
 			return false;
 		if (externalBeanMethods == null) {
 			if (other.externalBeanMethods != null)

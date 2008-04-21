@@ -30,6 +30,7 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
+import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.simple.SimpleConfigurationWithOneBean;
 import org.springframework.config.java.support.ConfigurationSupport;
@@ -232,16 +233,16 @@ public final class JavaConfigApplicationContextTests {
 		try {
 			ctx = new JavaConfigApplicationContext(WithMultipleArgumentsThatWillCauseDuplication.class);
 		}
-		catch (MalformedJavaConfigurationException e) {
+		catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.ILLEGAL_BEAN_OVERRIDE.toString()));
 			threw = true;
 		}
 		assertTrue("Did not detect duplication and throw as expected", threw);
 	}
 
-	@Import( { Foo1.class, Foo2.class })
+	@Import({ Foo1.class, Foo2.class })
 	@Configuration
-	static class WithMultipleArgumentsThatWillCauseDuplication {
-	}
+	static class WithMultipleArgumentsThatWillCauseDuplication { }
 
 	@Configuration
 	static class Foo1 {
