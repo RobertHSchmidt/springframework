@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.support.ConfigurationSupport;
 
@@ -35,7 +36,7 @@ public class AutoBeanTests {
 	@Ignore
 	@Test
 	public void constructorAutowiring() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(ConstructorAutowiring.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(ConstructorAutowiring.class);
 		Service service = ctx.getBean(Service.class);
 		Assert.assertNotNull(service);
 		Assert.assertNotNull(service.repos);

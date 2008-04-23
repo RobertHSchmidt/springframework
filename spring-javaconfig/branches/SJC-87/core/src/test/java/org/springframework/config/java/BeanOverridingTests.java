@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -52,19 +52,19 @@ public class BeanOverridingTests {
 
 	@Test
 	public void testShadowingIsBasedOnOrder1() {
-		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(Second.class);
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext(Second.class);
 		assertEquals("second", context.getBean(TestBean.class).getName());
 	}
 
 	@Test
 	public void testShadowingIsBasedOnOrder2() {
-		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(Second.class, First.class);
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext(Second.class, First.class);
 		assertEquals("first", context.getBean(TestBean.class).getName());
 	}
 
 	@Test
 	public void testShadowingIsBasedOnOrder2WorksSameWithSetter() {
-		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext();
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext();
 		context.setConfigClasses(Second.class, First.class);
 		context.refresh();
 		assertEquals("first", context.getBean(TestBean.class).getName());
@@ -157,8 +157,8 @@ public class BeanOverridingTests {
 
 	@Test
 	public void testChildContextBeanShadowsParentContextBean() {
-		LegacyJavaConfigApplicationContext firstContext = new LegacyJavaConfigApplicationContext(First.class);
-		LegacyJavaConfigApplicationContext secondContext = new LegacyJavaConfigApplicationContext(firstContext);
+		JavaConfigApplicationContext firstContext = new JavaConfigApplicationContext(First.class);
+		JavaConfigApplicationContext secondContext = new JavaConfigApplicationContext(firstContext);
 		secondContext.setConfigClasses(Second.class);
 		secondContext.refresh();
 
@@ -170,8 +170,8 @@ public class BeanOverridingTests {
 	// corners a subtle bug I found along the way...
 	@Test
 	public void testChildContextBeanShadowsParentContextBeanWhenUsingTypeSafeGetBeanMethod() {
-		LegacyJavaConfigApplicationContext firstContext = new LegacyJavaConfigApplicationContext(First.class);
-		LegacyJavaConfigApplicationContext secondContext = new LegacyJavaConfigApplicationContext(firstContext);
+		JavaConfigApplicationContext firstContext = new JavaConfigApplicationContext(First.class);
+		JavaConfigApplicationContext secondContext = new JavaConfigApplicationContext(firstContext);
 		secondContext.setConfigClasses(Second.class);
 		secondContext.refresh();
 

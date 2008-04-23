@@ -29,7 +29,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author Costin Leau
- * 
+ *
  */
 public class BeansAndPostprocessorTests {
 
@@ -112,7 +112,7 @@ public class BeansAndPostprocessorTests {
 	@Ignore
 	@Test
 	public void testViaApplicationContext() {
-		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(NewConfiguration.class);
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext(NewConfiguration.class);
 		String name = "newBean";
 		context.getBean(Object.class, name);
 		CountingBPP postProcessor = context.getBean(CountingBPP.class);
