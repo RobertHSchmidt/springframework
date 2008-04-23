@@ -60,6 +60,12 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		super(parent);
 	}
 
+	public JavaConfigApplicationContext(ApplicationContext parent, Class<?>... classes) {
+		super(parent);
+		addConfigClasses(classes);
+		refresh();
+	}
+
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();

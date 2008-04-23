@@ -18,14 +18,14 @@ package issues;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * SJC-60 exposed a bug with JavaConfig calling refresh() multiple times in the
  * hierarchical context situation below.
- * 
+ *
  * @author Serge Bogatyrev
  * @author Chris Beams
  */
@@ -39,20 +39,20 @@ public class Sjc60Tests {
 
 	@Test
 	public void reproWithParentAsJavaConfigApplicationContext() {
-		ApplicationContext parent = new LegacyJavaConfigApplicationContext(ApplicationConfiguration.class);
+		ApplicationContext parent = new JavaConfigApplicationContext(ApplicationConfiguration.class);
 		new ClassPathXmlApplicationContext(new String[] { "issues/Sjc60-child.xml" }, parent);
 	}
 
 	@Test
 	public void reproWithChildAsJavaConfigApplicationContext() {
 		ApplicationContext parent = new ClassPathXmlApplicationContext("issues/Sjc60-parent.xml");
-		new LegacyJavaConfigApplicationContext(parent, ApplicationConfiguration2.class);
+		new JavaConfigApplicationContext(parent, ApplicationConfiguration2.class);
 	}
 
 	@Test
 	public void reproWithBothContextsAsJavaConfigApplicationContext() {
-		ApplicationContext parent = new LegacyJavaConfigApplicationContext(ApplicationConfiguration.class);
-		new LegacyJavaConfigApplicationContext(parent, ApplicationConfiguration2.class);
+		ApplicationContext parent = new JavaConfigApplicationContext(ApplicationConfiguration.class);
+		new JavaConfigApplicationContext(parent, ApplicationConfiguration2.class);
 	}
 
 	@Configuration

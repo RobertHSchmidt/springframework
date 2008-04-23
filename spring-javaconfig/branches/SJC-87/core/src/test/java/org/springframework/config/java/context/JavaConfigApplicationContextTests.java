@@ -341,12 +341,14 @@ public final class JavaConfigApplicationContextTests {
 		public static class MemberClass { @Bean TestBean inner() { return new TestBean(); } }
 	}
 
+	// TODO: rename
 	public @Test void simplestPossibleRepro() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(DeclaringClass.MemberClass.class);
 		ctx.getBean("inner");
 		ctx.getBean("outer");
 	}
 
+	// TODO: rename
 	public @Test void main() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config.class);
 		String name = ctx.getBean(String.class, "name");
@@ -358,6 +360,7 @@ public final class JavaConfigApplicationContextTests {
 
 	static class Child { @Bean TestBean child() { return new TestBean("alice"); } }
 	static class Parent { @Bean TestBean parent() { return new TestBean("mother"); } }
+	// TODO: rename
 	public @Test void simple() {
 		JavaConfigApplicationContext c = new JavaConfigApplicationContext();
 		c.addConfigClasses(Child.class);
@@ -369,6 +372,7 @@ public final class JavaConfigApplicationContextTests {
 		assertEquals("mother", c.getBean(TestBean.class, "parent").getName());
 	}
 
+	// TODO: rename
 	public @Test void simple2() {
 		final JavaConfigApplicationContext p = new JavaConfigApplicationContext(Parent.class);
 		assertEquals("mother", p.getBean(TestBean.class, "parent").getName());
