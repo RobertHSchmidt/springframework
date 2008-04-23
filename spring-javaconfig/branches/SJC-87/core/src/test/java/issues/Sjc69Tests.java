@@ -23,14 +23,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * SJC-69 revaled a bug in the way addConfigClass() works with regard to bean
  * overrides. As Mark points out, the current (buggy) functionality is that bean
  * overriding is happening in a first-in-first-out fashion. It should be
  * last-in-first-out.
- * 
+ *
  * @author Mark Rohan
  * @author Chris Beams
  */
@@ -68,7 +68,7 @@ public class Sjc69Tests {
 		}
 	}
 
-	public static class MySpringContext extends LegacyJavaConfigApplicationContext {
+	public static class MySpringContext extends JavaConfigApplicationContext {
 		public MySpringContext() {
 			super();
 			addConfigClass(MyConfigA.class);
@@ -77,7 +77,6 @@ public class Sjc69Tests {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void reproPerOriginalBugReport() {
 		MySpringContext msc = new MySpringContext();
@@ -90,10 +89,9 @@ public class Sjc69Tests {
 	 * Simply demonstrates the bug applies when using the
 	 * JavaConfigApplicationContext API directly as well.
 	 */
-	@Ignore
 	@Test
 	public void reproWithJavaConfigApplicationContext() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext();
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
 		ctx.addConfigClass(MyConfigA.class);
 		ctx.addConfigClass(MyConfigB.class);
 		ctx.refresh();
@@ -104,10 +102,13 @@ public class Sjc69Tests {
 
 	/**
 	 * To work around this issue until fixed, simply reverse the ordering.
+	 *
+	 * Update: this workaround worked previously, but now that the issue is fixed, is no longer valid
 	 */
+	@Ignore
 	@Test
 	public void workaround() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext();
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
 		ctx.addConfigClass(MyConfigB.class);
 		ctx.addConfigClass(MyConfigA.class); // reversed
 		ctx.refresh();

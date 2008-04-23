@@ -16,11 +16,11 @@
 package issues;
 
 import org.junit.Test;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -29,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * SJC-54 came up because of an intentional break in backward compatibility from
  * 1.0M2 to 1.0M3. The issue was resolve as WONT FIX, so the test here is set up
  * to expect the exception described in the bug.
- * 
+ *
  * @author Volodymyr Zhabiuk
  * @author Chris Beams
  */
@@ -40,10 +40,10 @@ public class Sjc54Tests {
 	 * the customerService bean is an abstract class. This is consistent with
 	 * the changes made in SJC-54, see that issue for details.
 	 */
-	@Test(expected = NoSuchBeanDefinitionException.class)
+	@Test(expected = MalformedJavaConfigurationException.class)
 	public void repro() {
 		ApplicationContext pac = new ClassPathXmlApplicationContext("issues/Sjc54.xml");
-		LegacyJavaConfigApplicationContext applicationContext = new LegacyJavaConfigApplicationContext();
+		JavaConfigApplicationContext applicationContext = new JavaConfigApplicationContext();
 		applicationContext.setConfigClasses(ServicesBeanRepository.class, SystemBeanRepository.class);
 		applicationContext.setParent(pac);
 		applicationContext.refresh();

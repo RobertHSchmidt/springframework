@@ -29,7 +29,7 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
  * that abstract Configurations should be processed if the have any non-private
  * Bean methods. The example below is taken from Jim Moore's code originally
  * submitted with the bug.
- * 
+ *
  * @author Chris Beams
  */
 public class Sjc56Tests {
