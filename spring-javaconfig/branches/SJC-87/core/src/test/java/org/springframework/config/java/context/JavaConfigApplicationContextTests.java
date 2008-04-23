@@ -27,6 +27,7 @@ import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalB
 import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalBeanProvidingConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
@@ -272,24 +273,11 @@ public final class JavaConfigApplicationContextTests {
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
-	@Configuration
+	static class ExternalConfig { @Bean ITestBean extBean() { return new TestBean(); } }
 	static class OuterConfig {
+		@Bean String whatev() { return "whatev"; }
 		@Import(ExternalConfig.class)
-		@Configuration
-		static class InnerConfig {
-			@Bean
-			public ITestBean innerBean() {
-				return new TestBean();
-			}
-		}
-	}
-
-	@Configuration
-	static class ExternalConfig {
-		@Bean
-		public ITestBean extBean() {
-			return new TestBean();
-		}
+		static class InnerConfig { @Bean ITestBean innerBean() { return new TestBean(); } }
 	}
 
 	// ------------------------------------------------------------------------
@@ -327,6 +315,73 @@ public final class JavaConfigApplicationContextTests {
 	public void testAllVariationsOnOrderingOfClassesAndBasePackages() {
 		fail("not yet implemented");
 	}
+
+	// TODO: if two classes share a common outer class, this shouldn't cause a problem.
+
+	// TODO: PotentialConfigurationClass is not yet doing customized validation
+
+	// TODO: Declaring classes are not yet considered during validation (otherwise they would fail in cases such as this one)
+
+	// TODO: what about abstract outer classes?
+
+	public static class NameConfig { @Bean String name() { return "lewis"; } }
+	@Import(NameConfig.class)
+	public abstract static class Outer {
+		@Bean TestBean foo() { return new TestBean("foo"); }
+		@Bean TestBean bar() { return new TestBean(name()); }
+		abstract @ExternalBean String name();
+		static class Other { @Bean TestBean alice() { return new TestBean("alice"); } }
+	}
+
+	@Import({Outer.Other.class})
+	public static class Config { }
+
+	public static class DeclaringClass {
+		@Bean TestBean outer() { return new TestBean(); }
+		public static class MemberClass { @Bean TestBean inner() { return new TestBean(); } }
+	}
+
+	public @Test void simplestPossibleRepro() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(DeclaringClass.MemberClass.class);
+		ctx.getBean("inner");
+		ctx.getBean("outer");
+	}
+
+	public @Test void main() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config.class);
+		String name = ctx.getBean(String.class, "name");
+		//ctx.getParent().getBean("foo");
+		ctx.getBean("foo");
+		TestBean bar = ctx.getBean(TestBean.class, "bar");
+		assertEquals("lewis", bar.getName());
+	}
+
+	static class Child { @Bean TestBean child() { return new TestBean("alice"); } }
+	static class Parent { @Bean TestBean parent() { return new TestBean("mother"); } }
+	public @Test void simple() {
+		JavaConfigApplicationContext c = new JavaConfigApplicationContext();
+		c.addConfigClasses(Child.class);
+		JavaConfigApplicationContext p = new JavaConfigApplicationContext(Parent.class);
+		c.setParent(p);
+		c.refresh();
+		assertEquals("alice", c.getBean(TestBean.class, "child").getName());
+		assertEquals("mother", p.getBean(TestBean.class, "parent").getName());
+		assertEquals("mother", c.getBean(TestBean.class, "parent").getName());
+	}
+
+	public @Test void simple2() {
+		final JavaConfigApplicationContext p = new JavaConfigApplicationContext(Parent.class);
+		assertEquals("mother", p.getBean(TestBean.class, "parent").getName());
+
+		JavaConfigApplicationContext c = new JavaConfigApplicationContext();
+		c.addConfigClasses(Child.class);
+		c.setParent(p);
+		c.refresh();
+		assertEquals("alice", c.getBean(TestBean.class, "child").getName());
+		assertEquals("mother", ((TestBean)c.getParent().getBean("parent")).getName());
+		assertEquals("mother", ((TestBean)c.getBean("parent")).getName());
+	}
+
 
 	// ------------------------------------------------------------------------
 

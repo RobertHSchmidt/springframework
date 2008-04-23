@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -98,11 +99,11 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * <p>
  * The process work on configurations created from classes but also object
  * instances.
- * 
+ *
  * <p>
  * This class implements {@link InitializingBean} interface - remember to call
  * {@link InitializingBean#afterPropertiesSet()} before any processing.
- * 
+ *
  * @author Rod Johnson
  * @author Costin Leau
  * @author Chris Beams
@@ -155,7 +156,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	/**
 	 * Constructor taking an application context as parameter. Suitable for
 	 * programmatic use.
-	 * 
+	 *
 	 * @param ac application context in which the newly created bean definition
 	 * will reside
 	 */
@@ -234,7 +235,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Create a configuration processor. This is tied to an owning factory.
-	 * 
+	 *
 	 * @param clbf owning factory
 	 */
 	public ConfigurationProcessor(ConfigurableListableBeanFactory clbf) {
@@ -245,7 +246,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	/**
 	 * Optionally indicate the resourceLoader. If unspecified,
 	 * {@link DefaultResourceLoader} will be used. will be used.
-	 * 
+	 *
 	 * @param resourceLoader
 	 */
 	public void setResourceLoader(ResourceLoader resourceLoader) {
@@ -260,7 +261,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * Optionally indicate the naming strategy used for creating the bean names
 	 * during processing. If unspecified a default, method-name-based strategy
 	 * will be used.
-	 * 
+	 *
 	 * @param beanNamingStrategy bean naming strategy implementation
 	 */
 	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
@@ -271,10 +272,10 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	 * Optionally specify a custom subclass of
 	 * {@link ConfigurationListenerRegistry}. If unspecified, the default
 	 * implementation will be used.
-	 * 
+	 *
 	 * <p/>TODO: if ConfigurationListener is made internal, this configuration
 	 * should be eliminated as well
-	 * 
+	 *
 	 * @param configurationListenerRegistry
 	 */
 	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
@@ -329,11 +330,11 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Generate bean definitions from a 'naked' configuration class.
-	 * 
+	 *
 	 * <p/> Normally this method is used internally on inner classes however, it
 	 * is possible to use it directly on classes that haven't been manually
 	 * declared in the enclosing bean factory.
-	 * 
+	 *
 	 * @param configurationClass class containing &#64;Configurable or &#64;Bean
 	 * annotation
 	 * @return the number of bean definition generated (including the
@@ -388,7 +389,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
-	 * 
+	 *
 	 * @param configurationBeanName
 	 * @return
 	 * @throws BeanDefinitionStoreException
@@ -416,6 +417,8 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 				String beanName = beanClass.getName() + "#0";
 				requiredAnnotationPostProcessor.setBeanClass(beanClass);
 				requiredAnnotationPostProcessor.setResourceDescription("ensures @Required methods have been invoked");
+				requiredAnnotationPostProcessor.addMetadataAttribute(new BeanMetadataAttribute(Constants.JAVA_CONFIG_IGNORE, true));
+
 				((DefaultListableBeanFactory) owningBeanFactory).registerBeanDefinition(beanName,
 						requiredAnnotationPostProcessor);
 			}
@@ -433,7 +436,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	/**
 	 * Modify metadata by emitting new bean definitions based on the bean
 	 * creation methods in this Java bytecode.
-	 * 
+	 *
 	 * @param configurationBeanName name of the bean containing the factory
 	 * methods
 	 * @param configurationClass enhanced configuration class
@@ -526,7 +529,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Generate the actual bean definition using the given method.
-	 * 
+	 *
 	 * @param beanFactory containing beanFactory
 	 * @param configurerBeanName the configuration name
 	 * @param configurerClass configuration class
@@ -626,7 +629,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Check if the given class is a configuration.
-	 * 
+	 *
 	 * @param candidateConfigurationClass - must be non-abstract and be
 	 * annotated with &#64;Configuration and/or have at least one method
 	 * annotated with &#64;Bean
@@ -646,9 +649,9 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 
 	/**
 	 * Check if the given class is a configuration.
-	 * 
+	 *
 	 * Additionally, a listener registry is checked against the class.
-	 * 
+	 *
 	 * @param candidateConfigurationClass
 	 * @param registry
 	 * @return

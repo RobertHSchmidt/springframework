@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.model.ReflectingJavaConfigBeanDefinitionReader;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -50,6 +51,15 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		refresh();
 	}
 
+	/**
+	 * Create a new context with <var>parent</var> as the parent.  Requires an explicit call to refresh().
+	 *
+	 * @param parent
+	 */
+	public JavaConfigApplicationContext(JavaConfigApplicationContext parent) {
+		super(parent);
+	}
+
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
@@ -67,6 +77,12 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		BeanDefinitionReader reader = new ReflectingJavaConfigBeanDefinitionReader(beanFactory);
 		for(ClassPathResource configClassResource : configClassResources)
 			reader.loadBeanDefinitions(configClassResource);
+	}
+
+	@Override
+	public void setParent(ApplicationContext parent) {
+		assertOpenForConfiguration("setParent");
+		super.setParent(parent);
 	}
 
 	public void addConfigClasses(Class<?>... classes) {
