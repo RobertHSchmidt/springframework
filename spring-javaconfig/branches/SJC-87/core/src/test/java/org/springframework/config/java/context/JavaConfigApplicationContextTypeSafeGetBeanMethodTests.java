@@ -99,13 +99,16 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 
 	static class OuterConfig extends ConfigurationSupport {
 		public @Bean TestBean testBean() { return new TestBean("outer"); }
+		static class InnerConfig { public @Bean String innerBean() { return "inner"; } }
+	}
+	static class IllegalOuterConfig extends ConfigurationSupport {
+		public @Bean TestBean testBean() { return new TestBean("outer"); }
 		public @Bean String illegalBean() { return getBean(String.class, "innerBean"); }
 		static class InnerConfig { public @Bean String innerBean() { return "inner"; } }
 	}
 	public @Test void outerClassesAreProcessedAsBeanFactoryHierarchy() {
-		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
 		try {
-			ctx.getBean("illegalBean");
+			ctx = new JavaConfigApplicationContext(IllegalOuterConfig.InnerConfig.class);
 			fail("should have thrown exception - parent context should not be able to access child beans");
 		} catch(BeanCreationException ex) {
 			assertTrue(ex.getMostSpecificCause().getMessage().contains("No bean named 'innerBean'"));

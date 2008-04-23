@@ -6,11 +6,13 @@ import static java.lang.String.format;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanMetadataAttribute;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Primary;
+import org.springframework.config.java.core.BeanFactoryFactory;
 
 /**
  * Renders a given {@link ConfigurationModel} as bean definitions to be
@@ -37,20 +39,14 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getAllConfigurationClasses())
-			renderClass(configClass, registry);
+			renderClass(configClass);
 
 		return registry.getBeanDefinitionCount() - initialBeanDefCount;
 	}
 
-	private BeanDefinitionRegistry renderClass(ConfigurationClass configClass, BeanDefinitionRegistry registry) {
-		if(configClass.getDeclaringClass() != null) {
-			log.info(format("Found declaring class [%s] on configClass [%s]", configClass.getDeclaringClass(), configClass));
-			BeanDefinitionRegistry parent = renderClass(configClass.getDeclaringClass(), new DefaultListableBeanFactory());
-			((ConfigurableListableBeanFactory)registry).setParentBeanFactory((ConfigurableListableBeanFactory)parent);
-			// TODO: test for the case where more than one configuration class has a declaring class - this should be illegal
-			// because it would result in setParentBeanFactory being called more than once.
-			// note that this violation should be detected at model validation time, not at rendering time - that's too late.
-		}
+	private void renderClass(ConfigurationClass configClass) {
+
+		renderDeclaringClass(configClass.getDeclaringClass());
 
 		String configClassName = configClass.getName();
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
@@ -69,8 +65,25 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 			// TODO: plug in NamingStrategy here
 			registry.registerBeanDefinition(beanMethod.getName(), beanDef);
 		}
+	}
 
-		return registry;
+	private void renderDeclaringClass(ConfigurationClass declaringClass) {
+		if(declaringClass == null) return;
+
+		log.info(format("Found declaring class [%s] on configClass [%s]", declaringClass, declaringClass));
+
+		BeanFactory parentBF;
+		String factoryName = BeanFactoryFactory.class.getName();
+		if(((ConfigurableListableBeanFactory)registry).containsBeanDefinition(factoryName))
+			parentBF = (BeanFactory) ((ConfigurableListableBeanFactory)registry).getBean(factoryName, new Object[] { declaringClass.getName() });
+		else
+			parentBF = new DefaultListableBeanFactory();
+
+		((ConfigurableListableBeanFactory)registry).setParentBeanFactory(parentBF);
+
+		// TODO: test for the case where more than one configuration class has a declaring class - this should be illegal
+		// because it would result in setParentBeanFactory being called more than once.
+		// note that this violation should be detected at model validation time, not at rendering time - that's too late.
 	}
 
 }
