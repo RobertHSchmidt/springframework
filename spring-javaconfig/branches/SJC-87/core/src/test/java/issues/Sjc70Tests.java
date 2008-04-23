@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * SJC-70 revealed the fact that {@link AutoBean} methods do not execute their
@@ -28,7 +28,7 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
  * then being available for further (setter) autowiring. A number of other
  * issues presented themselves while writing this test; their verbosely-named
  * methods tell the tale.
- * 
+ *
  * @author Chris Beams
  * @author Jim Moore
  */
@@ -37,7 +37,7 @@ public class Sjc70Tests {
 	@Ignore
 	@Test
 	public void autoBeanMethodsShouldFavorMethodBodyIfPresent() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
 				ConfigurationAnnotatedAutoBeanConfiguration.class);
 
 		// fails, can't find default constructor
@@ -48,7 +48,7 @@ public class Sjc70Tests {
 	@Ignore
 	@Test
 	public void autoBeanConstructorWiringWorksWhenMethodIsAbstract() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
 				ConstructorInjectingAutoBeanConfiguration.class);
 
 		// fails, can't find default constructor
@@ -59,7 +59,7 @@ public class Sjc70Tests {
 	@Ignore
 	@Test
 	public void nonConfigurationAnnotatedClassDeclaringOnlyAutoBeanMethodsMustBeEligibleForProcessing() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(
 				NonConfigurationAnnotatedAutoBeanConfiguration.class);
 
 		// fails, config class was never processed because it wasn't recognized

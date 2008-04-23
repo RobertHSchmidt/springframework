@@ -30,7 +30,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ApplicationContext;
@@ -200,19 +200,19 @@ public class ConfigurationSupportTests {
 
 	@Test
 	public void testStringBasedGetBean() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(Config1.class, Config2.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config1.class, Config2.class);
 		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
 	}
 
 	@Test
 	public void testTypeSafeGetBean() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(TypeSafeConfig.class, Config2.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(TypeSafeConfig.class, Config2.class);
 		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
 	}
 
 	@Test
 	public void testTypeSafeGetBeanWithStringQualifier() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(TypeSafeConfigWithStringQualifier.class,
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(TypeSafeConfigWithStringQualifier.class,
 				Config2.class);
 		assertThat("xyz", CoreMatchers.equalTo(((TestBean) ctx.getBean("foo")).getName()));
 	}
