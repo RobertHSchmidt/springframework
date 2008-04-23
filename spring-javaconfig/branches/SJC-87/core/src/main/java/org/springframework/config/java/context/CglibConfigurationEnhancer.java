@@ -17,6 +17,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
@@ -72,7 +74,18 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		}
 
     	public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-    		return beanFactory.getBean(m.getName());
+    		final String name;
+
+    		ExternalBean extBean = AnnotationUtils.findAnnotation(m, ExternalBean.class);
+    		Assert.notNull(extBean, "ExternalBean methods must be annotated with @ExternalBean");
+
+    		String alternateName = extBean.value();
+    		if(StringUtils.hasLength(alternateName))
+    			name = alternateName;
+    		else
+    			name = m.getName();
+
+    		return beanFactory.getBean(name);
     	}
 	}
 
