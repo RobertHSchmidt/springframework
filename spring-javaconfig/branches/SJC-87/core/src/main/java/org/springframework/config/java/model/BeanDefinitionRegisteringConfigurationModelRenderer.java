@@ -65,10 +65,16 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 			beanDef.setFactoryBeanName(configClassName);
 			beanDef.setFactoryMethodName(beanMethod.getName());
 
-    		// consider autowire metadata
-    		Autowire defaultAutowire = configClass.getMetadata().defaultAutowire();
-    		if(defaultAutowire != Autowire.INHERITED)
-    			beanDef.setAutowireMode(defaultAutowire.value());
+			// consider autowire metadata TODO: also consider @Bean-level autowire settings
+			Autowire defaultAutowire = configClass.getMetadata().defaultAutowire();
+			if(defaultAutowire != Autowire.INHERITED)
+				beanDef.setAutowireMode(defaultAutowire.value());
+
+			// consider aliases
+			for(String alias : beanMethod.getMetadata().aliases())
+				// TODO: need to calculate bean name here, based on any naming strategy in the mix
+				registry.registerAlias(beanMethod.getName(), alias);
+
 
 			if(beanMethod.getMetadata().primary() == Primary.TRUE)
 				beanDef.setPrimary(true);
