@@ -28,94 +28,26 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * Bean lifecycle (aware/init/destroy) test.
- * 
+ * Bean lifecycle (aware/init/destroy) tests
+ *
  * @author Costin Leau
+ * @author Chris Beams
  */
 public class LifecycleTests {
 
-	private ConfigurationProcessor configurationProcessor;
-
-	private ConfigurableApplicationContext appCtx;
-
-	private static class AwareBean implements InitializingBean, DisposableBean, BeanFactoryAware, BeanNameAware,
-			ApplicationContextAware {
-
-		public static int DESTROYED = 0;
-
-		public static int INITIALIZED = 0;
-
-		public static int CUSTOM_DESTROYED = 0;
-
-		public static int CUSTOM_INITIALIZED = 0;
-
-		private BeanFactory factory = null;
-
-		public String name;
-
-		public ApplicationContext appCtx;
-
-		public BeanFactory getBeanFactory() {
-			return factory;
-		}
-
-		public void destroy() throws Exception {
-			DESTROYED++;
-		}
-
-		public void afterPropertiesSet() throws Exception {
-			INITIALIZED++;
-		}
-
-		public void close() {
-			CUSTOM_DESTROYED++;
-		}
-
-		public void init() {
-			CUSTOM_INITIALIZED++;
-		}
-
-		public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-			this.factory = beanFactory;
-		}
-
-		public void setApplicationContext(ApplicationContext appCtx) throws BeansException {
-			this.appCtx = appCtx;
-		}
-
-		public void setBeanName(String name) {
-			this.name = name;
-		}
-
-	}
-
-	@Configuration
-	public static class Config {
-		@Bean(lazy = Lazy.TRUE)
-		public AwareBean simple() {
-			return new AwareBean();
-		}
-
-		@Bean(initMethodName = "init", destroyMethodName = "close", lazy = Lazy.TRUE)
-		public AwareBean custom() {
-			return new AwareBean();
-		}
-	}
+	private ConfigurableJavaConfigApplicationContext ctx;
 
 	@Before
 	public void setUp() throws Exception {
-		appCtx = new GenericApplicationContext();
-		appCtx.registerShutdownHook();
-		configurationProcessor = new ConfigurationProcessor(appCtx);
+		ctx = new LegacyJavaConfigApplicationContext();
+		ctx.registerShutdownHook();
 
 		AwareBean.DESTROYED = 0;
 		AwareBean.INITIALIZED = 0;
@@ -125,67 +57,100 @@ public class LifecycleTests {
 
 	@After
 	public void tearDown() throws Exception {
-		configurationProcessor = null;
-		if (appCtx != null && appCtx.isActive())
-			appCtx.close();
+		if (ctx != null && ctx.isActive())
+			ctx.close();
 	}
 
-	@Test
-	public void testSimpleObject() throws Exception {
-
+	// TODO: [lifecycle]
+	public @Test void testSimpleObject() throws Exception {
 		assertEquals(0, AwareBean.INITIALIZED);
 		assertEquals(0, AwareBean.DESTROYED);
 
-		// and do the processing
-		configurationProcessor.processClass(Config.class);
-		appCtx.refresh();
+		// do the processing
+		ctx.addConfigClass(Config.class);
+		ctx.refresh();
 
-		assertBeanDefinitionCount(appCtx, 3);
+		assertBeanDefinitionCount(ctx, 3);
 		assertEquals(0, AwareBean.INITIALIZED);
 
 		String name = "simple";
-		AwareBean simple = (AwareBean) appCtx.getBean(name);
+		AwareBean simple = (AwareBean) ctx.getBean(name);
 		assertNotNull(simple.getBeanFactory());
 
 		assertEquals(1, AwareBean.INITIALIZED);
 		assertEquals(0, AwareBean.DESTROYED);
 
-		assertSame(appCtx, simple.appCtx);
+		assertSame(ctx, simple.appCtx);
 		assertEquals(name, simple.name);
 
-		appCtx.close();
+		ctx.close();
 		assertEquals(1, AwareBean.DESTROYED);
 	}
-
-	@Test
-	public void testCustomMethods() throws Exception {
-
+	// TODO: [lifecycle]
+	public @Test void testCustomMethods() throws Exception {
 		assertEquals(0, AwareBean.INITIALIZED);
 		assertEquals(0, AwareBean.DESTROYED);
-
 		assertEquals(0, AwareBean.CUSTOM_INITIALIZED);
 		assertEquals(0, AwareBean.CUSTOM_DESTROYED);
 
 		// and do the processing
-		configurationProcessor.processClass(Config.class);
-		appCtx.refresh();
+		ctx.addConfigClass(Config.class);
+		ctx.refresh();
 
 		String name = "custom";
 
 		assertEquals(0, AwareBean.CUSTOM_INITIALIZED);
-		AwareBean custom = (AwareBean) appCtx.getBean(name);
+		AwareBean custom = (AwareBean) ctx.getBean(name);
 		assertNotNull(custom.getBeanFactory());
 
 		assertEquals(1, AwareBean.INITIALIZED);
 		assertEquals(1, AwareBean.CUSTOM_INITIALIZED);
 		assertEquals(0, AwareBean.CUSTOM_DESTROYED);
 
-		assertSame(appCtx, custom.appCtx);
+		assertSame(ctx, custom.appCtx);
 		assertEquals(name, custom.name);
 
-		appCtx.close();
+		ctx.close();
 		assertEquals(1, AwareBean.CUSTOM_DESTROYED);
 		assertEquals(1, AwareBean.DESTROYED);
+	}
+	public static class Config {
+		@Bean(lazy = Lazy.TRUE)
+		public AwareBean simple() { return new AwareBean(); }
+
+		@Bean(initMethodName = "init", destroyMethodName = "close", lazy = Lazy.TRUE)
+		public AwareBean custom() { return new AwareBean(); }
+	}
+
+
+	private static class AwareBean implements InitializingBean, DisposableBean, BeanFactoryAware,
+	                                          BeanNameAware, ApplicationContextAware {
+		static int DESTROYED = 0;
+		static int INITIALIZED = 0;
+		static int CUSTOM_DESTROYED = 0;
+		static int CUSTOM_INITIALIZED = 0;
+
+		BeanFactory factory = null;
+		String name;
+		ApplicationContext appCtx;
+
+		public void destroy() throws Exception { DESTROYED++; }
+		public void afterPropertiesSet() throws Exception { INITIALIZED++; }
+		public void close() { CUSTOM_DESTROYED++; }
+		public void init() { CUSTOM_INITIALIZED++; }
+
+		public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+			this.factory = beanFactory;
+		}
+		public BeanFactory getBeanFactory() { return factory; }
+
+		public void setApplicationContext(ApplicationContext appCtx) throws BeansException {
+			this.appCtx = appCtx;
+		}
+
+		public void setBeanName(String name) {
+			this.name = name;
+		}
 	}
 
 }
