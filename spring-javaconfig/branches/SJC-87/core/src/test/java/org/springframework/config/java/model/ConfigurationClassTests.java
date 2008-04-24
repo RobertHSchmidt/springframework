@@ -3,12 +3,16 @@ package org.springframework.config.java.model;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.model.ValidationError.*;
 
 import java.lang.reflect.Modifier;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.config.java.annotation.Configuration;
 
 public class ConfigurationClassTests {
 
@@ -24,6 +28,17 @@ public class ConfigurationClassTests {
 
 		assertEquals("all modifiers should be preserved",
 				Modifier.ABSTRACT, new ConfigurationClass("c", Modifier.ABSTRACT).getModifiers());
+	}
+
+	/**
+	 * If a Configuration class is not explicitly annotated with
+	 * {@link Configuration @Configuration}, a default instance
+	 * of the annotation should be applied.  Essentially, Configuration
+	 * metadata should never be null.
+	 */
+	public @Test void defaultConfigurationMetadataIsAlwaysPresent() {
+		ConfigurationClass c = new ConfigurationClass("c");
+		assertNotNull("default metadata is not present", c.getMetadata());
 	}
 
 	public @Test void getFinalBeanMethods() {
@@ -95,6 +110,19 @@ public class ConfigurationClassTests {
 			c2.getDeclaringClass().add(new BeanMethod("f"));
 			Assert.assertThat(c1, not(equalTo(c2)));
 		}
+
+		{ // is @Configuration metadata considered when evaluating equality?
+			@Configuration(defaultAutowire=Autowire.BY_TYPE) class Prototype { }
+			Configuration metadata = extractClassAnnotation(Configuration.class, Prototype.class);
+
+			ConfigurationClass c1 = new ConfigurationClass("c", metadata);
+			ConfigurationClass c2 = new ConfigurationClass("c");
+			Assert.assertThat(c1, not(equalTo(c2)));
+			Assert.assertThat(c2, not(equalTo(c1)));
+			c2 = new ConfigurationClass("c", metadata);
+			Assert.assertThat(c1, equalTo(c2));
+			Assert.assertThat(c2, equalTo(c1));
+		}
 	}
 
 	public @Test void containsBeanMethod() {
@@ -119,10 +147,7 @@ public class ConfigurationClassTests {
 	// valid configurations must declare at least one bean
 	public @Test void validateConfigurationMustDeclareAtLeastOneBean() {
 		ConfigurationClass configClass = new ConfigurationClass("a");
-		ValidationErrors errors = new ValidationErrors();
-		configClass.validate(errors);
-		assertTrue(errors.size() > 0);
-		assertTrue(errors.get(0).contains(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString()));
+		assertErrorsContains(configClass, CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN);
 	}
 
 	// as an exception to the above, a configuration may be empty of @Bean methods if it imports another configuration
@@ -143,10 +168,7 @@ public class ConfigurationClassTests {
 		ConfigurationClass configClass =
 			new ConfigurationClass("a", Modifier.ABSTRACT)
 				.add(new BeanMethod("m"));
-		ValidationErrors errors = new ValidationErrors();
-		configClass.validate(errors);
-		assertTrue("expected errors during validation", errors.size() > 0);
-		assertTrue(errors.get(0).contains(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN.toString()));
+		assertErrorsContains(configClass, ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN);
 	}
 
 	public @Test void validationCascadesToImportedClasses() {
@@ -155,10 +177,14 @@ public class ConfigurationClassTests {
 			// import an non-well-formed configuration class (no bean methods)
 			.addImportedClass(new ConfigurationClass("i"));
 
-		ValidationErrors errors = new ValidationErrors();
-		configClass.validate(errors);
-		assertTrue("expected errors during validation", errors.size() > 0);
-		assertTrue(errors.get(0).contains(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString()));
+		assertErrorsContains(configClass, CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN);
+	}
+
+	public @Test void validationCascadesToBeanMethods() {
+		// create any simple, invalid bean method definition
+		configClass.add(new BeanMethod("m", Modifier.PRIVATE));
+
+		assertErrorsContains(configClass, METHOD_MAY_NOT_BE_PRIVATE);
 	}
 
 	/** See JavaDoc for {@link ConfigurationClass#getSelfAndAllImports()} */
@@ -178,6 +204,18 @@ public class ConfigurationClassTests {
 		ConfigurationClass[] expected = new ConfigurationClass[] { B, A, Z, Y, M };
 
 		assertArrayEquals(expected, M.getSelfAndAllImports().toArray());
+	}
+
+	/**
+	 * Calls <var>configClass</var>.validate() and asserts that the resulting
+	 * set of errors contains <var>error</var>
+	 * @param configClass
+	 */
+	private void assertErrorsContains(ConfigurationClass configClass, ValidationError error) {
+		ValidationErrors errors = new ValidationErrors();
+		configClass.validate(errors);
+		assertTrue("expected errors during validation", errors.size() > 0);
+		assertTrue(errors.get(0).contains(error.toString()));
 	}
 
 }

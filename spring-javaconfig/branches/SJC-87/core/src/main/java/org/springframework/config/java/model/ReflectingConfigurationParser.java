@@ -7,8 +7,13 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils.MethodCallback;
+import org.springframework.util.ReflectionUtils.MethodFilter;
 
 
 /**
@@ -45,11 +50,20 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 	 */
 	private ConfigurationClass doParse(Class<?> literalClass, boolean isUserSpecified) {
 		final ConfigurationClass modelClass;
+		final String className = literalClass.getName();
+		final Configuration metadata = AnnotationUtils.findAnnotation(literalClass, Configuration.class);
+		final int modifiers = literalClass.getModifiers();
 
 		if(isUserSpecified)
-			modelClass = new ConfigurationClass(literalClass.getName(), literalClass.getModifiers());
+			if(metadata == null)
+				modelClass = new ConfigurationClass(className, modifiers);
+			else
+				modelClass = new ConfigurationClass(className, metadata, modifiers);
 		else
-			modelClass = new PotentialConfigurationClass(literalClass.getName(), literalClass.getModifiers());
+			if(metadata == null)
+				modelClass = new PotentialConfigurationClass(className, modifiers);
+			else
+				modelClass = new PotentialConfigurationClass(className, metadata, modifiers);
 
 		Class<?> declaringLiteralClass = literalClass.getDeclaringClass();
 		if(new DeclaringClassInclusionPolicy().isCandidateForInclusion(declaringLiteralClass))
@@ -60,15 +74,30 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 			for(Class<?> classToImport : importAnno.value())
 				modelClass.addImportedClass(doParse(classToImport, true));
 
-		for(Method method : literalClass.getDeclaredMethods()) {
-			Bean bean = findAnnotation(method, Bean.class);
-			if(bean != null)
-				modelClass.add(new BeanMethod(method.getName(), bean, method.getModifiers()));
+		ReflectionUtils.doWithMethods(
+			// for each method in this class
+			literalClass,
+			// execute this callback
+			new MethodCallback() {
+				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+        			Bean bean = findAnnotation(method, Bean.class);
+        			if(bean != null)
+        				modelClass.add(new BeanMethod(method.getName(), bean, method.getModifiers()));
 
-			ExternalBean extBean = findAnnotation(method, ExternalBean.class);
-			if(extBean != null)
-				modelClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
-		}
+        			ExternalBean extBean = findAnnotation(method, ExternalBean.class);
+        			if(extBean != null)
+        				modelClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
+    			}
+    		},
+    		// but exclude all Object.* methods
+    		new MethodFilter() {
+    			public boolean matches(Method method) {
+    				if(method.getDeclaringClass().equals(Object.class))
+    					return false;
+    				return true;
+    			}
+    		}
+    	);
 
 		return modelClass;
 	}

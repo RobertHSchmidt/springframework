@@ -2,6 +2,7 @@ package org.springframework.config.java.model;
 
 
 import static java.lang.String.format;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
 import static org.springframework.util.ClassUtils.getShortName;
 
 import java.lang.reflect.Modifier;
@@ -46,6 +47,8 @@ public class ConfigurationClass {
 	private final String name;
 	private final int modifiers;
 
+	private final Configuration metadata;
+
 	/** set is used because order does not matter. see {@link #add(BeanMethod)} */
 	private HashSet<BeanMethod> beanMethods = new HashSet<BeanMethod>();
 
@@ -61,18 +64,32 @@ public class ConfigurationClass {
 
 	private ConfigurationClass declaringClass;
 
+	private @Configuration class Prototype { }
+	private static final Configuration DEFAULT_METADATA = extractClassAnnotation(Configuration.class, Prototype.class);
+
 	/**
 	 * Creates a new ConfigurationClass named <var>className</var>
 	 * @param name fully-qualified Configuration class being represented
 	 * @see #setClassName(String)
 	 */
 	public ConfigurationClass(String name) {
-		this(name, 0);
+		this(name, DEFAULT_METADATA, 0);
+	}
+
+	public ConfigurationClass(String name, Configuration metadata) {
+		this(name, metadata, 0);
 	}
 
 	public ConfigurationClass(String name, int modifiers) {
-		Assert.hasText(name);
+		this(name, DEFAULT_METADATA, modifiers);
+	}
+
+	public ConfigurationClass(String name, Configuration metadata, int modifiers) {
+		Assert.hasText(name, "Configuration class name must have text");
 		this.name = name;
+
+		Assert.notNull(metadata, "@Configuration annotation must be non-null");
+		this.metadata = metadata;
 
 		Assert.isTrue(modifiers >= 0, "modifiers must be non-negative");
 		this.modifiers = modifiers;
@@ -94,7 +111,7 @@ public class ConfigurationClass {
 	public BeanMethod[] getFinalBeanMethods() {
 		ArrayList<BeanMethod> finalBeanMethods = new ArrayList<BeanMethod>();
 		for(BeanMethod beanMethod : beanMethods)
-			if(beanMethod.getBeanAnnotation().allowOverriding() == false)
+			if(beanMethod.getMetadata().allowOverriding() == false)
 				finalBeanMethods.add(beanMethod);
 
 		return finalBeanMethods.toArray(new BeanMethod[finalBeanMethods.size()]);
@@ -173,13 +190,21 @@ public class ConfigurationClass {
 		return modifiers;
 	}
 
+	public Configuration getMetadata() {
+		return this.metadata;
+	}
+
 
 
 	/** must declare at least one Bean method, etc */
 	public ValidationErrors validate(ValidationErrors errors) {
-		// recurse through all imported classes
+		// cascade through all imported classes
 		for(ConfigurationClass importedClass : importedClasses)
 			importedClass.validate(errors);
+
+		// a configuration class may not be final (CGLIB limitation)
+		if(Modifier.isFinal(modifiers))
+			errors.add(ValidationError.CONFIGURATION_MUST_BE_NON_FINAL + ": " + name);
 
 		// a configuration class must declare at least one @Bean OR import at least one other configuration
 		if(importedClasses.isEmpty() && beanMethods.isEmpty())
@@ -189,6 +214,10 @@ public class ConfigurationClass {
 		if(Modifier.isAbstract(modifiers)
 				&& externalBeanMethods.size() == 0)
 			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN.toString() + ": " + name);
+
+		// cascade through all declared @Bean methods
+		for(BeanMethod beanMethod : beanMethods)
+			beanMethod.validate(errors);
 
 		return errors;
 	}
@@ -207,6 +236,7 @@ public class ConfigurationClass {
 		result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
 		result = prime * result + ((externalBeanMethods == null) ? 0 : externalBeanMethods.hashCode());
 		result = prime * result + ((importedClasses == null) ? 0 : importedClasses.hashCode());
+		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + modifiers;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((resourceBundles == null) ? 0 : resourceBundles.hashCode());
@@ -245,6 +275,12 @@ public class ConfigurationClass {
 				return false;
 		}
 		else if (!importedClasses.equals(other.importedClasses))
+			return false;
+		if (metadata == null) {
+			if (other.metadata != null)
+				return false;
+		}
+		else if (!metadata.equals(other.metadata))
 			return false;
 		if (modifiers != other.modifiers)
 			return false;
