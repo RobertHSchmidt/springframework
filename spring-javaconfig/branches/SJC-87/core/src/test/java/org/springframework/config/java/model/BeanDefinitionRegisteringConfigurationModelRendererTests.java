@@ -147,4 +147,48 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		verify(registry);
 	}
 
+	public @Test void renderWithAliases() {
+		String configClassName = "com.acme.OrderConfig";
+		String beanName = "order";
+
+		// create a simple configuration model
+		Bean metadata = extractMethodAnnotation(Bean.class, new MethodAnnotationPrototype() {
+			@Bean(aliases = { "tom", "dick", "harry" })
+			public void targetMethod() { }
+		}.getClass());
+
+		model.add(new ConfigurationClass(configClassName).add(new BeanMethod(beanName, metadata)));
+		model.assertIsValid();
+
+		// encode expectations
+		expect(registry.getBeanDefinitionCount()).andReturn(0);
+
+		// expect the registration of our Configuration class above
+		RootBeanDefinition configBeanDef = new RootBeanDefinition();
+		configBeanDef.setBeanClassName(configClassName);
+		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+		registry.registerBeanDefinition(configClassName, configBeanDef);
+
+		// expect the registration of the @Bean method above
+		RootBeanDefinition rbd = new RootBeanDefinition();
+		rbd.setFactoryBeanName(configClassName);
+		rbd.setFactoryMethodName(beanName);
+		registry.registerBeanDefinition(beanName, rbd);
+
+		// expect registration of aliases
+		registry.registerAlias("order", "tom");
+		registry.registerAlias("order", "dick");
+		registry.registerAlias("order", "harry");
+
+		expect(registry.getBeanDefinitionCount()).andReturn(2);
+
+		// all done with expectations
+		replay(registry);
+
+		// execute assertions and verifications
+		assertEquals(2, renderer.render(model));
+
+		verify(registry);
+	}
+
 }
