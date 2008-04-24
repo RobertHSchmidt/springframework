@@ -21,16 +21,17 @@ import static org.junit.Assert.assertNotSame;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.TestBean;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.CountingConfiguration;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.SingletonCountingAdvice;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * @author Rod Johnson
@@ -38,15 +39,39 @@ import org.springframework.config.java.process.ConfigurationProcessor;
  */
 public class SpringAopConfigurationProcessorTests {
 
-	@Test
-	public void testPerInstanceAdviceAndSharedAdvice() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
+	/**
+	 * Test fixture: each test method must initialize
+	 */
+	private ConfigurableJavaConfigApplicationContext ctx;
 
-		TestBean advised1 = (TestBean) bf.getBean("advised");
+	/**
+	 * It is up to each individual test to initialize the context;
+	 * null it out before each subsequent test just to be safe
+	 */
+	@After
+	public void nullOutContext() { ctx = null; }
+
+
+	// TODO: [aop]
+	public @Test void testNoAroundAdvice() throws Exception {
+		// Superclass doesn't have around advice
+		ctx = new LegacyJavaConfigApplicationContext(SingletonCountingAdvice.class);
+
+		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
+		int newAge = 24;
+		advised1.setAge(newAge);
+		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
+		assertEquals("tony", advised1.getName());
+	}
+
+
+	// TODO: [aop]
+	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
+		ctx = new LegacyJavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
+
+		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		Object target1 = ((Advised) advised1).getTargetSource().getTarget();
-		TestBean advised2 = (TestBean) bf.getBean("advised");
+		TestBean advised2 = ctx.getBean(TestBean.class, "advised");
 
 		// Hashcode works on this
 		advised2.setAge(35);
@@ -55,7 +80,7 @@ public class SpringAopConfigurationProcessorTests {
 		Object target2 = ((Advised) advised2).getTargetSource().getTarget();
 		assertNotSame(target1, target2);
 
-		assertEquals("advised", bf.getBeanNamesForType(TestBean.class)[0]);
+		assertEquals("advised", ctx.getBeanNamesForType(TestBean.class)[0]);
 
 		assertEquals(0, CountingConfiguration.getCount(target1));
 		advised1.absquatulate();
@@ -68,38 +93,18 @@ public class SpringAopConfigurationProcessorTests {
 		assertEquals(1, CountingConfiguration.getCount(target1));
 		assertEquals(1, CountingConfiguration.getCount(target2));
 	}
+	// TODO: [aop]
+	public @Test void testAroundAdvice() throws Exception {
+		ctx = new LegacyJavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
 
-	@Test
-	public void testAroundAdvice() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(SpringAroundPerInstanceAdvice.class);
-
-		TestBean advised1 = (TestBean) bf.getBean("advised");
+		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
 		assertEquals("around", advised1.getName());
 	}
-
-	@Test
-	public void testNoAroundAdvice() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		// Superclass doesn't have around advice
-		configurationProcessor.processClass(SingletonCountingAdvice.class);
-
-		TestBean advised1 = (TestBean) bf.getBean("advised");
-		int newAge = 24;
-		advised1.setAge(newAge);
-		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("tony", advised1.getName());
-	}
-
-	@Configuration
-	@Aspect
+	@Aspect @Configuration
 	public static class SpringAroundPerInstanceAdvice extends CountingConfiguration {
-
 		@Before("execution(* getSpouse()) && target(target)")
 		public void doesntMatter(Object target) {
 			Integer count = counts.get(target);
@@ -109,37 +114,17 @@ public class SpringAopConfigurationProcessorTests {
 			++count;
 			counts.put(target, count);
 		}
-
 		@Around("execution(* *.getName())")
-		public Object around() {
-			return "around";
-		}
+		public Object around() { return "around"; }
 	}
 
-	public static class InterceptAllAdvice {
-		public static int count;
 
-		@Before("* *(..)")
-		protected void count() {
-			++count;
-		}
+	// TODO: [aop]
+	@Ignore // interception on self causes circular dependency - can this be prevented?
+	public @Test void testInterceptAll() throws Exception {
+		ctx = new LegacyJavaConfigApplicationContext(InterceptAllAdvice.class);
 
-		@Bean
-		public TestBean kaare() {
-			return new TestBean();
-		}
-	}
-
-	// FIXME: interception on self causes circular dependency - can this be
-	// prevented?
-	@Ignore
-	@Test
-	public void testInterceptAll() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InterceptAllAdvice.class);
-
-		TestBean kaare = (TestBean) bf.getBean("kaare");
+		TestBean kaare = ctx.getBean(TestBean.class, "kaare");
 
 		// Can't start at 0 because of factory methods such as setBeanFactory()
 		int invocations = InterceptAllAdvice.count = 0;
@@ -148,6 +133,14 @@ public class SpringAopConfigurationProcessorTests {
 		assertEquals(++invocations, InterceptAllAdvice.count);
 		kaare.getAge();
 		assertEquals(++invocations, InterceptAllAdvice.count);
+	}
+	public static class InterceptAllAdvice {
+		public static int count;
+
+		@Before("* *(..)")
+		protected void count() { ++count; }
+
+		public @Bean TestBean kaare() { return new TestBean(); }
 	}
 
 }
