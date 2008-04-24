@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.framework.Advised;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -47,146 +49,177 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
  * Tests for {@link ConfigurationProcessor}
- * 
- * @see ConfigurationProcessorImportAnnotationTests - tests
- * ConfigurationProcessor usage against classes annotated with Import
- * 
+ *
  * @author Rod Johnson
+ * @author Chris Beams
  */
 public class ConfigurationProcessorTests {
 
-	@Test
-	public void testSimple() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+	private ConfigurableJavaConfigApplicationContext ctx;
 
-		configurationProcessor.processClass(BaseConfiguration.class);
-		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
+	/** Context should be initialized by each test */
+	@After
+	public void nullOutContext() {
+		ctx = null;
+	}
 
-		ITestBean tb = (ITestBean) bf.getBean("tom");
+	public @Test void testSingletonNature() {
+		ctx = new JavaConfigApplicationContext(BaseConfiguration.class);
+		assertTrue(ctx.containsBean(BaseConfiguration.class.getName()));
+
+		ITestBean tb = (ITestBean) ctx.getBean("tom");
 		assertEquals("tom", tb.getName());
 		assertEquals("becky", tb.getSpouse().getName());
 		ITestBean tomsBecky = tb.getSpouse();
-		ITestBean factorysBecky = (ITestBean) bf.getBean("becky");
+		ITestBean factorysBecky = (ITestBean) ctx.getBean("becky");
+
+		// given that becky is a singleton-scoped bean, these objects should be same instance
 		assertSame(tomsBecky, factorysBecky);
 	}
 
-	@Test
-	public void testBeanNameAware() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+	/**
+	 * Beans that implement {@link BeanNameAware} should be injected
+	 * with their bean names appropriately
+	 */
+	public @Test void testBeanNameAware() {
+		ctx = new JavaConfigApplicationContext(BaseConfiguration.class);
+		assertTrue(ctx.containsBean(BaseConfiguration.class.getName()));
 
-		configurationProcessor.processClass(BaseConfiguration.class);
-		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
-
-		TestBean tom = (TestBean) bf.getBean("tom");
+		TestBean tom = (TestBean) ctx.getBean("tom");
 		assertEquals("tom", tom.getName());
 		assertEquals("tom", tom.getBeanName());
 	}
 
-	@Test
-	public void testMethodOverrideWithJava() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
-		configurationProcessor.processClass(MethodOverrideConfiguration.class);
-		assertTrue(bf.containsBean(MethodOverrideConfiguration.class.getName()));
+	public @Test void testMethodOverrideWithJava() {
+		ctx = new JavaConfigApplicationContext(MethodOverrideConfiguration.class);
 
-		TestBean tom = (TestBean) bf.getBean("tom");
+		assertTrue(ctx.containsBean(MethodOverrideConfiguration.class.getName()));
+
+		TestBean tom = ctx.getBean(TestBean.class, "tom");
 		assertEquals("overridden", tom.getName());
 	}
-
-	@Test
-	public void testAfterPropertiesSetInvokedBeforeExplicitWiring() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-
-		configurationProcessor.processClass(AfterPropertiesConfiguration.class);
-
-		// This is enough to run the test
-		@SuppressWarnings("unused")
-		TestBean test = (TestBean) bf.getBean("test");
+	public static class MethodOverrideConfiguration extends BaseConfiguration {
+		@Override
+		public TestBean tom() {
+			return new TestBean() {
+				@Override
+				public String getName() {
+					return "overridden";
+				}
+			};
+		}
 	}
 
-	@Test
-	public void testBeanFactoryAware() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
-		configurationProcessor.processClass(BaseConfiguration.class);
-		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
+	public @Test void testAfterPropertiesSetInvokedBeforeExplicitWiring() {
+		ctx = new JavaConfigApplicationContext(AfterPropertiesConfiguration.class);
 
-		TestBean becky = (TestBean) bf.getBean("becky");
+		// This is enough to run the test - see assertions in test() bean method below
+		ctx.getBean(TestBean.class, "test");
+	}
+	public static class AfterPropertiesConfiguration {
+		public @Bean TestBean test() {
+			assertEquals("AfterPropertiesSet must have been called by now", 5, apt().sum());
+			return new TestBean();
+		}
+
+		public @Bean AfterPropertiesTest apt() {
+			AfterPropertiesTest apt = new AfterPropertiesTest();
+			apt.setA(2);
+			apt.setB(3);
+			return apt;
+		}
+	}
+
+
+	public @Test void testBeanFactoryAware() {
+		ctx = new JavaConfigApplicationContext(BaseConfiguration.class);
+
+		assertTrue(ctx.containsBean(BaseConfiguration.class.getName()));
+
+		TestBean becky = (TestBean) ctx.getBean("becky");
 		assertEquals("becky", becky.getName());
-		assertSame(bf, becky.getBeanFactory());
+		assertSame(ctx.getBeanFactory(), becky.getBeanFactory());
 	}
 
-	@Test
-	public void testHidden() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
 
-		configurationProcessor.processClass(BaseConfiguration.class);
-		assertTrue(bf.containsBean(BaseConfiguration.class.getName()));
+	// TODO: handle hidden beans - JavaConfigApplicationContext is not yet capable of this
+	public @Test void testHidden() {
+		ctx = new LegacyJavaConfigApplicationContext(BaseConfiguration.class);
 
-		ITestBean dependsOnHidden = (ITestBean) bf.getBean("dependsOnHidden");
+		assertTrue(ctx.containsBean(BaseConfiguration.class.getName()));
+
+		ITestBean dependsOnHidden = (ITestBean) ctx.getBean("dependsOnHidden");
 		ITestBean hidden = dependsOnHidden.getSpouse();
-		assertFalse(bf.containsBean("hidden"));
+		assertFalse("hidden bean 'hidden' should not be available via ctx", ctx.containsBean("hidden"));
 		assertEquals("hidden", hidden.getName());
 		assertEquals("becky", hidden.getSpouse().getName());
 		ITestBean hiddenBecky = hidden.getSpouse();
-		ITestBean factorysBecky = (ITestBean) bf.getBean("becky");
+		ITestBean factorysBecky = (ITestBean) ctx.getBean("becky");
 		assertSame(hiddenBecky, factorysBecky);
 	}
 
-	@Test
-	public void testAutowireOnBeanDefinition() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		// configurationProcessor.processClass(AspectJConfigurationProcessorTests.SingletonCountingAdvice.class);
-		configurationProcessor.processClass(AroundAdviceWithNamedPointcut.class);
 
-		bf.getBean("dotb");
-		DependsOnTestBean dotb1 = (DependsOnTestBean) bf.getBean("dotb");
-		DependsOnTestBean dotb2 = (DependsOnTestBean) bf.getBean("dotb");
+	// TODO: handle aspect configurations - JavaConfigApplicationContext is not yet capable of this
+	public @Test void testAutowireOnBeanDefinition() {
+		ctx = new LegacyJavaConfigApplicationContext(AroundAdviceWithNamedPointcut.class);
+
+		ctx.getBean("dotb");
+		DependsOnTestBean dotb1 = (DependsOnTestBean) ctx.getBean("dotb");
+		DependsOnTestBean dotb2 = (DependsOnTestBean) ctx.getBean("dotb");
 		assertSame(dotb1, dotb2);
 		assertSame(dotb1.getTestBean(), dotb2.getTestBean());
 		assertNotNull("Autowire works", dotb1.getTestBean());
 	}
 
-	@Test
-	public void testAutowireOnProxiedBeanDefinition() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(ProxiesDotb.class);
+
+	// TODO: complete autowiring support for JavaConfigApplicationContext
+	public @Test void testAutowireOnProxiedBeanDefinition() {
+		ctx = new LegacyJavaConfigApplicationContext(ProxiesDotb.class);
 
 		ProxiesDotb.count = 0;
-		// TestBean adrian = (TestBean) bf.getBean("adrian");
-		DependsOnTestBean sarah = (DependsOnTestBean) bf.getBean("sarah");
-		assertTrue(AopUtils.isAopProxy(sarah));
-		assertTrue(AopUtils.isCglibProxy(sarah));
-		assertNotNull("Autowire works", sarah.getTestBean());
+		DependsOnTestBean sarah = (DependsOnTestBean) ctx.getBean("sarah");
+		assertTrue("bean 'sarah' should have been an AOP proxy", AopUtils.isAopProxy(sarah));
+		assertTrue("bean 'sarah' should have been an CGLIB proxy", AopUtils.isCglibProxy(sarah));
+		assertNotNull("autowiring did not complete successfully", sarah.getTestBean());
 
 		assertEquals(1, ProxiesDotb.count);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+
+	@Test(expected=MalformedJavaConfigurationException.class)
 	public void testInvalidFinalConfigurationClass() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidFinalConfigurationClass.class);
-		// should throw, rejecting final configuration class;
+		try {
+			// should throw, rejecting final configuration class;
+			new JavaConfigApplicationContext(InvalidFinalConfigurationClass.class);
+		} catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.CONFIGURATION_MUST_BE_NON_FINAL.toString()));
+			throw ex;
+		}
 	}
+	@Configuration
+	public final static class InvalidFinalConfigurationClass {
+		@Bean
+		public DummyFactory factoryBean() {
+			return new DummyFactory();
+		}
+	}
+
 
 	@Test(expected = BeanDefinitionStoreException.class)
 	public void testInvalidDueToFinalBeanMethod() {
@@ -196,96 +229,86 @@ public class ConfigurationProcessorTests {
 		// should throw, rejecting final Bean method
 	}
 
+	// TODO JavaConfigApplicationContext does not yet support this
 	// TODO would expect BeanDefinitionStoreException?
 	@Test(expected = BeanCreationException.class)
 	public void testInvalidDueToFinalBeanClass() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(InvalidDueToFinalBeanClass.class);
+		ctx = new LegacyJavaConfigApplicationContext(InvalidDueToFinalBeanClass.class);
 		// Arguably should spot this earlier
-		bf.getBean("test");
-		// should throw, rejecting final Bean method
+		ctx.getBean("test");
+		// should have thrown, rejecting final Bean method
+	}
+	@Configuration @Aspect
+	public static class InvalidDueToFinalBeanClass {
+		@Before("execution(* get*())")
+		public void empty() { }
+
+		public @Bean FinalTestBean test() { return new FinalTestBean(); }
 	}
 
-	@Configuration
-	static class InvalidDuePrivateBeanMethod {
-		@Bean
-		public Object ok() {
-			return new Object();
-		}
 
-		@SuppressWarnings("unused")
-		@Bean
-		private Object notOk() {
-			return new Object();
-		}
-	}
-
-	@Test(expected = BeanDefinitionStoreException.class)
+	@Test(expected=MalformedJavaConfigurationException.class)
 	public void testInvalidDueToPrivateBeanMethod() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-
 		// should throw, rejecting private Bean method
-		configurationProcessor.processClass(InvalidDuePrivateBeanMethod.class);
+		new JavaConfigApplicationContext(InvalidDuePrivateBeanMethod.class);
+	}
+	static class InvalidDuePrivateBeanMethod {
+		public @Bean Object ok() { return new Object(); }
+		@SuppressWarnings("unused")
+		private @Bean Object notOk() { return new Object(); }
 	}
 
-	@Test
-	public void testValidWithDynamicProxy() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(ValidWithDynamicProxies.class);
-		ITestBean tb = (ITestBean) bf.getBean("test");
+
+	// TODO: [aop] JavaConfigApplicationContext does not yet support aspects
+	public @Test void testValidWithDynamicProxy() {
+		ctx = new LegacyJavaConfigApplicationContext(ValidWithDynamicProxies.class);
+		ITestBean tb = (ITestBean) ctx.getBean("test");
 		assertTrue(AopUtils.isJdkDynamicProxy(tb));
 	}
+	@Configuration @Aspect
+	public static class ValidWithDynamicProxies {
+		@Before("execution(* get*())")
+		public void empty() { }
 
-	@Test
-	public void testApplicationContextAwareCallbackWithGenericApplicationContext() {
-		doTestApplicationContextAwareCallback(new GenericApplicationContext());
+		public @Bean ITestBean test() { return new FinalTestBean(); }
 	}
 
-	private void doTestApplicationContextAwareCallback(AbstractApplicationContext bf) {
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(ApplicationContextAwareConfiguration.class);
-		bf.refresh();
-		ApplicationContextAwareImpl acai = (ApplicationContextAwareImpl) bf.getBean("ai");
+
+	public @Test void testApplicationContextAwareCallbackWithGenericApplicationContext() {
+		ctx = new JavaConfigApplicationContext(ApplicationContextAwareConfiguration.class);
+		ApplicationContextAwareImpl acai = (ApplicationContextAwareImpl) ctx.getBean("ai");
 		assertNotNull("ApplicationContextAware callback must be honoured", acai.applicationContext);
 	}
-
-	@Configuration
 	public static class ApplicationContextAwareConfiguration {
-		@Bean
-		public ApplicationContextAwareImpl ai() {
-			return new ApplicationContextAwareImpl();
-		}
+		public @Bean ApplicationContextAwareImpl ai() { return new ApplicationContextAwareImpl(); }
 	}
-
 	public static class ApplicationContextAwareImpl implements ApplicationContextAware {
 		public ApplicationContext applicationContext;
-
-		public void setApplicationContext(ApplicationContext ac) {
-			this.applicationContext = ac;
-		}
+		public void setApplicationContext(ApplicationContext ac) { this.applicationContext = ac; }
 	}
 
 	// TODO test override in XML: possible
 	// TODO conflict in Java config: illegal
-
 	// TODO multiple advice on the one method
-
 	// TODO deep getBeans
-
 	// TODO circular get beans
+	// TODO default lazy and other lazy
 
-	@Test
-	public void testDefaultAutowire() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(DefaultAutowireConfiguration.class);
+	public @Test void testDefaultAutowire() {
+		ctx = new JavaConfigApplicationContext(DefaultAutowireConfiguration.class);
 
-		DependsOnTestBean sarah = (DependsOnTestBean) bf.getBean("sarah");
-		assertEquals("adrian", sarah.getTestBean().getName());
+		DependsOnTestBean sarah = (DependsOnTestBean) ctx.getBean("sarah");
+		assertNotNull("autowiring did not occur: sarah should have TestBean", sarah.getTestBean());
+		assertEquals("autowiring error", "adrian", sarah.getTestBean().getName());
 	}
+	@Configuration(defaultAutowire = Autowire.BY_TYPE)
+	public static class DefaultAutowireConfiguration {
+		public @Bean TestBean adrian() { return new TestBean("adrian", 34); }
+		public @Bean DependsOnTestBean sarah() { return new DependsOnTestBean(); }
+	}
+
+	public @Test void next() { fail("resume here"); }
+
 
 	@Test
 	public void testFactoryBean() {
@@ -338,78 +361,6 @@ public class ConfigurationProcessorTests {
 		assertSame(alias, bf.getBean("harry"));
 		assertFalse(bf.containsBean("Glen"));
 	}
-
-	// public void testConversationalScopeAgainstClass() {
-	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-	//
-	// // We need a scope map definition for this to work
-	// HashMapScopeMap scopeMap = new HashMapScopeMap();
-	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME,
-	// scopeMap);
-	//
-	// MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
-	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME,
-	// sir);
-	//
-	// ConfigurationProcessor configurationProcessor = new
-	// ConfigurationProcessor(bf);
-	// configurationProcessor.process(ScopedConfigurationWithClass.class);
-	//
-	// Object obj = bf.getBean("conversationalTestBean");
-	//
-	// // Not possible, as only parent factory is visible
-	// //assertEquals("Only one testBean", 1,
-	// bf.getBeansOfType(TestBean.class).size());
-	//
-	// TestBean conversational = (TestBean) obj;
-	//
-	// //assertFalse(AopUtils.isCglibProxy(conversational));
-	// assertTrue(AopUtils.isAopProxy(conversational));
-	// System.out.println(((Advised) conversational).toProxyConfigString());
-	// assertEquals("conversational", conversational.getName());
-	// Advised adv = (Advised) conversational;
-	// assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
-	//
-	// // TODO actually try the sucker and see if it scopes
-	// //fail();
-	// }
-
-	// public void testConversationalScopeAgainstInterface() {
-	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-	//
-	// // We need a scope map definition for this to work
-	// HashMapScopeMap scopeMap = new HashMapScopeMap();
-	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_MAP_BEAN_NAME,
-	// scopeMap);
-	//
-	// MapScopeIdentiferResolver sir = new MapScopeIdentiferResolver();
-	// bf.registerSingleton(ConversationScopedConfigurationListener.SCOPE_IDENTIFIER_RESOLVER_BEAN_NAME,
-	// sir);
-	//
-	// ConfigurationProcessor configurationProcessor = new
-	// ConfigurationProcessor(bf);
-	// configurationProcessor.process(ScopedConfigurationWithInterface.class);
-	//
-	// Object obj = bf.getBean("conversationalTestBean");
-	//
-	// //assertEquals("Only one testBean", 1,
-	// bf.getBeansOfType(ITestBean.class).size());
-	//
-	// assertTrue(obj instanceof Advised);
-	// System.out.println(((Advised) obj).toProxyConfigString());
-	//
-	// ITestBean conversational = (ITestBean) obj;
-	//
-	// assertFalse(AopUtils.isCglibProxy(conversational));
-	// assertTrue(AopUtils.isAopProxy(conversational));
-	// System.out.println(((Advised) conversational).toProxyConfigString());
-	// assertEquals("conversational", conversational.getName());
-	// Advised adv = (Advised) conversational;
-	// assertTrue(adv.getTargetSource() instanceof ScopedTargetSource);
-	//
-	// // TODO actually try the sucker
-	// //fail();
-	// }
 
 	@Test
 	public void testHotSwappable() {
@@ -498,17 +449,6 @@ public class ConfigurationProcessorTests {
 		}
 	}
 
-	public static class MethodOverrideConfiguration extends BaseConfiguration {
-		@Override
-		public TestBean tom() {
-			return new TestBean() {
-				@Override
-				public String getName() {
-					return "overridden";
-				}
-			};
-		}
-	}
 
 	public static class ProxyConfiguration {
 
@@ -588,23 +528,6 @@ public class ConfigurationProcessorTests {
 		}
 	}
 
-	// TODO default lazy and other lazy
-
-	@Configuration(defaultAutowire = Autowire.BY_TYPE)
-	public static class DefaultAutowireConfiguration {
-		@Bean
-		public TestBean adrian() {
-			return new TestBean("adrian", 34);
-		}
-
-		@Bean
-		public DependsOnTestBean sarah() {
-			DependsOnTestBean sarah = new DependsOnTestBean();
-			// sarah.setTestBean(adrian());
-			return sarah;
-		}
-	}
-
 	@Configuration
 	@Aspect
 	public static class ProxiesDotb {
@@ -628,24 +551,6 @@ public class ConfigurationProcessorTests {
 			++count;
 		}
 
-	}
-
-	@Configuration
-	public static class AfterPropertiesConfiguration {
-		// @Bean(dependsOn="apt")
-		@Bean
-		public TestBean test() {
-			assertEquals("AfterPropertiesSet must have been called by now", 5, apt().sum());
-			return new TestBean();
-		}
-
-		@Bean()
-		public AfterPropertiesTest apt() {
-			AfterPropertiesTest apt = new AfterPropertiesTest();
-			apt.setA(2);
-			apt.setB(3);
-			return apt;
-		}
 	}
 
 	public static class AfterPropertiesTest implements InitializingBean {
@@ -676,13 +581,6 @@ public class ConfigurationProcessorTests {
 		}
 	}
 
-	@Configuration
-	public final static class InvalidFinalConfigurationClass {
-		@Bean
-		public DummyFactory factoryBean() {
-			return new DummyFactory();
-		}
-	}
 
 	@Configuration
 	public static class InvalidDueToFinalBeanMethod {
@@ -695,31 +593,7 @@ public class ConfigurationProcessorTests {
 	private final static class FinalTestBean extends TestBean {
 	}
 
-	@Configuration
-	@Aspect
-	public static class InvalidDueToFinalBeanClass {
-		@Before("execution(* get*())")
-		public void empty() {
-		}
 
-		@Bean
-		public FinalTestBean test() {
-			return new FinalTestBean();
-		}
-	}
-
-	@Configuration
-	@Aspect
-	public static class ValidWithDynamicProxies {
-		@Before("execution(* get*())")
-		public void empty() {
-		}
-
-		@Bean
-		public ITestBean test() {
-			return new FinalTestBean();
-		}
-	}
 
 	@Test
 	public void testEffectOfHidingOnAutowire() {
@@ -1123,15 +997,4 @@ public class ConfigurationProcessorTests {
 			return costin;
 		}
 	}
-
-	// Property population, no longer used
-	// public void testStringPropertyIsLoaded() {
-	// DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-	// ConfigurationProcessor configurationProcessor = new
-	// ConfigurationProcessor(bf, clr);
-	// configurationProcessor.process(RequiresProperty.class);
-	// TestBean costin = (TestBean) bf.getBean("costin");
-	// assertEquals("Name was populated from properties file", "costin",
-	// costin.getName());
-	// }
 }

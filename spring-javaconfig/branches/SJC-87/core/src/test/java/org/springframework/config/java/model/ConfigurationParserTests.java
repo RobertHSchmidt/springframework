@@ -1,6 +1,7 @@
 package org.springframework.config.java.model;
 
 import static org.junit.Assert.*;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
 
 import java.lang.reflect.Modifier;
 
@@ -8,7 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 
@@ -258,6 +262,75 @@ public abstract class ConfigurationParserTests {
 		expectedModel.add(new ConfigurationClass(FooTestsX.MemberConfigClass.class.getName())
 						.add(new BeanMethod("m"))
 						.setDeclaringClass(new PotentialConfigurationClass(FooTestsX.class.getName())));
+	}
+
+
+	/**
+	 * Configuration classes may optionally be annotated with JavaConfig's {@link Configuration @Configuration}
+	 * annotation.  If so, the annotation should be preserved in the configuration model object as 'metadata'
+	 * (this nomenclature is consistent across different model objects)
+	 * @see {@link ConfigurationClass#getMetadata()}
+	 * @see {@link BeanMethod#getMetadata()}
+	 */
+	public @Test void configurationMetadataIsPreserved() {
+		@Configuration(checkRequired=true)
+		class Config { @Bean TestBean alice() { return new TestBean(); } }
+
+		configClass = Config.class;
+
+		Configuration expectedMetadata = extractClassAnnotation(Configuration.class, Config.class);
+
+		expectedModel.add(new ConfigurationClass(Config.class.getName(), expectedMetadata).add(new BeanMethod("alice")));
+	}
+
+	/**
+	 * If Configuration class B extends Configuration class A, where A
+	 * is annotated with {@link Configuration @Configuration} and B is not,
+	 * an instance of B should have A's metadata.
+	 */
+	public @Test void configurationMetadataIsInherited() {
+		@Configuration(defaultAutowire=Autowire.NO)
+		class A { @Bean TestBean m() { return null; } }
+		class B extends A { }
+
+		configClass = B.class;
+
+		Configuration metadataA = extractClassAnnotation(Configuration.class, A.class);
+
+		expectedModel.add(new ConfigurationClass(B.class.getName(), metadataA).add(new BeanMethod("m")));
+	}
+
+	/**
+	 * If Configuration class B extends Configuration class A, where A
+	 * is annotated with {@link Configuration @Configuration} and B is also
+	 * annotated with {@link Configuration @Configuration}, the most specific
+	 * annotation should take precence.  That is, B's annotation shoud prevail.
+	 */
+	public @Test void configurationMetadataIsOverridable() {
+		@Configuration(defaultAutowire=Autowire.NO, defaultDependencyCheck=DependencyCheck.ALL)
+		class A { @Bean TestBean m() { return null; } }
+		@Configuration(defaultAutowire=Autowire.BY_NAME, checkRequired=true)
+		class B extends A { }
+
+		configClass = B.class;
+
+		Configuration expectedMetadata = extractClassAnnotation(Configuration.class, B.class);
+
+		expectedModel.add(new ConfigurationClass(B.class.getName(), expectedMetadata).add(new BeanMethod("m")));
+	}
+
+	/**
+	 * If a Configuration class B extends Configuration class A where A defines
+	 * a Bean method M, parsing class B should result in a model containing B and
+	 * method M.
+	 */
+	public @Test void beanMethodsAreInherited() {
+		class A { @Bean TestBean M() { return null; } }
+		class B extends A { }
+
+		configClass = B.class;
+
+		expectedModel.add(new ConfigurationClass(B.class.getName()).add(new BeanMethod("M")));
 	}
 
 

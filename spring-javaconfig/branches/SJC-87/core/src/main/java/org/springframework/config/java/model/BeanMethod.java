@@ -16,6 +16,7 @@
 package org.springframework.config.java.model;
 
 import static java.lang.String.format;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
 
 import java.lang.reflect.Modifier;
 
@@ -23,26 +24,17 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.util.Assert;
 
 public class BeanMethod {
-	private static final Bean defaultBeanAnnotation;
+	private static final Bean DEFAULT_BEAN_ANNOTATION =
+		extractMethodAnnotation(Bean.class, new MethodAnnotationPrototype() { public @Bean void targetMethod() {} }.getClass());
 	private final String name;
 	private final Bean beanAnnotation;
 	private final int modifiers;
 
-	// hack required to get an instance of @Bean for defaulting purposes
-	static {
-		try {
-    		class c { @Bean void m() { } }
-    		defaultBeanAnnotation = c.class.getDeclaredMethod("m").getAnnotation(Bean.class);
-		} catch (NoSuchMethodException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
+	/** for testing convenience */
+	BeanMethod(String name) { this(name, DEFAULT_BEAN_ANNOTATION); }
 
 	/** for testing convenience */
-	BeanMethod(String name) { this(name, defaultBeanAnnotation); }
-
-	/** for testing convenience */
-	BeanMethod(String name, int modifiers) { this(name, defaultBeanAnnotation, modifiers); }
+	BeanMethod(String name, int modifiers) { this(name, DEFAULT_BEAN_ANNOTATION, modifiers); }
 
 	public BeanMethod(String name, Bean beanAnno) { this(name, beanAnno, 0); }
 
@@ -61,7 +53,7 @@ public class BeanMethod {
 		return name;
 	}
 
-	public Bean getBeanAnnotation() {
+	public Bean getMetadata() {
 		return beanAnnotation;
 	}
 

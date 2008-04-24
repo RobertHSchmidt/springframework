@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -49,10 +50,13 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 		renderDeclaringClass(configClass.getDeclaringClass());
 
 		String configClassName = configClass.getName();
+
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		// mark this bean def with metadata indicating that it is a configuration bean
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+
+
 		// @Configuration classes' bean names are always their fully-qualified classname
 		registry.registerBeanDefinition(configClassName, configBeanDef);
 
@@ -60,7 +64,13 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 			RootBeanDefinition beanDef = new RootBeanDefinition();
 			beanDef.setFactoryBeanName(configClassName);
 			beanDef.setFactoryMethodName(beanMethod.getName());
-			if(beanMethod.getBeanAnnotation().primary() == Primary.TRUE)
+
+    		// consider autowire metadata
+    		Autowire defaultAutowire = configClass.getMetadata().defaultAutowire();
+    		if(defaultAutowire != Autowire.INHERITED)
+    			beanDef.setAutowireMode(defaultAutowire.value());
+
+			if(beanMethod.getMetadata().primary() == Primary.TRUE)
 				beanDef.setPrimary(true);
 			// TODO: plug in NamingStrategy here
 			registry.registerBeanDefinition(beanMethod.getName(), beanDef);

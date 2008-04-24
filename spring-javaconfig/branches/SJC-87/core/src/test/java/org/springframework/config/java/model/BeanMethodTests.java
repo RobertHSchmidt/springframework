@@ -3,6 +3,7 @@ package org.springframework.config.java.model;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
 
 import java.lang.reflect.Modifier;
 
@@ -12,12 +13,12 @@ import org.springframework.config.java.annotation.Bean;
 
 public class BeanMethodTests {
 
-	public static final Bean FINAL_BEAN_ANNOTATION;
-	static {
-		class c { @Bean(allowOverriding=false) void m() { } }
-		try { FINAL_BEAN_ANNOTATION = c.class.getDeclaredMethod("m").getAnnotation(Bean.class); }
-		catch (Exception ex) { throw new RuntimeException(ex); }
-	}
+	public static final Bean FINAL_BEAN_ANNOTATION =
+		extractMethodAnnotation(Bean.class,
+			new MethodAnnotationPrototype() {
+        		@Bean(allowOverriding=false)
+        		public void targetMethod() {}
+    		}.getClass());
 
 	// ------------------------------
 	// Equivalence tests

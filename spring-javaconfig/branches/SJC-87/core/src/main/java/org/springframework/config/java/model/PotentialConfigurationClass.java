@@ -1,5 +1,7 @@
 package org.springframework.config.java.model;
 
+import org.springframework.config.java.annotation.Configuration;
+
 /**
  * Represents a class that, at parsing time, is undetermined whether
  * it should be a configuration class.  At present, this is used in
@@ -18,6 +20,10 @@ public class PotentialConfigurationClass extends ConfigurationClass {
 
 	public PotentialConfigurationClass(String name) {
 		super(name);
+	}
+
+	public PotentialConfigurationClass(String name, Configuration metadata, int modifiers) {
+		super(name, metadata, modifiers);
 	}
 
 }

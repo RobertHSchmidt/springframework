@@ -129,6 +129,18 @@ public class AspectJConfigurationProcessorTests {
 	public void testAspectJAroundAdviceWithImplicitScopeAndNamedPointcut() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundAdviceWithNamedPointcut.class);
 	}
+	@Aspect
+	public static class AroundAdviceWithNamedPointcut extends AbstractSingletonCountingAdvice {
+
+		@Pointcut("execution(* *.getName())")
+		public void getName() {
+		}
+
+		@Around("getName()")
+		public Object newValue() throws Throwable {
+			return "around";
+		}
+	}
 
 	// TODO: this test is broken as of the changes for SJC-38. Not sure why
 	// yet...
@@ -324,19 +336,6 @@ public class AspectJConfigurationProcessorTests {
 		}
 	}
 
-	// TODO isn't aspect inherited? Clarify with Adrian
-	@Aspect
-	public static class AroundAdviceWithNamedPointcut extends AbstractSingletonCountingAdvice {
-
-		@Pointcut("execution(* *.getName())")
-		public void getName() {
-		}
-
-		@Around("getName()")
-		public Object newValue() throws Throwable {
-			return "around";
-		}
-	}
 
 	public static class InnerClassAdvice extends CountingConfiguration {
 
