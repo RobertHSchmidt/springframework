@@ -41,7 +41,6 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.AroundAdviceWithNamedPointcut;
 import org.springframework.config.java.ConfigurationProcessorTests.HiddenBeansConfig.BFAwareBean;
 import org.springframework.config.java.annotation.AutoBean;
@@ -52,6 +51,7 @@ import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.model.BeanDefinitionRegisteringConfigurationModelRendererTests;
 import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -75,6 +75,7 @@ public class ConfigurationProcessorTests {
 	@After
 	public void nullOutContext() { ctx = null; }
 
+
 	public @Test void testSingletonNature() {
 		ctx = new JavaConfigApplicationContext(BaseConfiguration.class);
 		assertTrue(ctx.containsBean(BaseConfiguration.class.getName()));
@@ -88,6 +89,7 @@ public class ConfigurationProcessorTests {
 		// given that becky is a singleton-scoped bean, these objects should be same instance
 		assertSame(tomsBecky, factorysBecky);
 	}
+
 
 	/**
 	 * Beans that implement {@link BeanNameAware} should be injected
@@ -677,23 +679,33 @@ public class ConfigurationProcessorTests {
 
 
 	public @Test void testBeanDefinitionCount() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-
-		// 3 @Bean + 1 @Configuration
-		assertEquals(4, configurationProcessor.processClass(HiddenBeansConfig.class));
-		// 2 @Bean + 1 Advice (@Before) + 1 @Configuration
-		assertEquals(4, configurationProcessor.processClass(AdvisedAutowiring.class));
-		// 3 @Bean + 1 @Configuration
-		assertEquals(4, configurationProcessor.processClass(BeanCreationMethodsThrowExceptions.class));
+		// TODO: [hiding]
+		// 3 @Bean + 1 @Configuration - 2 hidden @Bean
+		assertEquals(2, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(HiddenBeansConfig.class)));
 		// 2 @Bean + 1 @Configuration
-		assertEquals(3, configurationProcessor.processClass(AutowiringConfiguration.class));
-		// 6 @Bean + 1 Configuration
-		assertEquals(7, configurationProcessor.processClass(BaseConfiguration.class));
+		assertEquals(3, getBeanDefinitionCount(new JavaConfigApplicationContext(AdvisedAutowiring.class)));
+		// 3 @Bean + 1 @Configuration
+		assertEquals(4, getBeanDefinitionCount(new JavaConfigApplicationContext(BeanCreationMethodsThrowExceptions.class)));
+		// TODO: [hiding]
+		// 2 @Bean + 1 @Configuration - 1 hidden @Bean
+		assertEquals(2, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(AutowiringConfiguration.class)));
+		// TODO: [hiding]
+		// 6 @Bean + 1 Configuration - 1 hidden @Bean
+		assertEquals(6, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(BaseConfiguration.class)));
 		// 2 @Bean + 1 Configuration
-		assertEquals(3, configurationProcessor.processClass(HotSwapConfiguration.class));
+		assertEquals(3, getBeanDefinitionCount(new JavaConfigApplicationContext(HotSwapConfiguration.class)));
+		// TODO: [@AutoBean]
 		// 1 @Bean + 1 @Autobean + 1 Configuration
-		assertEquals(3, configurationProcessor.processClass(ValidAutoBeanTest.class));
+		assertEquals(3, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(ValidAutoBeanTest.class)));
+	}
+	private int getBeanDefinitionCount(ConfigurableJavaConfigApplicationContext ctx) {
+		int cx = 0;
+
+		for (String beanName : ctx.getBeanDefinitionNames())
+			if(ctx.getBeanFactory().getBeanDefinition(beanName).getAttribute(Constants.JAVA_CONFIG_IGNORE) == null)
+				cx++;
+
+		return cx;
 	}
 
 	/**
