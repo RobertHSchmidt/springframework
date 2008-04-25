@@ -16,6 +16,7 @@
 package org.springframework.config.java;
 
 import static org.junit.Assert.*;
+import static org.springframework.config.java.test.Assert.getNonInternalBeanDefinitionCount;
 
 import java.awt.Point;
 import java.lang.reflect.Method;
@@ -51,7 +52,6 @@ import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
-import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.model.BeanDefinitionRegisteringConfigurationModelRendererTests;
 import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -152,7 +152,6 @@ public class ConfigurationProcessorTests {
 		public int sum() { return sum; }
 		public void afterPropertiesSet() throws Exception { sum = a + b; }
 	}
-
 
 
 	public @Test void testBeanFactoryAware() {
@@ -681,32 +680,22 @@ public class ConfigurationProcessorTests {
 	public @Test void testBeanDefinitionCount() throws Exception {
 		// TODO: [hiding]
 		// 3 @Bean + 1 @Configuration - 2 hidden @Bean
-		assertEquals(2, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(HiddenBeansConfig.class)));
+		assertEquals(2, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(HiddenBeansConfig.class)));
 		// 2 @Bean + 1 @Configuration
-		assertEquals(3, getBeanDefinitionCount(new JavaConfigApplicationContext(AdvisedAutowiring.class)));
-		// 3 @Bean + 1 @Configuration
-		assertEquals(4, getBeanDefinitionCount(new JavaConfigApplicationContext(BeanCreationMethodsThrowExceptions.class)));
+		assertEquals(3, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(AdvisedAutowiring.class)));
 		// TODO: [hiding]
 		// 2 @Bean + 1 @Configuration - 1 hidden @Bean
-		assertEquals(2, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(AutowiringConfiguration.class)));
+		assertEquals(2, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(AutowiringConfiguration.class)));
 		// TODO: [hiding]
 		// 6 @Bean + 1 Configuration - 1 hidden @Bean
-		assertEquals(6, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(BaseConfiguration.class)));
+		assertEquals(6, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(BaseConfiguration.class)));
 		// 2 @Bean + 1 Configuration
-		assertEquals(3, getBeanDefinitionCount(new JavaConfigApplicationContext(HotSwapConfiguration.class)));
+		assertEquals(3, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(HotSwapConfiguration.class)));
 		// TODO: [@AutoBean]
 		// 1 @Bean + 1 @Autobean + 1 Configuration
-		assertEquals(3, getBeanDefinitionCount(new LegacyJavaConfigApplicationContext(ValidAutoBeanTest.class)));
+		assertEquals(3, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(ValidAutoBeanTest.class)));
 	}
-	private int getBeanDefinitionCount(ConfigurableJavaConfigApplicationContext ctx) {
-		int cx = 0;
 
-		for (String beanName : ctx.getBeanDefinitionNames())
-			if(ctx.getBeanFactory().getBeanDefinition(beanName).getAttribute(Constants.JAVA_CONFIG_IGNORE) == null)
-				cx++;
-
-		return cx;
-	}
 
 	/**
 	 * Base class used across tests for easy reuse of configuration scenarios
