@@ -22,13 +22,11 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
-import org.springframework.config.java.process.ConfigurationProcessor;
 
 /**
  * Test for properties resolution
@@ -58,11 +56,10 @@ public class ExternalValueTests {
 		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
 		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
 	}
+	// TODO: [@ExternalValue]
 	public @Test void testIntProperty() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(AbstractConfigurationDependsOnProperties.class);
-		TestBean rod = (TestBean) bf.getBean("rod");
+		ctx = new LegacyJavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
+		TestBean rod = ctx.getBean(TestBean.class, "rod");
 		assertEquals("int property must be resolved correctly", 37, rod.getAge());
 	}
 	@ResourceBundles("classpath:/org/springframework/config/java/simple")
