@@ -22,7 +22,7 @@ import java.util.Properties;
 
 /**
  * @author Costin Leau
- * 
+ * @deprecated will be removed in RC1
  */
 public class Configuration {
 

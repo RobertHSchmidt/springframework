@@ -16,6 +16,8 @@
 
 package org.springframework.osgi.web.tomcat.internal;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -25,6 +27,7 @@ import javax.management.MBeanRegistration;
 
 import org.apache.catalina.Engine;
 import org.apache.catalina.Lifecycle;
+import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
@@ -40,23 +43,12 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 /**
- * Simple activator for starting Apache Tomcat Catalina container inside OSGi.
- * To avoid the need of commons digester or an XML API, this activator uses a
- * simple property file to externalize the server settings (such as hostname,
- * port and the like).
+ * Simple activator for starting Apache Tomcat Catalina container inside OSGi
+ * using Tomcat's XML configuration files.
  * 
- * <p/> This activator looks initially for a
- * <code>conf/embedded-server.properties</code> file falling back to
- * <code>conf/embedded-server-defaults.properties</code>. This allows the
+ * <p/> This activator looks initially for a <code>conf/server.xml</code> file
+ * falling back to <code>conf/default-server.xml</code>. This allows the
  * default configuration to be tweaked through fragments for example.
- * 
- * <p/> The properties file must contain the following properties:
- * 
- * <pre class="code">
- * home = [catalina home]
- * host = [server host name]
- * port = [server port number]
- * </pre>
  * 
  * @author Costin Leau
  */
@@ -65,17 +57,31 @@ public class Activator implements BundleActivator {
 	/** logger */
 	private static final Log log = LogFactory.getLog(Activator.class);
 
-	/** user-configurable config location */
+	/**
+	 * user-configurable config location
+	 * 
+	 * @deprecated will be removed in RC1
+	 */
 	private static final String CONF_LOCATION = "conf/embedded-server.properties";
 
-	/** default config location */
+	/**
+	 * default config location *
+	 * 
+	 * @deprecated will be removed in RC1
+	 */
 	private static final String DEFAULT_CONF_LOCATION = "conf/embedded-server-defaults.properties";
+
+	/** default XML configuration */
+	private static final String DEFAULT_XML_CONF_LOCATION = "conf/default-server.xml";
+
+	/** user-configurable XML configuration */
+	private static final String XML_CONF_LOCATION = "conf/server.xml";
 
 	private BundleContext bundleContext;
 
-	private Embedded server;
+	private StandardService server;
 
-	private ServiceRegistration registration;
+	private ServiceRegistration registration, legacyRegistration;
 
 	private Thread startupThread;
 
@@ -97,15 +103,20 @@ public class Activator implements BundleActivator {
 				try {
 					current.setContextClassLoader(cl);
 
-					Configuration config = readConfiguration(bundleContext.getBundle());
-					server = createCatalinaServer(config);
+					server = createCatalinaServer(bundleContext.getBundle());
 
 					server.start();
-					log.info("Succesfully started " + ServerInfo.getServerInfo() + " @ " + config.getHost() + ":"
-							+ config.getPort() + ", home = " + config.getHome());
+
+					Connector[] connectors = server.findConnectors();
+					for (int i = 0; i < connectors.length; i++) {
+						Connector conn = connectors[i];
+						log.info("Succesfully started " + ServerInfo.getServerInfo() + " @ " + conn.getDomain() + ":"
+								+ conn.getPort());
+					}
 
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
+					legacyRegistration = publishServerAsAServiceInLegacyMode(server);
 					log.info("Published " + ServerInfo.getServerInfo() + " as an OSGi service");
 				}
 				catch (Exception ex) {
@@ -125,6 +136,7 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		// unpublish service first
 		registration.unregister();
+		legacyRegistration.unregister();
 
 		log.info("Unpublished  " + ServerInfo.getServerInfo() + " OSGi service");
 
@@ -150,7 +162,87 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	private Embedded createCatalinaServer(Configuration configuration) {
+	private StandardService createCatalinaServer(Bundle bundle) throws Exception {
+		// first try to use the XML file
+		URL xmlConfiguration = bundle.getResource(XML_CONF_LOCATION);
+
+		// if there is no custom XML file, check the custom properties
+		if (xmlConfiguration == null && bundle.getResource(CONF_LOCATION) != null) {
+			Configuration config = readConfiguration(bundle);
+			return createServerFromProperties(config);
+		}
+
+		if (xmlConfiguration != null) {
+			log.info("Using custom XML configuration " + xmlConfiguration);
+		}
+		else {
+			xmlConfiguration = bundle.getResource(DEFAULT_XML_CONF_LOCATION);
+			if (xmlConfiguration == null)
+				log.error("No XML configuration found; bailing out...");
+			else
+				log.info("Using default XML configuration " + xmlConfiguration);
+		}
+
+		return createServerFromXML(xmlConfiguration);
+	}
+
+	private StandardService createServerFromXML(URL xmlConfiguration) throws IOException {
+		OsgiCatalina catalina = new OsgiCatalina();
+		catalina.setAwait(false);
+		catalina.setUseShutdownHook(false);
+		catalina.setName("Catalina");
+		catalina.setParentClassLoader(Thread.currentThread().getContextClassLoader());
+
+		// copy the URL file to a local temporary file (since Catalina doesn't use URL unfortunately)
+		File configTempFile = File.createTempFile("dm.catalina", ".cfg.xml");
+		configTempFile.deleteOnExit();
+
+		// copy URL to temporary file
+		copyURLToFile(xmlConfiguration.openStream(), new FileOutputStream(configTempFile));
+		log.debug("Copied configuration " + xmlConfiguration + " to temporary file " + configTempFile);
+
+		catalina.setConfigFile(configTempFile.getAbsolutePath());
+
+		catalina.load();
+
+		Server server = catalina.getServer();
+
+		return (StandardService) server.findServices()[0];
+	}
+
+	private void copyURLToFile(InputStream inStream, FileOutputStream outStream) {
+
+		int bytesRead;
+		byte[] buf = new byte[4096];
+		try {
+			while ((bytesRead = inStream.read(buf)) >= 0) {
+				outStream.write(buf, 0, bytesRead);
+			}
+		}
+		catch (IOException ex) {
+			throw (RuntimeException) new IllegalStateException("Cannot copy URL to file").initCause(ex);
+		}
+		finally {
+			try {
+				inStream.close();
+			}
+			catch (IOException ignore) {
+			}
+			try {
+				outStream.close();
+			}
+			catch (IOException ignore) {
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param configuration
+	 * @return
+	 * @deprecated will be removed in RC1
+	 */
+	private StandardService createServerFromProperties(Configuration configuration) {
 		// create embedded server
 		Embedded embedded = new Embedded();
 		embedded.setCatalinaHome(configuration.getHome());
@@ -190,6 +282,7 @@ public class Activator implements BundleActivator {
 
 		// everything is configured, return the server
 		return embedded;
+
 	}
 
 	private Configuration readConfiguration(Bundle bundle) throws IOException {
@@ -239,7 +332,7 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	private ServiceRegistration publishServerAsAService(Embedded server) {
+	private ServiceRegistration publishServerAsAService(StandardService server) {
 		Properties props = new Properties();
 		// put some extra properties to easily identify the service
 		props.put(Constants.SERVICE_VENDOR, "Spring Dynamic Modules");
@@ -251,9 +344,48 @@ public class Activator implements BundleActivator {
 		props.put("org.springframework.osgi.bean.name", "tomcat-server");
 
 		// publish just the interfaces and the major classes (server/handlerWrapper)
-		String[] classes = new String[] { Embedded.class.getName(), StandardService.class.getName(),
-			Service.class.getName(), MBeanRegistration.class.getName(), Lifecycle.class.getName() };
+		String[] classes = new String[] { StandardService.class.getName(), Service.class.getName(),
+			MBeanRegistration.class.getName(), Lifecycle.class.getName() };
 
 		return bundleContext.registerService(classes, server, props);
+	}
+
+	/**
+	 * Service publication for M1 builds. Will create an Embedded instance used
+	 * just for publication.
+	 * 
+	 * @param server
+	 * @return
+	 * @deprecated will be removed in RC1
+	 */
+	private ServiceRegistration publishServerAsAServiceInLegacyMode(StandardService server) {
+
+		Properties props = new Properties();
+		// put some extra properties to easily identify the service
+		props.put(Constants.SERVICE_VENDOR, "Spring Dynamic Modules");
+		props.put(Constants.SERVICE_DESCRIPTION, ServerInfo.getServerInfo() + " deprecated");
+		props.put(Constants.BUNDLE_VERSION, ServerInfo.getServerNumber());
+		props.put(Constants.BUNDLE_NAME, bundleContext.getBundle().getSymbolicName());
+
+		// spring-dm specific property
+		props.put("org.springframework.osgi.bean.name", "tomcat-server");
+
+		// publish just the interfaces and the major classes (server/handlerWrapper)
+		String[] classes = new String[] { Embedded.class.getName() };
+
+		return bundleContext.registerService(classes, createEmbeddedServerFromServer(server), props);
+	}
+
+	private Embedded createEmbeddedServerFromServer(StandardService server) {
+		Embedded embedded = new Embedded();
+		embedded.setName("Catalina");
+		embedded.addEngine((Engine) server.getContainer());
+
+		for (int connectorsIndex = 0; connectorsIndex < server.findConnectors().length; connectorsIndex++) {
+			Connector connector = server.findConnectors()[connectorsIndex];
+			embedded.addConnector(connector);
+		}
+
+		return embedded;
 	}
 }
