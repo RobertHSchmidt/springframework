@@ -18,7 +18,6 @@
 		<config>src/test/resources/org/springframework/config/java/first.xml</config>
 		<config>src/test/resources/org/springframework/config/java/hiddenBeanPostProcessorTests.xml</config>
 		<config>src/test/resources/org/springframework/config/java/hiddenBeansWithAutowire.xml</config>
-		<config>src/test/resources/org/springframework/config/java/illegalShadow.xml</config>
 		<config>src/test/resources/org/springframework/config/java/independenceTest.xml</config>
 		<config>src/test/resources/org/springframework/config/java/injectedTest.xml</config>
 		<config>src/test/resources/org/springframework/config/java/javaandxml.xml</config>
@@ -36,6 +35,7 @@
 		<config>src/test/resources/org/springframework/config/java/naming/PropagateBeanNamingTest.xml</config>
 		<config>src/test/resources/org/springframework/config/java/proxies/proxies.xml</config>
 		<config>src/test/resources/org/springframework/config/java/txannotations/txannotations.xml</config>
+		<config>src/test/resources/org/springframework/config/java/illegalShadow.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
