@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+		xmlns="http://maven.apache.org/POM/4.0.0"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<artifactId>osgi-repo</artifactId>
+		<groupId>org.springframework.osgi</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.osgi</groupId>
+	<artifactId>jetty.web.extender.fragment.osgi</artifactId>
+	<packaging>bundle</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>Jetty Spring-DM Web Fragment (OSGi version)</name>
+
+	<properties>
+		<include.resources>src/main/resources</include.resources>
+	</properties>
+	
+	<build>
+	<plugins>
+		<plugin>
+		<artifactId>maven-jar-plugin</artifactId>
+		<configuration>
+		  <archive>  
+		    <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Fragment-Host>org.springframework.bundle.osgi.web.extender</Fragment-Host>
+            </manifestEntries>
+		  </archive>
+		</configuration>
+		</plugin>
+	</plugins>
+	</build>
+</project>

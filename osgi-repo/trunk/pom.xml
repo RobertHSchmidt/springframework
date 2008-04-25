@@ -24,7 +24,6 @@
 		<private.packages>
 			!*
 		</private.packages>
-
 		<symName.prefix>org.springframework.osgi.bundle</symName.prefix>
 		<symbolic.name>${pom.groupId}.${pom.artifactId}</symbolic.name>
 		<embed-dep>*;scope=provided;type=!pom;inline=true</embed-dep>
@@ -60,6 +59,8 @@
 		<!-- jetty modules -->
 		<module>jetty/etc</module>
 		<module>jetty/activator</module>
+		<module>jetty/web.extender.fragment</module>
+		
 		<module>catalina/5.5.x</module>
 		<!--
 		<module>catalina/6.0.x</module>
