@@ -14,11 +14,11 @@
 	<groupId>org.springframework.osgi</groupId>
 	<artifactId>jetty.etc.osgi</artifactId>
 	<packaging>bundle</packaging>
-	<version>6.1.7-SNAPSHOT</version>
+	<version>6.1.9-SNAPSHOT</version>
 	<name>Jetty Configuration Files (OSGi version)</name>
 
 	<properties>
-		<unpack.version>6.1.7</unpack.version>
+		<unpack.version>6.1.9</unpack.version>
 		<export.packages>org.mortbay</export.packages>
 		<include.resources>src/main/resources</include.resources>
 	</properties>

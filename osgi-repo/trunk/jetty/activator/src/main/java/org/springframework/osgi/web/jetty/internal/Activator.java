@@ -30,6 +30,7 @@ import org.mortbay.log.Log;
 import org.mortbay.log.Logger;
 import org.mortbay.util.Attributes;
 import org.mortbay.xml.XmlConfiguration;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -48,8 +49,11 @@ public class Activator implements BundleActivator {
 	/** logger */
 	private static final Logger log = Log.getLogger(Activator.class.getName());
 
+	/** default configuration present in the activator bundle */
+	private static final String DEFAULT_CONFIG_LOCATION = "/etc/default-jetty.xml";
+
 	/** standard jetty configuration file */
-	private static final String ETC_LOCATION = "/etc/jetty.xml";
+	private static final String USER_CONFIG_LOCATION = "/etc/jetty.xml";
 
 	private XmlConfiguration xmlConfig;
 
@@ -64,11 +68,27 @@ public class Activator implements BundleActivator {
 
 	public void start(BundleContext context) throws Exception {
 		this.bundleContext = context;
+		Bundle bundle = context.getBundle();
 
-		final URL config = context.getBundle().getResource(ETC_LOCATION);
+		// first try to use the user XML file
+		URL xmlConfiguration = bundle.getResource(USER_CONFIG_LOCATION);
 
-		if (config == null)
-			throw new IllegalArgumentException("cannot find a suitable jetty configuration at " + ETC_LOCATION);
+		if (xmlConfiguration != null) {
+			log.info("Using custom XML configuration " + xmlConfiguration, null, null);
+		}
+		else {
+			xmlConfiguration = bundle.getResource(DEFAULT_CONFIG_LOCATION);
+			if (xmlConfiguration == null) {
+				log.warn("No XML configuration found; bailing out...", null, null);
+				throw new IllegalArgumentException("Cannot find a suitable jetty configuration at "
+						+ USER_CONFIG_LOCATION + " or " + DEFAULT_CONFIG_LOCATION);
+			}
+
+			else
+				log.info("Using default XML configuration " + xmlConfiguration, null, null);
+		}
+
+		final URL config = xmlConfiguration;
 
 		// do the initialization on a different thread
 		// so the activator finishes fast
