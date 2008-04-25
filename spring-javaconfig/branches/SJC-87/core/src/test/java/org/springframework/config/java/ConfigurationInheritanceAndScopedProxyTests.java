@@ -23,89 +23,73 @@ import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.support.ConfigurationSupport;
 
 /**
  * Corners bug SJC-25 which prohibited overriding {@link ScopedProxy}
  * {@link Bean} methods.
- * 
+ *
  * @author Guillaume Duchesneau
  * @author Chris Beams
  */
 public class ConfigurationInheritanceAndScopedProxyTests {
 
 	public static final String SCOPE = "my scope";
-
-	public static String flag = "1";
-
-	private DefaultListableBeanFactory bf;
-
-	private ConfigurationProcessor configurationProcessor;
-
+	private ConfigurableJavaConfigApplicationContext ctx;
 	private CustomScope customScope = new CustomScope();
 
 	@Before
 	public void setUp() throws Exception {
-		bf = new DefaultListableBeanFactory();
-		bf.registerScope(SCOPE, customScope);
-		configurationProcessor = new ConfigurationProcessor(bf);
-
-		// and do the processing
-		configurationProcessor.processClass(ExtendedConfigurationClass.class);
+		ctx = new LegacyJavaConfigApplicationContext(ExtendedConfigurationClass.class) {
+			@Override
+			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+				super.customizeBeanFactory(beanFactory);
+				beanFactory.registerScope(SCOPE, customScope);
+			}
+		};
 	}
-
 	public static abstract class BaseConfigurationClass extends ConfigurationSupport {
-
-		@Bean(scope = SCOPE)
-		@ScopedProxy
+		@ScopedProxy @Bean(scope = SCOPE)
 		public TestBean overridenTestBean() {
 			TestBean tb = new TestBean();
 			tb.setName("overridenTestBean");
 			return tb;
 		}
-
-		@Bean(scope = SCOPE)
-		@ScopedProxy
+		@ScopedProxy @Bean(scope = SCOPE)
 		public abstract TestBean abstractTestBean();
 	}
-
 	public static class ExtendedConfigurationClass extends BaseConfigurationClass {
-
 		@Override
 		public TestBean overridenTestBean() {
 			TestBean tb = super.overridenTestBean();
 			tb.setName(tb.getName() + "-modified");
 			return tb;
 		}
-
 		@Override
-		public TestBean abstractTestBean() {
-			TestBean tb = new TestBean();
-			tb.setName("abstractTestBean");
-			return tb;
-		}
+		public TestBean abstractTestBean() { return new TestBean("abstractTestBean"); }
 	}
 
-	@Test
-	public void testConfigurationInheritance() {
 
-		TestBean overridenTestBean = (TestBean) bf.getBean("overridenTestBean");
+	// TODO: [@ScopedProxy]
+	public @Test void testConfigurationInheritance() {
+		TestBean overridenTestBean = ctx.getBean(TestBean.class, "overridenTestBean");
 		assertNotNull(overridenTestBean);
 		assertEquals("overridenTestBean-modified", overridenTestBean.getName());
 
-		TestBean abstractTestBean = (TestBean) bf.getBean("abstractTestBean");
+		TestBean abstractTestBean = ctx.getBean(TestBean.class, "abstractTestBean");
 		assertNotNull(abstractTestBean);
 		assertEquals("abstractTestBean", abstractTestBean.getName());
 
 		customScope.createNewScope = true;
 
-		TestBean overridenTestBean2 = (TestBean) bf.getBean("overridenTestBean");
+		TestBean overridenTestBean2 = ctx.getBean(TestBean.class, "overridenTestBean");
 		assertNotNull(overridenTestBean2);
 		assertEquals("overridenTestBean-modified", overridenTestBean2.getName());
 		assertNotSame(overridenTestBean, overridenTestBean2);
 
-		TestBean abstractTestBean2 = (TestBean) bf.getBean("abstractTestBean");
+		TestBean abstractTestBean2 = ctx.getBean(TestBean.class, "abstractTestBean");
 		assertNotNull(abstractTestBean2);
 		assertEquals("abstractTestBean", abstractTestBean2.getName());
 		assertNotSame(abstractTestBean, abstractTestBean2);
