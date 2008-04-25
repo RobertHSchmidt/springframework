@@ -14,11 +14,11 @@
 	<groupId>org.springframework.osgi</groupId>
 	<artifactId>jetty.start.osgi</artifactId>
 	<packaging>bundle</packaging>
-	<version>6.1.7-SNAPSHOT</version>
+	<version>6.1.9-SNAPSHOT</version>
 	<name>Jetty OSGi Activator</name>
 
 	<properties>
-		<unpack.version>6.1.7</unpack.version>
+		<unpack.version>6.1.9</unpack.version>
 		<import.packages>
 			org.osgi.framework;version=1.3,
 			org.mortbay.jetty;version=${unpack.version},
@@ -35,13 +35,13 @@
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>jetty</artifactId>
-			<version>6.1.7</version>
+			<version>${unpack.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>jetty-util</artifactId>
-			<version>6.1.7</version>
+			<version>${unpack.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
