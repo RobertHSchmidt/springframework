@@ -31,6 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class HiddenBeansAutowiringTests {
 
 	protected ApplicationContext createContext() throws Exception {
+		// TODO: [hiding]
 		return new LegacyJavaConfigApplicationContext(MyConfig.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {

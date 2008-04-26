@@ -24,25 +24,25 @@ import org.springframework.config.java.AspectTests.PropertyChangeTracker;
 import org.springframework.config.java.AspectTests.Service;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * SJC-57 revealed a bug where Reusable aspects (@Aspect-annotated
  * @Configuration classes) were not applied if passed in as a constructor
  * argument to JavaConfigApplicationContext.
- * 
+ *
  * This issue was resolved WONT FIX, so the test is ignored.
- * 
+ *
  * @see org.springframework.config.java.AspectTests
  * @author Christopher Hlubek
  * @author Chris Beams
  */
 public class Sjc57Tests {
 
+	// TODO: [aop] - note this functionality is new, never before implemented
 	@Ignore
-	@Test
-	public void testReusableAspect() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(StandaloneAppConfig.class,
+	public @Test void testReusableAspect() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(StandaloneAppConfig.class,
 				PropertyChangeTracker.class);
 		PropertyChangeTracker changeTracker = ctx.getBean(PropertyChangeTracker.class);
 

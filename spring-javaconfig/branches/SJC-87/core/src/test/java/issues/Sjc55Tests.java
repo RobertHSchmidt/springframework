@@ -33,7 +33,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -55,7 +55,7 @@ class JavaConfigContextLoader implements org.springframework.test.context.Contex
 /**
  * SJC-55 proposes an improved programming model for configuring aspects with
  * JavaConfig. These tests validate that new approach.
- * 
+ *
  * @author Chris Beams
  */
 @ContextConfiguration(loader = JavaConfigContextLoader.class)
@@ -121,11 +121,11 @@ public class Sjc55Tests {
 
 	}
 
-	// TODO: work in progress
+	// TODO: [aop] work in progress
 	@Ignore
 	@Test
 	public void test() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(MyConfig.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(MyConfig.class);
 		TestBean foo = ctx.getBean(TestBean.class);
 		MyAspect aspect = ctx.getBean(MyAspect.class);
 

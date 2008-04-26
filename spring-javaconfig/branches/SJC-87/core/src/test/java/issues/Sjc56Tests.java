@@ -17,11 +17,11 @@ package issues;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 /**
  * SJC-54 revealed a bug wherein abstract Configurations would not be processed
@@ -33,13 +33,17 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
  * @author Chris Beams
  */
 public class Sjc56Tests {
-	private LegacyJavaConfigApplicationContext ctx;
+	private ConfigurableJavaConfigApplicationContext ctx;
 
 	@Before
 	public void initContext() {
-		ctx = new LegacyJavaConfigApplicationContext();
+		ctx = new JavaConfigApplicationContext();
 		ctx.addConfigClass(InfrastructureConfig.class);
 	}
+    static class InfrastructureConfig {
+    	public @Bean DataSource dataSource() { return new DataSource(); }
+    }
+
 
 	@Test
 	public void withPublicExternalBean() {
@@ -48,6 +52,13 @@ public class Sjc56Tests {
 
 		ctx.getBean("contactRepository");
 	}
+    static abstract class RepositoryConfigWithPublicExternalBean {
+    	public @Bean JdbcContactRepository contactRepository() {
+    		return new JdbcContactRepository(dataSource());
+    	}
+    	public abstract @ExternalBean DataSource dataSource();
+    }
+
 
 	@Test
 	public void withPackagePrivateExternalBean() {
@@ -56,6 +67,14 @@ public class Sjc56Tests {
 
 		ctx.getBean("contactRepository");
 	}
+    static abstract class RepositoryConfigWithPackagePrivateExternalBean {
+    	public @Bean JdbcContactRepository contactRepository() {
+    		return new JdbcContactRepository(dataSource());
+    	}
+
+    	abstract @ExternalBean DataSource dataSource();
+    }
+
 
 	@Test
 	public void withProtectedExternalBean() {
@@ -68,75 +87,32 @@ public class Sjc56Tests {
 		// class was ignored completely.
 		ctx.getBean("contactRepository");
 	}
+    static abstract class RepositoryConfigWithProtectedExternalBean {
+    	public @Bean JdbcContactRepository contactRepository() {
+    		return new JdbcContactRepository(dataSource());
+    	}
 
-	@Test(expected = NoSuchBeanDefinitionException.class)
+    	protected abstract @ExternalBean DataSource dataSource();
+    }
+
+
+	@Test(expected = MalformedJavaConfigurationException.class)
 	public void withPrivateExternalBean() {
 		ctx.addConfigClass(RepositoryConfigWithPrivateExternalBean.class);
 		ctx.refresh();
-
-		ctx.getBean("contactRepository");
 	}
+    static abstract class RepositoryConfigWithPrivateExternalBean {
+    	public @Bean JdbcContactRepository contactRepository() {
+    		return new JdbcContactRepository(dataSource());
+    	}
+
+    	private @ExternalBean DataSource dataSource() { return null; }
+    }
 }
 
-@Configuration
-abstract class RepositoryConfigWithPublicExternalBean {
-	@Bean
-	public JdbcContactRepository contactRepository() {
-		return new JdbcContactRepository(dataSource());
-	}
 
-	@ExternalBean
-	public abstract DataSource dataSource();
-}
-
-@Configuration
-abstract class RepositoryConfigWithPackagePrivateExternalBean {
-	@Bean
-	public JdbcContactRepository contactRepository() {
-		return new JdbcContactRepository(dataSource());
-	}
-
-	@ExternalBean
-	abstract DataSource dataSource();
-}
-
-@Configuration
-abstract class RepositoryConfigWithProtectedExternalBean {
-	@Bean
-	public JdbcContactRepository contactRepository() {
-		return new JdbcContactRepository(dataSource());
-	}
-
-	@ExternalBean
-	protected abstract DataSource dataSource();
-}
-
-@Configuration
-abstract class RepositoryConfigWithPrivateExternalBean {
-	@Bean
-	public JdbcContactRepository contactRepository() {
-		return new JdbcContactRepository(dataSource());
-	}
-
-	@ExternalBean
-	private DataSource dataSource() {
-		return null;
-	}
-}
-
-@Configuration
-class InfrastructureConfig {
-	@Bean
-	public DataSource dataSource() {
-		return new DataSource();
-	}
-}
-
+class DataSource { }
 class JdbcContactRepository {
 	@SuppressWarnings("unused")
-	public JdbcContactRepository(DataSource dataSource) {
-	}
-}
-
-class DataSource {
+	public JdbcContactRepository(DataSource dataSource) { }
 }

@@ -46,6 +46,7 @@ public class LifecycleTests {
 
 	@Before
 	public void setUp() throws Exception {
+		// TODO: change to JCAC (see todos below)
 		ctx = new LegacyJavaConfigApplicationContext();
 		ctx.registerShutdownHook();
 

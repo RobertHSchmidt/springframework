@@ -24,11 +24,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * SJC-74 introduces support for annotating Configuration class constructor
  * params and Bean method params with ExternalValue.
- * 
+ *
  * @author Chris Beams
  */
 public abstract class Sjc74Tests {
 
+	// TODO: [@ExternalValue] specifically, parameter/constructor annotation support
 	public static class Sjc74JavaConfigApplicationContextTests extends Sjc74Tests {
 		@Override
 		protected ConfigurableJavaConfigApplicationContext newContext() {
