@@ -50,6 +50,7 @@ public class ScopingTests {
 	@Before
 	public void setUp() throws Exception {
 		customScope = new CustomScope();
+		// TODO: swap for JCAC (see todos below)
 		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {

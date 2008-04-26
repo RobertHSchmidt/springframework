@@ -30,6 +30,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.dao.support.PersistenceExceptionTranslationInterceptor;
@@ -48,6 +49,7 @@ public class BeansAndPostprocessorTests {
 	@Before
 	public void setUp() {
 		bpp = new CountingBPP();
+		// TODO: [hiding]
 		ctx = new LegacyJavaConfigApplicationContext(MixedConfig.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
@@ -82,10 +84,9 @@ public class BeansAndPostprocessorTests {
 	 * though one is explicitly declared in NewConfiguration below. Remove the
 	 * Ignore annotation and diagnose.
 	 */
-	@Ignore
-	@Test
-	public void testViaApplicationContext() {
-		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(NewConfiguration.class);
+	@Ignore // note this wasn't working against LegacyJCAC, either
+	public @Test void testViaApplicationContext() {
+		JavaConfigApplicationContext context = new JavaConfigApplicationContext(NewConfiguration.class);
 		String name = "newBean";
 		context.getBean(Object.class, name);
 		CountingBPP postProcessor = context.getBean(CountingBPP.class);

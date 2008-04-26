@@ -33,8 +33,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 /**
  * Annotation-aware application context that looks for classes annotated with
  * the Configuration annotation and registers the beans they define.
- * 
- * @deprecated - Favor use of {@link LegacyJavaConfigApplicationContext}. This class
+ *
+ * @deprecated - Favor use of {@link JavaConfigApplicationContext}. This class
  * will be eliminated before the 1.0 release of JavaConfig
  * @author Costin Leau
  * @author Rod Johnson
@@ -55,7 +55,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * Create a new AnnotationApplicationContext w/o any settings.
-	 * 
+	 *
 	 * @see #setClassLoader(ClassLoader)
 	 * @see #setConfigClasses(Class[])
 	 * @see #setBasePackages(String[])
@@ -67,11 +67,11 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	/**
 	 * Create a new AnnotationApplicationContext with the given parent. The
 	 * instance can be further configured before calling {@link #refresh()}.
-	 * 
+	 *
 	 * @see #setClassLoader(ClassLoader)
 	 * @see #setConfigClasses(Class[])
 	 * @see #setBasePackages(String[])
-	 * 
+	 *
 	 * @param parent the parent application context
 	 */
 	public AnnotationApplicationContext(ApplicationContext parent) {
@@ -85,7 +85,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	/**
 	 * Create a new AnnotationApplicationContext from the given locations ({@link #refresh()}
 	 * is being called).
-	 * 
+	 *
 	 * @param basePackages the base packages to scan
 	 */
 	public AnnotationApplicationContext(String... basePackages) {
@@ -97,7 +97,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	/**
 	 * Create a new AnnotationApplicationContext from the given classes ({@link #refresh()}
 	 * is being called).
-	 * 
+	 *
 	 * @param classes
 	 */
 	public AnnotationApplicationContext(Class<?>... classes) {
@@ -109,10 +109,10 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	/**
 	 * Create a new AnnotationApplicationContext with the given parent and
 	 * classes.
-	 * 
+	 *
 	 * @see #AnnotationApplicationContext(ApplicationContext)
 	 * @see #AnnotationApplicationContext(Class...)
-	 * 
+	 *
 	 * @param parent the parent application context
 	 * @param classes zero or more configuration classes
 	 */
@@ -125,10 +125,10 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	/**
 	 * Create a new AnnotationApplicationContext with the given parent and base
 	 * packages.
-	 * 
+	 *
 	 * @see #AnnotationApplicationContext(ApplicationContext)
 	 * @see #AnnotationApplicationContext(String...)
-	 * 
+	 *
 	 * @param parent the parent application context
 	 * @param basePackages the base packages to scan
 	 */
@@ -149,7 +149,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	/**
 	 * Set the base packages for configurations from Strings. These use the same
 	 * conventions as the component scanning introduced in Spring 2.5.
-	 * 
+	 *
 	 * @param basePackages
 	 */
 	public void setBasePackages(String... basePackages) {
@@ -167,7 +167,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * Register the default post processors used for parsing Spring classes.
-	 * 
+	 *
 	 */
 	protected void registerDefaultPostProcessors() {
 		addBeanFactoryPostProcessor(new ConfigurationPostProcessor());

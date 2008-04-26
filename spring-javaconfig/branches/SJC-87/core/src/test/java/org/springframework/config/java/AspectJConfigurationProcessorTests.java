@@ -52,6 +52,7 @@ public class AspectJConfigurationProcessorTests {
 	public void nullOutContext() { ctx = null; }
 
 
+	// TODO: [aop]
 	// TODO: this may not be a valid test. Would need prototype aspect bean and autoproxy
 	@Ignore
 	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
@@ -88,6 +89,7 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
+	// TODO: [aop]
 	public @Test void testSharedAfterAdvice() throws Throwable {
 		ctx = new LegacyJavaConfigApplicationContext(AfterAdvice.class);
 
@@ -110,6 +112,7 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
+	// TODO: [aop]
 	public @Test void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
 		ctx = new LegacyJavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
 		assertFalse("Aspect annotationName required", ctx.getBeanDefinitionCount() > 0);
@@ -123,6 +126,7 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
+	// TODO: [aop]
 	@Test(expected = AopConfigException.class)
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
 		// should throw, cannot extend a concrete aspect
@@ -167,6 +171,7 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
+	// TODO: [aop]
 	private void doTestAspectJAroundAdviceWithImplicitScope(Class<?> clazz) throws Exception {
 		ctx = new LegacyJavaConfigApplicationContext(clazz);
 
@@ -263,6 +268,7 @@ public class AspectJConfigurationProcessorTests {
 
 
 	public @Test void testAroundAdviceWithArguments() throws Exception {
+		// TODO: [aop]
 		ctx = new LegacyJavaConfigApplicationContext(SumAroundAdvice.class);
 		ReturnZero rz = ctx.getBean(ReturnZero.class, "willAdd");
 		assertEquals("Must add arguments, not return zero", 25, rz.returnZero(10, 15));

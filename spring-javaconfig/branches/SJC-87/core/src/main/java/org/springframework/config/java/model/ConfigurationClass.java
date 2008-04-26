@@ -195,7 +195,6 @@ public class ConfigurationClass {
 	}
 
 
-
 	/** must declare at least one Bean method, etc */
 	public ValidationErrors validate(ValidationErrors errors) {
 		// cascade through all imported classes
@@ -218,6 +217,10 @@ public class ConfigurationClass {
 		// cascade through all declared @Bean methods
 		for(BeanMethod beanMethod : beanMethods)
 			beanMethod.validate(errors);
+
+		// cascade through all declared @ExternalBean methods
+		for(ExternalBeanMethod extBeanMethod : externalBeanMethods)
+			extBeanMethod.validate(errors);
 
 		return errors;
 	}

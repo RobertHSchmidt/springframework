@@ -36,12 +36,13 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  * JavaConfig ApplicationContext implementation for use in the web tier. May be
  * supplied as the {@literal commandClass} parameter to Spring MVC's
  * DispatcherServlet
- * @see LegacyJavaConfigApplicationContext
+ * @see JavaConfigApplicationContext
  * @see org.springframework.web.context.WebApplicationContext
  * @see org.springframework.web.servlet.DispatcherServlet
- * 
+ *
  * @author Chris Beams
  */
+// TODO: port to behave like the newly refactored JavaConfigApplicationContext
 public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext
 implements ConfigurableJavaConfigApplicationContext {
 
@@ -104,7 +105,7 @@ implements ConfigurableJavaConfigApplicationContext {
 	/**
 	 * Processes contents of <var>configLocations</var>, setting the values of
 	 * configClasses and basePackages appropriately.
-	 * 
+	 *
 	 * @throws IllegalArgumentException if the <code>configLocations</code>
 	 * array is null, contains any null elements, or contains names of any
 	 * classes that cannot be found
@@ -136,7 +137,7 @@ implements ConfigurableJavaConfigApplicationContext {
 
 	/**
 	 * Register the default post processors used for parsing Spring classes.
-	 * 
+	 *
 	 * @see JavaConfigBeanFactoryPostProcessorRegistry
 	 */
 	protected void registerDefaultPostProcessors() {

@@ -36,7 +36,7 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
  * Spring JavaConfig. Currently, the programming model is a bit awkward, perhaps
  * a lot awkward. See the method comments below for details. We'll want to
  * consider changing this before 1.0 GA.
- * 
+ *
  * @author Chris Beams
  */
 public class AspectTests {
@@ -45,8 +45,8 @@ public class AspectTests {
 	 * {@link ConfigWithAspects} configuration, and prove that our advice gets
 	 * applied properly.
 	 */
-	@Test
-	public void testApplicationOfSimpleAspect() {
+	// TODO: [aop]
+	public @Test void testApplicationOfSimpleAspect() {
 		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(ConfigWithAspects.class);
 		TestBean foo = context.getBean(TestBean.class);
 		assertThat(foo.getName(), equalTo("foo"));
@@ -60,24 +60,10 @@ public class AspectTests {
 		assertThat(configBean.beforeCount, equalTo(2));
 		assertThat(configBean.afterCount, equalTo(2));
 	}
-
-	/**
-	 * Notice how the Configuration class is also an Aspect? This is strange,
-	 * and I believe unintuitive/surprising for users of Spring AOP coming from
-	 * the XML world. As a user, I would expect that I would define my Aspects
-	 * and then somehow expose them as beans within my Configurations. In this
-	 * example, the advice methods (logGetNameCall, logGetNameCalled) are
-	 * defined inline with the Configuration. This is convenient, perhaps, but
-	 * it shouldn't be the only way to do it.
-	 */
-	@Aspect
-	@Configuration
+	@Aspect @Configuration
 	public static class ConfigWithAspects {
-
 		Log log = LogFactory.getLog(ConfigWithAspects.class);
-
 		int beforeCount = 0;
-
 		int afterCount = 0;
 
 		@Before("getName(testBean)")
@@ -94,13 +80,9 @@ public class AspectTests {
 
 		@SuppressWarnings("unused")
 		@Pointcut("execution(* *..TestBean.getName(..)) && target(testBean)")
-		public void getName(TestBean testBean) {
-		}
+		public void getName(TestBean testBean) { }
 
-		@Bean
-		public TestBean foo() {
-			return new TestBean("foo");
-		}
+		public @Bean TestBean foo() { return new TestBean("foo"); }
 	}
 
 	/**
@@ -108,8 +90,8 @@ public class AspectTests {
 	 * aspect and then use it within a given Configuration. Trouble is, that
 	 * we'll see that our 'standalone aspect' also has to be a Configuration.
 	 */
-	@Test
-	public void testAspectModularity() {
+	// TODO: [aop]
+	public @Test void testAspectModularity() {
 		// instantiate a context against our AppConfig configuration. Remember
 		// that AppConfig uses the @Import annotation to pull in our
 		// 'standalone aspect' PropertyChangeTracker. Notice how
@@ -139,19 +121,14 @@ public class AspectTests {
 	// to mark it as @Aspect in order for any advice defined in other @Aspects
 	// to be applied to the @Bean instances defined here. In a way, I suppose
 	// this is like <aspectj:autoproxy/> in XML.
-	@Aspect
 	@Import(PropertyChangeTracker.class)
-	@Configuration
+	@Aspect @Configuration
 	public static class AppConfig {
 		Log log = LogFactory.getLog(AppConfig.class);
 
 		int propertyChangeCount = 0;
 
-		@Bean
-		public Service service() {
-			return new Service();
-		}
-
+		public @Bean Service service() { return new Service(); }
 	}
 
 	// here's our 'standalone aspect', but it must be annotated as

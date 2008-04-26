@@ -26,16 +26,14 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
 import org.springframework.config.java.support.ConfigurationSupport;
 
 public class AutoBeanTests {
-	@Test
-	public void basicConstructorAutowiring() {
+	// TODO: [@AutoBean]
+	public @Test void basicConstructorAutowiring() {
 		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(BasicConstructorAutowiring.class);
 		Assert.assertNotNull(ctx.getBean("a"));
 	}
 
-	// see SJC-85
-	@Ignore
-	@Test
-	public void constructorAutowiring() {
+	@Ignore // see SJC-85
+	public @Test void constructorAutowiring() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(ConstructorAutowiring.class);
 		Service service = ctx.getBean(Service.class);
 		Assert.assertNotNull(service);
@@ -44,33 +42,25 @@ public class AutoBeanTests {
 }
 
 abstract class BasicConstructorAutowiring extends ConfigurationSupport {
-	@AutoBean
-	public abstract TestBean a();
+	public abstract @AutoBean TestBean a();
 }
 
 abstract class ConstructorAutowiring extends ConfigurationSupport {
-	@Bean
-	public Service service() {
+	public @Bean Service service() {
 		Service service = new Service();
 		service.setRepository(repos());
 		return service;
 	}
 
-	@AutoBean
-	public abstract Repository repos();
+	public abstract @AutoBean Repository repos();
 }
 
 class Service {
 	Repository repos;
 
-	Service() {
-	}
+	Service() { }
 
-	void setRepository(Repository repos) {
-		this.repos = repos;
-	}
+	void setRepository(Repository repos) { this.repos = repos; }
 }
 
-class Repository {
-
-}
+class Repository { }
