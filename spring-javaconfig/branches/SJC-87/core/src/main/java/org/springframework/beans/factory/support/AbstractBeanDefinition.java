@@ -35,6 +35,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
+// TODO: The equals() method below is fixed in core v 2.5.4 - eliminate this file when it is released
 /**
  * Base class for concrete, full-fledged
  * {@link org.springframework.beans.factory.config.BeanDefinition} classes,

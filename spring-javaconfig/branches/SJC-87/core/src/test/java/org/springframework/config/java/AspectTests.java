@@ -25,10 +25,13 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Test;
+import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
@@ -40,18 +43,29 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
  * @author Chris Beams
  */
 public class AspectTests {
+	public @Test void testInvalidAspect() {
+		new JavaConfigApplicationContext(InvalidAspectConfig.class);
+	}
+	@Aspect @Configuration
+	public static class InvalidAspectConfig {
+		// invalid -> declares no advice methods
+		@Before("something()")
+		public @Bean TestBean alice() { return new TestBean(); }
+	}
 	/**
 	 * Here we're going to create a new AppCtx against the
 	 * {@link ConfigWithAspects} configuration, and prove that our advice gets
 	 * applied properly.
 	 */
-	// TODO: [aop]
+	// TODO: [aop-1]
 	public @Test void testApplicationOfSimpleAspect() {
-		LegacyJavaConfigApplicationContext context = new LegacyJavaConfigApplicationContext(ConfigWithAspects.class);
-		TestBean foo = context.getBean(TestBean.class);
+		ConfigurableJavaConfigApplicationContext ctx =
+			new JavaConfigApplicationContext(ConfigWithAspects.class);
+
+		ITestBean foo = ctx.getBean(ITestBean.class, "foo");
 		assertThat(foo.getName(), equalTo("foo"));
 
-		ConfigWithAspects configBean = context.getBean(ConfigWithAspects.class);
+		ConfigWithAspects configBean = ctx.getBean(ConfigWithAspects.class);
 		assertThat(configBean.beforeCount, equalTo(1));
 		assertThat(configBean.afterCount, equalTo(1));
 
@@ -68,12 +82,14 @@ public class AspectTests {
 
 		@Before("getName(testBean)")
 		public void logGetNameCall(TestBean testBean) {
+			System.out.println("BEFORE");
 			log.info("about to call getName on " + testBean);
 			beforeCount++;
 		}
 
 		@After("getName(testBean)")
 		public void logGetNameCalled(TestBean testBean) {
+			System.out.println("AFTER");
 			log.info("just called getName on " + testBean);
 			afterCount++;
 		}

@@ -5,6 +5,7 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
 import static org.springframework.util.Assert.notNull;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -13,12 +14,19 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 
+import org.aopalliance.aop.Advice;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.Pointcut;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.model.PointcutsAndAspectsHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -126,7 +134,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			String beanName = m.getName();
 
 			// the target bean instance, whether retrieved as a cached singleton or created newly below
-			final Object bean;
+			Object bean;
 
 			if(factoryContainsBean(beanName)) {
 				// we have an already existing cached instance of this bean -> retrieve it
@@ -137,13 +145,55 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			} else {
 				// no instance exists yet -> create a new one
 				bean = mp.invokeSuper(o, args);
+
+				/*
 				if(log.isDebugEnabled())
-					log.debug(format("Registering new cached singleton object [%s] for @Bean method %s.%s",
+					log.debug(format("Wrapping singleton object [%s] for @Bean method %s.%s in AOP proxy",
+							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
+				bean = proxyIfAnyPointcutsApply(bean, m.getReturnType());
+				*/
+
+				if(log.isDebugEnabled())
+					log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
 				((ConfigurableBeanFactory) ((ConfigurableApplicationContext)beanFactory).getBeanFactory()).registerSingleton(beanName, bean);
 			}
 
 			return bean;
+		}
+
+		private Object proxyIfAnyPointcutsApply(Object bean, Class<?> returnType) {
+			Map<String, Pointcut> pointcuts = PointcutsAndAspectsHolder.pointcuts;
+			Map<String, Advice> advices = PointcutsAndAspectsHolder.advice;
+
+			ProxyFactory pf = new ProxyFactory(bean);
+			pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
+
+			for(String adviceName : pointcuts.keySet()) {
+				Pointcut pc = pointcuts.get(adviceName);
+				if(!AopUtils.canApply(pc, bean.getClass()))
+					continue;
+
+				Advice advice = advices.get(adviceName);
+				DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pc, advice);
+
+				// TODO: [aop] respect Ordering
+
+				pf.addAdvisor(advisor);
+			}
+
+			if(pf.getAdvisors().length == 0)
+				// no pointcuts apply -> return the unadorned target object
+				return bean;
+
+			if(returnType.isInterface()) {
+    			pf.setInterfaces(new Class[] { returnType });
+    			pf.setProxyTargetClass(false);
+			} else {
+				pf.setProxyTargetClass(true);
+			}
+
+			return pf.getProxy();
 		}
 
 		/**
