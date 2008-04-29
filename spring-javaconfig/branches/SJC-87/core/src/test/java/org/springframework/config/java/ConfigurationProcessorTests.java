@@ -191,7 +191,7 @@ public class ConfigurationProcessorTests {
 		DependsOnTestBean dotb2 = (DependsOnTestBean) ctx.getBean("dotb");
 		assertSame(dotb1, dotb2);
 		assertSame(dotb1.getTestBean(), dotb2.getTestBean());
-		assertNotNull("Autowire works", dotb1.getTestBean());
+		assertNotNull("autowiring failed", dotb1.getTestBean());
 	}
 
 
@@ -285,9 +285,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop] JavaConfigApplicationContext does not yet support aspects
+	// XXX: [aop]
 	public @Test void testValidWithDynamicProxy() {
-		ctx = new LegacyJavaConfigApplicationContext(ValidWithDynamicProxies.class);
+		ctx = new JavaConfigApplicationContext(ValidWithDynamicProxies.class);
 		ITestBean tb = (ITestBean) ctx.getBean("test");
 		assertTrue(AopUtils.isJdkDynamicProxy(tb));
 	}

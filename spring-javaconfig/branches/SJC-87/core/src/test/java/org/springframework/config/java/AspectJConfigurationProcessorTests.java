@@ -36,6 +36,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.util.DefaultScopes;
 
@@ -51,7 +52,7 @@ public class AspectJConfigurationProcessorTests {
 	public void nullOutContext() { ctx = null; }
 
 
-	// TODO: [aop]
+	// TODO: [aop99]
 	// TODO: this may not be a valid test. Would need prototype aspect bean and autoproxy
 	@Ignore
 	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
@@ -88,9 +89,9 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// XXX: [aop]
 	public @Test void testSharedAfterAdvice() throws Throwable {
-		ctx = new LegacyJavaConfigApplicationContext(AfterAdvice.class);
+		ctx = new JavaConfigApplicationContext(AfterAdvice.class);
 
 		TestBean advised = ctx.getBean(TestBean.class, "advised");
 		AfterAdvice.count = 0;
@@ -113,7 +114,7 @@ public class AspectJConfigurationProcessorTests {
 
 	// TODO: [aop]
 	public @Test void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
+		ctx = new JavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
 		assertFalse("Aspect annotationName required", ctx.getBeanDefinitionCount() > 0);
 	}
 	/** Invalid class, doesn't have an Aspect tag */
@@ -125,11 +126,11 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// XXX: [aop]
 	@Test(expected = AopConfigException.class)
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
 		// should throw, cannot extend a concrete aspect
-		new LegacyJavaConfigApplicationContext(InvalidInheritanceFromConcreteAspect.class);
+		new JavaConfigApplicationContext(InvalidInheritanceFromConcreteAspect.class);
 	}
 	public static class InvalidInheritanceFromConcreteAspect extends AroundSingletonCountingAdvice { }
 
@@ -267,9 +268,9 @@ public class AspectJConfigurationProcessorTests {
 	public abstract static class AroundAdviceClass extends ValidAroundAdviceClassWithAspectAnnotation { }
 
 
+	// XXX: [aop]
 	public @Test void testAroundAdviceWithArguments() throws Exception {
-		// TODO: [aop]
-		ctx = new LegacyJavaConfigApplicationContext(SumAroundAdvice.class);
+		ctx = new JavaConfigApplicationContext(SumAroundAdvice.class);
 		ReturnZero rz = ctx.getBean(ReturnZero.class, "willAdd");
 		assertEquals("Must add arguments, not return zero", 25, rz.returnZero(10, 15));
 	}
