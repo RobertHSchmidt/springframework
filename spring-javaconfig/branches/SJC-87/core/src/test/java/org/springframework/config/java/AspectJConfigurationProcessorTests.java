@@ -114,7 +114,7 @@ public class AspectJConfigurationProcessorTests {
 
 	// TODO: [aop]
 	public @Test void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
-		ctx = new JavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
+		ctx = new LegacyJavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
 		assertFalse("Aspect annotationName required", ctx.getBeanDefinitionCount() > 0);
 	}
 	/** Invalid class, doesn't have an Aspect tag */
