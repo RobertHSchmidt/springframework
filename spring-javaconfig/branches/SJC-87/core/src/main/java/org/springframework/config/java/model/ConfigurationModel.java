@@ -3,6 +3,7 @@ package org.springframework.config.java.model;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
@@ -26,7 +27,7 @@ public class ConfigurationModel {
 	/** list is used because order and collection equality matters. */
 	private ArrayList<ConfigurationClass> configurationClasses = new ArrayList<ConfigurationClass>();
 
-	private ArrayList<AspectClass> aspectClasses = new ArrayList<AspectClass>();
+	private HashSet<AspectClass> aspectClasses = new HashSet<AspectClass>();
 
 	/**
 	 * Add a {@link Configuration @Configuration} class to the model.  Classes

@@ -114,11 +114,26 @@ public class AspectJConfigurationProcessorTests {
 
 	// TODO: [aop]
 	public @Test void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
+		ctx = new JavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
 		assertFalse("Aspect annotationName required", ctx.getBeanDefinitionCount() > 0);
 	}
 	/** Invalid class, doesn't have an Aspect tag */
 	public static class InvalidNoAspectAnnotation {
+		@Around("execution(* *.getName())")
+		public Object invalid() throws Throwable {
+			return "around";
+		}
+	}
+
+	/**
+	 *
+	 */
+	public @Test void testModelIsValidWithOnlyOneAspect() {
+		ctx = new JavaConfigApplicationContext(ValidAspectAnnotation.class);
+		assertNotNull(ctx.getBean(ValidAspectAnnotation.class));
+	}
+	@Aspect
+	public static class ValidAspectAnnotation {
 		@Around("execution(* *.getName())")
 		public Object invalid() throws Throwable {
 			return "around";
