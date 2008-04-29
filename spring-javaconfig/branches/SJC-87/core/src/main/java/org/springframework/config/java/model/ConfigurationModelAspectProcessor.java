@@ -46,6 +46,7 @@ public class ConfigurationModelAspectProcessor {
     				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
         				// examine this method to see if it's an advice method
         				String aspectName = literalClass.getName();
+        				advisorFactory.validate(literalClass);
         				MetadataAwareAspectInstanceFactory aif = new BeanFactoryAspectInstanceFactory(beanFactory, aspectName, literalClass);
         				Advisor pa = advisorFactory.getAdvisor(method, aif, 0, aspectName);
                 		if (pa != null && (pa instanceof PointcutAdvisor)) {

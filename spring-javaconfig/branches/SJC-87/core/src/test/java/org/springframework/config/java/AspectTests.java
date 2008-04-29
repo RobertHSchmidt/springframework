@@ -59,7 +59,7 @@ public class AspectTests {
 	 * {@link ConfigWithAspects} configuration, and prove that our advice gets
 	 * applied properly.
 	 */
-	// TODO: [aop-1]
+	// XXX: [aop]
 	public @Test void testApplicationOfSimpleAspect() {
 		ConfigurableJavaConfigApplicationContext ctx =
 			new JavaConfigApplicationContext(ConfigWithAspects.class);
@@ -114,7 +114,7 @@ public class AspectTests {
 		// that AppConfig uses the @Import annotation to pull in our
 		// 'standalone aspect' PropertyChangeTracker. Notice how
 		// PropertyChangeTracker is a Configuration? Doesn't that seem strange?
-		LegacyJavaConfigApplicationContext ctx;
+		ConfigurableJavaConfigApplicationContext ctx;
 		ctx = new LegacyJavaConfigApplicationContext(AppConfig.class);
 
 		// grab out the aspect/configuration bean from the context, we'll

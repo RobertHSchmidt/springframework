@@ -31,6 +31,7 @@ import org.springframework.config.java.AspectJConfigurationProcessorTests.Single
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
@@ -93,9 +94,9 @@ public class SpringAopConfigurationProcessorTests {
 		assertEquals(1, CountingConfiguration.getCount(target1));
 		assertEquals(1, CountingConfiguration.getCount(target2));
 	}
-	// TODO: [aop]
+	// XXX: [aop]
 	public @Test void testAroundAdvice() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
+		ctx = new JavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
 
 		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		int newAge = 24;
@@ -119,10 +120,10 @@ public class SpringAopConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// XXX: [aop]
 	@Ignore // interception on self causes circular dependency - can this be prevented?
 	public @Test void testInterceptAll() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(InterceptAllAdvice.class);
+		ctx = new JavaConfigApplicationContext(InterceptAllAdvice.class);
 
 		TestBean kaare = ctx.getBean(TestBean.class, "kaare");
 
