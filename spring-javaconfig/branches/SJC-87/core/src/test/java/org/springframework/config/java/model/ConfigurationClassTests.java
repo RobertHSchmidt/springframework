@@ -16,6 +16,7 @@ import org.springframework.config.java.annotation.Configuration;
 
 public class ConfigurationClassTests {
 
+	static final ConfigurationClass INVALID_CONFIGURATION_CLASS = new ConfigurationClass("c");
 	private ConfigurationClass configClass;
 
 	@Before

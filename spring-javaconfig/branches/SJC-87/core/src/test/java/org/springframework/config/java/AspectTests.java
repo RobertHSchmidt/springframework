@@ -84,14 +84,12 @@ public class AspectTests {
 
 		@Before("getName(testBean)")
 		public void logGetNameCall(TestBean testBean) {
-			System.out.println("BEFORE");
 			log.info("about to call getName on " + testBean);
 			beforeCount++;
 		}
 
 		@After("getName(testBean)")
 		public void logGetNameCalled(TestBean testBean) {
-			System.out.println("AFTER");
 			log.info("just called getName on " + testBean);
 			afterCount++;
 		}
