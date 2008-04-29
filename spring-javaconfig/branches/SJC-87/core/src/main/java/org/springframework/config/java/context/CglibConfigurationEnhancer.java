@@ -26,7 +26,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.model.PointcutsAndAspectsHolder;
+import org.springframework.config.java.model.ConfigurationModelAspectProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -146,12 +146,11 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				// no instance exists yet -> create a new one
 				bean = mp.invokeSuper(o, args);
 
-				/*
+
 				if(log.isDebugEnabled())
 					log.debug(format("Wrapping singleton object [%s] for @Bean method %s.%s in AOP proxy",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
 				bean = proxyIfAnyPointcutsApply(bean, m.getReturnType());
-				*/
 
 				if(log.isDebugEnabled())
 					log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
@@ -163,11 +162,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		}
 
 		private Object proxyIfAnyPointcutsApply(Object bean, Class<?> returnType) {
-			Map<String, Pointcut> pointcuts = PointcutsAndAspectsHolder.pointcuts;
-			Map<String, Advice> advices = PointcutsAndAspectsHolder.advice;
+			Map<String, Pointcut> pointcuts = ConfigurationModelAspectProcessor.pointcuts;
+			Map<String, Advice> advices = ConfigurationModelAspectProcessor.advices;
 
 			ProxyFactory pf = new ProxyFactory(bean);
-			pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
 
 			for(String adviceName : pointcuts.keySet()) {
 				Pointcut pc = pointcuts.get(adviceName);
@@ -185,6 +183,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			if(pf.getAdvisors().length == 0)
 				// no pointcuts apply -> return the unadorned target object
 				return bean;
+
+			pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
 
 			if(returnType.isInterface()) {
     			pf.setInterfaces(new Class[] { returnType });

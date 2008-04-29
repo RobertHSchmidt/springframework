@@ -4,16 +4,9 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
 
 import java.lang.reflect.Method;
 
-import org.aopalliance.aop.Advice;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.aop.Advisor;
-import org.springframework.aop.Pointcut;
-import org.springframework.aop.PointcutAdvisor;
-import org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory;
-import org.springframework.aop.aspectj.annotation.MetadataAwareAspectInstanceFactory;
-import org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory;
-import org.springframework.aop.aspectj.annotation.SimpleMetadataAwareAspectInstanceFactory;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -75,13 +68,9 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 				modelClass.addImportedClass(doParse(classToImport, false));
 
 		// is this an @Aspect configuration?
-		final AspectJAdvisorFactory advisorFactory = new ReflectiveAspectJAdvisorFactory();
-		// note: when porting to an ASM-based implementation, using this reflective aj
-		// factory is going to pose a problem.  There is no ASM-based impl, and even the
-		// interface expects class literals.  Should get in touch w/ Adrian et al on this
-		final boolean isAtAspectClass = advisorFactory.isAspect(literalClass);
-		if(isAtAspectClass)
-			advisorFactory.validate(literalClass); // TODO: catch exceptions
+		// TODO: [aop] allow for @Aspects({}), @Import-style
+		if(findAnnotation(literalClass, Aspect.class) != null)
+			model.add(new AspectClass(literalClass.getName()));
 
 		// iterate through all the methods in the specified configuration class
 		// looking for @Bean, @ExternalBean, etc.
@@ -98,23 +87,6 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
         			ExternalBean extBean = findAnnotation(method, ExternalBean.class);
         			if(extBean != null)
         				modelClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
-
-        			if(isAtAspectClass) {
-        				// examine this method to see if it's an advice method
-        				String aspectName = "aspectNamePlaceholder";
-        				MetadataAwareAspectInstanceFactory aif = new SimpleMetadataAwareAspectInstanceFactory(literalClass, aspectName);
-        				Advisor pa = advisorFactory.getAdvisor(method, aif, 0, aspectName);
-                		if (pa != null && (pa instanceof PointcutAdvisor)) {
-                			String adviceName = method.getName();
-                			Advice advice = pa.getAdvice();
-                			// advice may return null in the case of named pointcuts (@Pointcut)
-                			if (advice != null) {
-                				Pointcut pointcut = ((PointcutAdvisor) pa).getPointcut();
-                				PointcutsAndAspectsHolder.pointcuts.put(adviceName, pointcut);
-                				PointcutsAndAspectsHolder.advice.put(adviceName, advice);
-                			}
-                		}
-        			}
     			}
     		},
     		// but exclude all Object.* methods

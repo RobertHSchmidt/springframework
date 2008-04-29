@@ -27,6 +27,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Test;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
@@ -43,7 +44,8 @@ import org.springframework.config.java.context.LegacyJavaConfigApplicationContex
  * @author Chris Beams
  */
 public class AspectTests {
-	public @Test void testInvalidAspect() {
+	@Test(expected=BeanCreationException.class)
+	public void testInvalidAspect() {
 		new JavaConfigApplicationContext(InvalidAspectConfig.class);
 	}
 	@Aspect @Configuration

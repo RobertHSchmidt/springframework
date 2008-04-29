@@ -26,6 +26,8 @@ public class ConfigurationModel {
 	/** list is used because order and collection equality matters. */
 	private ArrayList<ConfigurationClass> configurationClasses = new ArrayList<ConfigurationClass>();
 
+	private ArrayList<AspectClass> aspectClasses = new ArrayList<AspectClass>();
+
 	/**
 	 * Add a {@link Configuration @Configuration} class to the model.  Classes
 	 * may be added at will and without any particular validation.  Malformed
@@ -45,6 +47,16 @@ public class ConfigurationModel {
 	public ConfigurationClass[] getConfigurationClasses() {
 		return configurationClasses.toArray(new ConfigurationClass[] {});
 	}
+
+	public ConfigurationModel add(AspectClass aspectClass) {
+		aspectClasses.add(aspectClass);
+		return this;
+	}
+
+	public AspectClass[] getAspectClasses() {
+		return aspectClasses.toArray(new AspectClass[] {});
+	}
+
 
 	/**
 	 * Return all configuration classes, including all imported configuration classes.
@@ -75,6 +87,8 @@ public class ConfigurationModel {
 		for(ConfigurationClass configClass : configurationClasses)
 			configClass.validate(errors);
 
+		// TODO: cascade to aspectClasses for validation?
+
 		// catch errors that happen across configurations (including imports)
 		ConfigurationClass[] allClasses = getAllConfigurationClasses();
 		for(int i=0; i<allClasses.length; i++)
@@ -94,14 +108,15 @@ public class ConfigurationModel {
 
 	@Override
 	public String toString() {
-		return format("%s: configurationClasses=%s",
-				      getClass().getSimpleName(), configurationClasses);
+		return format("%s: configurationClasses=%s; aspectClasses=%s",
+				      getClass().getSimpleName(), configurationClasses, aspectClasses);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((aspectClasses == null) ? 0 : aspectClasses.hashCode());
 		result = prime * result + ((configurationClasses == null) ? 0 : configurationClasses.hashCode());
 		return result;
 	}
@@ -115,6 +130,12 @@ public class ConfigurationModel {
 		if (getClass() != obj.getClass())
 			return false;
 		ConfigurationModel other = (ConfigurationModel) obj;
+		if (aspectClasses == null) {
+			if (other.aspectClasses != null)
+				return false;
+		}
+		else if (!aspectClasses.equals(other.aspectClasses))
+			return false;
 		if (configurationClasses == null) {
 			if (other.configurationClasses != null)
 				return false;

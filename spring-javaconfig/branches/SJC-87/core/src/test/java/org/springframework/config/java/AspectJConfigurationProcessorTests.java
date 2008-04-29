@@ -36,7 +36,6 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
-import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.util.DefaultScopes;
 
@@ -219,9 +218,10 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
+	// TODO: [aop]
 	public @Test void testAspectJNoAroundAdvice() throws Exception {
 		// Superclass doesn't have around advice
-		ctx = new JavaConfigApplicationContext(SingletonCountingAdvice.class);
+		ctx = new LegacyJavaConfigApplicationContext(SingletonCountingAdvice.class);
 
 		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		int newAge = 24;
