@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -43,6 +44,8 @@ public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 
 		// render model by creating BeanDefinitions based on the model and registering them within registry
 		new BeanDefinitionRegisteringConfigurationModelRenderer(registry).render(model);
+
+		ConfigurationModelAspectProcessor.processAnyAspects(model, (BeanFactory) registry);
 
 		// return the total number of bean definitions registered
 		return registry.getBeanDefinitionCount() - initialBeanDefinitionCount;
