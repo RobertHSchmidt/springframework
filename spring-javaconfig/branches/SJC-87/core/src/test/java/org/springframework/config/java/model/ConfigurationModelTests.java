@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 /**
- * Primarily exists to test equals() implementation of model objects
+ * Unit tests for {@link ConfigurationModel}
  *
  * @author Chris Beams
  */
@@ -187,10 +187,10 @@ public class ConfigurationModelTests {
 	 * If the user has supplied only Aspect classes, validation should fail
 	 */
 	public @Test void modelContainingOnlyAspectClassesIsInvalid() {
-		ConfigurationModel m = new ConfigurationModel().add(new AspectClass("a"));
+		ConfigurationModel m = new ConfigurationModel().add(AspectClassTests.VALID_ASPECT_CLASS);
 
 		ValidationErrors errors = m.validate();
-		assertEquals("expected one error", 1, errors.size());
+		assertEquals("expected one error: " + errors, 1, errors.size());
 		assertTrue(errors.get(0).contains(ValidationError.MODEL_IS_EMPTY.toString()));
 	}
 

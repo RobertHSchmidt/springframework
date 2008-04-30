@@ -28,7 +28,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.framework.Advised;
-import org.springframework.aop.framework.AopConfigException;
 import org.springframework.beans.DependsOnTestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -38,6 +37,8 @@ import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.model.ValidationError;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.util.DefaultScopes;
 
 /**
@@ -112,26 +113,53 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
-	public @Test void testAspectJAnnotationsRequireAspectAnnotationDirect() throws Exception {
-		ctx = new JavaConfigApplicationContext(InvalidNoAspectAnnotation.class);
-		assertFalse("Aspect annotationName required", ctx.getBeanDefinitionCount() > 0);
-	}
-	/** Invalid class, doesn't have an Aspect tag */
-	public static class InvalidNoAspectAnnotation {
-		@Around("execution(* *.getName())")
-		public Object invalid() throws Throwable {
-			return "around";
-		}
+	/**
+	 * Integration test proving that an invalid aspect (i.e.: one without an Aspect
+	 * annotation) causes an appropriate error upon validation
+	 * <p>
+	 * local classes are used because the runtime will never get to the point of
+	 * attempting to subclass them with CGLIB (which would fail)
+	 */
+	// XXX: [aop]
+	@Test(expected = MalformedJavaConfigurationException.class)
+	public void testAspectJAnnotationsRequireExplicitLocalAspectAnnotation() throws Exception {
+    	/** Invalid class, doesn't have an Aspect tag */
+    	class InvalidNoAspectAnnotation {
+    		@Around("execution(* *.getName())")
+    		public Object invalid() throws Throwable { return "around"; }
+    	}
+    	class Config { public @Bean TestBean alice() { return new TestBean(); } }
+
+    	try {
+    		ctx = new JavaConfigApplicationContext();
+    		ctx.addConfigClass(Config.class);
+    		ctx.addAspectClasses(InvalidNoAspectAnnotation.class);
+    		ctx.refresh();
+    	} catch (MalformedJavaConfigurationException ex) {
+    		assertTrue(ex.getMessage().contains(ValidationError.ASPECT_CLASS_MUST_HAVE_ASPECT_ANNOTATION.toString()));
+    		throw ex;
+    	}
 	}
 
 	/**
-	 *
+	 * If an Aspect class is passed to the JavaConfigApplicationContext constructor
+	 * it will not be recognized as an Aspect.  The constructor considers all Class
+	 * arguments to be Configuration classes.
 	 */
-	public @Test void testModelIsValidWithOnlyOneAspect() {
-		ctx = new JavaConfigApplicationContext(ValidAspectAnnotation.class);
-		assertNotNull(ctx.getBean(ValidAspectAnnotation.class));
+	@Test(expected=MalformedJavaConfigurationException.class)
+	public void testModelIsInvalidWithOnlyOneAspect() {
+		try {
+			ctx = new JavaConfigApplicationContext(ValidAspectAnnotation.class);
+		}
+		catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString()));
+			throw ex;
+		}
 	}
+	/**
+	 * Technically a valid Aspect, but it is supplied to the constructor
+	 * above, which is incorrect usage
+	 */
 	@Aspect
 	public static class ValidAspectAnnotation {
 		@Around("execution(* *.getName())")
@@ -142,11 +170,15 @@ public class AspectJConfigurationProcessorTests {
 
 
 	// XXX: [aop]
-	@Test(expected = AopConfigException.class)
+	@Test(expected = MalformedJavaConfigurationException.class)
 	public void testInvalidInheritanceFromConcreteAspect() throws Exception {
 		// should throw, cannot extend a concrete aspect
-		new JavaConfigApplicationContext(InvalidInheritanceFromConcreteAspect.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
+		ctx.addConfigClasses(ValidConfigClass.class);
+		ctx.addAspectClasses(InvalidInheritanceFromConcreteAspect.class);
+		ctx.refresh();
 	}
+	public static class ValidConfigClass { public @Bean TestBean alice() { return new TestBean(); } }
 	public static class InvalidInheritanceFromConcreteAspect extends AroundSingletonCountingAdvice { }
 
 
@@ -199,11 +231,22 @@ public class AspectJConfigurationProcessorTests {
 
 
 	// TODO: this test is broken as of the changes for SJC-38. Not sure why yet...
-	@Ignore
 	public @Test void testAspectJAroundAdviceWithAspectInnerClass() throws Exception {
-		doTestAspectJAroundAdviceWithImplicitScope(InnerClassAdvice.class);
+		ctx = new JavaConfigApplicationContext();
+		ctx.addConfigClass(InnerClassAdviceConfig.class);
+		ctx.addAspectClasses(InnerClassAdviceConfig.InnerAroundAdvice.class);
+		ctx.refresh();
+
+		TestBean advised1 = (TestBean) ctx.getBean("advised");
+		/*
+		int newAge = 24;
+		advised1.setAge(newAge);
+		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
+		assertEquals("around", advised1.getName());
+		*/
 	}
-	public static class InnerClassAdvice extends CountingConfiguration {
+	public static class InnerClassAdviceConfig extends CountingConfiguration {
+		public @Bean TestBean alice() { return new TestBean(); }
 		// This is enough to bring it in
 		@Aspect
 		static class InnerAroundAdvice extends AroundAdviceClass { }

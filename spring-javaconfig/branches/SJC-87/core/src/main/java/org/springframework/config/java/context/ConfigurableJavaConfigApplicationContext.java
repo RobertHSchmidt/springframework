@@ -24,4 +24,10 @@ public interface ConfigurableJavaConfigApplicationContext extends ConfigurableAp
 	@Deprecated // favor addBasePackages
 	void setBasePackages(String... basePackages);
 
+	/**
+	 * Add one or more AspectJ {@link Aspect @Aspect} classes
+	 * @param atAspectClasses one or more classes annotated with {@link Aspect @Aspect}
+	 */
+	void addAspectClasses(Class<?>... atAspectClasses);
+
 }

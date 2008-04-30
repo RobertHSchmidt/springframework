@@ -6,14 +6,22 @@ import org.aspectj.lang.annotation.Aspect;
 import org.junit.Test;
 
 public class AspectClassTests {
+
+	private static @Aspect class Prototype { }
+	private static Aspect DEFAULT_ASPECT_ANNOTATION =  AnnotationExtractionUtils.extractClassAnnotation(Aspect.class, Prototype.class);
+
 	/**
 	 * Example of an invalid aspect class, for use in higher-level tests.
 	 * (is invalid because it does not have an explicit Aspect annotation)
 	 */
-	static AspectClass INVALID_ASPECT_CLASS = new AspectClass("a");
+	static final AspectClass INVALID_ASPECT_CLASS = new AspectClass("a");
 
-	private static @Aspect class Prototype { }
-	private static Aspect DEFAULT_ASPECT_ANNOTATION =  AnnotationExtractionUtils.extractClassAnnotation(Aspect.class, Prototype.class);
+	/**
+	 * Example of a valid aspect class, for use in higher-level tests.
+	 * (is invalid because it does not have an explicit Aspect annotation)
+	 */
+	static final AspectClass VALID_ASPECT_CLASS = new AspectClass("a", DEFAULT_ASPECT_ANNOTATION);
+
 
 	public @Test void validateAspectClassMustHaveExplicitAspectAnnotation() {
 		// test the negative case

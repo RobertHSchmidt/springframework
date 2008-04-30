@@ -24,15 +24,16 @@ import org.springframework.config.java.process.MalformedJavaConfigurationExcepti
  */
 public class ConfigurationModel {
 
-	/** list is used because order and collection equality matters. */
+	/* list is used because order and collection equality matters. */
 	private ArrayList<ConfigurationClass> configurationClasses = new ArrayList<ConfigurationClass>();
 
+	/* order of aspect classes is insignificant */
 	private HashSet<AspectClass> aspectClasses = new HashSet<AspectClass>();
 
 	/**
 	 * Add a {@link Configuration @Configuration} class to the model.  Classes
 	 * may be added at will and without any particular validation.  Malformed
-	 * classes will be caught and errors processed during a later phase.
+	 * classes will be caught and errors processed during {@link #validate() validation}
 	 *
 	 * @param configurationClass user-supplied Configuration class
 	 */
@@ -88,7 +89,9 @@ public class ConfigurationModel {
 		for(ConfigurationClass configClass : configurationClasses)
 			configClass.validate(errors);
 
-		// TODO: cascade to aspectClasses for validation?
+		// cascade to each Aspect class for validation
+		for(AspectClass aspectClass : aspectClasses)
+			aspectClass.validate(errors);
 
 		// catch errors that happen across configurations (including imports)
 		ConfigurationClass[] allClasses = getAllConfigurationClasses();

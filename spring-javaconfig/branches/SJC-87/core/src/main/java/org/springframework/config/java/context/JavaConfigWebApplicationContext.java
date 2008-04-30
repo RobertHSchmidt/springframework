@@ -180,4 +180,8 @@ implements ConfigurableJavaConfigApplicationContext {
 		throw new UnsupportedOperationException();
 	}
 
+	public void addAspectClasses(Class<?>... atAspectClasses) {
+		throw new UnsupportedOperationException();
+	}
+
 }

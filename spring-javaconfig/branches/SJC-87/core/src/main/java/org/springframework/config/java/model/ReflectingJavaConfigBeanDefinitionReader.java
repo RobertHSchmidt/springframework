@@ -2,6 +2,11 @@ package org.springframework.config.java.model;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -21,8 +26,16 @@ import org.springframework.util.ClassUtils;
  */
 public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
+	private final List<Entry<ClassPathResource, Aspect>> aspectClassResources;
+
 	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
+		this(registry, new ArrayList<Entry<ClassPathResource, Aspect>>());
+	}
+
+	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
+			List<Entry<ClassPathResource, Aspect>> aspectClassResources) {
 		super(registry);
+		this.aspectClassResources = aspectClassResources;
 	}
 
 	public int loadBeanDefinitions(Resource configClass) throws BeanDefinitionStoreException {
@@ -32,6 +45,11 @@ public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 
 		// initialize a new model
 		ConfigurationModel model = new ConfigurationModel();
+
+		// add any ad-hoc aspects to the model
+		for(Entry<ClassPathResource, Aspect> entry : aspectClassResources) {
+			model.add(new AspectClass(ClassUtils.convertResourcePathToClassName(entry.getKey().getPath()), entry.getValue()));
+		}
 
 		// parse the class and populate the model using reflection
 		new ReflectingConfigurationParser(model).parse(loadClassFromResource(configClass));

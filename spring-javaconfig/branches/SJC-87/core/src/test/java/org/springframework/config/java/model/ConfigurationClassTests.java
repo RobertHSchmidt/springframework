@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.model.AspectClassTests.VALID_ASPECT_CLASS;
 import static org.springframework.config.java.model.ValidationError.*;
 
 import java.lang.reflect.Modifier;
@@ -121,6 +122,16 @@ public class ConfigurationClassTests {
 			Assert.assertThat(c1, not(equalTo(c2)));
 			Assert.assertThat(c2, not(equalTo(c1)));
 			c2 = new ConfigurationClass("c", metadata);
+			Assert.assertThat(c1, equalTo(c2));
+			Assert.assertThat(c2, equalTo(c1));
+		}
+
+		{ // are any imported Aspect classes considered when evaluating equality?
+			ConfigurationClass c1 = new ConfigurationClass("c").addImportedAspect(VALID_ASPECT_CLASS);
+			ConfigurationClass c2 = new ConfigurationClass("c");
+			Assert.assertThat(c1, not(equalTo(c2)));
+			Assert.assertThat(c2, not(equalTo(c1)));
+			c2.addImportedAspect(VALID_ASPECT_CLASS);
 			Assert.assertThat(c1, equalTo(c2));
 			Assert.assertThat(c2, equalTo(c1));
 		}

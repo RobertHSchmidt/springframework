@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.config.java.annotation.Aspects;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -67,10 +68,21 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 			for(Class<?> classToImport : importAnno.value())
 				modelClass.addImportedClass(doParse(classToImport, false));
 
-		// is this an @Aspect configuration?
+		// does this configuration import any Aspect classes?
+		Aspects importedAspects = findAnnotation(literalClass, Aspects.class);
+		if(importedAspects != null) {
+			for(Class<?> aspectClass : importedAspects.value()) {
+				Aspect aspectAnno = aspectClass.getAnnotation(Aspect.class);
+				model.add(new AspectClass(aspectClass.getName(), aspectAnno));
+			}
+		}
+
+		// is this configuration also an @Aspect?
 		// TODO: [aop] allow for @Aspects({}), @Import-style
-		if(findAnnotation(literalClass, Aspect.class) != null)
-			model.add(new AspectClass(literalClass.getName()));
+		Aspect aspectAnno = literalClass.getAnnotation(Aspect.class);
+		if(aspectAnno != null)
+			model.add(new AspectClass(literalClass.getName(), aspectAnno));
+
 
 		// iterate through all the methods in the specified configuration class
 		// looking for @Bean, @ExternalBean, etc.
