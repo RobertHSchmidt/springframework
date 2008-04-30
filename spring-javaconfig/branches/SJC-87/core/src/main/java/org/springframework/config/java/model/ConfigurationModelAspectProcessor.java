@@ -20,14 +20,12 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.ReflectionUtils.MethodFilter;
 
 public class ConfigurationModelAspectProcessor {
-	public static Map<String, Pointcut> pointcuts;
-	public static Map<String, Advice> advices;
-	public static final Log logger = LogFactory.getLog(ConfigurationModelAspectProcessor.class);
+	public Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
+	public Map<String, Advice> advices = new HashMap<String, Advice>();
+	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectProcessor.class);
 
-	public static void processAnyAspects(ConfigurationModel model, final BeanFactory beanFactory) {
+	public void processAnyAspects(ConfigurationModel model, final BeanFactory beanFactory) {
 		logger.info("Processing " + model + " for any aspects");
-		pointcuts = new HashMap<String, Pointcut>();
-		advices = new HashMap<String, Advice>();
 
 		for(AspectClass aspectClass : model.getAspectClasses()) {
 			final Class<?> literalClass;

@@ -162,8 +162,9 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		}
 
 		private Object proxyIfAnyPointcutsApply(Object bean, Class<?> returnType) {
-			Map<String, Pointcut> pointcuts = ConfigurationModelAspectProcessor.pointcuts;
-			Map<String, Advice> advices = ConfigurationModelAspectProcessor.advices;
+			ConfigurationModelAspectProcessor cmap = (ConfigurationModelAspectProcessor) beanFactory.getBean(ConfigurationModelAspectProcessor.class.getName());
+			Map<String, Pointcut> pointcuts = cmap.pointcuts;
+			Map<String, Advice> advices = cmap.advices;
 
 			ProxyFactory pf = new ProxyFactory(bean);
 
