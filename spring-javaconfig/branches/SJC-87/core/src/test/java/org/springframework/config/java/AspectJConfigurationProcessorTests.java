@@ -182,6 +182,7 @@ public class AspectJConfigurationProcessorTests {
 	public static class InvalidInheritanceFromConcreteAspect extends AroundSingletonCountingAdvice { }
 
 
+	// TODO: [aop]
 	public @Test void testAspectJAroundAdviceWithImplicitScope() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundSingletonCountingAdvice.class);
 	}
@@ -194,6 +195,7 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
+	// TODO: [aop]
 	public @Test void testAspectJAroundAdviceWithImplicitScopeAndNamedPointcut() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundAdviceWithNamedPointcut.class);
 	}

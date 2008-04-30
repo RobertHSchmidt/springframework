@@ -11,6 +11,7 @@ import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.core.BeanFactoryFactory;
@@ -63,7 +64,15 @@ public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 		// render model by creating BeanDefinitions based on the model and registering them within registry
 		new BeanDefinitionRegisteringConfigurationModelRenderer(registry).render(model);
 
-		ConfigurationModelAspectProcessor.processAnyAspects(model, (BeanFactory) registry);
+		String cmapBeanName = ConfigurationModelAspectProcessor.class.getName();
+
+		if(!((SingletonBeanRegistry)registry).containsSingleton(cmapBeanName))
+			((SingletonBeanRegistry)registry).registerSingleton(cmapBeanName, new ConfigurationModelAspectProcessor());
+
+		ConfigurationModelAspectProcessor cmap =
+			(ConfigurationModelAspectProcessor) ((BeanFactory)registry).getBean(cmapBeanName);
+
+		cmap.processAnyAspects(model, (BeanFactory) registry);
 
 		// return the total number of bean definitions registered
 		return registry.getBeanDefinitionCount() - initialBeanDefinitionCount;
