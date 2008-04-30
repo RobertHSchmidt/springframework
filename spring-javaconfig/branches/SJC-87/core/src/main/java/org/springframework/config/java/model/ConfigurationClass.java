@@ -62,6 +62,8 @@ public class ConfigurationClass {
 	// problem: LinkedHashSet#equals() does not respect insertion order.
 	private ArrayList<ConfigurationClass> importedClasses = new ArrayList<ConfigurationClass>();
 
+	private ArrayList<AspectClass> importedAspects = new ArrayList<AspectClass>();
+
 	private ConfigurationClass declaringClass;
 
 	private @Configuration class Prototype { }
@@ -156,6 +158,11 @@ public class ConfigurationClass {
 		return selfAndAllImports;
 	}
 
+	public ConfigurationClass addImportedAspect(AspectClass aspectClass) {
+		importedAspects.add(aspectClass);
+		return this;
+	}
+
 	public ConfigurationClass setDeclaringClass(ConfigurationClass configurationClass) {
 		this.declaringClass = configurationClass;
 		return this;
@@ -238,6 +245,7 @@ public class ConfigurationClass {
 		result = prime * result + ((beanMethods == null) ? 0 : beanMethods.hashCode());
 		result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
 		result = prime * result + ((externalBeanMethods == null) ? 0 : externalBeanMethods.hashCode());
+		result = prime * result + ((importedAspects == null) ? 0 : importedAspects.hashCode());
 		result = prime * result + ((importedClasses == null) ? 0 : importedClasses.hashCode());
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + modifiers;
@@ -272,6 +280,12 @@ public class ConfigurationClass {
 				return false;
 		}
 		else if (!externalBeanMethods.equals(other.externalBeanMethods))
+			return false;
+		if (importedAspects == null) {
+			if (other.importedAspects != null)
+				return false;
+		}
+		else if (!importedAspects.equals(other.importedAspects))
 			return false;
 		if (importedClasses == null) {
 			if (other.importedClasses != null)

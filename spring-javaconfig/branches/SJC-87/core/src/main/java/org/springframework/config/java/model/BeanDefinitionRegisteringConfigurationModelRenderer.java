@@ -42,7 +42,22 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 		for(ConfigurationClass configClass : model.getAllConfigurationClasses())
 			renderClass(configClass);
 
+		for(AspectClass aspectClass : model.getAspectClasses())
+			renderAspectClass(aspectClass);
+
 		return registry.getBeanDefinitionCount() - initialBeanDefCount;
+	}
+
+	private void renderAspectClass(AspectClass aspectClass) {
+		String className = aspectClass.getName();
+
+		RootBeanDefinition beanDef = new RootBeanDefinition();
+		beanDef.setBeanClassName(className);
+
+		// @Aspect classes' bean names are always their fully-qualified classname
+		// don't overwrite any existing bean definition (in the case of an @Aspect @Configuration)
+		if(!registry.containsBeanDefinition(className))
+			registry.registerBeanDefinition(className, beanDef);
 	}
 
 	private void renderClass(ConfigurationClass configClass) {

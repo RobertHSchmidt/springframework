@@ -417,4 +417,8 @@ public class LegacyJavaConfigApplicationContext extends AbstractRefreshableAppli
 		return reversed;
 	}
 
+	public void addAspectClasses(Class<?>... atAspectClasses) {
+		throw new UnsupportedOperationException();
+	}
+
 }
