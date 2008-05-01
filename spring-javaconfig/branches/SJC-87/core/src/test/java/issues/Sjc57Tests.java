@@ -39,11 +39,26 @@ import org.springframework.config.java.context.JavaConfigApplicationContext;
  */
 public class Sjc57Tests {
 
-	// TODO: [aop] - note this functionality is new, never before implemented
-	@Ignore
+	@Ignore // this is just to demonstrate what Christopher was originally trying to do
 	public @Test void testReusableAspect() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(StandaloneAppConfig.class,
 				PropertyChangeTracker.class);
+		PropertyChangeTracker changeTracker = ctx.getBean(PropertyChangeTracker.class);
+
+		Service service = ctx.getBean(Service.class);
+		service.setCacheSize(2500);
+
+		// assert that aspect was applied
+		assertThat(changeTracker.propertyChangeCount, equalTo(1));
+	}
+
+	// XXX: [aop]
+	// starting with m4, this is now possible: it essentially meets Christopher's needs
+	public @Test void testReusableAspectWorkingImplementation() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
+		ctx.addConfigClasses(StandaloneAppConfig.class);
+		ctx.addAspectClasses(PropertyChangeTracker.class);
+		ctx.refresh();
 		PropertyChangeTracker changeTracker = ctx.getBean(PropertyChangeTracker.class);
 
 		Service service = ctx.getBean(Service.class);

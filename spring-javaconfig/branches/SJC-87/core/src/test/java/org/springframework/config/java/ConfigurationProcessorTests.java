@@ -182,7 +182,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// TODO: [aop, autowiring]
 	public @Test void testAutowireOnBeanDefinition() {
 		ctx = new LegacyJavaConfigApplicationContext(AroundAdviceWithNamedPointcut.class);
 
@@ -195,9 +195,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// TODO: [aop, autowiring]
 	public @Test void testAutowireOnProxiedBeanDefinition() {
-		ctx = new LegacyJavaConfigApplicationContext(ProxiesDotb.class);
+		ctx = new JavaConfigApplicationContext(ProxiesDotb.class);
 
 		ProxiesDotb.count = 0;
 		DependsOnTestBean sarah = (DependsOnTestBean) ctx.getBean("sarah");
@@ -422,7 +422,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop] JCAC needs aop support
+	// TODO: [aop, hot-swap]
 	public @Test void testHotSwappable() {
 		ctx = new LegacyJavaConfigApplicationContext(HotSwapConfiguration.class);
 
@@ -586,7 +586,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// TODO: [aop, autowiring]
 	public @Test void testAutowiringOnProxiedBean() {
 		ctx = new LegacyJavaConfigApplicationContext(AdvisedAutowiring.class);
 		Husband husband = ctx.getBean(Husband.class, "husband");
