@@ -53,10 +53,10 @@ public class SpringAopConfigurationProcessorTests {
 	public void nullOutContext() { ctx = null; }
 
 
-	// TODO: [aop]
+	// XXX: [aop]
 	public @Test void testNoAroundAdvice() throws Exception {
 		// Superclass doesn't have around advice
-		ctx = new LegacyJavaConfigApplicationContext(SingletonCountingAdvice.class);
+		ctx = new JavaConfigApplicationContext(SingletonCountingAdvice.class);
 
 		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		int newAge = 24;
@@ -66,7 +66,7 @@ public class SpringAopConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// TODO: [bean scoping, aop] looks like an AOP issue but is actually about supporting PROTOTYPE scope
 	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		ctx = new LegacyJavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
 

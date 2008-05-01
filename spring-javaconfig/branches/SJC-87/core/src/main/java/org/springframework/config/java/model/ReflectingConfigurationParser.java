@@ -78,7 +78,6 @@ public class ReflectingConfigurationParser implements ConfigurationParser {
 		}
 
 		// is this configuration also an @Aspect?
-		// TODO: [aop] allow for @Aspects({}), @Import-style
 		Aspect aspectAnno = literalClass.getAnnotation(Aspect.class);
 		if(aspectAnno != null)
 			model.add(new AspectClass(literalClass.getName(), aspectAnno));

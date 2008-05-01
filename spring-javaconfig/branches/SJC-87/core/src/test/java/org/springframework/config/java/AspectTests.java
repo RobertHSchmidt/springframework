@@ -28,12 +28,11 @@ import org.junit.Test;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.config.java.annotation.Aspects;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * This test showcases the most up-to-date techniques for using aspects within
@@ -106,14 +105,17 @@ public class AspectTests {
 	 * aspect and then use it within a given Configuration. Trouble is, that
 	 * we'll see that our 'standalone aspect' also has to be a Configuration.
 	 */
-	// TODO: [aop]
+	// XXX: [aop]
+	// XXX: [breaks-backward-compat] it once would have worked to @Import an
+	//      @Aspect @Configuration that declared no @Beans. This is no longer
+	//      supported.  See AppConfig below
 	public @Test void testAspectModularity() {
 		// instantiate a context against our AppConfig configuration. Remember
 		// that AppConfig uses the @Import annotation to pull in our
 		// 'standalone aspect' PropertyChangeTracker. Notice how
 		// PropertyChangeTracker is a Configuration? Doesn't that seem strange?
 		ConfigurableJavaConfigApplicationContext ctx;
-		ctx = new LegacyJavaConfigApplicationContext(AppConfig.class);
+		ctx = new JavaConfigApplicationContext(AppConfig.class);
 
 		// grab out the aspect/configuration bean from the context, we'll
 		// introspect it to see if the advice method executed in a moment
@@ -137,8 +139,8 @@ public class AspectTests {
 	// to mark it as @Aspect in order for any advice defined in other @Aspects
 	// to be applied to the @Bean instances defined here. In a way, I suppose
 	// this is like <aspectj:autoproxy/> in XML.
-	@Import(PropertyChangeTracker.class)
-	@Aspect @Configuration
+	@Aspects(PropertyChangeTracker.class)
+	@Configuration
 	public static class AppConfig {
 		Log log = LogFactory.getLog(AppConfig.class);
 

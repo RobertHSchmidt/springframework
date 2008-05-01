@@ -53,8 +53,10 @@ public class AspectJConfigurationProcessorTests {
 	public void nullOutContext() { ctx = null; }
 
 
-	// TODO: [aop99]
-	// TODO: this may not be a valid test. Would need prototype aspect bean and autoproxy
+	// TODO: [bean scoping, aop]
+	// this may not be a valid test. Would need prototype aspect bean and autoproxy
+	// see also: SpringAopConfigurationProcessorTests#testPerInstanceAdviceAndSharedAdvice(),
+	//           which is a duplicate of this method
 	@Ignore
 	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
 		ctx = new LegacyJavaConfigApplicationContext(PerInstanceCountingAdvice.class);
@@ -182,9 +184,15 @@ public class AspectJConfigurationProcessorTests {
 	public static class InvalidInheritanceFromConcreteAspect extends AroundSingletonCountingAdvice { }
 
 
-	// TODO: [aop]
+	// XXX: [aop]
 	public @Test void testAspectJAroundAdviceWithImplicitScope() throws Exception {
-		doTestAspectJAroundAdviceWithImplicitScope(AroundSingletonCountingAdvice.class);
+		ctx = new JavaConfigApplicationContext(AroundSingletonCountingAdvice.class);
+
+		TestBean advised1 = (TestBean) ctx.getBean("advised");
+		int newAge = 24;
+		advised1.setAge(newAge);
+		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
+		assertEquals("around", advised1.getName());
 	}
 	@Aspect
 	public static class AroundSingletonCountingAdvice extends AbstractSingletonCountingAdvice {
@@ -195,7 +203,7 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
+	// XXX: [aop]
 	public @Test void testAspectJAroundAdviceWithImplicitScopeAndNamedPointcut() throws Exception {
 		doTestAspectJAroundAdviceWithImplicitScope(AroundAdviceWithNamedPointcut.class);
 	}
@@ -220,9 +228,8 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop]
 	private void doTestAspectJAroundAdviceWithImplicitScope(Class<?> clazz) throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(clazz);
+		ctx = new JavaConfigApplicationContext(clazz);
 
 		TestBean advised1 = (TestBean) ctx.getBean("advised");
 		int newAge = 24;
@@ -232,7 +239,15 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: this test is broken as of the changes for SJC-38. Not sure why yet...
+	/*
+	 * The original intention of this test was to prove that a @Configuration
+	 * class would respect any inner @Aspect class and apply its advice automatically.
+	 * This functionality is NO LONGER SUPPORTED at this time.  Of course, if the inner
+	 * class is explicitly specified as an aspect class, it will work fine, but this is
+	 * not in alignment with the original functionality.
+	 */
+	// XXX: [aop]
+	// XXX: [breaks-backward-compat]
 	public @Test void testAspectJAroundAdviceWithAspectInnerClass() throws Exception {
 		ctx = new JavaConfigApplicationContext();
 		ctx.addConfigClass(InnerClassAdviceConfig.class);
@@ -240,12 +255,10 @@ public class AspectJConfigurationProcessorTests {
 		ctx.refresh();
 
 		TestBean advised1 = (TestBean) ctx.getBean("advised");
-		/*
 		int newAge = 24;
 		advised1.setAge(newAge);
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
 		assertEquals("around", advised1.getName());
-		*/
 	}
 	public static class InnerClassAdviceConfig extends CountingConfiguration {
 		public @Bean TestBean alice() { return new TestBean(); }
@@ -255,34 +268,10 @@ public class AspectJConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop] - this didn't work when porting to LJCAC
-	public @Test void testAspectJAroundAdviceWithAspectClassScope() throws Exception {
-		LegacyJavaConfigApplicationContext bf =
-			new LegacyJavaConfigApplicationContext(AroundAdviceClass.class, SingletonCountingAdvice.class);
-
-		/* original code
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(SingletonCountingAdvice.class);
-
-		assertFalse("Must not allow class that does not define beans or aspects",
-				configurationProcessor.processClass(InvalidAroundAdviceClassWithNoAspectAnnotation.class) > 0);
-
-		configurationProcessor.processClass(AroundAdviceClass.class);
-
-		TestBean advised1 = (TestBean) bf.getBean("advised");
-		int newAge = 24;
-		advised1.setAge(newAge);
-		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
-		assertEquals("around", advised1.getName());
-		*/
-	}
-
-
-	// TODO: [aop]
+	// XXX: [aop]
 	public @Test void testAspectJNoAroundAdvice() throws Exception {
 		// Superclass doesn't have around advice
-		ctx = new LegacyJavaConfigApplicationContext(SingletonCountingAdvice.class);
+		ctx = new JavaConfigApplicationContext(SingletonCountingAdvice.class);
 
 		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		int newAge = 24;
@@ -290,8 +279,6 @@ public class AspectJConfigurationProcessorTests {
 		assertEquals("Invocations must work on target without around advice", newAge, advised1.getAge());
 		assertEquals("tony", advised1.getName());
 	}
-
-
 	public static class SingletonCountingAdvice extends AbstractSingletonCountingAdvice { }
 
 
