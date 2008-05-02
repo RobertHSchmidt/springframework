@@ -261,7 +261,6 @@ public class AspectJConfigurationProcessorTests {
 		assertEquals("around", advised1.getName());
 	}
 	public static class InnerClassAdviceConfig extends CountingConfiguration {
-		public @Bean TestBean alice() { return new TestBean(); }
 		// This is enough to bring it in
 		@Aspect
 		static class InnerAroundAdvice extends AroundAdviceClass { }
