@@ -29,7 +29,7 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
  */
 public class ReflectiveConfigurationParser implements ConfigurationParser {
 
-	private static final Log log = LogFactory.getLog(ReflectiveConfigurationParser.class);
+	private static final Log logger = LogFactory.getLog(ReflectiveConfigurationParser.class);
 
 	private final ConfigurationModel model;
 
@@ -47,7 +47,6 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 		model.add(doParse(classLiteral, false));
 	}
 
-
 	/**
 	 *
 	 * @param literalClass
@@ -55,60 +54,17 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	 * @return
 	 */
 	private ConfigurationClass doParse(final Class<?> literalClass, boolean isDeclaringClass) {
-		final ConfigurationClass modelClass = createConfigurationClass(literalClass, isDeclaringClass);;
+		ConfigurationClass modelClass = createConfigurationClass(literalClass, isDeclaringClass);
 
-		// detect and process this configuration class's declaring class (if any)
-		Class<?> declaringLiteralClass = literalClass.getDeclaringClass();
-		if(new DeclaringClassInclusionPolicy().isCandidateForInclusion(declaringLiteralClass))
-			modelClass.setDeclaringClass(doParse(declaringLiteralClass, true));
+		processAnyDeclaringClass(literalClass, modelClass);
 
-		// does this config class import any other config classes?
-		Import importAnno = findAnnotation(literalClass, Import.class);
-		if(importAnno != null)
-			for(Class<?> classToImport : importAnno.value())
-				modelClass.addImportedClass(doParse(classToImport, false));
+		processAnyImportedConfigurations(literalClass, modelClass);
 
-		// does this configuration import any Aspect classes?
-		Aspects importedAspects = findAnnotation(literalClass, Aspects.class);
-		if(importedAspects != null) {
-			for(Class<?> aspectClass : importedAspects.value()) {
-				Aspect aspectAnno = aspectClass.getAnnotation(Aspect.class);
-				model.add(new AspectClass(aspectClass.getName(), aspectAnno));
-			}
-		}
+		processAnyImportedAspects(literalClass);
 
-		// is this configuration also an @Aspect?
-		Aspect aspectAnno = literalClass.getAnnotation(Aspect.class);
-		if(aspectAnno != null)
-			model.add(new AspectClass(literalClass.getName(), aspectAnno));
+		processSelfAsAspectIfAnnotated(literalClass);
 
-
-		// iterate through all the methods in the specified configuration class
-		// looking for @Bean, @ExternalBean, etc.
-		ReflectionUtils.doWithMethods(
-			// for each method in this class
-			literalClass,
-			// execute this callback
-			new MethodCallback() {
-				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-        			Bean bean = findAnnotation(method, Bean.class);
-        			if(bean != null)
-        				modelClass.add(new BeanMethod(method.getName(), bean, method.getModifiers()));
-
-        			ExternalBean extBean = findAnnotation(method, ExternalBean.class);
-        			if(extBean != null)
-        				modelClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
-    			}
-    		},
-    		// but exclude all Object.* methods
-    		new MethodFilter() {
-    			public boolean matches(Method method) {
-    				if(method.getDeclaringClass().equals(Object.class))
-    					return false;
-    				return true;
-    			}
-    		}
-    	);
+		processAllMethods(literalClass, modelClass);
 
 		return modelClass;
 	}
@@ -137,15 +93,87 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 		return modelClass;
 	}
 
+	private void processAnyDeclaringClass(final Class<?> literalClass, ConfigurationClass modelClass) {
+		// detect and process this configuration class's declaring class (if any)
+		Class<?> declaringLiteralClass = literalClass.getDeclaringClass();
+		if(new DeclaringClassInclusionPolicy().isCandidateForInclusion(declaringLiteralClass))
+			modelClass.setDeclaringClass(doParse(declaringLiteralClass, true));
+	}
 
+	private void processAnyImportedConfigurations(final Class<?> literalClass, ConfigurationClass modelClass) {
+		// does this config class import any other config classes?
+		Import importAnno = findAnnotation(literalClass, Import.class);
+		if(importAnno != null)
+			for(Class<?> classToImport : importAnno.value())
+				modelClass.addImportedClass(doParse(classToImport, false));
+	}
 
-}
+	private void processAnyImportedAspects(final Class<?> literalClass) {
+		// does this configuration import any Aspect classes?
+		Aspects importedAspects = findAnnotation(literalClass, Aspects.class);
+		if(importedAspects != null) {
+			for(Class<?> aspectClass : importedAspects.value()) {
+				Aspect aspectAnno = aspectClass.getAnnotation(Aspect.class);
+				model.add(new AspectClass(aspectClass.getName(), aspectAnno));
+			}
+		}
+	}
 
-class DeclaringClassInclusionPolicy {
-	public boolean isCandidateForInclusion(Class<?> declaringClass) {
-		if(declaringClass == null) return false;
-		if(declaringClass.getName().endsWith("Test")) return false;
-		if(declaringClass.getName().endsWith("Tests")) return false;
-		return true;
+	private void processSelfAsAspectIfAnnotated(final Class<?> literalClass) {
+		// is this configuration also an @Aspect?
+		Aspect aspectAnno = literalClass.getAnnotation(Aspect.class);
+		if(aspectAnno != null)
+			model.add(new AspectClass(literalClass.getName(), aspectAnno));
+	}
+
+	private void processAllMethods(final Class<?> literalClass, final ConfigurationClass modelClass) {
+		// iterate through all the methods in the specified configuration class
+		// looking for @Bean, @ExternalBean, etc.
+		ReflectionUtils.doWithMethods(
+			// for each method in this class
+			literalClass,
+			// execute this callback
+			new MethodCallback() {
+				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+        			processMethod(method, modelClass);
+    			}
+
+    		},
+    		// but exclude all Object.* methods
+    		new MethodFilter() {
+    			public boolean matches(Method method) {
+    				if(method.getDeclaringClass().equals(Object.class))
+    					return false;
+    				return true;
+    			}
+    		}
+    	);
+	}
+
+	private void processMethod(Method method, ConfigurationClass modelClass) {
+		processBeanMethod(method, modelClass);
+
+		processExternalBeanMethod(method, modelClass);
+	}
+
+	private void processExternalBeanMethod(Method method, final ConfigurationClass modelClass) {
+		ExternalBean extBean = findAnnotation(method, ExternalBean.class);
+		if(extBean != null)
+			modelClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
+	}
+
+	private void processBeanMethod(Method method, final ConfigurationClass modelClass) {
+		Bean bean = findAnnotation(method, Bean.class);
+		if(bean != null)
+			modelClass.add(new BeanMethod(method.getName(), bean, method.getModifiers()));
+	}
+
+	private static class DeclaringClassInclusionPolicy {
+		public boolean isCandidateForInclusion(Class<?> declaringClass) {
+			if(declaringClass == null) return false;
+			if(declaringClass.getName().endsWith("Test")) return false;
+			if(declaringClass.getName().endsWith("Tests")) return false;
+			return true;
+		}
 	}
 }
