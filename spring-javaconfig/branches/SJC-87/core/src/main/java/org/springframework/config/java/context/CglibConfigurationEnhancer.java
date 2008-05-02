@@ -26,7 +26,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.model.ConfigurationModelAspectProcessor;
+import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -162,7 +162,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		}
 
 		private Object proxyIfAnyPointcutsApply(Object bean, Class<?> returnType) {
-			ConfigurationModelAspectProcessor cmap = (ConfigurationModelAspectProcessor) beanFactory.getBean(ConfigurationModelAspectProcessor.class.getName());
+			ConfigurationModelAspectRegistry cmap = (ConfigurationModelAspectRegistry) beanFactory.getBean(ConfigurationModelAspectRegistry.class.getName());
 			Map<String, Pointcut> pointcuts = cmap.pointcuts;
 			Map<String, Advice> advices = cmap.advices;
 

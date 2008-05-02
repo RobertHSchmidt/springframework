@@ -27,8 +27,8 @@ import org.springframework.util.ClassUtils;
 public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 	private final List<ClassPathResource> aspectClassResources;
-	private static final String cmapBeanName = ConfigurationModelAspectProcessor.class.getName();
 	private BeanDefinitionRegisteringConfigurationModelRenderer modelRenderer;
+	private final ConfigurationModelAspectRegistry aspectRegistry;
 
 	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this(registry, new ArrayList<ClassPathResource>());
@@ -41,8 +41,10 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 		// register a bean definition for a factory that can be used when rendering declaring classes
 		registerBeanFactoryFactory(registry);
 
-		if(!((SingletonBeanRegistry)registry).containsSingleton(cmapBeanName))
-			((SingletonBeanRegistry)registry).registerSingleton(cmapBeanName, new ConfigurationModelAspectProcessor());
+		aspectRegistry = new ConfigurationModelAspectRegistry();
+		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.class.getName();
+		if(!((SingletonBeanRegistry)registry).containsSingleton(aspectRegistryBeanName))
+			((SingletonBeanRegistry)registry).registerSingleton(aspectRegistryBeanName, aspectRegistry);
 
 		modelRenderer = new BeanDefinitionRegisteringConfigurationModelRenderer(registry);
 	}
@@ -66,9 +68,7 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 
 
 	private void registerAspectsFromModel(ConfigurationModel model) {
-		ConfigurationModelAspectProcessor cmap =
-			(ConfigurationModelAspectProcessor) ((BeanFactory)getRegistry()).getBean(cmapBeanName);
-		cmap.processAnyAspects(model, (BeanFactory) getRegistry());
+		aspectRegistry.registerAspects(model, (BeanFactory) getRegistry());
 	}
 
 
