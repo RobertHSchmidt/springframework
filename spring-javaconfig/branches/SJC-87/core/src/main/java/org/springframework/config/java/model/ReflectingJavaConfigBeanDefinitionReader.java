@@ -28,55 +28,88 @@ import org.springframework.util.ClassUtils;
 public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 	private final List<Entry<ClassPathResource, Aspect>> aspectClassResources;
+	private static final String cmapBeanName = ConfigurationModelAspectProcessor.class.getName();
+	private BeanDefinitionRegisteringConfigurationModelRenderer modelRenderer;
 
 	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this(registry, new ArrayList<Entry<ClassPathResource, Aspect>>());
 	}
 
+
 	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
 			List<Entry<ClassPathResource, Aspect>> aspectClassResources) {
 		super(registry);
 		this.aspectClassResources = aspectClassResources;
-	}
-
-	public int loadBeanDefinitions(Resource configClass) throws BeanDefinitionStoreException {
-		BeanDefinitionRegistry registry = this.getRegistry();
-
-		int initialBeanDefinitionCount = registry.getBeanDefinitionCount();
-
-		// initialize a new model
-		ConfigurationModel model = new ConfigurationModel();
-
-		// add any ad-hoc aspects to the model
-		for(Entry<ClassPathResource, Aspect> entry : aspectClassResources) {
-			model.add(new AspectClass(ClassUtils.convertResourcePathToClassName(entry.getKey().getPath()), entry.getValue()));
-		}
-
-		// parse the class and populate the model using reflection
-		new ReflectingConfigurationParser(model).parse(loadClassFromResource(configClass));
-
-		// is the model valid? TODO: perhaps should go into the parse() method above
-		model.assertIsValid();
-
 		// register a bean definition for a factory that can be used when rendering declaring classes
 		registerBeanFactoryFactory(registry);
-
-		// render model by creating BeanDefinitions based on the model and registering them within registry
-		new BeanDefinitionRegisteringConfigurationModelRenderer(registry).render(model);
-
-		String cmapBeanName = ConfigurationModelAspectProcessor.class.getName();
 
 		if(!((SingletonBeanRegistry)registry).containsSingleton(cmapBeanName))
 			((SingletonBeanRegistry)registry).registerSingleton(cmapBeanName, new ConfigurationModelAspectProcessor());
 
-		ConfigurationModelAspectProcessor cmap =
-			(ConfigurationModelAspectProcessor) ((BeanFactory)registry).getBean(cmapBeanName);
-
-		cmap.processAnyAspects(model, (BeanFactory) registry);
-
-		// return the total number of bean definitions registered
-		return registry.getBeanDefinitionCount() - initialBeanDefinitionCount;
+		modelRenderer = new BeanDefinitionRegisteringConfigurationModelRenderer(registry);
 	}
+
+	@Override
+	public int loadBeanDefinitions(Resource[] configClassResources) throws BeanDefinitionStoreException {
+		ConfigurationModel model = createConfigurationModel(configClassResources);
+
+		applyAdHocAspectsToModel(model);
+
+		validateModel(model);
+
+		registerAspectsFromModel(model);
+
+		return loadBeanDefinitionsFromModel(model);
+	}
+
+	public int loadBeanDefinitions(Resource configClassResource) throws BeanDefinitionStoreException {
+		return loadBeanDefinitions(new Resource[] { configClassResource } );
+	}
+
+
+	private void registerAspectsFromModel(ConfigurationModel model) {
+		ConfigurationModelAspectProcessor cmap =
+			(ConfigurationModelAspectProcessor) ((BeanFactory)getRegistry()).getBean(cmapBeanName);
+		cmap.processAnyAspects(model, (BeanFactory) getRegistry());
+	}
+
+
+	/**
+	 * @param model
+	 * @return number of bean definitions registered
+	 */
+	private int loadBeanDefinitionsFromModel(ConfigurationModel model) {
+		return modelRenderer.render(model);
+	}
+
+
+	private void validateModel(ConfigurationModel model) {
+		model.assertIsValid();
+	}
+
+	/**
+	 * Create an abstract {@link ConfigurationModel} from a set of {@link Configuration @Configuration}
+	 * classes.  Classes are {@link Resource} objects rather than class literals in order to interoperate
+	 * with tooling (Spring IDE) effectively.
+	 * @param configClassResources set of Configuration class resources
+	 * @return configuration model representing logical structure of configuration metadata within
+	 * those classes
+	 */
+	private ConfigurationModel createConfigurationModel(Resource... configClassResources) {
+		ConfigurationModel model = new ConfigurationModel();
+		ReflectingConfigurationParser parser = new ReflectingConfigurationParser(model);
+		for(Resource configClassResource : configClassResources)
+			parser.parse(loadClassFromResource(configClassResource));
+		return model;
+	}
+
+	private void applyAdHocAspectsToModel(ConfigurationModel model) {
+		// add any ad-hoc aspects to the model
+		for(Entry<ClassPathResource, Aspect> entry : aspectClassResources) {
+			model.add(new AspectClass(ClassUtils.convertResourcePathToClassName(entry.getKey().getPath()), entry.getValue()));
+		}
+	}
+
 
 	// TODO: document this extensively.  the declaring class logic is quite complex, potentially confusing right now.
 	private void registerBeanFactoryFactory(BeanDefinitionRegistry registry) {

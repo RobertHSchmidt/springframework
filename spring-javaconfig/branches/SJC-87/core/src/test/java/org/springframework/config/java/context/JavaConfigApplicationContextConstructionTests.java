@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.config.java.complex.ComplexConfiguration;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.testing.Company;
 import org.springframework.config.java.testing.SimpleConfiguration;
 import org.springframework.config.java.testing.Worker;
@@ -69,10 +70,9 @@ public final class JavaConfigApplicationContextConstructionTests {
 		assertBeanDefinitionCount(ctx, 5);
 	}
 
-	// strange to think someone would want to do this, but it's legal
-	// nonetheless
-	@Test
-	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsLegal() {
+	// XXX: [breaks-backward-compat] this used to be legal, now it's not
+	@Test(expected = MalformedJavaConfigurationException.class)
+	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsIllegal() {
 		ctx = new JavaConfigApplicationContext();
 		ctx.refresh();
 		assertBeanDefinitionCount(ctx, 0);
