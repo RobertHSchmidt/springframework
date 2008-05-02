@@ -19,7 +19,7 @@ import org.springframework.util.ClassUtils;
  * method.
  * 
  * @see AsmJavaConfigBeanDefinitionReader
- * @see ReflectingJavaConfigBeanDefinitionReader
+ * @see ReflectiveJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */

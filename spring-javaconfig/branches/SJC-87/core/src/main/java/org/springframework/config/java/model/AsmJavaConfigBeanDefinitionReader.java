@@ -26,7 +26,7 @@ import org.springframework.core.io.Resource;
  * reflection. See SJC-87.
  *
  * @see LegacyReflectingJavaConfigBeanDefinitionReader
- * @see ReflectingJavaConfigBeanDefinitionReader
+ * @see ReflectiveJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */

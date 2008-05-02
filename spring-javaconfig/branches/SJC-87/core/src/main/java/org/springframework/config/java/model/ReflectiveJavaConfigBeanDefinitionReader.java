@@ -25,18 +25,18 @@ import org.springframework.util.ClassUtils;
  *
  * @author Chris Beams
  */
-public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
+public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 	private final List<Entry<ClassPathResource, Aspect>> aspectClassResources;
 	private static final String cmapBeanName = ConfigurationModelAspectProcessor.class.getName();
 	private BeanDefinitionRegisteringConfigurationModelRenderer modelRenderer;
 
-	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
+	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this(registry, new ArrayList<Entry<ClassPathResource, Aspect>>());
 	}
 
 
-	public ReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
+	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
 			List<Entry<ClassPathResource, Aspect>> aspectClassResources) {
 		super(registry);
 		this.aspectClassResources = aspectClassResources;
@@ -97,7 +97,7 @@ public class ReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 	 */
 	private ConfigurationModel createConfigurationModel(Resource... configClassResources) {
 		ConfigurationModel model = new ConfigurationModel();
-		ReflectingConfigurationParser parser = new ReflectingConfigurationParser(model);
+		ReflectiveConfigurationParser parser = new ReflectiveConfigurationParser(model);
 		for(Resource configClassResource : configClassResources)
 			parser.parse(loadClassFromResource(configClassResource));
 		return model;

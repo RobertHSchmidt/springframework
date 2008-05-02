@@ -12,7 +12,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.model.ReflectingJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
@@ -85,7 +85,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		BeanDefinitionReader reader = new ReflectingJavaConfigBeanDefinitionReader(beanFactory, aspectClassResources);
+		BeanDefinitionReader reader = new ReflectiveJavaConfigBeanDefinitionReader(beanFactory, aspectClassResources);
 		reader.loadBeanDefinitions(configClassResources.toArray(new Resource[configClassResources.size()]));
 	}
 

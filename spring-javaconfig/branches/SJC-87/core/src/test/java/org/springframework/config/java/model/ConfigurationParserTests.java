@@ -340,7 +340,7 @@ public abstract class ConfigurationParserTests {
 	public static class ReflectingConfigurationParserTests extends ConfigurationParserTests {
 		@Override
 		protected ConfigurationParser newParser(ConfigurationModel model) {
-			return new ReflectingConfigurationParser(model);
+			return new ReflectiveConfigurationParser(model);
 		}
 	}
 
