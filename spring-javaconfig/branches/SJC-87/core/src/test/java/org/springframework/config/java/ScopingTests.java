@@ -47,10 +47,10 @@ public class ScopingTests {
 	private CustomScope customScope;
 	private ConfigurableJavaConfigApplicationContext ctx;
 
+	// TODO: [@ScopedProxy]
 	@Before
 	public void setUp() throws Exception {
 		customScope = new CustomScope();
-		// TODO: swap for JCAC (see todos below)
 		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {

@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
  * re-implementing a simplified version of the context.  This will be swapped
@@ -85,8 +86,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
 		BeanDefinitionReader reader = new ReflectingJavaConfigBeanDefinitionReader(beanFactory, aspectClassResources);
-		for(ClassPathResource configClassResource : configClassResources)
-			reader.loadBeanDefinitions(configClassResource);
+		reader.loadBeanDefinitions(configClassResources.toArray(new Resource[configClassResources.size()]));
 	}
 
 	@Override
