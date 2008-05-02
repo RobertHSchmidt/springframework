@@ -107,7 +107,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	public void addAspectClasses(Class<?>... classes) {
-		assertOpenForConfiguration("addAspects");
+		assertOpenForConfiguration("addAspectClasses");
 		for (Class<?> aspectClass : classes)
 			addAspectClassAsResource(aspectClass.getName());
 	}
