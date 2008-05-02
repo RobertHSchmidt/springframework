@@ -7,13 +7,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.core.BeanFactoryFactory;
+import org.springframework.core.annotation.AnnotationUtils;
 
 /**
  * Renders a given {@link ConfigurationModel} as bean definitions to be
@@ -80,19 +82,21 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 			beanDef.setFactoryBeanName(configClassName);
 			beanDef.setFactoryMethodName(beanMethod.getName());
 
-			// consider autowire metadata TODO: also consider @Bean-level autowire settings
-			Autowire defaultAutowire = configClass.getMetadata().defaultAutowire();
-			if(defaultAutowire != Autowire.INHERITED)
-				beanDef.setAutowireMode(defaultAutowire.value());
+			// consider autowiring
+			if(beanMethod.getMetadata().autowire() != AnnotationUtils.getDefaultValue(Bean.class, "autowire"))
+				beanDef.setAutowireMode(beanMethod.getMetadata().autowire().value());
+			else
+				if(configClass.getMetadata().defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
+					beanDef.setAutowireMode(configClass.getMetadata().defaultAutowire().value());
 
 			// consider aliases
 			for(String alias : beanMethod.getMetadata().aliases())
 				// TODO: need to calculate bean name here, based on any naming strategy in the mix
 				registry.registerAlias(beanMethod.getName(), alias);
 
-
 			if(beanMethod.getMetadata().primary() == Primary.TRUE)
 				beanDef.setPrimary(true);
+
 			// TODO: plug in NamingStrategy here
 			registry.registerBeanDefinition(beanMethod.getName(), beanDef);
 		}

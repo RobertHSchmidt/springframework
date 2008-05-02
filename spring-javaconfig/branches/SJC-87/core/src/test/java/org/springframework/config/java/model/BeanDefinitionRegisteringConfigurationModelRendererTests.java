@@ -107,7 +107,10 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		verify(registry);
 	}
 
-	public @Test void renderWithAutowireByType() {
+	/*
+	 * Tests @Configuration(defaultAutowire=Autowire.BY_TYPE)
+	 */
+	public @Test void renderWithDefaultAutowireByType() {
 		String configClassName = "com.acme.OrderConfig";
 		String beanName = "order";
 
@@ -117,6 +120,50 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		Configuration metadata = extractClassAnnotation(Configuration.class, Prototype.class);
 
 		model.add(new ConfigurationClass(configClassName, metadata).add(new BeanMethod(beanName)));
+		model.assertIsValid();
+
+		// encode expectations
+		expect(registry.getBeanDefinitionCount()).andReturn(0);
+
+		// expect the registration of our Configuration class above
+		RootBeanDefinition configBeanDef = new RootBeanDefinition();
+		configBeanDef.setBeanClassName(configClassName);
+		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+		registry.registerBeanDefinition(configClassName, configBeanDef);
+		expectLastCall();
+
+		// expect the registration of the @Bean method above
+		RootBeanDefinition rbd = new RootBeanDefinition();
+		rbd.setFactoryBeanName(configClassName);
+		rbd.setFactoryMethodName(beanName);
+		rbd.setAutowireMode(AUTOWIRE_BY_TYPE);
+		registry.registerBeanDefinition(beanName, rbd);
+		expectLastCall();
+
+		expect(registry.getBeanDefinitionCount()).andReturn(2);
+
+		replay(registry);
+
+		// execute assertions and verifications
+		assertEquals(2, renderer.render(model));
+
+		verify(registry);
+	}
+
+	/*
+	 * Tests @Bean(autowire=Autowire.BY_TYPE)
+	 */
+	public @Test void renderWithBeanAutowireByType() {
+		String configClassName = "com.acme.OrderConfig";
+		String beanName = "order";
+
+		// create a simple configuration model
+		Bean metadata = AnnotationExtractionUtils.extractMethodAnnotation(Bean.class, new MethodAnnotationPrototype() {
+			@Bean(autowire=Autowire.BY_TYPE)
+			public void targetMethod() { }
+		}.getClass());
+
+		model.add(new ConfigurationClass(configClassName).add(new BeanMethod(beanName, metadata)));
 		model.assertIsValid();
 
 		// encode expectations

@@ -182,9 +182,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop, autowiring]
+	// XXX: [autowiring, aop]
 	public @Test void testAutowireOnBeanDefinition() {
-		ctx = new LegacyJavaConfigApplicationContext(AroundAdviceWithNamedPointcut.class);
+		ctx = new JavaConfigApplicationContext(AroundAdviceWithNamedPointcut.class);
 
 		ctx.getBean("dotb");
 		DependsOnTestBean dotb1 = (DependsOnTestBean) ctx.getBean("dotb");
@@ -195,7 +195,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop, autowiring]
+	// TODO: [autowiring, aop]
 	public @Test void testAutowireOnProxiedBeanDefinition() {
 		ctx = new JavaConfigApplicationContext(ProxiesDotb.class);
 
@@ -473,7 +473,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [hiding]
+	// TODO: [hiding, autowiring]
 	public @Test void testEffectOfHidingOnAutowire() {
 		ctx = new LegacyJavaConfigApplicationContext(AutowiringConfiguration.class);
 
@@ -489,7 +489,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [hiding]
+	// TODO: [hiding, autowiring]
 	public @Test void testHiddenBeansDoNotConfuseAutowireByType() {
 		ctx = new LegacyJavaConfigApplicationContext(AutowiringConfigurationWithNonHiddenWinner.class);
 
@@ -512,11 +512,11 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [general compatibility]
+	// XXX: [autowiring]
 	@Test(expected=UnsatisfiedDependencyException.class)
 	public void testAutowireAmbiguityIsRejected() {
 		try {
-			ctx = new LegacyJavaConfigApplicationContext(InvalidAutowiringConfigurationWithAmbiguity.class);
+			ctx = new JavaConfigApplicationContext(InvalidAutowiringConfigurationWithAmbiguity.class);
 			ctx.getBean("autowireCandidate");
 		}
 		catch (UnsatisfiedDependencyException ex) {
