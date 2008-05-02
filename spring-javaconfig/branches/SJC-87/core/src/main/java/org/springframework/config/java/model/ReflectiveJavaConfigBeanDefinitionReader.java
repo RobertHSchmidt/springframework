@@ -4,7 +4,6 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.BeanMetadataAttribute;
@@ -27,17 +26,16 @@ import org.springframework.util.ClassUtils;
  */
 public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
-	private final List<Entry<ClassPathResource, Aspect>> aspectClassResources;
+	private final List<ClassPathResource> aspectClassResources;
 	private static final String cmapBeanName = ConfigurationModelAspectProcessor.class.getName();
 	private BeanDefinitionRegisteringConfigurationModelRenderer modelRenderer;
 
 	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
-		this(registry, new ArrayList<Entry<ClassPathResource, Aspect>>());
+		this(registry, new ArrayList<ClassPathResource>());
 	}
 
 
-	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
-			List<Entry<ClassPathResource, Aspect>> aspectClassResources) {
+	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, ArrayList<ClassPathResource> aspectClassResources) {
 		super(registry);
 		this.aspectClassResources = aspectClassResources;
 		// register a bean definition for a factory that can be used when rendering declaring classes
@@ -105,8 +103,10 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 
 	private void applyAdHocAspectsToModel(ConfigurationModel model) {
 		// add any ad-hoc aspects to the model
-		for(Entry<ClassPathResource, Aspect> entry : aspectClassResources) {
-			model.add(new AspectClass(ClassUtils.convertResourcePathToClassName(entry.getKey().getPath()), entry.getValue()));
+		for(ClassPathResource aspectClassResource : aspectClassResources) {
+			Class<?> aspectClass = loadClassFromResource(aspectClassResource);
+			Aspect metadata = aspectClass.getAnnotation(Aspect.class); // may be null
+			model.add(new AspectClass(aspectClass.getName(), metadata));
 		}
 	}
 
