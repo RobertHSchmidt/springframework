@@ -24,14 +24,14 @@ import org.springframework.config.java.annotation.Primary;
  */
 public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 
-	private BeanDefinitionRegisteringConfigurationModelRenderer renderer;
+	private ConfigurationModelBeanDefinitionReader renderer;
 	private BeanDefinitionRegistry registry;
 	private ConfigurationModel model;
 
 	@Before
 	public void setUp() {
 		registry = createMock(BeanDefinitionRegistry.class);
-		renderer = new BeanDefinitionRegisteringConfigurationModelRenderer(registry);
+		renderer = new ConfigurationModelBeanDefinitionReader(registry);
 		model = new ConfigurationModel();
 	}
 
@@ -63,7 +63,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		replay(registry);
 
 		// execute assertions and verifications
-		assertEquals(2, renderer.render(model));
+		assertEquals(2, renderer.loadBeanDefinitions(model));
 
 		verify(registry);
 	}
@@ -102,7 +102,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		replay(registry);
 
 		// execute assertions and verifications
-		assertEquals(2, renderer.render(model));
+		assertEquals(2, renderer.loadBeanDefinitions(model));
 
 		verify(registry);
 	}
@@ -145,7 +145,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		replay(registry);
 
 		// execute assertions and verifications
-		assertEquals(2, renderer.render(model));
+		assertEquals(2, renderer.loadBeanDefinitions(model));
 
 		verify(registry);
 	}
@@ -189,7 +189,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		replay(registry);
 
 		// execute assertions and verifications
-		assertEquals(2, renderer.render(model));
+		assertEquals(2, renderer.loadBeanDefinitions(model));
 
 		verify(registry);
 	}
@@ -233,7 +233,7 @@ public class BeanDefinitionRegisteringConfigurationModelRendererTests {
 		replay(registry);
 
 		// execute assertions and verifications
-		assertEquals(2, renderer.render(model));
+		assertEquals(2, renderer.loadBeanDefinitions(model));
 
 		verify(registry);
 	}
