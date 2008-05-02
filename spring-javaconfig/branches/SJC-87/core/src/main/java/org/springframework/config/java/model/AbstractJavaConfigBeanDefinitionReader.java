@@ -17,16 +17,12 @@ package org.springframework.config.java.model;
 
 import java.util.List;
 
-import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.core.BeanFactoryFactory;
-import org.springframework.config.java.core.Constants;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -42,6 +38,7 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 
 	protected AbstractJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, List<ClassPathResource> aspectClassResources) {
 		super(registry);
+
 		this.aspectClassResources = aspectClassResources;
 
 		initializeDeclaringClassBeanFactoryFactory();
@@ -94,14 +91,7 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 
 	// TODO: document this extensively.  the declaring class logic is quite complex, potentially confusing right now.
 	private void initializeDeclaringClassBeanFactoryFactory() {
-		RootBeanDefinition bff = new RootBeanDefinition();
-		String factoryName = BeanFactoryFactory.class.getName();
-		bff.setBeanClassName(factoryName);
-		bff.setFactoryMethodName(BeanFactoryFactory.FACTORY_METHOD_NAME);
-		bff.setScope(BeanDefinition.SCOPE_PROTOTYPE);
-		bff.addMetadataAttribute(new BeanMetadataAttribute(Constants.JAVA_CONFIG_IGNORE, true));
-
-		this.getRegistry().registerBeanDefinition(factoryName, bff);
+		this.getRegistry().registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
 	}
 
 	private ConfigurationModelBeanDefinitionReader initializeConfigurationModelBeanDefinitionReader() {
