@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -20,16 +21,18 @@ import org.springframework.core.annotation.AnnotationUtils;
 /**
  * Renders a given {@link ConfigurationModel} as bean definitions to be
  * registered on-the-fly with a given {@link BeanDefinitionRegistry}.
+ * Modeled after the {@link BeanDefinitionReader} hierarchy, but could not extend
+ * directly as {@link ConfigurationModel} is not a {@link Resource}
  *
  * @author Chris Beams
  */
-public class BeanDefinitionRegisteringConfigurationModelRenderer {
+public class ConfigurationModelBeanDefinitionReader {
 
-	private static final Log log = LogFactory.getLog(BeanDefinitionRegisteringConfigurationModelRenderer.class);
+	private static final Log logger = LogFactory.getLog(ConfigurationModelBeanDefinitionReader.class);
 
 	private final BeanDefinitionRegistry registry;
 
-	public BeanDefinitionRegisteringConfigurationModelRenderer(BeanDefinitionRegistry registry) {
+	public ConfigurationModelBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this.registry = registry;
 	}
 
@@ -38,19 +41,62 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 	 * @param model
 	 * @return number of bean definitions generated
 	 */
-	public int render(ConfigurationModel model) {
+	public int loadBeanDefinitions(ConfigurationModel model) {
 		int initialBeanDefCount = registry.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getAllConfigurationClasses())
-			renderClass(configClass);
+			loadBeanDefinitionsForConfigurationClass(configClass);
 
 		for(AspectClass aspectClass : model.getAspectClasses())
-			renderAspectClass(aspectClass);
+			loadBeanDefinitionsForAspectClass(aspectClass);
 
 		return registry.getBeanDefinitionCount() - initialBeanDefCount;
 	}
 
-	private void renderAspectClass(AspectClass aspectClass) {
+	private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
+
+		loadBeanDefinitionsForDeclaringClass(configClass.getDeclaringClass());
+
+		String configClassName = configClass.getName();
+
+		RootBeanDefinition configBeanDef = new RootBeanDefinition();
+		configBeanDef.setBeanClassName(configClassName);
+		// mark this bean def with metadata indicating that it is a configuration bean
+		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+
+		// @Configuration classes' bean names are always their fully-qualified classname
+		registry.registerBeanDefinition(configClassName, configBeanDef);
+
+		for(BeanMethod beanMethod : configClass.getBeanMethods())
+			loadBeanDefinitionsForBeanMethod(configClass, configClassName, beanMethod);
+	}
+
+	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass, String configClassName,
+			BeanMethod beanMethod) {
+		RootBeanDefinition beanDef = new RootBeanDefinition();
+		beanDef.setFactoryBeanName(configClassName);
+		beanDef.setFactoryMethodName(beanMethod.getName());
+
+		// consider autowiring
+		if(beanMethod.getMetadata().autowire() != AnnotationUtils.getDefaultValue(Bean.class, "autowire"))
+			beanDef.setAutowireMode(beanMethod.getMetadata().autowire().value());
+		else
+			if(configClass.getMetadata().defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
+				beanDef.setAutowireMode(configClass.getMetadata().defaultAutowire().value());
+
+		// consider aliases
+		for(String alias : beanMethod.getMetadata().aliases())
+			// TODO: need to calculate bean name here, based on any naming strategy in the mix
+			registry.registerAlias(beanMethod.getName(), alias);
+
+		if(beanMethod.getMetadata().primary() == Primary.TRUE)
+			beanDef.setPrimary(true);
+
+		// TODO: plug in NamingStrategy here
+		registry.registerBeanDefinition(beanMethod.getName(), beanDef);
+	}
+
+	private void loadBeanDefinitionsForAspectClass(AspectClass aspectClass) {
 		String className = aspectClass.getName();
 
 		RootBeanDefinition beanDef = new RootBeanDefinition();
@@ -62,50 +108,11 @@ public class BeanDefinitionRegisteringConfigurationModelRenderer {
 			registry.registerBeanDefinition(className, beanDef);
 	}
 
-	private void renderClass(ConfigurationClass configClass) {
+	private void loadBeanDefinitionsForDeclaringClass(ConfigurationClass declaringClass) {
+		if(declaringClass == null)
+			return;
 
-		renderDeclaringClass(configClass.getDeclaringClass());
-
-		String configClassName = configClass.getName();
-
-		RootBeanDefinition configBeanDef = new RootBeanDefinition();
-		configBeanDef.setBeanClassName(configClassName);
-		// mark this bean def with metadata indicating that it is a configuration bean
-		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-
-
-		// @Configuration classes' bean names are always their fully-qualified classname
-		registry.registerBeanDefinition(configClassName, configBeanDef);
-
-		for(BeanMethod beanMethod : configClass.getBeanMethods()) {
-			RootBeanDefinition beanDef = new RootBeanDefinition();
-			beanDef.setFactoryBeanName(configClassName);
-			beanDef.setFactoryMethodName(beanMethod.getName());
-
-			// consider autowiring
-			if(beanMethod.getMetadata().autowire() != AnnotationUtils.getDefaultValue(Bean.class, "autowire"))
-				beanDef.setAutowireMode(beanMethod.getMetadata().autowire().value());
-			else
-				if(configClass.getMetadata().defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
-					beanDef.setAutowireMode(configClass.getMetadata().defaultAutowire().value());
-
-			// consider aliases
-			for(String alias : beanMethod.getMetadata().aliases())
-				// TODO: need to calculate bean name here, based on any naming strategy in the mix
-				registry.registerAlias(beanMethod.getName(), alias);
-
-			if(beanMethod.getMetadata().primary() == Primary.TRUE)
-				beanDef.setPrimary(true);
-
-			// TODO: plug in NamingStrategy here
-			registry.registerBeanDefinition(beanMethod.getName(), beanDef);
-		}
-	}
-
-	private void renderDeclaringClass(ConfigurationClass declaringClass) {
-		if(declaringClass == null) return;
-
-		log.info(format("Found declaring class [%s] on configClass [%s]", declaringClass, declaringClass));
+		logger.info(format("Found declaring class [%s] on configClass [%s]", declaringClass, declaringClass));
 
 		BeanFactory parentBF;
 		String factoryName = BeanFactoryFactory.class.getName();

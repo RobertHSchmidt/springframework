@@ -17,27 +17,29 @@ import org.springframework.util.ClassUtils;
  * order to call its
  * {@link ConfigurationProcessor#processConfigurationBean(String, Class) processConfigurationBean}
  * method.
- * 
+ *
  * @see AsmJavaConfigBeanDefinitionReader
  * @see ReflectiveJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */
-public class LegacyReflectingJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
+public class LegacyReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
 	private final ConfigurationProcessor processor;
 	private final String configurationBeanName;
 
-	public LegacyReflectingJavaConfigBeanDefinitionReader(ConfigurationProcessor processor, String configurationBeanName) {
+	public LegacyReflectiveJavaConfigBeanDefinitionReader(ConfigurationProcessor processor, String configurationBeanName) {
 		super(new DefaultListableBeanFactory());
 		this.processor = processor;
 		this.configurationBeanName = configurationBeanName;
 	}
 
-	public LegacyReflectingJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
+	public LegacyReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
 		this(new ConfigurationProcessor((ConfigurableListableBeanFactory)registry), configurationBeanName);
 	}
 
+
+	@Override
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
 		int initialBeanDefinitionCount = this.getRegistry().getBeanDefinitionCount();
 		try {
@@ -49,5 +51,23 @@ public class LegacyReflectingJavaConfigBeanDefinitionReader extends AbstractJava
 		}
 
 		return this.getRegistry().getBeanDefinitionCount() - initialBeanDefinitionCount;
+	}
+
+	/**
+	 * Implemented for compatibility with template base class
+	 * @throws UnsupportedOperationException
+	 */
+	@Override
+	protected void applyAdHocAspectsToModel(ConfigurationModel model) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Implemented for compatibility with template base class
+	 * @throws UnsupportedOperationException
+	 */
+	@Override
+	protected ConfigurationModel createConfigurationModel(Resource... configClassResources) {
+		throw new UnsupportedOperationException();
 	}
 }

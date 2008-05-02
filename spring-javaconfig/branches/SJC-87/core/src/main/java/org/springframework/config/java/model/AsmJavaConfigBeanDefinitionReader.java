@@ -15,42 +15,29 @@
  */
 package org.springframework.config.java.model;
 
+import java.util.List;
+
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.core.io.ClassPathResource;
+
 // import issues.MyConfig;
 
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.core.io.Resource;
 
 /**
  * Will eventually be an ASM-based implementation to be swapped in during the switchover from
- * reflection. See SJC-87.
+ * reflection. See SJC-87.  Currently just a placeholder, abstract to avoid being forced
+ * to implement methods from the base class.  Will become concrete during actual implementation
  *
- * @see LegacyReflectingJavaConfigBeanDefinitionReader
  * @see ReflectiveJavaConfigBeanDefinitionReader
+ * @see LegacyReflectiveJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */
-public class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
+public abstract class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
-	protected AsmJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
-		super(registry);
-	}
-
-	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
-		ConfigurationModel model = new ConfigurationModel();
-
-		ConfigurationClass configClass = new ConfigurationClass("c");
-
-		BeanMethod beanMethod = new BeanMethod("username");
-		configClass.add(beanMethod);
-
-		model.add(configClass);
-
-		BeanDefinitionRegisteringConfigurationModelRenderer modelToBeanGen =
-			new BeanDefinitionRegisteringConfigurationModelRenderer(this.getRegistry());
-
-
-		return modelToBeanGen.render(model);
+	protected AsmJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
+			List<ClassPathResource> aspectClassResources) {
+		super(registry, aspectClassResources);
 	}
 
 }

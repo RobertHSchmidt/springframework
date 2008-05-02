@@ -22,7 +22,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
-import org.springframework.config.java.model.LegacyReflectingJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.model.LegacyReflectiveJavaConfigBeanDefinitionReader;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -147,7 +147,7 @@ ApplicationContextAware {
 
 		processor.afterPropertiesSet();
 
-		return new LegacyReflectingJavaConfigBeanDefinitionReader(processor, beanName);
+		return new LegacyReflectiveJavaConfigBeanDefinitionReader(processor, beanName);
 	}
 
 }
