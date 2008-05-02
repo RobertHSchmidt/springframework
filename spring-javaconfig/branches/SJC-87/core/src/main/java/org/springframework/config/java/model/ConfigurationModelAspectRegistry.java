@@ -15,17 +15,31 @@ import org.springframework.aop.aspectj.annotation.BeanFactoryAspectInstanceFacto
 import org.springframework.aop.aspectj.annotation.MetadataAwareAspectInstanceFactory;
 import org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.config.java.annotation.Bean;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.ReflectionUtils.MethodFilter;
 
-public class ConfigurationModelAspectProcessor {
-	public Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
-	public Map<String, Advice> advices = new HashMap<String, Advice>();
-	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectProcessor.class);
+/**
+ * @author Chris Beams
+ */
+public class ConfigurationModelAspectRegistry {
+	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectRegistry.class);
 
-	public void processAnyAspects(ConfigurationModel model, final BeanFactory beanFactory) {
-		logger.info("Processing " + model + " for any aspects");
+	public Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
+
+	public Map<String, Advice> advices = new HashMap<String, Advice>();
+
+	/**
+	 * Finds any aspects specified within <var>model</var> and registers associated pointcuts
+	 * and advice such that they can be used during runtime processing within enhanced {@link Bean @Bean}
+	 * methods.
+	 *
+	 * @param model
+	 * @param beanFactory
+	 */
+	public void registerAspects(ConfigurationModel model, final BeanFactory beanFactory) {
+		logger.info("Registering aspects from " + model);
 
 		for(AspectClass aspectClass : model.getAspectClasses()) {
 			final Class<?> literalClass;
@@ -36,10 +50,7 @@ public class ConfigurationModelAspectProcessor {
 
 			final AspectJAdvisorFactory advisorFactory = new ReflectiveAspectJAdvisorFactory();
 
-    		ReflectionUtils.doWithMethods(
-    			// for each method in this class
-    			literalClass,
-    			// execute this callback
+    		ReflectionUtils.doWithMethods(literalClass,
     			new MethodCallback() {
     				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
         				// examine this method to see if it's an advice method
@@ -59,7 +70,7 @@ public class ConfigurationModelAspectProcessor {
                 		}
         			}
         		},
-        		// but exclude all Object.* methods
+        		// exclude all Object.* methods
         		new MethodFilter() {
         			public boolean matches(Method method) {
         				if(method.getDeclaringClass().equals(Object.class))
@@ -69,51 +80,6 @@ public class ConfigurationModelAspectProcessor {
         		}
         	);
 		}
-		/*
-
-		final AspectJAdvisorFactory advisorFactory = new ReflectiveAspectJAdvisorFactory();
-		// note: when porting to an ASM-based implementation, using this reflective aj
-		// factory is going to pose a problem.  There is no ASM-based impl, and even the
-		// interface expects class literals.  Should get in touch w/ Adrian et al on this
-		final boolean isAtAspectClass = advisorFactory.isAspect(literalClass);
-		if(isAtAspectClass)
-			advisorFactory.validate(literalClass); // TODO: catch exceptions
-
-		ReflectionUtils.doWithMethods(
-			// for each method in this class
-			literalClass,
-			// execute this callback
-			new MethodCallback() {
-				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-        			if(isAtAspectClass) {
-        				// examine this method to see if it's an advice method
-        				String aspectName = "aspectNamePlaceholder";
-        				MetadataAwareAspectInstanceFactory aif = new SimpleMetadataAwareAspectInstanceFactory(literalClass, aspectName);
-        				Advisor pa = advisorFactory.getAdvisor(method, aif, 0, aspectName);
-                		if (pa != null && (pa instanceof PointcutAdvisor)) {
-                			String adviceName = method.getName();
-                			Advice advice = pa.getAdvice();
-                			// advice may return null in the case of named pointcuts (@Pointcut)
-                			if (advice != null) {
-                				Pointcut pointcut = ((PointcutAdvisor) pa).getPointcut();
-                				PointcutsAndAspectsHolder.pointcuts.put(adviceName, pointcut);
-                				PointcutsAndAspectsHolder.advice.put(adviceName, advice);
-                			}
-                		}
-        			}
-    			}
-    		},
-    		// but exclude all Object.* methods
-    		new MethodFilter() {
-    			public boolean matches(Method method) {
-    				if(method.getDeclaringClass().equals(Object.class))
-    					return false;
-    				return true;
-    			}
-    		}
-    	);
-
-		 */
 	}
 
 }
