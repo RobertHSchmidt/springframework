@@ -5,9 +5,7 @@ import static org.springframework.util.ClassUtils.convertClassNameToResourcePath
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
@@ -33,7 +31,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	// TODO: should be LinkedHashSet?
 	private ArrayList<ClassPathResource> configClassResources = new ArrayList<ClassPathResource>();
 
-	private ArrayList<Entry<ClassPathResource, Aspect>> aspectClassResources = new ArrayList<Entry<ClassPathResource, Aspect>>();
+	private ArrayList<ClassPathResource> aspectClassResources = new ArrayList<ClassPathResource>();
 
 	/** context is configurable until refresh() is called */
 	private boolean openForConfiguration = true;
@@ -110,10 +108,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	public void addAspectClasses(Class<?>... classes) {
 		assertOpenForConfiguration("addAspects");
-		for (Class<?> aspectClass : classes) {
-			Aspect aspectAnnotation = aspectClass.getAnnotation(Aspect.class);
-			addAspectClassAsResource(aspectClass.getName(), aspectAnnotation);
-		}
+		for (Class<?> aspectClass : classes)
+			addAspectClassAsResource(aspectClass.getName());
 	}
 
 	private void assertOpenForConfiguration(String attemptedMethod) {
@@ -129,32 +125,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		configClassResources.add(new ClassPathResource(convertClassNameToResourcePath(fqClassName)));
 	}
 
-	private void addAspectClassAsResource(String fqClassName, Aspect metadata) {
-		aspectClassResources.add(new MyEntry<ClassPathResource, Aspect>(new ClassPathResource(convertClassNameToResourcePath(fqClassName)), metadata));
-	}
-
-	private static class MyEntry<K, V> implements Entry<K, V> {
-
-		private final K key;
-		private final V value;
-
-		public MyEntry(K key, V value) {
-			this.key = key;
-			this.value = value;
-		}
-
-		public K getKey() {
-			return key;
-		}
-
-		public V getValue() {
-			return value;
-		}
-
-		public V setValue(Object value) {
-			throw new UnsupportedOperationException();
-		}
-
+	private void addAspectClassAsResource(String fqClassName) {
+		aspectClassResources.add(new ClassPathResource(convertClassNameToResourcePath(fqClassName)));
 	}
 
 	@Deprecated
