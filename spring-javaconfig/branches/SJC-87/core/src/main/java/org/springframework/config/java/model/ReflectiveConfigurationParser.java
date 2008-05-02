@@ -27,13 +27,13 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
  *
  * @author Chris Beams
  */
-public class ReflectingConfigurationParser implements ConfigurationParser {
+public class ReflectiveConfigurationParser implements ConfigurationParser {
 
-	private static final Log log = LogFactory.getLog(ReflectingConfigurationParser.class);
+	private static final Log log = LogFactory.getLog(ReflectiveConfigurationParser.class);
 
 	private final ConfigurationModel model;
 
-	public ReflectingConfigurationParser(ConfigurationModel model) {
+	public ReflectiveConfigurationParser(ConfigurationModel model) {
 		this.model = model;
 	}
 
