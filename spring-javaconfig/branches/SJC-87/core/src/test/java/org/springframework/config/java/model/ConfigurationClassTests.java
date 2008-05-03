@@ -5,6 +5,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
 import static org.springframework.config.java.model.AspectClassTests.VALID_ASPECT_CLASS;
+import static org.springframework.config.java.model.AutoBeanMethodTests.VALID_AUTOBEAN_METHOD;
+import static org.springframework.config.java.model.BeanMethodTests.VALID_BEAN_METHOD;
 import static org.springframework.config.java.model.ValidationError.*;
 
 import java.lang.reflect.Modifier;
@@ -135,6 +137,16 @@ public class ConfigurationClassTests {
 			Assert.assertThat(c1, equalTo(c2));
 			Assert.assertThat(c2, equalTo(c1));
 		}
+
+		{ // are @AutoBean methods considered when evaluating evaluating equality?
+			ConfigurationClass c1 = new ConfigurationClass("c").add(VALID_AUTOBEAN_METHOD);
+			ConfigurationClass c2 = new ConfigurationClass("c");
+			Assert.assertThat(c1, not(equalTo(c2)));
+			Assert.assertThat(c2, not(equalTo(c1)));
+			c2.add(VALID_AUTOBEAN_METHOD);
+			Assert.assertThat(c1, equalTo(c2));
+			Assert.assertThat(c2, equalTo(c1));
+		}
 	}
 
 	public @Test void containsBeanMethod() {
@@ -160,6 +172,20 @@ public class ConfigurationClassTests {
 	public @Test void validateConfigurationMustDeclareAtLeastOneBean() {
 		ConfigurationClass configClass = new ConfigurationClass("a");
 		assertErrorsContains(configClass, CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN);
+	}
+
+	public @Test void validateConfigurationDeclaringOneBeanIsValid() {
+		ConfigurationClass configClass = new ConfigurationClass("a").add(VALID_BEAN_METHOD);
+		ValidationErrors errors = new ValidationErrors();
+		configClass.validate(errors);
+		assertEquals(0, errors.size());
+	}
+
+	public @Test void validateConfigurationDeclaringOneAutoBeanIsValid() {
+		ConfigurationClass configClass = new ConfigurationClass("a").add(VALID_AUTOBEAN_METHOD);
+		ValidationErrors errors = new ValidationErrors();
+		configClass.validate(errors);
+		assertEquals(0, errors.size());
 	}
 
 	// as an exception to the above, a configuration may be empty of @Bean methods if it imports another configuration

@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.config.java.annotation.Aspects;
+import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -111,11 +112,12 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	private void processAnyImportedAspects(final Class<?> literalClass) {
 		// does this configuration import any Aspect classes?
 		Aspects importedAspects = findAnnotation(literalClass, Aspects.class);
-		if(importedAspects != null) {
-			for(Class<?> aspectClass : importedAspects.value()) {
-				Aspect aspectAnno = aspectClass.getAnnotation(Aspect.class);
-				model.add(new AspectClass(aspectClass.getName(), aspectAnno));
-			}
+		if(importedAspects == null)
+			return;
+
+		for(Class<?> aspectClass : importedAspects.value()) {
+			Aspect aspectAnno = aspectClass.getAnnotation(Aspect.class);
+			model.add(new AspectClass(aspectClass.getName(), aspectAnno));
 		}
 	}
 
@@ -154,18 +156,26 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 		processBeanMethod(method, modelClass);
 
 		processExternalBeanMethod(method, modelClass);
+
+		processAutoBeanMethod(method, modelClass);
 	}
 
 	private void processExternalBeanMethod(Method method, final ConfigurationClass modelClass) {
-		ExternalBean extBean = findAnnotation(method, ExternalBean.class);
-		if(extBean != null)
-			modelClass.add(new ExternalBeanMethod(method.getName(), extBean, method.getModifiers()));
+		ExternalBean metadata = findAnnotation(method, ExternalBean.class);
+		if(metadata != null)
+			modelClass.add(new ExternalBeanMethod(method.getName(), metadata, method.getModifiers()));
 	}
 
 	private void processBeanMethod(Method method, final ConfigurationClass modelClass) {
-		Bean bean = findAnnotation(method, Bean.class);
-		if(bean != null)
-			modelClass.add(new BeanMethod(method.getName(), bean, method.getModifiers()));
+		Bean metadata = findAnnotation(method, Bean.class);
+		if(metadata != null)
+			modelClass.add(new BeanMethod(method.getName(), metadata, method.getModifiers()));
+	}
+
+	private void processAutoBeanMethod(Method method, final ConfigurationClass modelClass) {
+		AutoBean metadata = findAnnotation(method, AutoBean.class);
+		if(metadata != null)
+			modelClass.add(new AutoBeanMethod(method.getName(), metadata, method.getModifiers()));
 	}
 
 	private static class DeclaringClassInclusionPolicy {

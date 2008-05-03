@@ -22,15 +22,20 @@ import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.support.ConfigurationSupport;
 
+// TODO: rename as AutoBeanIntegrationTests
 public class AutoBeanTests {
+
 	// TODO: [@AutoBean]
 	public @Test void basicConstructorAutowiring() {
-		LegacyJavaConfigApplicationContext ctx = new LegacyJavaConfigApplicationContext(BasicConstructorAutowiring.class);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(BasicConstructorAutowiring.class);
 		Assert.assertNotNull(ctx.getBean("a"));
 	}
+    abstract static class BasicConstructorAutowiring extends ConfigurationSupport {
+    	public abstract @AutoBean TestBean a();
+    }
+
 
 	@Ignore // see SJC-85
 	public @Test void constructorAutowiring() {
@@ -39,10 +44,6 @@ public class AutoBeanTests {
 		Assert.assertNotNull(service);
 		Assert.assertNotNull(service.repos);
 	}
-}
-
-abstract class BasicConstructorAutowiring extends ConfigurationSupport {
-	public abstract @AutoBean TestBean a();
 }
 
 abstract class ConstructorAutowiring extends ConfigurationSupport {

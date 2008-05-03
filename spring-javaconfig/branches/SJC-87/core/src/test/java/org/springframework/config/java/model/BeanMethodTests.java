@@ -20,6 +20,11 @@ public class BeanMethodTests {
         		public void targetMethod() {}
     		}.getClass());
 
+	static final Bean DEFAULT_METADATA = extractMethodAnnotation(Bean.class,
+			new MethodAnnotationPrototype() { public @Bean void targetMethod() {} }.getClass());
+
+	public static final BeanMethod VALID_BEAN_METHOD = new BeanMethod("m", DEFAULT_METADATA, 0);
+
 	// ------------------------------
 	// Equivalence tests
 	// ------------------------------
