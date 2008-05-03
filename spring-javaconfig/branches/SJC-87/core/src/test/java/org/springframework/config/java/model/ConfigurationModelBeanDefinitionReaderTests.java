@@ -22,7 +22,7 @@ import org.springframework.config.java.annotation.Primary;
  *
  * @author Chris Beams
  */
-public class BeanDefinitionRegisteringConfigurationModelRendererTests {
+public class ConfigurationModelBeanDefinitionReaderTests {
 
 	private ConfigurationModelBeanDefinitionReader renderer;
 	private BeanDefinitionRegistry registry;

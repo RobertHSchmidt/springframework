@@ -52,7 +52,7 @@ import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
-import org.springframework.config.java.model.BeanDefinitionRegisteringConfigurationModelRendererTests;
+import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReaderTests;
 import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
@@ -399,7 +399,7 @@ public class ConfigurationProcessorTests {
 
 
 	/**
-	 * @see BeanDefinitionRegisteringConfigurationModelRendererTests#renderWithAliases() (unit test)
+	 * @see ConfigurationModelBeanDefinitionReaderTests#renderWithAliases() (unit test)
 	 */
 	public @Test void testBeanAliases() {
 		ctx = new JavaConfigApplicationContext(AliasesConfiguration.class);
