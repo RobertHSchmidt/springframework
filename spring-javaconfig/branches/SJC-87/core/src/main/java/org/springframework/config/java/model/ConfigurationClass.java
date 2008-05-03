@@ -44,6 +44,9 @@ public class ConfigurationClass {
 	 */
 	public static final String BEAN_ATTR_NAME = "isJavaConfigurationClass";
 
+	private @Configuration class Prototype { }
+	private static final Configuration DEFAULT_METADATA = extractClassAnnotation(Configuration.class, Prototype.class);
+
 	private final String name;
 	private final int modifiers;
 
@@ -55,6 +58,8 @@ public class ConfigurationClass {
 	/** set is used because order does not matter. see {@link #add(ExternalBeanMethod)} */
 	private HashSet<ExternalBeanMethod> externalBeanMethods = new HashSet<ExternalBeanMethod>();
 
+	private HashSet<AutoBeanMethod> autoBeanMethods = new HashSet<AutoBeanMethod>();
+
 	/** list is used because order matters. see {@link #add(ResourceBundles)} */
 	private ArrayList<ResourceBundles> resourceBundles = new ArrayList<ResourceBundles>();
 
@@ -65,9 +70,6 @@ public class ConfigurationClass {
 	private ArrayList<AspectClass> importedAspects = new ArrayList<AspectClass>();
 
 	private ConfigurationClass declaringClass;
-
-	private @Configuration class Prototype { }
-	private static final Configuration DEFAULT_METADATA = extractClassAnnotation(Configuration.class, Prototype.class);
 
 	/**
 	 * Creates a new ConfigurationClass named <var>className</var>
@@ -105,6 +107,12 @@ public class ConfigurationClass {
 		beanMethods.add(method);
 		return this;
 	}
+
+	public ConfigurationClass add(AutoBeanMethod method) {
+		autoBeanMethods.add(method);
+		return this;
+	}
+
 
 	public BeanMethod[] getBeanMethods() {
 		return beanMethods.toArray(new BeanMethod[beanMethods.size()]);
@@ -212,8 +220,10 @@ public class ConfigurationClass {
 		if(Modifier.isFinal(modifiers))
 			errors.add(ValidationError.CONFIGURATION_MUST_BE_NON_FINAL + ": " + name);
 
-		// a configuration class must declare at least one @Bean OR import at least one other configuration
-		if(importedClasses.isEmpty() && beanMethods.isEmpty())
+		// a configuration class must declare at least one @Bean/@AutoBean OR import at least one other configuration
+		if(importedClasses.isEmpty()
+				&& beanMethods.isEmpty()
+				&& autoBeanMethods.isEmpty())
 			errors.add(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString() + ": " + name);
 
 		// if the class is abstract and declares no @ExternalBean methods, it is malformed
@@ -234,14 +244,15 @@ public class ConfigurationClass {
 
 	@Override
 	public String toString() {
-		return format("%s: name=%s; beanMethods=%s; externalBeanMethods=%s",
-					   getClass().getSimpleName(), getShortName(name), beanMethods, externalBeanMethods);
+		return format("%s: name=%s; beanMethods=%s; externalBeanMethods=%s; autoBeanMethods=%s",
+					   getClass().getSimpleName(), getShortName(name), beanMethods, externalBeanMethods, autoBeanMethods);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((autoBeanMethods == null) ? 0 : autoBeanMethods.hashCode());
 		result = prime * result + ((beanMethods == null) ? 0 : beanMethods.hashCode());
 		result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
 		result = prime * result + ((externalBeanMethods == null) ? 0 : externalBeanMethods.hashCode());
@@ -263,6 +274,12 @@ public class ConfigurationClass {
 		if (getClass() != obj.getClass())
 			return false;
 		ConfigurationClass other = (ConfigurationClass) obj;
+		if (autoBeanMethods == null) {
+			if (other.autoBeanMethods != null)
+				return false;
+		}
+		else if (!autoBeanMethods.equals(other.autoBeanMethods))
+			return false;
 		if (beanMethods == null) {
 			if (other.beanMethods != null)
 				return false;

@@ -56,14 +56,28 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 					return 1;
 				if(findAnnotation(candidateMethod, ExternalBean.class) != null)
 					return 2;
+				//if(findAnnotation(candidateMethod, AutoBean.class) != null)
+					//return 3;
 				return 0;
 			}
 		});
-		enhancer.setCallbackTypes(new Class<?>[] { NoOp.class, BeanMethodInterceptor.class, ExternalBeanMethodInterceptor.class });
+		enhancer.setCallbackTypes(
+			new Class<?>[] {
+    			NoOp.class,
+    			BeanMethodInterceptor.class,
+    			ExternalBeanMethodInterceptor.class,
+    			//AutoBeanMethodInterceptor.class
+			});
 
 		Class<?> enhancedSubclass = enhancer.createClass();
 
-		Enhancer.registerCallbacks(enhancedSubclass, new Callback[] { NoOp.INSTANCE, new BeanMethodInterceptor(beanFactory), new ExternalBeanMethodInterceptor(beanFactory) });
+		Enhancer.registerCallbacks(enhancedSubclass,
+			new Callback[] {
+				NoOp.INSTANCE,
+				new BeanMethodInterceptor(beanFactory),
+				new ExternalBeanMethodInterceptor(beanFactory),
+				//new AutoBeanMethodInterceptor(beanFactory)
+			});
 
 		if(log.isDebugEnabled())
 			log.debug(format("Successfully enhanced %s; enhanced class name is: %s",
@@ -72,13 +86,13 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		return enhancedSubclass.getName();
 	}
 
-	// TODO: should probably be in a util class
 	private Class<?> loadClassFromName(String configClassName) {
-		// TODO: handle exception more gracefully
 		try {
 			return Class.forName(configClassName);
 		}
-		catch (ClassNotFoundException ex) { throw new RuntimeException(ex); }
+		catch (ClassNotFoundException ex) {
+			throw new IllegalArgumentException("class must be loadable", ex);
+		}
 	}
 
 	static class ExternalBeanMethodInterceptor implements MethodInterceptor {
