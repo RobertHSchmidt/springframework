@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.AutoBean;
+import org.springframework.config.java.type.ReflectiveType;
+import org.springframework.config.java.type.Type;
 
 /**
  * Unit tests for {@link AutoBeanMethod}
@@ -25,7 +27,7 @@ public class AutoBeanMethodTests {
 	static AutoBean CUSTOM_METADATA = extractMethodAnnotation(AutoBean.class, new MethodAnnotationPrototype() {
 		public @AutoBean(autowire=Autowire.BY_NAME) void targetMethod() { } }.getClass());
 
-	static final String DEFAULT_RETURN_TYPE = TestBean.class.getName();
+	static final Type DEFAULT_RETURN_TYPE = new ReflectiveType(TestBean.class);
 	static final AutoBeanMethod VALID_AUTOBEAN_METHOD = new AutoBeanMethod("m", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
 
 	public @Test void testConstruction() {

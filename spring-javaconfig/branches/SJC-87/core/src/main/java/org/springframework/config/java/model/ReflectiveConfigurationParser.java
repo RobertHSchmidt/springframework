@@ -13,6 +13,8 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.type.ReflectiveType;
+import org.springframework.config.java.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
@@ -174,11 +176,12 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 
 	private void processAutoBeanMethod(Method method, final ConfigurationClass modelClass) {
 		AutoBean metadata = findAnnotation(method, AutoBean.class);
-		if(metadata != null)
-			modelClass.add(new AutoBeanMethod(method.getName(),
-		                                      metadata,
-		                                      method.getReturnType().getName(),
-		                                      method.getModifiers()));
+
+		if(metadata == null)
+			return;
+
+		Type returnType = new ReflectiveType(method.getReturnType());
+		modelClass.add(new AutoBeanMethod(method.getName(), metadata, returnType, method.getModifiers()));
 	}
 
 	private static class DeclaringClassInclusionPolicy {

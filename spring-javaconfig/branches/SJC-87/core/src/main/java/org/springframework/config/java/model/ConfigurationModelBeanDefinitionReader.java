@@ -16,6 +16,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.core.BeanFactoryFactory;
+import org.springframework.config.java.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -107,8 +108,7 @@ public class ConfigurationModelBeanDefinitionReader {
 	                                                  String configClassName,
 	                                                  AutoBeanMethod autoBeanMethod) {
 
-
-		String returnType = autoBeanMethod.getReturnType();
+		Type returnType = autoBeanMethod.getReturnType();
 		/*
 		Type returnType = autoBeanMethod.getReturnType();
 
@@ -118,7 +118,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		*/
 
 		RootBeanDefinition beanDef = new RootBeanDefinition();
-		beanDef.setBeanClassName(returnType);
+		beanDef.setBeanClassName(returnType.getName());
 		beanDef.setAutowireMode(autoBeanMethod.getMetadata().autowire().value());
 
 		registry.registerBeanDefinition(autoBeanMethod.getName(), beanDef);
