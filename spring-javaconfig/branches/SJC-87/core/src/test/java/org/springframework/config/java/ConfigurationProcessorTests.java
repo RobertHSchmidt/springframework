@@ -612,9 +612,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [@AutoBean]
+	// XXX: [@AutoBean]
 	public @Test void testValidAutoBean() {
-		ctx = new LegacyJavaConfigApplicationContext(ValidAutoBeanTest.class);
+		ctx = new JavaConfigApplicationContext(ValidAutoBeanTest.class);
 
 		TestBean kerry = ctx.getBean(TestBean.class, "kerry");
 		assertEquals("AutoBean was not autowired", "Rod", kerry.getSpouse().getName());
@@ -625,10 +625,16 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [@AutoBean]
-	@Test(expected = BeanDefinitionStoreException.class)
+	// XXX: [@AutoBean]
+	// XXX: [breaks-backward-compat] previously expected BeanDefinitionStoreException
+	@Test(expected = MalformedJavaConfigurationException.class)
 	public void testInvalidAutoBean() {
-		ctx = new LegacyJavaConfigApplicationContext(InvalidAutoBeanTest.class);
+		try {
+		ctx = new JavaConfigApplicationContext(InvalidAutoBeanTest.class);
+		} catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.AUTOBEAN_MUST_BE_CONCRETE_TYPE.toString()));
+			throw ex;
+		}
 	}
 	public abstract static class InvalidAutoBeanTest extends ConfigurationSupport {
 		public @Bean TestBean rod() { return new TestBean(kerry()); }
@@ -691,9 +697,9 @@ public class ConfigurationProcessorTests {
 		assertEquals(6, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(BaseConfiguration.class)));
 		// 2 @Bean + 1 Configuration
 		assertEquals(3, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(HotSwapConfiguration.class)));
-		// TODO: [@AutoBean]
+		// XXX: [@AutoBean]
 		// 1 @Bean + 1 @Autobean + 1 Configuration
-		assertEquals(3, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(ValidAutoBeanTest.class)));
+		assertEquals(3, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(ValidAutoBeanTest.class)));
 	}
 
 
