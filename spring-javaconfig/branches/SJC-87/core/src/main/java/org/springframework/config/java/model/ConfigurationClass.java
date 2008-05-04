@@ -113,9 +113,12 @@ public class ConfigurationClass {
 		return this;
 	}
 
-
 	public BeanMethod[] getBeanMethods() {
 		return beanMethods.toArray(new BeanMethod[beanMethods.size()]);
+	}
+
+	public AutoBeanMethod[] getAutoBeanMethods() {
+		return autoBeanMethods.toArray(new AutoBeanMethod[autoBeanMethods.size()]);
 	}
 
 	public BeanMethod[] getFinalBeanMethods() {
@@ -226,10 +229,11 @@ public class ConfigurationClass {
 				&& autoBeanMethods.isEmpty())
 			errors.add(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString() + ": " + name);
 
-		// if the class is abstract and declares no @ExternalBean methods, it is malformed
+		// if the class is abstract and declares no @ExternalBean or @AutoBean methods, it is malformed
 		if(Modifier.isAbstract(modifiers)
-				&& externalBeanMethods.size() == 0)
-			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN.toString() + ": " + name);
+				&& externalBeanMethods.isEmpty()
+				&& autoBeanMethods.isEmpty())
+			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_OR_AUTOBEAN.toString() + ": " + name);
 
 		// cascade through all declared @Bean methods
 		for(BeanMethod beanMethod : beanMethods)

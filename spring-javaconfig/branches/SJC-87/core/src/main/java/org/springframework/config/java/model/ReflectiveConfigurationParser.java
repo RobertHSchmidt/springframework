@@ -175,7 +175,10 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	private void processAutoBeanMethod(Method method, final ConfigurationClass modelClass) {
 		AutoBean metadata = findAnnotation(method, AutoBean.class);
 		if(metadata != null)
-			modelClass.add(new AutoBeanMethod(method.getName(), metadata, method.getModifiers()));
+			modelClass.add(new AutoBeanMethod(method.getName(),
+		                                      metadata,
+		                                      method.getReturnType().getName(),
+		                                      method.getModifiers()));
 	}
 
 	private static class DeclaringClassInclusionPolicy {

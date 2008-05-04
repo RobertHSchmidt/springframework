@@ -8,12 +8,26 @@ public class AutoBeanMethod {
 
 	private final String name;
 	private final AutoBean metadata;
+	private final String returnType;
 	private final int modifiers;
 
-	public AutoBeanMethod(String name, AutoBean metadata, int modifiers) {
+	public AutoBeanMethod(String name, AutoBean metadata, String returnType, int modifiers) {
 		this.name = name;
 		this.metadata = metadata;
+		this.returnType = returnType;
 		this.modifiers = modifiers;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public AutoBean getMetadata() {
+		return metadata;
+	}
+
+	public String getReturnType() {
+		return returnType;
 	}
 
 	@Override
