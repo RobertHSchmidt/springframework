@@ -4,6 +4,8 @@ public interface Type {
 
 	String getName();
 
+	String getSimpleName();
+
 	boolean isInterface();
 
 }
