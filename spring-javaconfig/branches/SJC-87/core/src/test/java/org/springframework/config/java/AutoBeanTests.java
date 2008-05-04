@@ -16,45 +16,54 @@
 package org.springframework.config.java;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.support.ConfigurationSupport;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 // TODO: rename as AutoBeanIntegrationTests
 public class AutoBeanTests {
 
-	// TODO: [@AutoBean]
+	// XXX: [@AutoBean]
 	public @Test void basicConstructorAutowiring() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(BasicConstructorAutowiring.class);
 		Assert.assertNotNull(ctx.getBean("a"));
 	}
-    abstract static class BasicConstructorAutowiring extends ConfigurationSupport {
+    static abstract class BasicConstructorAutowiring {
     	public abstract @AutoBean TestBean a();
     }
 
 
-	@Ignore // see SJC-85
+	// XXX: [@AutoBean]
 	public @Test void constructorAutowiring() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(ConstructorAutowiring.class);
 		Service service = ctx.getBean(Service.class);
 		Assert.assertNotNull(service);
 		Assert.assertNotNull(service.repos);
 	}
+    static abstract class ConstructorAutowiring {
+    	public @Bean Service service() {
+    		Service service = new Service();
+    		service.setRepository(repos());
+    		return service;
+    	}
+
+    	public abstract @AutoBean Repository repos();
+    }
+
+	// XXX: [@AutoBean]
+    @Test(expected = MalformedJavaConfigurationException.class)
+    public void interfaceAutoBeanIsMalformed() {
+    	new JavaConfigApplicationContext(InterfaceAutoBeanConfig.class);
+    }
+    static abstract class InterfaceAutoBeanConfig {
+    	public abstract @AutoBean ITestBean alice();
+    }
 }
 
-abstract class ConstructorAutowiring extends ConfigurationSupport {
-	public @Bean Service service() {
-		Service service = new Service();
-		service.setRepository(repos());
-		return service;
-	}
-
-	public abstract @AutoBean Repository repos();
-}
 
 class Service {
 	Repository repos;
@@ -63,5 +72,4 @@ class Service {
 
 	void setRepository(Repository repos) { this.repos = repos; }
 }
-
 class Repository { }

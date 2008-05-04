@@ -8,6 +8,7 @@ import static org.springframework.config.java.model.AnnotationExtractionUtils.ex
 import java.lang.reflect.Modifier;
 
 import org.junit.Test;
+import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.AutoBean;
 
@@ -24,27 +25,28 @@ public class AutoBeanMethodTests {
 	static AutoBean CUSTOM_METADATA = extractMethodAnnotation(AutoBean.class, new MethodAnnotationPrototype() {
 		public @AutoBean(autowire=Autowire.BY_NAME) void targetMethod() { } }.getClass());
 
-	static final AutoBeanMethod VALID_AUTOBEAN_METHOD = new AutoBeanMethod("m", DEFAULT_METADATA, 0);
+	static final String DEFAULT_RETURN_TYPE = TestBean.class.getName();
+	static final AutoBeanMethod VALID_AUTOBEAN_METHOD = new AutoBeanMethod("m", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
 
 	public @Test void testConstruction() {
-		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_METADATA, 0);
+		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
 	}
 
 	public @Test void equality() {
-		AutoBeanMethod a1 = new AutoBeanMethod("a", DEFAULT_METADATA, 0);
-		AutoBeanMethod a2 = new AutoBeanMethod("a", DEFAULT_METADATA, 0);
+		AutoBeanMethod a1 = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		AutoBeanMethod a2 = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
 		assertThat(a1, equalTo(a2));
 		assertThat(a2, equalTo(a1));
 
-		a2 = new AutoBeanMethod("b", DEFAULT_METADATA, 0);
+		a2 = new AutoBeanMethod("b", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
-		a2 = new AutoBeanMethod("a", CUSTOM_METADATA, 0);
+		a2 = new AutoBeanMethod("a", CUSTOM_METADATA, DEFAULT_RETURN_TYPE, 0);
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
-		a2 = new AutoBeanMethod("a", DEFAULT_METADATA, Modifier.PUBLIC);
+		a2 = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, Modifier.PUBLIC);
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
@@ -52,5 +54,10 @@ public class AutoBeanMethodTests {
 		assertThat(a1, not(equalTo(null)));
 		assertThat(null, not(equalTo(a1)));
 		assertThat(a1, not(equalTo(new Object())));
+	}
+
+	public @Test void getReturnType() {
+		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		assertThat(m.getReturnType(), equalTo(DEFAULT_RETURN_TYPE));
 	}
 }

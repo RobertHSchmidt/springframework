@@ -54,11 +54,20 @@ public class ConfigurationModelBeanDefinitionReader {
 	}
 
 	private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
-
 		loadBeanDefinitionsForDeclaringClass(configClass.getDeclaringClass());
 
 		String configClassName = configClass.getName();
 
+		doLoadBeanDefinitionForConfigurationClass(configClassName);
+
+		for(BeanMethod beanMethod : configClass.getBeanMethods())
+			loadBeanDefinitionsForBeanMethod(configClass, configClassName, beanMethod);
+
+		for(AutoBeanMethod autoBeanMethod : configClass.getAutoBeanMethods())
+			loadBeanDefinitionsForAutoBeanMethod(configClass, configClassName, autoBeanMethod);
+	}
+
+	private void doLoadBeanDefinitionForConfigurationClass(String configClassName) {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		// mark this bean def with metadata indicating that it is a configuration bean
@@ -66,13 +75,11 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// @Configuration classes' bean names are always their fully-qualified classname
 		registry.registerBeanDefinition(configClassName, configBeanDef);
-
-		for(BeanMethod beanMethod : configClass.getBeanMethods())
-			loadBeanDefinitionsForBeanMethod(configClass, configClassName, beanMethod);
 	}
 
-	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass, String configClassName,
-			BeanMethod beanMethod) {
+	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass,
+	                                              String configClassName,
+	                                              BeanMethod beanMethod) {
 		RootBeanDefinition beanDef = new RootBeanDefinition();
 		beanDef.setFactoryBeanName(configClassName);
 		beanDef.setFactoryMethodName(beanMethod.getName());
@@ -94,6 +101,27 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// TODO: plug in NamingStrategy here
 		registry.registerBeanDefinition(beanMethod.getName(), beanDef);
+	}
+
+	private void loadBeanDefinitionsForAutoBeanMethod(ConfigurationClass configClass,
+	                                                  String configClassName,
+	                                                  AutoBeanMethod autoBeanMethod) {
+
+
+		String returnType = autoBeanMethod.getReturnType();
+		/*
+		Type returnType = autoBeanMethod.getReturnType();
+
+		if (returnType.isInterface())
+			throw new BeanDefinitionStoreException("Cannot use AutoBean of interface type " + m.getReturnType()
+					+ ": don't know what class to instantiate; processing @AutoBean method " + m);
+		*/
+
+		RootBeanDefinition beanDef = new RootBeanDefinition();
+		beanDef.setBeanClassName(returnType);
+		beanDef.setAutowireMode(autoBeanMethod.getMetadata().autowire().value());
+
+		registry.registerBeanDefinition(autoBeanMethod.getName(), beanDef);
 	}
 
 	private void loadBeanDefinitionsForAspectClass(AspectClass aspectClass) {

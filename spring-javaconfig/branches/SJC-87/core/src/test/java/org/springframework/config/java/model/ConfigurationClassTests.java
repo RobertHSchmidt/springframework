@@ -206,7 +206,7 @@ public class ConfigurationClassTests {
 		ConfigurationClass configClass =
 			new ConfigurationClass("a", Modifier.ABSTRACT)
 				.add(new BeanMethod("m"));
-		assertErrorsContains(configClass, ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN);
+		assertErrorsContains(configClass, ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_OR_AUTOBEAN);
 	}
 
 	public @Test void validationCascadesToImportedClasses() {

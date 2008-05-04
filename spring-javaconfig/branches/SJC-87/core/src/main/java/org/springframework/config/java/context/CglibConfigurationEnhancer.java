@@ -24,6 +24,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
@@ -56,8 +57,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 					return 1;
 				if(findAnnotation(candidateMethod, ExternalBean.class) != null)
 					return 2;
-				//if(findAnnotation(candidateMethod, AutoBean.class) != null)
-					//return 3;
+				if(findAnnotation(candidateMethod, AutoBean.class) != null)
+					return 3;
 				return 0;
 			}
 		});
@@ -66,7 +67,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
     			NoOp.class,
     			BeanMethodInterceptor.class,
     			ExternalBeanMethodInterceptor.class,
-    			//AutoBeanMethodInterceptor.class
+    			AutoBeanMethodInterceptor.class
 			});
 
 		Class<?> enhancedSubclass = enhancer.createClass();
@@ -76,7 +77,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				NoOp.INSTANCE,
 				new BeanMethodInterceptor(beanFactory),
 				new ExternalBeanMethodInterceptor(beanFactory),
-				//new AutoBeanMethodInterceptor(beanFactory)
+				new AutoBeanMethodInterceptor(beanFactory)
 			});
 
 		if(log.isDebugEnabled())
@@ -113,6 +114,25 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				name = alternateName;
 			else
 				name = m.getName();
+
+			return beanFactory.getBean(name);
+		}
+	}
+
+	static class AutoBeanMethodInterceptor implements MethodInterceptor {
+		private final BeanFactory beanFactory;
+
+		public AutoBeanMethodInterceptor(BeanFactory beanFactory) {
+			this.beanFactory = beanFactory;
+		}
+
+		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
+			final String name;
+
+			AutoBean metadata = AnnotationUtils.findAnnotation(m, AutoBean.class);
+			Assert.notNull(metadata, "AutoBean methods must be annotated with @AutoBean");
+
+			name = m.getName();
 
 			return beanFactory.getBean(name);
 		}
