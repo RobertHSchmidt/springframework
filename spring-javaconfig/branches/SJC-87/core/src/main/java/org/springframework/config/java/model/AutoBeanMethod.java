@@ -3,15 +3,16 @@ package org.springframework.config.java.model;
 import static java.lang.String.format;
 
 import org.springframework.config.java.annotation.AutoBean;
+import org.springframework.config.java.type.Type;
 
 public class AutoBeanMethod {
 
 	private final String name;
 	private final AutoBean metadata;
-	private final String returnType;
+	private final Type returnType;
 	private final int modifiers;
 
-	public AutoBeanMethod(String name, AutoBean metadata, String returnType, int modifiers) {
+	public AutoBeanMethod(String name, AutoBean metadata, Type returnType, int modifiers) {
 		this.name = name;
 		this.metadata = metadata;
 		this.returnType = returnType;
@@ -26,8 +27,13 @@ public class AutoBeanMethod {
 		return metadata;
 	}
 
-	public String getReturnType() {
+	public Type getReturnType() {
 		return returnType;
+	}
+
+	public void validate(ValidationErrors errors) {
+		if(returnType.isInterface())
+			errors.add(ValidationError.AUTOBEAN_MUST_BE_CONCRETE_TYPE.toString());
 	}
 
 	@Override

@@ -15,6 +15,8 @@
  */
 package org.springframework.config.java;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.ITestBean;
@@ -22,6 +24,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 // TODO: rename as AutoBeanIntegrationTests
@@ -57,7 +60,12 @@ public class AutoBeanTests {
 	// XXX: [@AutoBean]
     @Test(expected = MalformedJavaConfigurationException.class)
     public void interfaceAutoBeanIsMalformed() {
-    	new JavaConfigApplicationContext(InterfaceAutoBeanConfig.class);
+    	try {
+    		new JavaConfigApplicationContext(InterfaceAutoBeanConfig.class);
+    	} catch (MalformedJavaConfigurationException ex) {
+    		assertTrue(ex.getMessage().contains(ValidationError.AUTOBEAN_MUST_BE_CONCRETE_TYPE.toString()));
+    		throw ex;
+    	}
     }
     static abstract class InterfaceAutoBeanConfig {
     	public abstract @AutoBean ITestBean alice();

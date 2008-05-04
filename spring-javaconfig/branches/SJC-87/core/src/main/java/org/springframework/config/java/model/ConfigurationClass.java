@@ -236,12 +236,16 @@ public class ConfigurationClass {
 			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_OR_AUTOBEAN.toString() + ": " + name);
 
 		// cascade through all declared @Bean methods
-		for(BeanMethod beanMethod : beanMethods)
-			beanMethod.validate(errors);
+		for(BeanMethod method : beanMethods)
+			method.validate(errors);
 
 		// cascade through all declared @ExternalBean methods
-		for(ExternalBeanMethod extBeanMethod : externalBeanMethods)
-			extBeanMethod.validate(errors);
+		for(ExternalBeanMethod method : externalBeanMethods)
+			method.validate(errors);
+
+		// cascade through all declared @AutoBean methods
+		for(AutoBeanMethod method : autoBeanMethods)
+			method.validate(errors);
 
 		return errors;
 	}
