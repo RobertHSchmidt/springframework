@@ -38,8 +38,8 @@ public class AutoBeanMethod {
 
 	@Override
 	public String toString() {
-		return format("%s: name=%s; modifiers=%d",
-				       getClass().getSimpleName(), name, modifiers);
+		return format("%s: name=%s; returnType=%s; modifiers=%d",
+				       getClass().getSimpleName(), name, returnType.getSimpleName(), modifiers);
 	}
 
 	@Override
@@ -49,6 +49,7 @@ public class AutoBeanMethod {
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + modifiers;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((returnType == null) ? 0 : returnType.hashCode());
 		return result;
 	}
 
@@ -74,6 +75,12 @@ public class AutoBeanMethod {
 				return false;
 		}
 		else if (!name.equals(other.name))
+			return false;
+		if (returnType == null) {
+			if (other.returnType != null)
+				return false;
+		}
+		else if (!returnType.equals(other.returnType))
 			return false;
 		return true;
 	}

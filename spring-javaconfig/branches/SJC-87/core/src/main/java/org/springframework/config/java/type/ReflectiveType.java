@@ -12,6 +12,10 @@ public class ReflectiveType implements Type {
 		return delegate.getName();
 	}
 
+	public String getSimpleName() {
+		return delegate.getSimpleName();
+	}
+
 	public boolean isInterface() {
 		return delegate.isInterface();
 	}

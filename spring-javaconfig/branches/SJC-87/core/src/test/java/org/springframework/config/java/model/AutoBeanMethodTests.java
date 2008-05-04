@@ -2,12 +2,13 @@ package org.springframework.config.java.model;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
 
 import java.lang.reflect.Modifier;
 
 import org.junit.Test;
+import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.AutoBean;
@@ -52,14 +53,38 @@ public class AutoBeanMethodTests {
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
+		Type iface = new ReflectiveType(ITestBean.class);
+		a2 = new AutoBeanMethod("a", DEFAULT_METADATA, iface, 0);
+		assertThat(a1, not(equalTo(a2)));
+
 		assertThat(a1, equalTo(a1));
 		assertThat(a1, not(equalTo(null)));
 		assertThat(null, not(equalTo(a1)));
 		assertThat(a1, not(equalTo(new Object())));
 	}
 
-	public @Test void getReturnType() {
+	public @Test void validity() {
+		{ // valid case
+			AutoBeanMethod valid = VALID_AUTOBEAN_METHOD;
+			ValidationErrors errors = new ValidationErrors();
+			valid.validate(errors);
+			assertEquals(0, errors.size());
+		}
+
+		{ // invalid because return type is interface
+			Type rtInvalid = new ReflectiveType(ITestBean.class);
+			AutoBeanMethod valid = new AutoBeanMethod("invalid", DEFAULT_METADATA, rtInvalid, 0);
+			ValidationErrors errors = new ValidationErrors();
+			valid.validate(errors);
+			assertEquals(errors.toString(), 1, errors.size());
+			assertTrue(errors.get(0).contains(ValidationError.AUTOBEAN_MUST_BE_CONCRETE_TYPE.toString()));
+		}
+	}
+
+	public @Test void testAccessors() {
 		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		assertThat(m.getName(), equalTo("a"));
+		assertThat(m.getMetadata(), equalTo(DEFAULT_METADATA));
 		assertThat(m.getReturnType(), equalTo(DEFAULT_RETURN_TYPE));
 	}
 }
