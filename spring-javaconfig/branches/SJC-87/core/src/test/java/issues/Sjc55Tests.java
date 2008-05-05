@@ -98,7 +98,7 @@ public class Sjc55Tests {
 
 	}
 
-	// TODO: [aop] work in progress
+	// TODO: {aop} work in progress
 	@Ignore
 	@Test
 	public void test() {

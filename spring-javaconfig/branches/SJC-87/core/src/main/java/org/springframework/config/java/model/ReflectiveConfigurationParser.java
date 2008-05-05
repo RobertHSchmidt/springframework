@@ -2,7 +2,9 @@ package org.springframework.config.java.model;
 
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +15,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.type.ReflectiveType;
 import org.springframework.config.java.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -155,6 +158,8 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	}
 
 	private void processMethod(Method method, ConfigurationClass modelClass) {
+		Annotation[] annotations = getJavaConfigAnnotations(method);
+
 		processBeanMethod(method, modelClass);
 
 		processExternalBeanMethod(method, modelClass);
@@ -162,16 +167,19 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 		processAutoBeanMethod(method, modelClass);
 	}
 
+	private void processBeanMethod(Method method, final ConfigurationClass modelClass) {
+		//if(!BeanMethod.identifyAsBeanMethod(annotations))
+			//return;
+
+		Bean metadata = AnnotationUtils.getAnnotation(method, Bean.class);
+		if(metadata != null)
+			modelClass.add(new BeanMethod(method.getName(), metadata, method.getModifiers()));
+	}
+
 	private void processExternalBeanMethod(Method method, final ConfigurationClass modelClass) {
 		ExternalBean metadata = findAnnotation(method, ExternalBean.class);
 		if(metadata != null)
 			modelClass.add(new ExternalBeanMethod(method.getName(), metadata, method.getModifiers()));
-	}
-
-	private void processBeanMethod(Method method, final ConfigurationClass modelClass) {
-		Bean metadata = findAnnotation(method, Bean.class);
-		if(metadata != null)
-			modelClass.add(new BeanMethod(method.getName(), metadata, method.getModifiers()));
 	}
 
 	private void processAutoBeanMethod(Method method, final ConfigurationClass modelClass) {
@@ -182,6 +190,22 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 
 		Type returnType = new ReflectiveType(method.getReturnType());
 		modelClass.add(new AutoBeanMethod(method.getName(), metadata, returnType, method.getModifiers()));
+	}
+
+	/**
+	 * Returns an array of all framework-specific annotations on <var>method</var>.
+	 * Considers only those annotations that are a) directly specified on <var>method</var>
+	 * or, in the case of Inherited annotations, those that are annotated on a
+	 * superclass/interface implementation of <var>method</var>.
+	 */
+	private Annotation[] getJavaConfigAnnotations(Method method) {
+		ArrayList<Annotation> sjcAnnotations = new ArrayList<Annotation>();
+
+		for(Annotation a : method.getAnnotations())
+			if(a.annotationType().getName().startsWith(Constants.JAVA_CONFIG_PKG))
+				sjcAnnotations.add(a);
+
+		return sjcAnnotations.toArray(new Annotation[sjcAnnotations.size()]);
 	}
 
 	private static class DeclaringClassInclusionPolicy {

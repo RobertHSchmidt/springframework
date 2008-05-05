@@ -24,7 +24,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.support.ConfigurationSupport;
 
 /**
@@ -43,7 +43,7 @@ public class ConfigurationInheritanceAndScopedProxyTests {
 	@Before
 	public void setUp() throws Exception {
 		// TODO: Switch to JCAC (see todos below)
-		ctx = new LegacyJavaConfigApplicationContext(ExtendedConfigurationClass.class) {
+		ctx = new JavaConfigApplicationContext(ExtendedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -73,7 +73,7 @@ public class ConfigurationInheritanceAndScopedProxyTests {
 	}
 
 
-	// TODO: [@ScopedProxy]
+	// XXX: [@ScopedProxy]
 	public @Test void testConfigurationInheritance() {
 		TestBean overridenTestBean = ctx.getBean(TestBean.class, "overridenTestBean");
 		assertNotNull(overridenTestBean);
