@@ -35,7 +35,6 @@ import org.springframework.beans.factory.config.Scope;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -131,9 +130,9 @@ public class HiddenBeanPostProcessorTests {
 	}
 
 
-	// TODO: [bean scoping]
+	// XXX: [bean scoping]
 	public @Test void testScopesCopiedFromParent() {
-		new LegacyJavaConfigApplicationContext(ScopedContextConfig.class) {
+		new JavaConfigApplicationContext(ScopedContextConfig.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);

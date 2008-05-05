@@ -28,6 +28,7 @@ import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
+import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -186,10 +187,14 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
 				bean = proxyIfAnyPointcutsApply(bean, m.getReturnType());
 
-				if(log.isDebugEnabled())
-					log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
+				// TODO: replace with static call to BeanMethod
+				Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
+				if(metadata.scope() == DefaultScopes.SINGLETON) {
+					if(log.isDebugEnabled())
+						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
-				((ConfigurableBeanFactory) ((ConfigurableApplicationContext)beanFactory).getBeanFactory()).registerSingleton(beanName, bean);
+					((ConfigurableBeanFactory) ((ConfigurableApplicationContext)beanFactory).getBeanFactory()).registerSingleton(beanName, bean);
+				}
 			}
 
 			return bean;

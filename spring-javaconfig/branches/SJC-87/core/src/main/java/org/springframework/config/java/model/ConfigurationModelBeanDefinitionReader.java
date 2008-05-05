@@ -65,7 +65,7 @@ public class ConfigurationModelBeanDefinitionReader {
 			loadBeanDefinitionsForBeanMethod(configClass, configClassName, beanMethod);
 
 		for(AutoBeanMethod autoBeanMethod : configClass.getAutoBeanMethods())
-			loadBeanDefinitionsForAutoBeanMethod(configClass, configClassName, autoBeanMethod);
+			loadBeanDefinitionsForAutoBeanMethod(autoBeanMethod);
 	}
 
 	private void doLoadBeanDefinitionForConfigurationClass(String configClassName) {
@@ -85,43 +85,40 @@ public class ConfigurationModelBeanDefinitionReader {
 		beanDef.setFactoryBeanName(configClassName);
 		beanDef.setFactoryMethodName(beanMethod.getName());
 
+		Bean metadata = beanMethod.getMetadata();
+		Configuration defaults = configClass.getMetadata();
+
+		// consider scoping
+		beanDef.setScope(metadata.scope());
+
 		// consider autowiring
-		if(beanMethod.getMetadata().autowire() != AnnotationUtils.getDefaultValue(Bean.class, "autowire"))
-			beanDef.setAutowireMode(beanMethod.getMetadata().autowire().value());
+		if(metadata.autowire() != AnnotationUtils.getDefaultValue(Bean.class, "autowire"))
+			beanDef.setAutowireMode(metadata.autowire().value());
 		else
-			if(configClass.getMetadata().defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
-				beanDef.setAutowireMode(configClass.getMetadata().defaultAutowire().value());
+			if(defaults.defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
+				beanDef.setAutowireMode(defaults.defaultAutowire().value());
 
 		// consider aliases
-		for(String alias : beanMethod.getMetadata().aliases())
+		for(String alias : metadata.aliases())
 			// TODO: need to calculate bean name here, based on any naming strategy in the mix
 			registry.registerAlias(beanMethod.getName(), alias);
 
-		if(beanMethod.getMetadata().primary() == Primary.TRUE)
+		// is this bean marked as primary for disambiguation?
+		if(metadata.primary() == Primary.TRUE)
 			beanDef.setPrimary(true);
 
 		// TODO: plug in NamingStrategy here
 		registry.registerBeanDefinition(beanMethod.getName(), beanDef);
 	}
 
-	private void loadBeanDefinitionsForAutoBeanMethod(ConfigurationClass configClass,
-	                                                  String configClassName,
-	                                                  AutoBeanMethod autoBeanMethod) {
-
-		Type returnType = autoBeanMethod.getReturnType();
-		/*
-		Type returnType = autoBeanMethod.getReturnType();
-
-		if (returnType.isInterface())
-			throw new BeanDefinitionStoreException("Cannot use AutoBean of interface type " + m.getReturnType()
-					+ ": don't know what class to instantiate; processing @AutoBean method " + m);
-		*/
+	private void loadBeanDefinitionsForAutoBeanMethod(AutoBeanMethod method) {
+		Type returnType = method.getReturnType();
 
 		RootBeanDefinition beanDef = new RootBeanDefinition();
 		beanDef.setBeanClassName(returnType.getName());
-		beanDef.setAutowireMode(autoBeanMethod.getMetadata().autowire().value());
+		beanDef.setAutowireMode(method.getMetadata().autowire().value());
 
-		registry.registerBeanDefinition(autoBeanMethod.getName(), beanDef);
+		registry.registerBeanDefinition(method.getName(), beanDef);
 	}
 
 	private void loadBeanDefinitionsForAspectClass(AspectClass aspectClass) {

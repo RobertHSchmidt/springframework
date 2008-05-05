@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -173,6 +174,33 @@ public abstract class ConfigurationParserTests {
 					.addImportedClass(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen"))))
 				.addImportedClass(new ConfigurationClass(Imported3.class.getName()).add(new BeanMethod("rabbit"))))
 			;
+	}
+
+	public static class CircularImportTests {
+		// TODO: {@Import, model validation}
+		@Ignore
+		public @Test void circularImportsAreDetected() {
+			ConfigurationModel model = new ConfigurationModel();
+			fail("currently causes stack overflow");
+			new ReflectiveConfigurationParser(model).parse(A.class);
+		}
+		@Import(B.class)
+		static class A { @Bean TestBean b1() { return new TestBean(); } }
+		@Import(A.class)
+		static class B { @Bean TestBean b2() { return new TestBean(); } }
+	}
+
+	/**
+	 * given in instantiation of JCAC(A.class, B.class) where both A and B
+	 * Import C.class, C should be processed only once.  There are some
+	 * edge cases here where if there is a D that overrides beans in C, the
+	 * last to declare an import on C should actually re-override those that
+	 * were overridden by D.
+	 */
+	// TODO: {@Import}
+	@Ignore
+	public @Test void overlappingImportsAreHandledGracefully() {
+		fail();
 	}
 
 	public @Test void variousBeanMethodModifiersAreSupported() {

@@ -36,7 +36,6 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.util.DefaultScopes;
@@ -53,13 +52,14 @@ public class AspectJConfigurationProcessorTests {
 	public void nullOutContext() { ctx = null; }
 
 
-	// TODO: [bean scoping, aop]
+	// TODO: {bean scoping, aop}
 	// this may not be a valid test. Would need prototype aspect bean and autoproxy
 	// see also: SpringAopConfigurationProcessorTests#testPerInstanceAdviceAndSharedAdvice(),
 	//           which is a duplicate of this method
 	@Ignore
 	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(PerInstanceCountingAdvice.class);
+		// NOTE: didn't work with LegacyJCAC, either
+		ctx = new JavaConfigApplicationContext(PerInstanceCountingAdvice.class);
 
 		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		Object target1 = ((Advised) advised1).getTargetSource().getTarget();
