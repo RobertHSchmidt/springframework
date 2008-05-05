@@ -32,7 +32,7 @@ import org.springframework.util.Assert;
  * Configuration listener for &#64;ScopedProxy annotation. Similar in
  * functionality with
  * {@link org.springframework.aop.config.ScopedProxyBeanDefinitionDecorator}
- * 
+ *
  * @author Costin Leau
  */
 class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
@@ -45,6 +45,7 @@ class ScopedProxyConfigurationListener extends ConfigurationListenerSupport {
 		if (proxyAnnotation != null) {
 			// do some validation first related to scoping
 			String scope = beanAnnotation.scope();
+
 			if (DefaultScopes.PROTOTYPE.equals(scope) || DefaultScopes.SINGLETON.equals(scope))
 				throw new BeanDefinitionStoreException(String.format(
 						"[%s] contains an invalid annotation declaration: @ScopedProxy "
