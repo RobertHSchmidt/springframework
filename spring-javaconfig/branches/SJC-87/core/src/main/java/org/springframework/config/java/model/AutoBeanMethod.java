@@ -1,9 +1,13 @@
 package org.springframework.config.java.model;
 
 import static java.lang.String.format;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.findAnnotation;
+
+import java.lang.annotation.Annotation;
 
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.type.Type;
+import org.springframework.util.Assert;
 
 public class AutoBeanMethod {
 
@@ -12,11 +16,17 @@ public class AutoBeanMethod {
 	private final Type returnType;
 	private final int modifiers;
 
-	public AutoBeanMethod(String name, AutoBean metadata, Type returnType, int modifiers) {
+	public AutoBeanMethod(String name, Type returnType, int modifiers, Annotation... annotations) {
 		this.name = name;
-		this.metadata = metadata;
+		Assert.notNull(annotations);
+		this.metadata = findAnnotation(AutoBean.class, annotations);
+		Assert.notNull(metadata);
 		this.returnType = returnType;
 		this.modifiers = modifiers;
+	}
+
+	public static boolean identifyAsExternalBeanMethod(Annotation[] annotations) {
+		return (findAnnotation(AutoBean.class, annotations) != null);
 	}
 
 	public String getName() {

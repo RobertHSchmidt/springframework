@@ -1,7 +1,9 @@
 package org.springframework.config.java.model;
 
 import static java.lang.String.format;
+import static org.springframework.config.java.model.AnnotationExtractionUtils.findAnnotation;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
 import org.springframework.config.java.annotation.ExternalBean;
@@ -29,19 +31,24 @@ public class ExternalBeanMethod {
 	ExternalBeanMethod(String name) { this(name, defaultAnno); }
 
 	/** for testing convenience */
-	ExternalBeanMethod(String name, int modifiers) { this(name, defaultAnno, modifiers); }
+	ExternalBeanMethod(String name, int modifiers) { this(name, modifiers, defaultAnno); }
 
-	public ExternalBeanMethod(String name, ExternalBean metadata) { this(name, metadata, 0); }
+	public ExternalBeanMethod(String name, Annotation... annotations) { this(name, 0, annotations); }
 
-	public ExternalBeanMethod(String name, ExternalBean metadata, int modifiers) {
+	public ExternalBeanMethod(String name, int modifiers, Annotation... annotations) {
 		Assert.hasText(name);
 		this.name = name;
 
+		Assert.notNull(annotations);
+		this.metadata = findAnnotation(ExternalBean.class, annotations);
 		Assert.notNull(metadata);
-		this.metadata = metadata;
 
 		Assert.isTrue(modifiers >= 0, "modifiers must be non-negative: " + modifiers);
 		this.modifiers = modifiers;
+	}
+
+	public static boolean identifyAsExternalBeanMethod(Annotation[] annotations) {
+		return (findAnnotation(ExternalBean.class, annotations) != null);
 	}
 
 	public int getModifiers() {

@@ -5,6 +5,10 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Modifier;
 
 import org.junit.Test;
@@ -23,7 +27,7 @@ public class BeanMethodTests {
 	static final Bean DEFAULT_METADATA = extractMethodAnnotation(Bean.class,
 			new MethodAnnotationPrototype() { public @Bean void targetMethod() {} }.getClass());
 
-	public static final BeanMethod VALID_BEAN_METHOD = new BeanMethod("m", DEFAULT_METADATA, 0);
+	public static final BeanMethod VALID_BEAN_METHOD = new BeanMethod("m", 0, DEFAULT_METADATA);
 
 	// ------------------------------
 	// Equivalence tests
@@ -66,4 +70,21 @@ public class BeanMethodTests {
 		ValidationErrors errors = new BeanMethod("foo", Modifier.PRIVATE).validate(new ValidationErrors());
 		assertTrue(errors.get(0).contains(ValidationError.METHOD_MAY_NOT_BE_PRIVATE.toString()));
 	}
+
+	public @Test void unknownAnnotationCausesIncompatibilityError() {
+		Bean beanAnno = DEFAULT_METADATA;
+		Bogus unknownAnno = extractMethodAnnotation(Bogus.class, new MethodAnnotationPrototype() {
+			public @Bogus void targetMethod() { }
+		}.getClass());
+
+		BeanMethod method = new BeanMethod("m", 0, beanAnno, unknownAnno);
+		ValidationErrors errors = new ValidationErrors();
+		method.validate(errors);
+		assertTrue(errors.get(0).contains(ValidationError.INCOMPATIBLE_ANNOTATION.toString()));
+	}
+
+
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	static @interface Bogus { }
 }

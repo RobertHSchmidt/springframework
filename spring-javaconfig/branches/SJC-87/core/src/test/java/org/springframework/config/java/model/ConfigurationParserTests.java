@@ -85,7 +85,7 @@ public abstract class ConfigurationParserTests {
 				.add(new BeanMethod("alice")));
 	}
 
-	public @Test void nonBeanMethodsAreIgnored() {
+	public @Test void nonJavaConfigMethodsAreRecognized() {
 		class Config {
 			@Bean TestBean alice() { return new TestBean(); }
 			TestBean knave() { return new TestBean(); }
@@ -94,7 +94,8 @@ public abstract class ConfigurationParserTests {
 
 		expectedModel.add(
 			new ConfigurationClass(Config.class.getName())
-				.add(new BeanMethod("alice")));
+				.add(new BeanMethod("alice"))
+				.add(new NonJavaConfigMethod("knave")));
 	}
 
 

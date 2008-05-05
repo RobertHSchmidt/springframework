@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.springframework.aop.scope.ScopedObject;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -32,6 +31,8 @@ import org.springframework.config.java.context.ConfigurableJavaConfigApplication
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
+import org.springframework.config.java.model.ValidationError;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 /**
  * Test that scopes are properly supported by using a custom scope and scoped
@@ -96,11 +97,16 @@ public class ScopingTests {
 	}
 
 
-	// TODO: [@ScopedProxy]
-	@Test(expected = BeanDefinitionStoreException.class)
-	public void testInvalidScopedProxy() throws Exception {
+	// XXX: [@ScopedProxy]
+	@Test(expected = MalformedJavaConfigurationException.class)
+	public void testInvalidScopedProxy() {
 		// should throw - @ScopedProxy should not exist by itself
-		new LegacyJavaConfigApplicationContext(InvalidProxyObjectConfiguration.class);
+		try {
+			new JavaConfigApplicationContext(InvalidProxyObjectConfiguration.class);
+		} catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.INCOMPATIBLE_ANNOTATION.toString()));
+			throw ex;
+		}
 	}
 	@Configuration
 	public static class InvalidProxyObjectConfiguration {
@@ -108,12 +114,16 @@ public class ScopingTests {
 	}
 
 
-	// TODO: [@ScopedProxy]
-	@Test(expected = BeanDefinitionStoreException.class)
+	// XXX: [@ScopedProxy]
+	@Test (expected = MalformedJavaConfigurationException.class)
 	public void testScopedProxyOnNonBeanAnnotatedMethod() throws Exception {
-		// should throw - @ScopedProxy should not be applied on
-		// singleton/prototype beans
-		new LegacyJavaConfigApplicationContext(InvalidProxyOnPredefinedScopesConfiguration.class);
+		// should throw - @ScopedProxy should not be applied on singleton/prototype beans
+		try {
+			new JavaConfigApplicationContext(InvalidProxyOnPredefinedScopesConfiguration.class);
+		} catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.INVALID_ANNOTATION_DECLARATION.toString()));
+			throw ex;
+		}
 	}
 	@Configuration
 	public static class InvalidProxyOnPredefinedScopesConfiguration {

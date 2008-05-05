@@ -60,6 +60,8 @@ public class ConfigurationClass {
 
 	private HashSet<AutoBeanMethod> autoBeanMethods = new HashSet<AutoBeanMethod>();
 
+	private HashSet<NonJavaConfigMethod> nonJavaConfigMethods = new HashSet<NonJavaConfigMethod>();
+
 	/** list is used because order matters. see {@link #add(ResourceBundles)} */
 	private ArrayList<ResourceBundles> resourceBundles = new ArrayList<ResourceBundles>();
 
@@ -108,8 +110,18 @@ public class ConfigurationClass {
 		return this;
 	}
 
+	public ConfigurationClass add(ExternalBeanMethod method) {
+		externalBeanMethods.add(method);
+		return this;
+	}
+
 	public ConfigurationClass add(AutoBeanMethod method) {
 		autoBeanMethods.add(method);
+		return this;
+	}
+
+	public ConfigurationClass add(NonJavaConfigMethod method) {
+		nonJavaConfigMethods.add(method);
 		return this;
 	}
 
@@ -136,11 +148,6 @@ public class ConfigurationClass {
 			if(beanMethod.getName().equals(beanMethodName))
 				return true;
 		return false;
-	}
-
-	public ConfigurationClass add(ExternalBeanMethod method) {
-		externalBeanMethods.add(method);
-		return this;
 	}
 
 	public ConfigurationClass addImportedClass(ConfigurationClass importedClass) {
@@ -247,6 +254,10 @@ public class ConfigurationClass {
 		for(AutoBeanMethod method : autoBeanMethods)
 			method.validate(errors);
 
+		// cascade through all remaning (non-javaconfig) methods
+		for(NonJavaConfigMethod method : nonJavaConfigMethods)
+			method.validate(errors);
+
 		return errors;
 	}
 
@@ -269,6 +280,7 @@ public class ConfigurationClass {
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + modifiers;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((nonJavaConfigMethods == null) ? 0 : nonJavaConfigMethods.hashCode());
 		result = prime * result + ((resourceBundles == null) ? 0 : resourceBundles.hashCode());
 		return result;
 	}
@@ -332,6 +344,12 @@ public class ConfigurationClass {
 		}
 		else if (!name.equals(other.name))
 			return false;
+		if (nonJavaConfigMethods == null) {
+			if (other.nonJavaConfigMethods != null)
+				return false;
+		}
+		else if (!nonJavaConfigMethods.equals(other.nonJavaConfigMethods))
+			return false;
 		if (resourceBundles == null) {
 			if (other.resourceBundles != null)
 				return false;
@@ -340,5 +358,6 @@ public class ConfigurationClass {
 			return false;
 		return true;
 	}
+
 
 }
