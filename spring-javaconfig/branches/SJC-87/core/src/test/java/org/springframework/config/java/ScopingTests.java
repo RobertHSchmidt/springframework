@@ -29,6 +29,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 
@@ -51,7 +52,7 @@ public class ScopingTests {
 	@Before
 	public void setUp() throws Exception {
 		customScope = new CustomScope();
-		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+		ctx = new JavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -120,8 +121,16 @@ public class ScopingTests {
 	}
 
 
+	// TODO: [@ScopedProxy]
 	public @Test void testRawScopes() throws Exception {
 		String beanName = "scopedProxyInterface";
+		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+			@Override
+			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+				super.customizeBeanFactory(beanFactory);
+				beanFactory.registerScope(SCOPE, customScope);
+			}
+		};
 		// get hidden bean
 		Object bean = ctx.getBean("scopedTarget." + beanName);
 
@@ -130,6 +139,13 @@ public class ScopingTests {
 
 
 	public @Test void testScopedProxyConfiguration() throws Exception {
+		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+			@Override
+			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+				super.customizeBeanFactory(beanFactory);
+				beanFactory.registerScope(SCOPE, customScope);
+			}
+		};
 		TestBean singleton = (TestBean) ctx.getBean("singletonWithScopedInterfaceDep");
 		ITestBean spouse = singleton.getSpouse();
 		assertTrue("scoped bean is not wrapped by the scoped-proxy", spouse instanceof ScopedObject);
@@ -162,6 +178,13 @@ public class ScopingTests {
 
 
 	public @Test void testScopedProxyConfigurationWithClasses() throws Exception {
+		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+			@Override
+			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+				super.customizeBeanFactory(beanFactory);
+				beanFactory.registerScope(SCOPE, customScope);
+			}
+		};
 		TestBean singleton = (TestBean) ctx.getBean("singletonWithScopedClassDep");
 		ITestBean spouse = singleton.getSpouse();
 		assertTrue("scoped bean is not wrapped by the scoped-proxy", spouse instanceof ScopedObject);

@@ -32,7 +32,6 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * @author Rod Johnson
@@ -66,9 +65,9 @@ public class SpringAopConfigurationProcessorTests {
 	}
 
 
-	// TODO: [bean scoping, aop] looks like an AOP issue but is actually about supporting PROTOTYPE scope
+	// XXX: [aop, bean scoping]
 	public @Test void testPerInstanceAdviceAndSharedAdvice() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
+		ctx = new JavaConfigApplicationContext(SpringAroundPerInstanceAdvice.class);
 
 		TestBean advised1 = ctx.getBean(TestBean.class, "advised");
 		Object target1 = ((Advised) advised1).getTargetSource().getTarget();
