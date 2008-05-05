@@ -29,32 +29,32 @@ public class AutoBeanMethodTests {
 		public @AutoBean(autowire=Autowire.BY_NAME) void targetMethod() { } }.getClass());
 
 	static final Type DEFAULT_RETURN_TYPE = new ReflectiveType(TestBean.class);
-	static final AutoBeanMethod VALID_AUTOBEAN_METHOD = new AutoBeanMethod("m", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+	static final AutoBeanMethod VALID_AUTOBEAN_METHOD = new AutoBeanMethod("m", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
 
 	public @Test void testConstruction() {
-		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
 	}
 
 	public @Test void equality() {
-		AutoBeanMethod a1 = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
-		AutoBeanMethod a2 = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		AutoBeanMethod a1 = new AutoBeanMethod("a", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
+		AutoBeanMethod a2 = new AutoBeanMethod("a", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
 		assertThat(a1, equalTo(a2));
 		assertThat(a2, equalTo(a1));
 
-		a2 = new AutoBeanMethod("b", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		a2 = new AutoBeanMethod("b", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
-		a2 = new AutoBeanMethod("a", CUSTOM_METADATA, DEFAULT_RETURN_TYPE, 0);
+		a2 = new AutoBeanMethod("a", DEFAULT_RETURN_TYPE, 0, CUSTOM_METADATA);
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
-		a2 = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, Modifier.PUBLIC);
+		a2 = new AutoBeanMethod("a", DEFAULT_RETURN_TYPE, Modifier.PUBLIC, DEFAULT_METADATA);
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
 		Type iface = new ReflectiveType(ITestBean.class);
-		a2 = new AutoBeanMethod("a", DEFAULT_METADATA, iface, 0);
+		a2 = new AutoBeanMethod("a", iface, 0, DEFAULT_METADATA);
 		assertThat(a1, not(equalTo(a2)));
 
 		assertThat(a1, equalTo(a1));
@@ -73,7 +73,7 @@ public class AutoBeanMethodTests {
 
 		{ // invalid because return type is interface
 			Type rtInvalid = new ReflectiveType(ITestBean.class);
-			AutoBeanMethod valid = new AutoBeanMethod("invalid", DEFAULT_METADATA, rtInvalid, 0);
+			AutoBeanMethod valid = new AutoBeanMethod("invalid", rtInvalid, 0, DEFAULT_METADATA);
 			ValidationErrors errors = new ValidationErrors();
 			valid.validate(errors);
 			assertEquals(errors.toString(), 1, errors.size());
@@ -82,7 +82,7 @@ public class AutoBeanMethodTests {
 	}
 
 	public @Test void testAccessors() {
-		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_METADATA, DEFAULT_RETURN_TYPE, 0);
+		AutoBeanMethod m = new AutoBeanMethod("a", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
 		assertThat(m.getName(), equalTo("a"));
 		assertThat(m.getMetadata(), equalTo(DEFAULT_METADATA));
 		assertThat(m.getReturnType(), equalTo(DEFAULT_RETURN_TYPE));

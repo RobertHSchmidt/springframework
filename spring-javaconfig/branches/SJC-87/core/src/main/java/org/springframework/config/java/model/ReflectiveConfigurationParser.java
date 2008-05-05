@@ -10,10 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.config.java.annotation.Aspects;
-import org.springframework.config.java.annotation.AutoBean;
-import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.type.ReflectiveType;
@@ -159,37 +156,19 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 
 	private void processMethod(Method method, ConfigurationClass modelClass) {
 		Annotation[] annotations = getJavaConfigAnnotations(method);
-
-		processBeanMethod(method, modelClass);
-
-		processExternalBeanMethod(method, modelClass);
-
-		processAutoBeanMethod(method, modelClass);
-	}
-
-	private void processBeanMethod(Method method, final ConfigurationClass modelClass) {
-		//if(!BeanMethod.identifyAsBeanMethod(annotations))
-			//return;
-
-		Bean metadata = AnnotationUtils.getAnnotation(method, Bean.class);
-		if(metadata != null)
-			modelClass.add(new BeanMethod(method.getName(), metadata, method.getModifiers()));
-	}
-
-	private void processExternalBeanMethod(Method method, final ConfigurationClass modelClass) {
-		ExternalBean metadata = findAnnotation(method, ExternalBean.class);
-		if(metadata != null)
-			modelClass.add(new ExternalBeanMethod(method.getName(), metadata, method.getModifiers()));
-	}
-
-	private void processAutoBeanMethod(Method method, final ConfigurationClass modelClass) {
-		AutoBean metadata = findAnnotation(method, AutoBean.class);
-
-		if(metadata == null)
-			return;
-
 		Type returnType = new ReflectiveType(method.getReturnType());
-		modelClass.add(new AutoBeanMethod(method.getName(), metadata, returnType, method.getModifiers()));
+
+		if(BeanMethod.identifyAsBeanMethod(annotations))
+			modelClass.add(new BeanMethod(method.getName(), method.getModifiers(), annotations));
+
+		else if(ExternalBeanMethod.identifyAsExternalBeanMethod(annotations))
+			modelClass.add(new ExternalBeanMethod(method.getName(), method.getModifiers(), annotations));
+
+		else if(AutoBeanMethod.identifyAsExternalBeanMethod(annotations))
+			modelClass.add(new AutoBeanMethod(method.getName(), returnType, method.getModifiers(), annotations));
+
+		else
+			modelClass.add(new NonJavaConfigMethod(method.getName(), method.getModifiers(), annotations));
 	}
 
 	/**

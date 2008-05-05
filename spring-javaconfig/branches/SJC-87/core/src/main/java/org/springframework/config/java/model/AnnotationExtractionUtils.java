@@ -31,4 +31,14 @@ public class AnnotationExtractionUtils {
 		} catch (Exception ex) { throw new RuntimeException(ex); }
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <A extends Annotation> A findAnnotation(Class<A> targetType, Annotation[] annotations) {
+		for(Annotation a : annotations)
+			if(a.annotationType().equals(targetType))
+				return (A) a; // target found -> return it
+	
+		// couldn't find the target annotation
+		return null;
+	}
+
 }
