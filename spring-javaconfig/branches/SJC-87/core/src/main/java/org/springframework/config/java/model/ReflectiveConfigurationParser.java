@@ -165,6 +165,9 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 		else if(ExternalBeanMethod.identifyAsExternalBeanMethod(annotations))
 			modelClass.add(new ExternalBeanMethod(method.getName(), method.getModifiers(), annotations));
 
+		else if(ExternalValueMethod.identifyAsExternalValueMethod(annotations))
+			modelClass.add(new ExternalValueMethod(method.getName(), method.getModifiers(), annotations));
+
 		else if(AutoBeanMethod.identifyAsExternalBeanMethod(annotations))
 			modelClass.add(new AutoBeanMethod(method.getName(), returnType, method.getModifiers(), annotations));
 

@@ -26,6 +26,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
@@ -51,7 +52,7 @@ public class ExternalValueTests {
 
 	// TODO: [@ExternalValue]
 	public @Test void testStringAndBooleanProperty() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
+		ctx = new JavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
 		TestBean rod = ctx.getBean(TestBean.class, "rod");
 		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
 		assertTrue("Boolean property must be resolved correctly", rod.isJedi());

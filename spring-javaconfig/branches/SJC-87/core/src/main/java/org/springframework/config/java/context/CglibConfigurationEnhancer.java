@@ -5,6 +5,7 @@ import static org.springframework.config.java.core.ScopedProxyMethodProcessor.re
 import static org.springframework.config.java.util.DefaultScopes.SINGLETON;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.StringUtils.hasLength;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -29,20 +30,29 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
+import org.springframework.config.java.valuesource.MessageSourceValueSource;
+import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
 	private final BeanFactory beanFactory;
+	private final ResourceLoader resourceLoader;
 
-	public CglibConfigurationEnhancer(BeanFactory beanFactory) {
+	public CglibConfigurationEnhancer(BeanFactory beanFactory, ResourceLoader resourceLoader) {
 		notNull(beanFactory, "beanFactory must be non-null");
 		this.beanFactory = beanFactory;
+
+		notNull(resourceLoader, "resourceLoader must be non-null");
+		this.resourceLoader = resourceLoader;
 	}
 
 	public String enhance(String configClassName) {
@@ -62,6 +72,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 					return 2;
 				if(findAnnotation(candidateMethod, AutoBean.class) != null)
 					return 3;
+				if(findAnnotation(candidateMethod, ExternalValue.class) != null)
+					return 4;
 				return 0;
 			}
 		});
@@ -70,17 +82,26 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
     			NoOp.class,
     			BeanMethodInterceptor.class,
     			ExternalBeanMethodInterceptor.class,
-    			AutoBeanMethodInterceptor.class
+    			AutoBeanMethodInterceptor.class,
+    			ExternalValueMethodInterceptor.class
 			});
 
 		Class<?> enhancedSubclass = enhancer.createClass();
+
+		/* ... */
+		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
+		ms.setResourceLoader(resourceLoader);
+		ms.setBasenames(new String[] { "classpath:/org/springframework/config/java/simple" });
+		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
+		/* ... */
 
 		Enhancer.registerCallbacks(enhancedSubclass,
 			new Callback[] {
 				NoOp.INSTANCE,
 				new BeanMethodInterceptor(beanFactory),
 				new ExternalBeanMethodInterceptor(beanFactory),
-				new AutoBeanMethodInterceptor(beanFactory)
+				new AutoBeanMethodInterceptor(beanFactory),
+				new ExternalValueMethodInterceptor(valueSource)
 			});
 
 		if(log.isDebugEnabled())
@@ -119,6 +140,33 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				name = m.getName();
 
 			return beanFactory.getBean(name);
+		}
+	}
+
+	static class ExternalValueMethodInterceptor implements MethodInterceptor {
+		private final ValueSource valueSource;
+
+		public ExternalValueMethodInterceptor(ValueSource valueSource) {
+			this.valueSource = valueSource;
+		}
+
+		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
+			ExternalValue metadata = AnnotationUtils.findAnnotation(m, ExternalValue.class);
+			Assert.notNull(metadata, "ExternalValue methods must be annotated with @ExternalValue");
+
+    		String name = metadata.value();
+    		if (!hasLength(name)) {
+    			// no explicit name provided -> use method name
+    			// TODO: plug in naming strategy
+    			name = m.getName();
+    			// Strip property name if needed
+    			if (name.startsWith("get"))
+    				name = Character.toLowerCase(name.charAt(3)) + name.substring(4);
+    		}
+
+			Class<?> requiredType = m.getReturnType();
+
+			return valueSource.resolve(name, requiredType);
 		}
 	}
 

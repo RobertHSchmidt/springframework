@@ -19,7 +19,7 @@ public class NonJavaConfigMethod {
 
 	public void validate(ValidationErrors errors) {
 		for(Annotation anno : annotations)
-			errors.add(ValidationError.INCOMPATIBLE_ANNOTATION + ": " + name + " " + anno.annotationType().getSimpleName());
+			errors.add(ValidationError.INVALID_ANNOTATION_DECLARATION + ": " + name + " " + anno.annotationType().getSimpleName());
 	}
 
 	@Override
