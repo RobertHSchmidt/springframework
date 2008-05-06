@@ -8,10 +8,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class Assert {
 	/**
 	 * Validates the number of beans registered with <var>ctx</var> matches
-	 * <var>expected</var>. Makes a special exception, however for the special
-	 * BeanPostProcessor registered for clearing out the
-	 * {@link org.springframework.config.java.aspects.RequiredMethodInvocationTracker.RequiredAnnotationMethodInvocationMonitor}
-	 * aspect
+	 * <var>expected</var>. Makes a special exception, however for any bean
+	 * definitions that have the {@link Constants#JAVA_CONFIG_IGNORE}.  These
+	 * definitions are considered 'internal' and not to be counted.
 	 *
 	 * @param ctx context to interrogate
 	 * @param expected expected number of beans

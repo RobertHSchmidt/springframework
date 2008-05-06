@@ -42,7 +42,6 @@ public class ConfigurationInheritanceAndScopedProxyTests {
 
 	@Before
 	public void setUp() throws Exception {
-		// TODO: Switch to JCAC (see todos below)
 		ctx = new JavaConfigApplicationContext(ExtendedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {

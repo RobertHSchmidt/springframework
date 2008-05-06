@@ -1,6 +1,8 @@
 package org.springframework.config.java.context;
 
 import static java.lang.String.format;
+import static org.springframework.config.java.core.ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName;
+import static org.springframework.config.java.util.DefaultScopes.SINGLETON;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.Assert.notNull;
 
@@ -27,8 +29,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
+import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
-import org.springframework.config.java.util.DefaultScopes;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
@@ -168,6 +170,11 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			// TODO: incorporate BeanNamingStrategy here
 			String beanName = m.getName();
 
+			boolean isScopedProxy = (AnnotationUtils.findAnnotation(m, ScopedProxy.class) != null);
+			String scopedBeanName = resolveHiddenScopedProxyBeanName(beanName);
+			if(isScopedProxy && ((ConfigurableApplicationContext)beanFactory).getBeanFactory().isCurrentlyInCreation(scopedBeanName))
+				beanName = scopedBeanName;
+
 			// the target bean instance, whether retrieved as a cached singleton or created newly below
 			Object bean;
 
@@ -189,7 +196,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 				// TODO: replace with static call to BeanMethod
 				Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
-				if(metadata.scope() == DefaultScopes.SINGLETON) {
+				if(metadata.scope().equals(SINGLETON)) {
 					if(log.isDebugEnabled())
 						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));

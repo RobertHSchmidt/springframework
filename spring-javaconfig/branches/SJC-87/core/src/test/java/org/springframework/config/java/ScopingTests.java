@@ -29,10 +29,10 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
+import org.springframework.config.java.test.Assert;
 
 /**
  * Test that scopes are properly supported by using a custom scope and scoped
@@ -49,7 +49,6 @@ public class ScopingTests {
 	private CustomScope customScope;
 	private ConfigurableJavaConfigApplicationContext ctx;
 
-	// TODO: [@ScopedProxy]
 	@Before
 	public void setUp() throws Exception {
 		customScope = new CustomScope();
@@ -131,10 +130,10 @@ public class ScopingTests {
 	}
 
 
-	// TODO: [@ScopedProxy]
+	// XXX: [@ScopedProxy]
 	public @Test void testRawScopes() throws Exception {
 		String beanName = "scopedProxyInterface";
-		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+		ctx = new JavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -148,8 +147,9 @@ public class ScopingTests {
 	}
 
 
+	// XXX: [@ScopedProxy]
 	public @Test void testScopedProxyConfiguration() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+		ctx = new JavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -187,8 +187,9 @@ public class ScopingTests {
 	}
 
 
+	// XXX: [@ScopedProxy]
 	public @Test void testScopedProxyConfigurationWithClasses() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+		ctx = new JavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -227,9 +228,9 @@ public class ScopingTests {
 	}
 
 
-	// TODO: [@ScopedProxy]
+	// XXX: [@ScopedProxy]
 	public @Test void testScopedConfigurationBeanDefinitionCount() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(ScopedConfigurationClass.class) {
+		ctx = new JavaConfigApplicationContext(ScopedConfigurationClass.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -239,7 +240,7 @@ public class ScopingTests {
 
 		// count the beans
 		// 6 @Beans + 1 Configuration + 2 @ScopedProxy
-		assertEquals(9, ctx.getBeanDefinitionCount());
+		Assert.assertBeanDefinitionCount(ctx, 9);
 	}
 	public static class ScopedConfigurationClass {
 		@Bean(scope = SCOPE)
