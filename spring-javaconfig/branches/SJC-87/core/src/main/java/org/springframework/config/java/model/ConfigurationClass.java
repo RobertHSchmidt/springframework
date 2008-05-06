@@ -140,6 +140,11 @@ public class ConfigurationClass {
 		return autoBeanMethods.toArray(new AutoBeanMethod[autoBeanMethods.size()]);
 	}
 
+	public ResourceBundles[] getResourceBundles() {
+		return resourceBundles.toArray(new ResourceBundles[resourceBundles.size()]);
+	}
+
+
 	public BeanMethod[] getFinalBeanMethods() {
 		ArrayList<BeanMethod> finalBeanMethods = new ArrayList<BeanMethod>();
 		for(BeanMethod beanMethod : beanMethods)

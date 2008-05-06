@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.config.java.annotation.Aspects;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.model.AnnotationExtractionUtils.AnnotationFilter;
 import org.springframework.config.java.type.ReflectiveType;
@@ -64,6 +65,8 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 
 		processAnyImportedConfigurations(literalClass, modelClass);
 
+		processAnyResourceBundles(literalClass, modelClass);
+
 		processAnyImportedAspects(literalClass);
 
 		processSelfAsAspectIfAnnotated(literalClass);
@@ -110,6 +113,12 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 		if(importAnno != null)
 			for(Class<?> classToImport : importAnno.value())
 				modelClass.addImportedClass(doParse(classToImport, false));
+	}
+
+	private void processAnyResourceBundles(Class<?> literalClass, ConfigurationClass modelClass) {
+		ResourceBundles resourceBundles = literalClass.getAnnotation(ResourceBundles.class);
+		if(resourceBundles != null)
+			modelClass.add(resourceBundles);
 	}
 
 	private void processAnyImportedAspects(final Class<?> literalClass) {
