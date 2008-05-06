@@ -27,7 +27,6 @@ import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 
 /**
  * Test for properties resolution
@@ -50,16 +49,16 @@ public class ExternalValueTests {
 	public void nullOutContext() { ctx = null; }
 
 
-	// TODO: [@ExternalValue]
+	// XXX: [@ExternalValue]
 	public @Test void testStringAndBooleanProperty() throws Exception {
 		ctx = new JavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
 		TestBean rod = ctx.getBean(TestBean.class, "rod");
 		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
 		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
 	}
-	// TODO: [@ExternalValue]
+	// XXX: [@ExternalValue]
 	public @Test void testIntProperty() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
+		ctx = new JavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
 		TestBean rod = ctx.getBean(TestBean.class, "rod");
 		assertEquals("int property must be resolved correctly", 37, rod.getAge());
 	}
@@ -80,9 +79,9 @@ public class ExternalValueTests {
 	}
 
 
-	// TODO: [@ExternalValue]
+	// XXX: [@ExternalValue]
 	public @Test void testDefaultValueInImplementationBody() throws Exception {
-		ctx = new LegacyJavaConfigApplicationContext(DefaultValuesConfig.class);
+		ctx = new JavaConfigApplicationContext(DefaultValuesConfig.class);
 		TestBean rod = ctx.getBean(TestBean.class, "rod");
 		assertEquals("int property must default correctly if there's a concrete method", 25, rod.getAge());
 	}
@@ -99,11 +98,11 @@ public class ExternalValueTests {
 	}
 
 
-	// TODO: [@ExternalValue]
+	// XXX: [@ExternalValue]
 	@Test(expected = BeanCreationException.class)
 	public void testUnresolved() throws Exception {
 		// unresolvedName will cause an exception
-		ctx = new LegacyJavaConfigApplicationContext(MissingValuesConfig.class);
+		ctx = new JavaConfigApplicationContext(MissingValuesConfig.class);
 	}
 	@ResourceBundles("classpath:/org/springframework/config/java/simple")
 	static abstract class MissingValuesConfig {

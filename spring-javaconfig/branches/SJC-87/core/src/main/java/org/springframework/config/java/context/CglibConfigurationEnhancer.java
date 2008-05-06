@@ -8,6 +8,7 @@ import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.StringUtils.hasLength;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import net.sf.cglib.proxy.Callback;
@@ -34,6 +35,7 @@ import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
+import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -145,10 +147,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
     		String name = metadata.value();
     		if (!hasLength(name)) {
     			// no explicit name provided -> use method name
-    			// TODO: plug in naming strategy
+    			// TODO: {naming strategy} plug in naming strategy
     			name = m.getName();
     			// Strip property name if needed
-    			if (name.startsWith("get"))
+    			if (name.startsWith("get") && Character.isUpperCase(name.charAt(3)))
     				name = Character.toLowerCase(name.charAt(3)) + name.substring(4);
     		}
 
@@ -157,7 +159,16 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			if(valueSource == null)
 				initializeValueSource(m);
 
-			return valueSource.resolve(name, requiredType);
+			try {
+				return valueSource.resolve(name, requiredType);
+			}
+			catch(ValueResolutionException ex) {
+				// value was not found in properties -> default to the body of the method (if any exists)
+				if(Modifier.isAbstract(m.getModifiers()))
+					throw ex; // cannot call super implementation if it's abstract.
+
+				return mp.invokeSuper(o, args);
+			}
 		}
 
 		/**
