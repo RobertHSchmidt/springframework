@@ -1,10 +1,10 @@
 package org.springframework.config.java.model;
 
+import static org.springframework.config.java.model.AnnotationExtractionUtils.findAnnotations;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +13,7 @@ import org.springframework.config.java.annotation.Aspects;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.core.Constants;
+import org.springframework.config.java.model.AnnotationExtractionUtils.AnnotationFilter;
 import org.springframework.config.java.type.ReflectiveType;
 import org.springframework.config.java.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -178,13 +179,11 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	 * superclass/interface implementation of <var>method</var>.
 	 */
 	private Annotation[] getJavaConfigAnnotations(Method method) {
-		ArrayList<Annotation> sjcAnnotations = new ArrayList<Annotation>();
-
-		for(Annotation a : method.getAnnotations())
-			if(a.annotationType().getName().startsWith(Constants.JAVA_CONFIG_PKG))
-				sjcAnnotations.add(a);
-
-		return sjcAnnotations.toArray(new Annotation[sjcAnnotations.size()]);
+		return findAnnotations(method, new AnnotationFilter() {
+			public boolean accept(Annotation candidate) {
+				return candidate.annotationType().getName().startsWith(Constants.JAVA_CONFIG_PKG);
+			}
+		});
 	}
 
 	private static class DeclaringClassInclusionPolicy {

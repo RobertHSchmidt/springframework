@@ -16,6 +16,11 @@
 package org.springframework.config.java.model;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Inherited;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+
+import org.springframework.core.annotation.AnnotationUtils;
 
 public class AnnotationExtractionUtils {
 
@@ -36,9 +41,62 @@ public class AnnotationExtractionUtils {
 		for(Annotation a : annotations)
 			if(a.annotationType().equals(targetType))
 				return (A) a; // target found -> return it
-	
+
 		// couldn't find the target annotation
 		return null;
+	}
+
+	/**
+	 * Modeled after {@link AnnotationUtils#findAnnotation(Method, Class)}, finds all
+	 * annotations on a given <var>method</var> by traversing up the class hierarchy.
+	 * This is necessary, because {@link Inherited @Inherited} does not apply to methods.
+	 *
+	 * @param method target method
+	 * @return all annotations, locally defined or defined in a superimplementation of <var>method</var>
+	 */
+	public static Annotation[] findAnnotations(Method method) {
+		return findAnnotations(method, new AnnotationFilter() {
+			public boolean accept(Annotation candidate) {
+				// include all annotations
+				return true;
+			}
+		});
+	}
+
+	/**
+	 * Finds all annotations on a given <var>method</var> that match <var>filter</var>.
+	 * Semantics are otherwise identical to {@link #findAnnotations(Method)}
+	 *
+	 * @see #findAnnotations(Method)
+	 *
+	 * @param method target method
+	 * @return all annotations on <var>method</var> that match <var>filter</var>
+	 */
+	public static Annotation[] findAnnotations(Method method, AnnotationFilter filter) {
+		ArrayList<Annotation> annotations = new ArrayList<Annotation>();
+		Class<?> cl = method.getDeclaringClass();
+		while(true) {
+			for(Annotation candidate : method.getDeclaredAnnotations())
+				if(filter.accept(candidate))
+					annotations.add(candidate);
+
+			cl = cl.getSuperclass();
+			if(cl == null)
+				break;
+
+			try {
+				method = cl.getDeclaredMethod(method.getName(), method.getParameterTypes());
+			}
+			catch (NoSuchMethodException e) {
+				break;
+			}
+		}
+
+		return annotations.toArray(new Annotation[annotations.size()]);
+	}
+
+	public static interface AnnotationFilter {
+		boolean accept(Annotation candidate);
 	}
 
 }

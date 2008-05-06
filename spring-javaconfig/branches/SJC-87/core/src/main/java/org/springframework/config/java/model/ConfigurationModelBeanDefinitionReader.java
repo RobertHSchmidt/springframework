@@ -5,6 +5,8 @@ import static java.lang.String.format;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
+import org.springframework.aop.scope.ScopedProxyFactoryBean;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -16,6 +18,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.core.BeanFactoryFactory;
+import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.type.Type;
 import org.springframework.core.annotation.AnnotationUtils;
 
@@ -98,17 +101,48 @@ public class ConfigurationModelBeanDefinitionReader {
 			if(defaults.defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
 				beanDef.setAutowireMode(defaults.defaultAutowire().value());
 
+		// TODO: plug in NamingStrategy here
+		String beanName = beanMethod.getName();
+
 		// consider aliases
 		for(String alias : metadata.aliases())
-			// TODO: need to calculate bean name here, based on any naming strategy in the mix
-			registry.registerAlias(beanMethod.getName(), alias);
+			registry.registerAlias(beanName, alias);
 
 		// is this bean marked as primary for disambiguation?
 		if(metadata.primary() == Primary.TRUE)
 			beanDef.setPrimary(true);
 
-		// TODO: plug in NamingStrategy here
-		registry.registerBeanDefinition(beanMethod.getName(), beanDef);
+		// is this method annotated with @ScopedProxy?
+		if(beanMethod.isScopedProxy()) {
+			RootBeanDefinition targetDef = beanDef;
+
+			// Create a scoped proxy definition for the original bean name,
+			// "hiding" the target bean in an internal target definition.
+			String targetBeanName = ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName(beanName);
+			RootBeanDefinition scopedProxyDefinition = new RootBeanDefinition(ScopedProxyFactoryBean.class);
+			scopedProxyDefinition.getPropertyValues().addPropertyValue("targetBeanName", targetBeanName);
+
+			// transfer relevant attributes from original bean to scoped-proxy bean
+			scopedProxyDefinition.setScope(beanMethod.getMetadata().scope());
+
+			if (beanMethod.getScopedProxyMetadata().proxyTargetClass())
+				targetDef.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
+				// ScopedFactoryBean's "proxyTargetClass" default is TRUE, so we
+				// don't need to set it explicitly here.
+			else
+				scopedProxyDefinition.getPropertyValues().addPropertyValue("proxyTargetClass", Boolean.FALSE);
+
+			// The target bean should be ignored in favor of the scoped proxy.
+			targetDef.setAutowireCandidate(false);
+
+			// Register the target bean as separate bean in the factory
+			registry.registerBeanDefinition(targetBeanName, targetDef);
+
+			// replace the original bean definition with the target one
+			beanDef = scopedProxyDefinition;
+		}
+
+		registry.registerBeanDefinition(beanName, beanDef);
 	}
 
 	private void loadBeanDefinitionsForAutoBeanMethod(AutoBeanMethod method) {
