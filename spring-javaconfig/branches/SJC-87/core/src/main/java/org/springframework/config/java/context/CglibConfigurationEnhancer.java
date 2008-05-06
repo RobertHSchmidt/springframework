@@ -31,28 +31,22 @@ import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
-import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
 	private final BeanFactory beanFactory;
-	private final ResourceLoader resourceLoader;
 
-	public CglibConfigurationEnhancer(BeanFactory beanFactory, ResourceLoader resourceLoader) {
+	public CglibConfigurationEnhancer(BeanFactory beanFactory) {
 		notNull(beanFactory, "beanFactory must be non-null");
 		this.beanFactory = beanFactory;
-
-		notNull(resourceLoader, "resourceLoader must be non-null");
-		this.resourceLoader = resourceLoader;
 	}
 
 	public String enhance(String configClassName) {
@@ -88,20 +82,13 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 		Class<?> enhancedSubclass = enhancer.createClass();
 
-		/* ... */
-		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-		ms.setResourceLoader(resourceLoader);
-		ms.setBasenames(new String[] { "classpath:/org/springframework/config/java/simple" });
-		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
-		/* ... */
-
 		Enhancer.registerCallbacks(enhancedSubclass,
 			new Callback[] {
 				NoOp.INSTANCE,
 				new BeanMethodInterceptor(beanFactory),
 				new ExternalBeanMethodInterceptor(beanFactory),
 				new AutoBeanMethodInterceptor(beanFactory),
-				new ExternalValueMethodInterceptor(valueSource)
+				new ExternalValueMethodInterceptor(beanFactory)
 			});
 
 		if(log.isDebugEnabled())
@@ -144,10 +131,11 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	}
 
 	static class ExternalValueMethodInterceptor implements MethodInterceptor {
-		private final ValueSource valueSource;
+		private final BeanFactory beanFactory;
+		private ValueSource valueSource;
 
-		public ExternalValueMethodInterceptor(ValueSource valueSource) {
-			this.valueSource = valueSource;
+		public ExternalValueMethodInterceptor(BeanFactory beanFactory) {
+			this.beanFactory = beanFactory;
 		}
 
 		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
@@ -166,7 +154,31 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 			Class<?> requiredType = m.getReturnType();
 
+			if(valueSource == null)
+				initializeValueSource(m);
+
 			return valueSource.resolve(name, requiredType);
+		}
+
+		/**
+		 * Lazily initializes value source by retrieving it from the beanFactory. This design
+		 * allows this method interceptor to be wired up by {@link CglibConfigurationEnhancer}
+		 * eagerly and then only cause a failure if a user actually tries to access an
+		 * {@link ExternalValue @ExternalValue} method without having provided a
+		 * {@link ResourceBundles @ResourceBundles} annotation.
+		 */
+		private void initializeValueSource(Method m) {
+    		if(beanFactory.containsBean("valueSource")) {
+    			valueSource = (ValueSource) beanFactory.getBean("valueSource");
+    		}
+    		else {
+    			String className = m.getDeclaringClass().getSimpleName();
+    			String methodName = m.getName();
+    			throw new IllegalStateException(format("No ValueSource bean could be found in " +
+    					"beanFactory while trying to resolve @ExternalValue method %s.%s. " +
+    					"Perhaps no @ResourceBundles annotation was provided on %s?",
+    					className, methodName, className));
+    		}
 		}
 	}
 

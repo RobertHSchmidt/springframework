@@ -13,7 +13,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 
 /**
@@ -39,34 +38,26 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 
 	private BeanFactory beanFactory;
 
-	private ResourceLoader resourceLoader;
-
 	public ConfigurationEnhancingBeanFactoryPostProcessor() { }
 
 	public ConfigurationEnhancingBeanFactoryPostProcessor(ApplicationContext appContext) {
 		setApplicationContext(appContext);
-		setResourceLoader(appContext);
 		afterPropertiesSet();
 	}
 
 	public void afterPropertiesSet() {
 		if(beanFactory == null) throw new IllegalStateException("beanFactory was not set");
-		if(resourceLoader == null) throw new IllegalStateException("resourceLoader was not set");
 
 		// has an enhancer already been injected?
 		if(enhancer != null) return;
 
 		// no. provide a default;
-		enhancer = new CglibConfigurationEnhancer(beanFactory, resourceLoader);
+		enhancer = new CglibConfigurationEnhancer(beanFactory);
 	}
 
 	/** called by the enclosing BeanFactory during initialization */
 	public void setApplicationContext(ApplicationContext appContext) {
 		this.beanFactory = appContext;
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
 	}
 
 	/**

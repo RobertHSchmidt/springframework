@@ -10,6 +10,7 @@ import org.springframework.aop.scope.ScopedProxyFactoryBean;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -17,10 +18,14 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
+import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.type.Type;
+import org.springframework.config.java.valuesource.MessageSourceValueSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.io.DefaultResourceLoader;
 
 /**
  * Renders a given {@link ConfigurationModel} as bean definitions to be
@@ -64,6 +69,9 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		doLoadBeanDefinitionForConfigurationClass(configClassName);
 
+		for(ResourceBundles resourceBundles : configClass.getResourceBundles())
+			loadBeanDefinitionsForResourceBundles(resourceBundles);
+
 		for(BeanMethod beanMethod : configClass.getBeanMethods())
 			loadBeanDefinitionsForBeanMethod(configClass, configClassName, beanMethod);
 
@@ -79,6 +87,14 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// @Configuration classes' bean names are always their fully-qualified classname
 		registry.registerBeanDefinition(configClassName, configBeanDef);
+	}
+
+	private void loadBeanDefinitionsForResourceBundles(ResourceBundles resourceBundles) {
+		ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
+		ms.setResourceLoader(new DefaultResourceLoader());
+		ms.setBasenames(resourceBundles.value());
+		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
+		((SingletonBeanRegistry)registry).registerSingleton("valueSource", valueSource);
 	}
 
 	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass,
