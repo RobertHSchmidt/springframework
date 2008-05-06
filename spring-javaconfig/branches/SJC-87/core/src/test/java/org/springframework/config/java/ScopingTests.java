@@ -103,7 +103,7 @@ public class ScopingTests {
 		try {
 			new JavaConfigApplicationContext(InvalidProxyObjectConfiguration.class);
 		} catch (MalformedJavaConfigurationException ex) {
-			assertTrue(ex.getMessage().contains(ValidationError.INCOMPATIBLE_ANNOTATION.toString()));
+			assertTrue(ex.getMessage().contains(ValidationError.INVALID_ANNOTATION_DECLARATION.toString()));
 			throw ex;
 		}
 	}

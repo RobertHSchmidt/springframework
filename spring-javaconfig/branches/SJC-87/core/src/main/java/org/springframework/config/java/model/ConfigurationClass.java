@@ -58,6 +58,8 @@ public class ConfigurationClass {
 	/** set is used because order does not matter. see {@link #add(ExternalBeanMethod)} */
 	private HashSet<ExternalBeanMethod> externalBeanMethods = new HashSet<ExternalBeanMethod>();
 
+	private HashSet<ExternalValueMethod> externalValueMethods = new HashSet<ExternalValueMethod>();
+
 	private HashSet<AutoBeanMethod> autoBeanMethods = new HashSet<AutoBeanMethod>();
 
 	private HashSet<NonJavaConfigMethod> nonJavaConfigMethods = new HashSet<NonJavaConfigMethod>();
@@ -112,6 +114,11 @@ public class ConfigurationClass {
 
 	public ConfigurationClass add(ExternalBeanMethod method) {
 		externalBeanMethods.add(method);
+		return this;
+	}
+
+	public ConfigurationClass add(ExternalValueMethod method) {
+		externalValueMethods.add(method);
 		return this;
 	}
 
@@ -239,8 +246,10 @@ public class ConfigurationClass {
 		// if the class is abstract and declares no @ExternalBean or @AutoBean methods, it is malformed
 		if(Modifier.isAbstract(modifiers)
 				&& externalBeanMethods.isEmpty()
-				&& autoBeanMethods.isEmpty())
-			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_OR_AUTOBEAN.toString() + ": " + name);
+				&& externalValueMethods.isEmpty()
+				&& autoBeanMethods.isEmpty()
+				)
+			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_EXTERNALVALUE_OR_AUTOBEAN.toString() + ": " + name);
 
 		// cascade through all declared @Bean methods
 		for(BeanMethod method : beanMethods)
@@ -248,6 +257,10 @@ public class ConfigurationClass {
 
 		// cascade through all declared @ExternalBean methods
 		for(ExternalBeanMethod method : externalBeanMethods)
+			method.validate(errors);
+
+		// cascade through all declared @ExternalValue methods
+		for(ExternalValueMethod method : externalValueMethods)
 			method.validate(errors);
 
 		// cascade through all declared @AutoBean methods

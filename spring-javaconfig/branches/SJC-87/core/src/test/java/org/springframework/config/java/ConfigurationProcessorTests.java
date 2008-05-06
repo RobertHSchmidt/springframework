@@ -195,7 +195,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [autowiring, aop]
+	// XXX: [autowiring, aop]
 	public @Test void testAutowireOnProxiedBeanDefinition() {
 		ctx = new JavaConfigApplicationContext(ProxiesDotb.class);
 
