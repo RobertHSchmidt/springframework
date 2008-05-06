@@ -26,9 +26,6 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
 /**
  * Parses configuration class literals using java reflection, writing the results
  * out to a {@link ConfigurationModel} object.
- * <p/>
- * TODO: rename to ReflectiveConfigurationParser (see precedent
- * at ReflectiveAspectJAdvisorFactory)
  *
  * @author Chris Beams
  */

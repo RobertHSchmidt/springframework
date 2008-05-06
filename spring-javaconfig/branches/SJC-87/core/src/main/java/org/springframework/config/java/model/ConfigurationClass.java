@@ -276,6 +276,11 @@ public class ConfigurationClass {
 		for(NonJavaConfigMethod method : nonJavaConfigMethods)
 			method.validate(errors);
 
+		// TODO: {model validation} could validate that if there are any @ExternalValue methods
+		// present that at least one @ResourceBundles must be present. this would actually only
+		// apply for abstract @ExternalValue methods, because those that have an implementation
+		// can default to it. see ExternalValueMethodInterceptor#initializeValueSource()
+
 		return errors;
 	}
 
