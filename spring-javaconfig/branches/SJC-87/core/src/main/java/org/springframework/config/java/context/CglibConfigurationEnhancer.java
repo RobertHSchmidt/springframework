@@ -28,6 +28,8 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -37,7 +39,6 @@ import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -243,7 +244,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 			boolean isScopedProxy = (AnnotationUtils.findAnnotation(m, ScopedProxy.class) != null);
 			String scopedBeanName = resolveHiddenScopedProxyBeanName(beanName);
-			if(isScopedProxy && ((ConfigurableApplicationContext)beanFactory).getBeanFactory().isCurrentlyInCreation(scopedBeanName))
+			if(isScopedProxy && ((ConfigurableBeanFactory)beanFactory).isCurrentlyInCreation(scopedBeanName))
 				beanName = scopedBeanName;
 
 			// the target bean instance, whether retrieved as a cached singleton or created newly below
@@ -271,7 +272,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 					if(log.isDebugEnabled())
 						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
-					((ConfigurableBeanFactory) ((ConfigurableApplicationContext)beanFactory).getBeanFactory()).registerSingleton(beanName, bean);
+					((SingletonBeanRegistry)beanFactory).registerSingleton(beanName, bean);
 				}
 			}
 
@@ -326,12 +327,12 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		 */
 		private boolean factoryContainsBean(String beanName) {
 			// TODO: stopgap check; see todos above, this type wrangling needs to get worked out better
-			Assert.isInstanceOf(ConfigurableApplicationContext.class, beanFactory,
-					"beanFactory must be of type ConfigurableApplicationContext. Actual type: " +
+			Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
+					"beanFactory must be of type ConfigurableListableBeanFactory. Actual type: " +
 					beanFactory.getClass().getSimpleName());
 
 			return beanFactory.containsBean(beanName)
-				&& !(((ConfigurableApplicationContext)beanFactory).getBeanFactory()).isCurrentlyInCreation(beanName);
+				&& !((ConfigurableBeanFactory)beanFactory).isCurrentlyInCreation(beanName);
 		}
 	}
 
