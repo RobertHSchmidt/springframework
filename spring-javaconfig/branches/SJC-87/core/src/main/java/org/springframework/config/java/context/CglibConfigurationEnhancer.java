@@ -27,9 +27,7 @@ import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -45,9 +43,9 @@ import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
-	private final BeanFactory beanFactory;
+	private final ConfigurableListableBeanFactory beanFactory;
 
-	public CglibConfigurationEnhancer(BeanFactory beanFactory) {
+	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory beanFactory) {
 		notNull(beanFactory, "beanFactory must be non-null");
 		this.beanFactory = beanFactory;
 	}
@@ -221,10 +219,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	 * @author Chris Beams
 	 */
 	static class BeanMethodInterceptor implements MethodInterceptor {
-		private final BeanFactory beanFactory;
+		private final ConfigurableListableBeanFactory beanFactory;
 		private final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
 
-		public BeanMethodInterceptor(BeanFactory beanFactory) {
+		public BeanMethodInterceptor(ConfigurableListableBeanFactory beanFactory) {
 			this.beanFactory = beanFactory;
 		}
 
@@ -244,7 +242,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 			boolean isScopedProxy = (AnnotationUtils.findAnnotation(m, ScopedProxy.class) != null);
 			String scopedBeanName = resolveHiddenScopedProxyBeanName(beanName);
-			if(isScopedProxy && ((ConfigurableBeanFactory)beanFactory).isCurrentlyInCreation(scopedBeanName))
+			if(isScopedProxy && beanFactory.isCurrentlyInCreation(scopedBeanName))
 				beanName = scopedBeanName;
 
 			// the target bean instance, whether retrieved as a cached singleton or created newly below
@@ -272,7 +270,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 					if(log.isDebugEnabled())
 						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
-					((SingletonBeanRegistry)beanFactory).registerSingleton(beanName, bean);
+					beanFactory.registerSingleton(beanName, bean);
 				}
 			}
 
@@ -332,7 +330,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 					beanFactory.getClass().getSimpleName());
 
 			return beanFactory.containsBean(beanName)
-				&& !((ConfigurableBeanFactory)beanFactory).isCurrentlyInCreation(beanName);
+				&& !beanFactory.isCurrentlyInCreation(beanName);
 		}
 	}
 
