@@ -72,7 +72,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
-		addBeanFactoryPostProcessor(new ConfigurationEnhancingBeanFactoryPostProcessor(this));
+		addBeanFactoryPostProcessor(new ConfigurationEnhancingBeanFactoryPostProcessor());
 	}
 
 	@Override

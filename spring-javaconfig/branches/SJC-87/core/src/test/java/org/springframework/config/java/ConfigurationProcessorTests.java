@@ -166,6 +166,24 @@ public class ConfigurationProcessorTests {
 
 
 	// TODO: [hiding]
+	public @Test void simplestPossibleHidingScenario() {
+		ctx = new JavaConfigApplicationContext(SimpleHiding.class);
+		TestBean publicBean = ctx.getBean(TestBean.class, "publicBean");
+		assertEquals("public", publicBean.getName());
+		assertEquals("hidden", publicBean.getSpouse().getName());
+		assertFalse("hiddenBean was not hidden!", ctx.containsBean("hiddenBean"));
+
+	}
+	static class SimpleHiding {
+		public @Bean TestBean publicBean() {
+			TestBean publicBean = new TestBean("public");
+			publicBean.setSpouse(hiddenBean());
+			return publicBean;
+		}
+		protected @Bean TestBean hiddenBean() { return new TestBean("hidden"); }
+	}
+
+	// TODO: [hiding]
 	public @Test void testHidden() {
 		ctx = new LegacyJavaConfigApplicationContext(BaseConfiguration.class);
 
