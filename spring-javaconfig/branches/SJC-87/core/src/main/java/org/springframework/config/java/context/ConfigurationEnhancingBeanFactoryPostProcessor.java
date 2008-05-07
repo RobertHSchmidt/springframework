@@ -5,7 +5,6 @@ import static java.lang.String.format;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -31,7 +30,7 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 		this.enhancer = enhancer;
 	}
 
-	protected ConfigurationEnhancer initConfigurationEnhancer(BeanFactory beanFactory) {
+	protected ConfigurationEnhancer initConfigurationEnhancer(ConfigurableListableBeanFactory beanFactory) {
 		return new CglibConfigurationEnhancer(beanFactory);
 	}
 
