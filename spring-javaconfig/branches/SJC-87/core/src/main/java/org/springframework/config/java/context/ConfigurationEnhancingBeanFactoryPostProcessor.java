@@ -7,10 +7,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.Assert;
 
 /**
@@ -29,19 +32,39 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 
 	private ConfigurationEnhancer enhancer;
 	private ConfigurableListableBeanFactory internalBeanFactory;
-	private JavaConfigApplicationContext context;
+	private ApplicationContext context;
 
 	public void setConfigurationEnhancer(ConfigurationEnhancer enhancer) {
 		this.enhancer = enhancer;
 	}
 
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		Assert.isInstanceOf(JavaConfigApplicationContext.class, context);
-		this.context = (JavaConfigApplicationContext) context;
+		Assert.isInstanceOf(ConfigurableApplicationContext.class, context);
+		// TODO: Assert.isInstanceOf(JavaConfigApplicationContext.class, context);
+		this.context = context;
 	}
 
-	protected ConfigurationEnhancer initConfigurationEnhancer(ConfigurableListableBeanFactory beanFactory) {
-		internalBeanFactory = context.getInternalBeanFactory();
+	protected ConfigurationEnhancer initConfigurationEnhancer(ConfigurableListableBeanFactory externalBeanFactory) {
+		if(context instanceof JavaConfigApplicationContext)
+			internalBeanFactory = ((JavaConfigApplicationContext) context).getInternalBeanFactory();
+		else {
+			// TODO: replace with JavaConfigBeanFactory / InformationHidingBeanFactory
+			internalBeanFactory = new DefaultListableBeanFactory(externalBeanFactory) {
+				@Override
+				public boolean isCurrentlyInCreation(String beanName) {
+					if(super.isCurrentlyInCreation(beanName))
+						return true;
+
+					ConfigurableBeanFactory bf = (ConfigurableBeanFactory) this.getParentBeanFactory();
+					while(bf != null) {
+						if(bf.isCurrentlyInCreation(beanName))
+							return true;
+						bf = (ConfigurableBeanFactory) bf.getParentBeanFactory();
+					}
+					return false;
+				}
+			};
+		}
 		return new CglibConfigurationEnhancer(internalBeanFactory);
 	}
 
@@ -49,7 +72,7 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 		log.info("Post-processing " + beanFactory);
 
 		if(enhancer == null)
-				enhancer = initConfigurationEnhancer(beanFactory);
+			enhancer = initConfigurationEnhancer(beanFactory);
 
 		int configClassesEnhanced = 0;
 
@@ -66,7 +89,7 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 
 			if(log.isDebugEnabled())
 				log.debug(format("Replacing bean definition class name [%s] with enhanced class name [%s]",
-				                  configClassName, enhancedClassName));
+				                 configClassName, enhancedClassName));
 			beanDef.setBeanClassName(enhancedClassName);
 
 			configClassesEnhanced++;

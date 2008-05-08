@@ -78,27 +78,53 @@ public class ConfigurationModelBeanDefinitionReader {
 	private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
 		loadBeanDefinitionsForDeclaringClass(configClass.getDeclaringClass());
 
-		String configClassName = configClass.getName();
-
-		doLoadBeanDefinitionForConfigurationClass(configClassName);
+		doLoadBeanDefinitionForConfigurationClass(configClass.getName());
 
 		for(ResourceBundles resourceBundles : configClass.getResourceBundles())
 			loadBeanDefinitionsForResourceBundles(resourceBundles);
 
 		for(BeanMethod beanMethod : configClass.getBeanMethods())
-			loadBeanDefinitionsForBeanMethod(configClass, configClassName, beanMethod);
+			loadBeanDefinitionsForBeanMethod(configClass, beanMethod);
 
 		for(AutoBeanMethod autoBeanMethod : configClass.getAutoBeanMethods())
 			loadBeanDefinitionsForAutoBeanMethod(autoBeanMethod);
 	}
 
 	private void doLoadBeanDefinitionForConfigurationClass(String configClassName) {
-		RootBeanDefinition configBeanDef = new RootBeanDefinition();
-		configBeanDef.setBeanClassName(configClassName);
+		/* TODO: come back and clean this commenting up - left in for future use when re-enabling XML bootstrapping
+		ArrayList<BeanDefinition> existingBeanDefs = new ArrayList<BeanDefinition>();
+		for(String beanName : getExternalRegistry().getBeanDefinitionNames()) {
+			BeanDefinition beanDef = getExternalRegistry().getBeanDefinition(beanName);
+			if(beanDef.getBeanClassName() != null && beanDef.getBeanClassName().equals(configClassName)) {
+				existingBeanDefs.add(beanDef);
+			}
+		}
+
+		*/
+		RootBeanDefinition configBeanDef;
+		/*
+
+		switch (existingBeanDefs.size()) {
+			case 0:
+		*/
+				configBeanDef = new RootBeanDefinition();
+				configBeanDef.setBeanClassName(configClassName);
+		/*
+				break;
+			case 1:
+				configBeanDef = (GenericBeanDefinition) existingBeanDefs.get(0);
+				break;
+			default:
+				throw new IllegalStateException("multiple bean definitions already exist for " + configClassName);
+		}
+		*/
+
 		// mark this bean def with metadata indicating that it is a configuration bean
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
 
 		// @Configuration classes' bean names are always their fully-qualified classname
+		if(logger.isInfoEnabled())
+			logger.info(format("Registering externally visible bean definition for @Configuration class %s", configClassName));
 		getExternalRegistry().registerBeanDefinition(configClassName, configBeanDef);
 	}
 
@@ -107,12 +133,14 @@ public class ConfigurationModelBeanDefinitionReader {
 		ms.setResourceLoader(new DefaultResourceLoader());
 		ms.setBasenames(resourceBundles.value());
 		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
+		if(logger.isInfoEnabled())
+			logger.info(format("Registering singleton ValueSource %s for @ResourceBundles %s", valueSource, resourceBundles));
 		((SingletonBeanRegistry)getInternalRegistry()).registerSingleton("valueSource", valueSource);
 	}
 
-	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass,
-	                                              String configClassName,
-	                                              BeanMethod beanMethod) {
+	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass, BeanMethod beanMethod) {
+		String configClassName = configClass.getName();
+
 		RootBeanDefinition beanDef = new RootBeanDefinition();
 		beanDef.setFactoryBeanName(configClassName);
 		beanDef.setFactoryMethodName(beanMethod.getName());
@@ -171,10 +199,15 @@ public class ConfigurationModelBeanDefinitionReader {
 			beanDef = scopedProxyDefinition;
 		}
 
-		if(Modifier.isPublic(beanMethod.getModifiers()))
+		if(Modifier.isPublic(beanMethod.getModifiers())) {
+			if(logger.isInfoEnabled())
+				logger.info(format("Registering externally visible bean definition for @Bean method %s.%s()", configClassName, beanName));
 			getExternalRegistry().registerBeanDefinition(beanName, beanDef);
-		else
+		} else {
+			if(logger.isInfoEnabled())
+				logger.info(format("Registering internally visible (hidden) bean definition for @Bean method %s.%s() ", configClassName, beanName));
 			getInternalRegistry().registerBeanDefinition(beanName, beanDef);
+		}
 	}
 
 	private void loadBeanDefinitionsForAutoBeanMethod(AutoBeanMethod method) {
