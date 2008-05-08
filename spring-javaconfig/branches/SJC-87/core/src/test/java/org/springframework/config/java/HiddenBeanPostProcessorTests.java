@@ -52,7 +52,7 @@ public class HiddenBeanPostProcessorTests {
 				super.customizeBeanFactory(beanFactory);
 				beanFactory.addBeanPostProcessor(rememberingPostProcessor);
 			}
-		}.getBean("publicPoint");
+		};
 
 		assertTrue("Must have recorded public bean method",
 				rememberingPostProcessor.beansSeen.containsKey("publicPoint"));

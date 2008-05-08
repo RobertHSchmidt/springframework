@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 
 /**
  * re-implementing a simplified version of the context.  This will be swapped
@@ -35,6 +38,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/** context is configurable until refresh() is called */
 	private boolean openForConfiguration = true;
+
+	private DefaultListableBeanFactory internalBeanFactory;
 
 	public JavaConfigApplicationContext() { }
 
@@ -69,10 +74,59 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		refresh();
 	}
 
+	public ConfigurableListableBeanFactory getInternalBeanFactory() {
+		return internalBeanFactory;
+	}
+
+	@Override
+	protected DefaultListableBeanFactory createBeanFactory() {
+		DefaultListableBeanFactory externalBeanFactory = super.createBeanFactory();
+		internalBeanFactory = new DefaultListableBeanFactory(externalBeanFactory) {
+			@Override
+			public boolean isCurrentlyInCreation(String beanName) {
+				if(super.isCurrentlyInCreation(beanName))
+					return true;
+
+				ConfigurableBeanFactory bf = (ConfigurableBeanFactory) this.getParentBeanFactory();
+				while(bf != null) {
+        			if(bf.isCurrentlyInCreation(beanName))
+        				return true;
+        			bf = (ConfigurableBeanFactory) bf.getParentBeanFactory();
+				}
+    			return false;
+			}
+		};
+		return externalBeanFactory;
+	}
+
+	/**
+	 * Ensures that all bean definitions, both hidden and externally visible get post-processed.
+	 * There is a contract here: BeanFactoryPostProcessors should not consider BeanFactory ancestry;
+	 * if they do, they will risk processing definitions twice.
+	 */
+	@Override
+	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory externalBeanFactory) {
+		super.invokeBeanFactoryPostProcessors(internalBeanFactory);
+		super.invokeBeanFactoryPostProcessors(externalBeanFactory);
+	}
+
+	/**
+	 * Finish the initialization of this context's bean factory,
+	 * initializing all remaining singleton beans.
+	 */
+	@Override
+	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory externalBeanFactory) {
+		internalBeanFactory.copyConfigurationFrom(externalBeanFactory);
+		super.finishBeanFactoryInitialization(externalBeanFactory);
+		super.finishBeanFactoryInitialization(internalBeanFactory);
+	}
+
 	@Override
 	protected void prepareRefresh() {
 		super.prepareRefresh();
-		addBeanFactoryPostProcessor(new ConfigurationEnhancingBeanFactoryPostProcessor());
+		ConfigurationEnhancingBeanFactoryPostProcessor bfpp = new ConfigurationEnhancingBeanFactoryPostProcessor();
+		bfpp.setApplicationContext(this);
+		addBeanFactoryPostProcessor(bfpp);
 	}
 
 	@Override
@@ -82,8 +136,9 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	}
 
 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
-		BeanDefinitionReader reader = new ReflectiveJavaConfigBeanDefinitionReader(beanFactory, aspectClassResources);
+	protected void loadBeanDefinitions(DefaultListableBeanFactory externalBeanFactory) throws IOException, BeansException {
+		Assert.isTrue(externalBeanFactory == internalBeanFactory.getParentBeanFactory());
+		BeanDefinitionReader reader = new ReflectiveJavaConfigBeanDefinitionReader(internalBeanFactory, aspectClassResources);
 		reader.loadBeanDefinitions(configClassResources.toArray(new Resource[configClassResources.size()]));
 	}
 

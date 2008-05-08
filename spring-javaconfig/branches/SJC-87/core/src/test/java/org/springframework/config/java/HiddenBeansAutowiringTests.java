@@ -24,15 +24,15 @@ import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostP
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class HiddenBeansAutowiringTests {
 
 	protected ApplicationContext createContext() throws Exception {
-		// TODO: [hiding]
-		return new LegacyJavaConfigApplicationContext(MyConfig.class) {
+		// XXX: [hiding]
+		return new JavaConfigApplicationContext(MyConfig.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				// need to register processor via definition to get

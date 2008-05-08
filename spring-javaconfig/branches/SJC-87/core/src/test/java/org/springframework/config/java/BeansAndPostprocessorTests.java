@@ -31,7 +31,6 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.dao.support.PersistenceExceptionTranslationInterceptor;
 import org.springframework.stereotype.Repository;
@@ -49,8 +48,8 @@ public class BeansAndPostprocessorTests {
 	@Before
 	public void setUp() {
 		bpp = new CountingBPP();
-		// TODO: [hiding]
-		ctx = new LegacyJavaConfigApplicationContext(MixedConfig.class) {
+		// XXX: [hiding]
+		ctx = new JavaConfigApplicationContext(MixedConfig.class) {
 			@Override
 			protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 				super.customizeBeanFactory(beanFactory);
@@ -114,7 +113,7 @@ public class BeansAndPostprocessorTests {
 	}
 
 
-	// TODO: [hiding]
+	// XXX: [hiding]
 	public @Test void testBPPForHiddenBeans() throws Exception {
 		String name = "hiddenBean";
 		try {
@@ -125,7 +124,13 @@ public class BeansAndPostprocessorTests {
 			// expected
 		}
 		// deal with BPP
-		assertFalse(bpp.beans.containsKey(name));
+		// XXX: [breaks-backward-compat]: before, the bpp didn't ever see the
+		// hidden bean. this seems to be in conflict with the way
+		// HiddenBeanPostProcessorTests#testBeanPostProcessorActsOnHiddenBeans()
+		// works.  At any rate, it seems desirable to have any registered BPPs
+		// process all beans, hidden or visible, every time.
+		//assertFalse(bpp.beans.containsKey(name));
+		assertTrue(bpp.beans.containsKey(name));
 	}
 
 }

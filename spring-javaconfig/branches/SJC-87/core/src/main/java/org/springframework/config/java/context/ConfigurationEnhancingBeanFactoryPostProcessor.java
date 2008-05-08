@@ -9,6 +9,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
 
 /**
  * Post-processes a BeanFactory in search of Configuration class BeanDefinitions;
@@ -21,24 +24,32 @@ import org.springframework.config.java.model.ConfigurationClass;
  *
  * @author Chris Beams
  */
-public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, ApplicationContextAware {
 	private static final Log log = LogFactory.getLog(ConfigurationEnhancingBeanFactoryPostProcessor.class);
 
 	private ConfigurationEnhancer enhancer;
+	private ConfigurableListableBeanFactory internalBeanFactory;
+	private JavaConfigApplicationContext context;
 
 	public void setConfigurationEnhancer(ConfigurationEnhancer enhancer) {
 		this.enhancer = enhancer;
 	}
 
+	public void setApplicationContext(ApplicationContext context) throws BeansException {
+		Assert.isInstanceOf(JavaConfigApplicationContext.class, context);
+		this.context = (JavaConfigApplicationContext) context;
+	}
+
 	protected ConfigurationEnhancer initConfigurationEnhancer(ConfigurableListableBeanFactory beanFactory) {
-		return new CglibConfigurationEnhancer(beanFactory);
+		internalBeanFactory = context.getInternalBeanFactory();
+		return new CglibConfigurationEnhancer(internalBeanFactory);
 	}
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		log.info("Post-processing " + beanFactory);
 
 		if(enhancer == null)
-			enhancer = initConfigurationEnhancer(beanFactory);
+				enhancer = initConfigurationEnhancer(beanFactory);
 
 		int configClassesEnhanced = 0;
 
