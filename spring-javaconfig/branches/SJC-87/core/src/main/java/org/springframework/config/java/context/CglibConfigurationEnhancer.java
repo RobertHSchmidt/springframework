@@ -93,8 +93,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				new ExternalValueMethodInterceptor(beanFactory)
 			});
 
-		if(log.isDebugEnabled())
-			log.debug(format("Successfully enhanced %s; enhanced class name is: %s",
+		if(log.isInfoEnabled())
+			log.info(format("Successfully enhanced %s; enhanced class name is: %s",
 							  configClassName, enhancedSubclass.getName()));
 
 		return enhancedSubclass.getName();
