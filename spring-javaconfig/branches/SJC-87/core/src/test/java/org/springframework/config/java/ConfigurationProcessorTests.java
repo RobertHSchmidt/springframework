@@ -165,7 +165,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [hiding]
+	// XXX: [hiding]
 	public @Test void simplestPossibleHidingScenario() {
 		ctx = new JavaConfigApplicationContext(SimpleHiding.class);
 		TestBean publicBean = ctx.getBean(TestBean.class, "publicBean");
@@ -183,9 +183,9 @@ public class ConfigurationProcessorTests {
 		protected @Bean TestBean hiddenBean() { return new TestBean("hidden"); }
 	}
 
-	// TODO: [hiding]
+	// XXX: [hiding]
 	public @Test void testHidden() {
-		ctx = new LegacyJavaConfigApplicationContext(BaseConfiguration.class);
+		ctx = new JavaConfigApplicationContext(BaseConfiguration.class);
 
 		assertTrue(ctx.containsBean(BaseConfiguration.class.getName()));
 
@@ -495,9 +495,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [hiding, autowiring]
+	// XXX: [hiding, autowiring]
 	public @Test void testEffectOfHidingOnAutowire() {
-		ctx = new LegacyJavaConfigApplicationContext(AutowiringConfiguration.class);
+		ctx = new JavaConfigApplicationContext(AutowiringConfiguration.class);
 
 		assertFalse(ctx.containsBean("testBean"));
 		DependsOnTestBean dotb = ctx.getBean(DependsOnTestBean.class, "autowireCandidate");
@@ -511,9 +511,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [hiding, autowiring]
+	// XXX: [hiding, autowiring]
 	public @Test void testHiddenBeansDoNotConfuseAutowireByType() {
-		ctx = new LegacyJavaConfigApplicationContext(AutowiringConfigurationWithNonHiddenWinner.class);
+		ctx = new JavaConfigApplicationContext(AutowiringConfigurationWithNonHiddenWinner.class);
 
 		assertFalse(ctx.containsBean("testBean"));
 		DependsOnTestBean dotb = ctx.getBean(DependsOnTestBean.class, "autowireCandidate");
@@ -665,9 +665,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [hiding]
+	// XXX: [hiding]
 	public @Test void testHiddenBeans() {
-		ctx = new LegacyJavaConfigApplicationContext(HiddenBeansConfig.class);
+		ctx = new JavaConfigApplicationContext(HiddenBeansConfig.class);
 
 		BeanFactory bf = ctx.getBeanFactory();
 		// hidden beans
@@ -706,17 +706,17 @@ public class ConfigurationProcessorTests {
 
 
 	public @Test void testBeanDefinitionCount() throws Exception {
-		// TODO: [hiding]
+		// XXX: [hiding]
 		// 3 @Bean + 1 @Configuration - 2 hidden @Bean
-		assertEquals(2, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(HiddenBeansConfig.class)));
+		assertEquals(2, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(HiddenBeansConfig.class)));
 		// 2 @Bean + 1 @Configuration
 		assertEquals(3, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(AdvisedAutowiring.class)));
-		// TODO: [hiding]
+		// XXX: [hiding]
 		// 2 @Bean + 1 @Configuration - 1 hidden @Bean
-		assertEquals(2, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(AutowiringConfiguration.class)));
-		// TODO: [hiding]
+		assertEquals(2, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(AutowiringConfiguration.class)));
+		// XXX: [hiding]
 		// 6 @Bean + 1 Configuration - 1 hidden @Bean
-		assertEquals(6, getNonInternalBeanDefinitionCount(new LegacyJavaConfigApplicationContext(BaseConfiguration.class)));
+		assertEquals(6, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(BaseConfiguration.class)));
 		// 2 @Bean + 1 Configuration
 		assertEquals(3, getNonInternalBeanDefinitionCount(new JavaConfigApplicationContext(HotSwapConfiguration.class)));
 		// XXX: [@AutoBean]

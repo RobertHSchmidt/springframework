@@ -273,11 +273,11 @@ public final class JavaConfigApplicationContextTests {
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
-	static class ExternalConfig { @Bean ITestBean extBean() { return new TestBean(); } }
+	static class ExternalConfig { public @Bean ITestBean extBean() { return new TestBean(); } }
 	static class OuterConfig {
 		@Bean String whatev() { return "whatev"; }
 		@Import(ExternalConfig.class)
-		static class InnerConfig { @Bean ITestBean innerBean() { return new TestBean(); } }
+		static class InnerConfig { public @Bean ITestBean innerBean() { return new TestBean(); } }
 	}
 
 	// ------------------------------------------------------------------------
@@ -324,11 +324,11 @@ public final class JavaConfigApplicationContextTests {
 
 	// TODO: what about abstract outer classes?
 
-	public static class NameConfig { @Bean String name() { return "lewis"; } }
+	public static class NameConfig { public @Bean String name() { return "lewis"; } }
 	@Import(NameConfig.class)
 	public abstract static class Outer {
-		@Bean TestBean foo() { return new TestBean("foo"); }
-		@Bean TestBean bar() { return new TestBean(name()); }
+		public @Bean TestBean foo() { return new TestBean("foo"); }
+		public @Bean TestBean bar() { return new TestBean(name()); }
 		abstract @ExternalBean String name();
 		static class Other { @Bean TestBean alice() { return new TestBean("alice"); } }
 	}
@@ -337,8 +337,8 @@ public final class JavaConfigApplicationContextTests {
 	public static class Config { }
 
 	public static class DeclaringClass {
-		@Bean TestBean outer() { return new TestBean(); }
-		public static class MemberClass { @Bean TestBean inner() { return new TestBean(); } }
+		public @Bean TestBean outer() { return new TestBean(); }
+		public static class MemberClass { public @Bean TestBean inner() { return new TestBean(); } }
 	}
 
 	// TODO: rename
@@ -358,8 +358,8 @@ public final class JavaConfigApplicationContextTests {
 		assertEquals("lewis", bar.getName());
 	}
 
-	static class Child { @Bean TestBean child() { return new TestBean("alice"); } }
-	static class Parent { @Bean TestBean parent() { return new TestBean("mother"); } }
+	static class Child { public @Bean TestBean child() { return new TestBean("alice"); } }
+	static class Parent { public @Bean TestBean parent() { return new TestBean("mother"); } }
 	// TODO: rename
 	public @Test void simple() {
 		JavaConfigApplicationContext c = new JavaConfigApplicationContext();

@@ -18,10 +18,9 @@ package org.springframework.config.java.model;
 import java.util.List;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.AbstractBeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -46,6 +45,18 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 		aspectRegistry = initializeAspectRegistry();
 
 		modelBeanDefinitionReader = initializeConfigurationModelBeanDefinitionReader();
+	}
+
+	/**
+	 * Temporary measure while porting from LegacyJCAC - JCAC.  TODO: remove temporary bridge
+	 */
+	private static DefaultListableBeanFactory getParentIfJCAC(BeanDefinitionRegistry registry) {
+		DefaultListableBeanFactory parent = (DefaultListableBeanFactory)((DefaultListableBeanFactory)registry).getParentBeanFactory();
+
+		if(parent == null)
+			return (DefaultListableBeanFactory) registry; // must be LegacyJCAC
+
+		return parent; // must be JCAC
 	}
 
 	@Override
@@ -74,7 +85,15 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 	}
 
 	protected void registerAspectsFromModel(ConfigurationModel model) {
-		aspectRegistry.registerAspects(model, (BeanFactory) getRegistry());
+		aspectRegistry.registerAspects(model, getExternalBeanFactory());
+	}
+
+	private DefaultListableBeanFactory getExternalBeanFactory() {
+		return getParentIfJCAC(getRegistry());
+	}
+
+	private DefaultListableBeanFactory getInternalBeanFactory() {
+		return (DefaultListableBeanFactory) getRegistry();
 	}
 
 	/**
@@ -91,18 +110,18 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 
 	// TODO: document this extensively.  the declaring class logic is quite complex, potentially confusing right now.
 	private void initializeDeclaringClassBeanFactoryFactory() {
-		this.getRegistry().registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
+		getInternalBeanFactory().registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
 	}
 
 	private ConfigurationModelBeanDefinitionReader initializeConfigurationModelBeanDefinitionReader() {
-		return new ConfigurationModelBeanDefinitionReader(this.getRegistry());
+		return new ConfigurationModelBeanDefinitionReader(getInternalBeanFactory());
 	}
 
 	private ConfigurationModelAspectRegistry initializeAspectRegistry() {
 		ConfigurationModelAspectRegistry aspectRegistry = new ConfigurationModelAspectRegistry();
 		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.class.getName();
-		if(!((SingletonBeanRegistry)getRegistry()).containsSingleton(aspectRegistryBeanName))
-			((SingletonBeanRegistry)getRegistry()).registerSingleton(aspectRegistryBeanName, aspectRegistry);
+		if(!getInternalBeanFactory().containsSingleton(aspectRegistryBeanName))
+			getInternalBeanFactory().registerSingleton(aspectRegistryBeanName, aspectRegistry);
 		return aspectRegistry;
 	}
 

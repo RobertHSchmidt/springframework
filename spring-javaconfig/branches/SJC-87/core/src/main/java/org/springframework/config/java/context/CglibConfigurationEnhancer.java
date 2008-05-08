@@ -28,6 +28,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -264,13 +265,17 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
 				bean = proxyIfAnyPointcutsApply(bean, m.getReturnType());
 
-				// TODO: replace with static call to BeanMethod
+				// TODO: replace with static call to BeanMethod?
 				Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
 				if(metadata.scope().equals(SINGLETON)) {
 					if(log.isDebugEnabled())
 						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
-					beanFactory.registerSingleton(beanName, bean);
+
+					if(Modifier.isPublic(m.getModifiers()))
+						((SingletonBeanRegistry)beanFactory.getParentBeanFactory()).registerSingleton(beanName, bean);
+					else
+						beanFactory.registerSingleton(beanName, bean);
 				}
 			}
 
@@ -332,6 +337,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			return beanFactory.containsBean(beanName)
 				&& !beanFactory.isCurrentlyInCreation(beanName);
 		}
+
 	}
 
 }
