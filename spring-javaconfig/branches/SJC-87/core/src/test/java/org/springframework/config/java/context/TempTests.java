@@ -13,7 +13,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.process.NewConfigurationPostProcessor;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -160,9 +160,9 @@ public class TempTests {
 		//configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
 		ac.registerBeanDefinition(configClassName, configBeanDef);
 
-		NewConfigurationPostProcessor ncpp = new NewConfigurationPostProcessor();
-		ncpp.setApplicationContext(ac);
-		ac.addBeanFactoryPostProcessor(ncpp);
+		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
+		cpp.setApplicationContext(ac);
+		ac.addBeanFactoryPostProcessor(cpp);
 
 		ac.refresh();
 

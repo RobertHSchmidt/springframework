@@ -43,7 +43,7 @@ import org.springframework.config.java.ConfigurationProcessorTests.BaseConfigura
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.process.NewConfigurationPostProcessor;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -53,7 +53,7 @@ public class ConfigurationPostProcessorTests {
 
 	@Test
 	public void testPriorityOrdering() {
-		NewConfigurationPostProcessor cpp = new NewConfigurationPostProcessor();
+		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
 		assertEquals(Integer.MIN_VALUE, cpp.getOrder());
 	}
 
