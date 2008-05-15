@@ -6,6 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 
 public class AspectClass {
 
+	public static final String BEAN_ATTR_NAME = "isJavaConfigurationAspectClass";
 	private final String name;
 	private Aspect metadata;
 

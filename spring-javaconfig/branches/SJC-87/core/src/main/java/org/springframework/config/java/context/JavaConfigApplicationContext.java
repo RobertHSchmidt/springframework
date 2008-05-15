@@ -1,24 +1,23 @@
 package org.springframework.config.java.context;
 
 import static java.lang.String.format;
-import static org.springframework.util.ClassUtils.convertClassNameToResourcePath;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.model.AspectClass;
+import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 
 /**
  * re-implementing a simplified version of the context.  This will be swapped
@@ -32,14 +31,14 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		new ClassPathScanningConfigurationProviderFactory().getProvider(this);
 
 	// TODO: should be LinkedHashSet?
-	private ArrayList<ClassPathResource> configClassResources = new ArrayList<ClassPathResource>();
+	private ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
 
-	private ArrayList<ClassPathResource> aspectClassResources = new ArrayList<ClassPathResource>();
+	private ArrayList<Class<?>> aspectClasses = new ArrayList<Class<?>>();
+
+	private ArrayList<String> basePackages = new ArrayList<String>();
 
 	/** context is configurable until refresh() is called */
 	private boolean openForConfiguration = true;
-
-	private DefaultListableBeanFactory internalBeanFactory;
 
 	public JavaConfigApplicationContext() { }
 
@@ -74,59 +73,12 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		refresh();
 	}
 
-	public ConfigurableListableBeanFactory getInternalBeanFactory() {
-		return internalBeanFactory;
-	}
-
 	@Override
-	protected DefaultListableBeanFactory createBeanFactory() {
-		DefaultListableBeanFactory externalBeanFactory = super.createBeanFactory();
-		internalBeanFactory = new DefaultListableBeanFactory(externalBeanFactory) {
-			@Override
-			public boolean isCurrentlyInCreation(String beanName) {
-				if(super.isCurrentlyInCreation(beanName))
-					return true;
-
-				ConfigurableBeanFactory bf = (ConfigurableBeanFactory) this.getParentBeanFactory();
-				while(bf != null) {
-        			if(bf.isCurrentlyInCreation(beanName))
-        				return true;
-        			bf = (ConfigurableBeanFactory) bf.getParentBeanFactory();
-				}
-    			return false;
-			}
-		};
-		return externalBeanFactory;
-	}
-
-	/**
-	 * Ensures that all bean definitions, both hidden and externally visible get post-processed.
-	 * There is a contract here: BeanFactoryPostProcessors should not consider BeanFactory ancestry;
-	 * if they do, they will risk processing definitions twice.
-	 */
-	@Override
-	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory externalBeanFactory) {
-		super.invokeBeanFactoryPostProcessors(internalBeanFactory);
-		super.invokeBeanFactoryPostProcessors(externalBeanFactory);
-	}
-
-	/**
-	 * Finish the initialization of this context's bean factory,
-	 * initializing all remaining singleton beans.
-	 */
-	@Override
-	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory externalBeanFactory) {
-		internalBeanFactory.copyConfigurationFrom(externalBeanFactory);
-		super.finishBeanFactoryInitialization(externalBeanFactory);
-		super.finishBeanFactoryInitialization(internalBeanFactory);
-	}
-
-	@Override
-	protected void prepareRefresh() {
-		super.prepareRefresh();
-		ConfigurationEnhancingBeanFactoryPostProcessor bfpp = new ConfigurationEnhancingBeanFactoryPostProcessor();
-		bfpp.setApplicationContext(this);
-		addBeanFactoryPostProcessor(bfpp);
+	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this).postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		super.invokeBeanFactoryPostProcessors(beanFactory);
 	}
 
 	@Override
@@ -135,11 +87,48 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		openForConfiguration = false;
 	}
 
+	/**
+	 * Loads any specified {@link Configuration @Configuration} classes and {@link Aspect @Aspect} classes
+	 * as bean definitions within this context's BeanFactory for later processing by {@link ConfigurationPostProcessor}
+	 * @see #JavaConfigApplicationContext(Class...)
+	 * @see #addConfigClasses(Class...)
+	 * @see #addAspectClasses(Class...)
+	 */
 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory externalBeanFactory) throws IOException, BeansException {
-		Assert.isTrue(externalBeanFactory == internalBeanFactory.getParentBeanFactory());
-		BeanDefinitionReader reader = new ReflectiveJavaConfigBeanDefinitionReader(internalBeanFactory, aspectClassResources);
-		reader.loadBeanDefinitions(configClassResources.toArray(new Resource[configClassResources.size()]));
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
+		for(Class<?> configClass : configClasses)
+			loadBeanDefinitionForConfigurationClass(beanFactory, configClass);
+
+		for(String basePackage : basePackages)
+			loadBeanDefinitionsForBasePackage(beanFactory, basePackage);
+
+		for(Class<?> aspectClass : aspectClasses)
+			loadBeanDefinitionForAspectClass(beanFactory, aspectClass);
+	}
+
+	private void loadBeanDefinitionForConfigurationClass(DefaultListableBeanFactory beanFactory, Class<?> configClass) {
+		String configBeanName = configClass.getName(); // TODO: {naming strategy} should end in # mark?
+		RootBeanDefinition configBeanDef = new RootBeanDefinition();
+		configBeanDef.setBeanClassName(configBeanName);
+		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+		beanFactory.registerBeanDefinition(configBeanName, configBeanDef);
+	}
+
+	private void loadBeanDefinitionsForBasePackage(DefaultListableBeanFactory beanFactory, String basePackage) {
+		for(BeanDefinition beanDef : scanner.findCandidateComponents(basePackage)) {
+			ScannedGenericBeanDefinition configBeanDef = (ScannedGenericBeanDefinition) beanDef; // TODO: unfortunate cast
+			String configBeanName = configBeanDef.getBeanClassName(); // TODO: {naming strategy}
+			configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+			beanFactory.registerBeanDefinition(configBeanName, configBeanDef);
+		}
+	}
+
+	private void loadBeanDefinitionForAspectClass(DefaultListableBeanFactory beanFactory, Class<?> aspectClass) {
+		String aspectBeanName = aspectClass.getName(); // TODO: {naming strategy} should end in # mark?
+		RootBeanDefinition aspectBeanDef = new RootBeanDefinition();
+		aspectBeanDef.setBeanClassName(aspectBeanName);
+		aspectBeanDef.addMetadataAttribute(new BeanMetadataAttribute(AspectClass.BEAN_ATTR_NAME, true));
+		beanFactory.registerBeanDefinition(aspectBeanName, aspectBeanDef);
 	}
 
 	@Override
@@ -151,20 +140,19 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	public void addConfigClasses(Class<?>... classes) {
 		assertOpenForConfiguration("addConfigClasses");
 		for(Class<?> configClass : classes)
-			addConfigClassAsResource(configClass.getName());
+			configClasses.add(configClass);
 	}
 
-	public void addBasePackages(String... basePackages) {
+	public void addBasePackages(String... packages) {
 		assertOpenForConfiguration("addBasePackages");
-		for (String basePackage : basePackages)
-			for(BeanDefinition beanDef : scanner.findCandidateComponents(basePackage))
-				addConfigClassAsResource(beanDef.getBeanClassName());
+		for (String basePackage : packages)
+			basePackages.add(basePackage);
 	}
 
 	public void addAspectClasses(Class<?>... classes) {
 		assertOpenForConfiguration("addAspectClasses");
 		for (Class<?> aspectClass : classes)
-			addAspectClassAsResource(aspectClass.getName());
+			aspectClasses.add(aspectClass);
 	}
 
 	private void assertOpenForConfiguration(String attemptedMethod) {
@@ -174,14 +162,6 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
     				"before refresh(), consider using the no-arg constructor for %s",
     				attemptedMethod, this.getClass().getSimpleName()
     			));
-	}
-
-	private void addConfigClassAsResource(String fqClassName) {
-		configClassResources.add(new ClassPathResource(convertClassNameToResourcePath(fqClassName)));
-	}
-
-	private void addAspectClassAsResource(String fqClassName) {
-		aspectClassResources.add(new ClassPathResource(convertClassNameToResourcePath(fqClassName)));
 	}
 
 	@Deprecated

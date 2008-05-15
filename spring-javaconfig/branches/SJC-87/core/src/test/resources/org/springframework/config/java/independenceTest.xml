@@ -9,6 +9,7 @@
 		from each other and doesn't affect owning factory
 	-->
 
+	<!-- TODO: [xml:aop] -->
 	<bean 
 		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 		

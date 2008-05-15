@@ -4,6 +4,8 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.beans.factory.support.AbstractBeanDefinition.AUTOWIRE_BY_TYPE;
 import static org.springframework.beans.factory.support.BeanDefinitionBuilder.rootBeanDefinition;
+import static org.springframework.config.java.context.BeanVisibility.HIDDEN;
+import static org.springframework.config.java.context.BeanVisibility.PUBLIC;
 import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
 import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
 import static org.springframework.config.java.model.AutoBeanMethodTests.VALID_AUTOBEAN_METHOD;
@@ -13,12 +15,13 @@ import org.junit.Test;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.util.DefaultScopes;
 
 /**
@@ -29,12 +32,12 @@ import org.springframework.config.java.util.DefaultScopes;
 public class ConfigurationModelBeanDefinitionReaderTests {
 
 	private ConfigurationModelBeanDefinitionReader renderer;
-	private BeanDefinitionRegistry registry;
+	private JavaConfigBeanFactory registry;
 	private ConfigurationModel model;
 
 	@Before
 	public void setUp() {
-		registry = createMock(BeanDefinitionRegistry.class);
+		registry = createMock(JavaConfigBeanFactory.class);
 		renderer = new ConfigurationModelBeanDefinitionReader(registry);
 		model = new ConfigurationModel();
 	}
@@ -53,13 +56,14 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 		expectLastCall();
 
-		registry.registerBeanDefinition(beanName,
+		BeanDefinition beanDef =
 			rootBeanDefinition((String)null)
 				.setFactoryBean(configClassName, beanName)
-				.getBeanDefinition());
+				.getBeanDefinition();
+		registry.registerBeanDefinition(beanName, beanDef, HIDDEN);
 		expectLastCall();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
@@ -90,7 +94,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 		expectLastCall();
 
 
@@ -98,7 +102,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		rbd.setFactoryBeanName(configClassName);
 		rbd.setFactoryMethodName(beanName);
 		rbd.setScope(DefaultScopes.PROTOTYPE);
-		registry.registerBeanDefinition(beanName, rbd);
+		registry.registerBeanDefinition(beanName, rbd, HIDDEN);
 		expectLastCall();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
@@ -125,13 +129,13 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 		expectLastCall();
 
 		RootBeanDefinition rbd = new RootBeanDefinition();
 		rbd.setBeanClassName(TestBean.class.getName());
 		rbd.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
-		registry.registerBeanDefinition(beanName, rbd);
+		registry.registerBeanDefinition(beanName, rbd, PUBLIC);
 		expectLastCall();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
@@ -162,7 +166,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 		expectLastCall();
 
 
@@ -170,7 +174,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		rbd.setFactoryBeanName(configClassName);
 		rbd.setFactoryMethodName(beanName);
 		rbd.setPrimary(true);
-		registry.registerBeanDefinition(beanName, rbd);
+		registry.registerBeanDefinition(beanName, rbd, HIDDEN);
 		expectLastCall();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
@@ -205,7 +209,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 		expectLastCall();
 
 		// expect the registration of the @Bean method above
@@ -213,7 +217,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		rbd.setFactoryBeanName(configClassName);
 		rbd.setFactoryMethodName(beanName);
 		rbd.setAutowireMode(AUTOWIRE_BY_TYPE);
-		registry.registerBeanDefinition(beanName, rbd);
+		registry.registerBeanDefinition(beanName, rbd, HIDDEN);
 		expectLastCall();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
@@ -249,7 +253,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 		expectLastCall();
 
 		// expect the registration of the @Bean method above
@@ -257,7 +261,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		rbd.setFactoryBeanName(configClassName);
 		rbd.setFactoryMethodName(beanName);
 		rbd.setAutowireMode(AUTOWIRE_BY_TYPE);
-		registry.registerBeanDefinition(beanName, rbd);
+		registry.registerBeanDefinition(beanName, rbd, HIDDEN);
 		expectLastCall();
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
@@ -290,18 +294,18 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
-		registry.registerBeanDefinition(configClassName, configBeanDef);
+		registry.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 
 		// expect the registration of the @Bean method above
 		RootBeanDefinition rbd = new RootBeanDefinition();
 		rbd.setFactoryBeanName(configClassName);
 		rbd.setFactoryMethodName(beanName);
-		registry.registerBeanDefinition(beanName, rbd);
+		registry.registerBeanDefinition(beanName, rbd, HIDDEN);
 
 		// expect registration of aliases
-		registry.registerAlias("order", "tom");
-		registry.registerAlias("order", "dick");
-		registry.registerAlias("order", "harry");
+		registry.registerAlias("order", "tom", PUBLIC);
+		registry.registerAlias("order", "dick", PUBLIC);
+		registry.registerAlias("order", "harry", PUBLIC);
 
 		expect(registry.getBeanDefinitionCount()).andReturn(2);
 

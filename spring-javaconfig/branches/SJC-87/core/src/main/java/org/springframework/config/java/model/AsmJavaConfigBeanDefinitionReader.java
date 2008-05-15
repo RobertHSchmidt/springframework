@@ -17,7 +17,7 @@ package org.springframework.config.java.model;
 
 import java.util.List;
 
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
 // import issues.MyConfig;
@@ -35,7 +35,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 public abstract class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
-	protected AsmJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
+	protected AsmJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry,
 			List<ClassPathResource> aspectClassResources) {
 		super(registry, aspectClassResources);
 	}

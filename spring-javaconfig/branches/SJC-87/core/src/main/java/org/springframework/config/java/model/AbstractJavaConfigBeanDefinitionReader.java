@@ -18,25 +18,24 @@ package org.springframework.config.java.model;
 import java.util.List;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.support.AbstractBeanDefinitionReader;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
+public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 	private final List<ClassPathResource> aspectClassResources;
 	private final ConfigurationModelAspectRegistry aspectRegistry;
 	private final ConfigurationModelBeanDefinitionReader modelBeanDefinitionReader;
+	protected final DefaultJavaConfigBeanFactory beanFactory;
 
 	@Deprecated
-	protected AbstractJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry) {
+	protected AbstractJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry) {
 		this(registry, null);
 	}
 
-	protected AbstractJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry, List<ClassPathResource> aspectClassResources) {
-		super(registry);
+	protected AbstractJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry, List<ClassPathResource> aspectClassResources) {
+		this.beanFactory = registry;
 
 		this.aspectClassResources = aspectClassResources;
 
@@ -47,19 +46,6 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 		modelBeanDefinitionReader = initializeConfigurationModelBeanDefinitionReader();
 	}
 
-	/**
-	 * Temporary measure while porting from LegacyJCAC - JCAC.  TODO: remove temporary bridge
-	 */
-	private static DefaultListableBeanFactory getParentIfJCAC(BeanDefinitionRegistry registry) {
-		DefaultListableBeanFactory parent = (DefaultListableBeanFactory)((DefaultListableBeanFactory)registry).getParentBeanFactory();
-
-		if(parent == null)
-			return (DefaultListableBeanFactory) registry; // must be LegacyJCAC
-
-		return parent; // must be JCAC
-	}
-
-	@Override
 	public int loadBeanDefinitions(Resource[] configClassResources) throws BeanDefinitionStoreException {
 		ConfigurationModel model = createConfigurationModel(configClassResources);
 
@@ -85,15 +71,7 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 	}
 
 	protected void registerAspectsFromModel(ConfigurationModel model) {
-		aspectRegistry.registerAspects(model, getExternalBeanFactory());
-	}
-
-	private DefaultListableBeanFactory getExternalBeanFactory() {
-		return getParentIfJCAC(getRegistry());
-	}
-
-	private DefaultListableBeanFactory getInternalBeanFactory() {
-		return (DefaultListableBeanFactory) getRegistry();
+		aspectRegistry.registerAspects(model, beanFactory.getParentBeanFactory());
 	}
 
 	/**
@@ -110,18 +88,18 @@ public abstract class AbstractJavaConfigBeanDefinitionReader extends AbstractBea
 
 	// TODO: document this extensively.  the declaring class logic is quite complex, potentially confusing right now.
 	private void initializeDeclaringClassBeanFactoryFactory() {
-		getInternalBeanFactory().registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
+		beanFactory.registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
 	}
 
 	private ConfigurationModelBeanDefinitionReader initializeConfigurationModelBeanDefinitionReader() {
-		return new ConfigurationModelBeanDefinitionReader(getInternalBeanFactory());
+		return new ConfigurationModelBeanDefinitionReader(beanFactory);
 	}
 
 	private ConfigurationModelAspectRegistry initializeAspectRegistry() {
 		ConfigurationModelAspectRegistry aspectRegistry = new ConfigurationModelAspectRegistry();
 		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.class.getName();
-		if(!getInternalBeanFactory().containsSingleton(aspectRegistryBeanName))
-			getInternalBeanFactory().registerSingleton(aspectRegistryBeanName, aspectRegistry);
+		if(!beanFactory.containsSingleton(aspectRegistryBeanName))
+			beanFactory.registerSingleton(aspectRegistryBeanName, aspectRegistry);
 		return aspectRegistry;
 	}
 

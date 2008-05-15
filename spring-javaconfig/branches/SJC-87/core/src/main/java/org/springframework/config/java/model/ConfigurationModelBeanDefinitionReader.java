@@ -2,8 +2,8 @@ package org.springframework.config.java.model;
 
 
 import static java.lang.String.format;
-
-import java.lang.reflect.Modifier;
+import static org.springframework.config.java.context.BeanVisibility.PUBLIC;
+import static org.springframework.config.java.context.BeanVisibility.visibilityOf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,9 +11,6 @@ import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.aop.scope.ScopedProxyFactoryBean;
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.HierarchicalBeanFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -22,6 +19,8 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.annotation.ResourceBundles;
+import org.springframework.config.java.context.BeanVisibility;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.type.Type;
@@ -42,29 +41,18 @@ public class ConfigurationModelBeanDefinitionReader {
 
 	private static final Log logger = LogFactory.getLog(ConfigurationModelBeanDefinitionReader.class);
 
-	private final BeanDefinitionRegistry registry;
+	private final JavaConfigBeanFactory beanFactory;
 
-	public ConfigurationModelBeanDefinitionReader(BeanDefinitionRegistry registry) {
-		this.registry = registry;
-	}
-
-	private BeanDefinitionRegistry getInternalRegistry() {
-		return registry;
-	}
-
-	private BeanDefinitionRegistry getExternalRegistry() {
-		if(registry instanceof HierarchicalBeanFactory && ((HierarchicalBeanFactory) registry).getParentBeanFactory() != null)
-			return (BeanDefinitionRegistry) ((HierarchicalBeanFactory)registry).getParentBeanFactory();
-		return registry;
+	public ConfigurationModelBeanDefinitionReader(JavaConfigBeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
 	}
 
 	/**
-	 * @param registry
 	 * @param model
 	 * @return number of bean definitions generated
 	 */
 	public int loadBeanDefinitions(ConfigurationModel model) {
-		int initialBeanDefCount = getInternalRegistry().getBeanDefinitionCount();
+		int initialBeanDefCount = beanFactory.getBeanDefinitionCount();
 
 		for(ConfigurationClass configClass : model.getAllConfigurationClasses())
 			loadBeanDefinitionsForConfigurationClass(configClass);
@@ -72,7 +60,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		for(AspectClass aspectClass : model.getAspectClasses())
 			loadBeanDefinitionsForAspectClass(aspectClass);
 
-		return getInternalRegistry().getBeanDefinitionCount() - initialBeanDefCount;
+		return beanFactory.getBeanDefinitionCount() - initialBeanDefCount;
 	}
 
 	private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
@@ -125,7 +113,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		// @Configuration classes' bean names are always their fully-qualified classname
 		if(logger.isInfoEnabled())
 			logger.info(format("Registering externally visible bean definition for @Configuration class %s", configClassName));
-		getExternalRegistry().registerBeanDefinition(configClassName, configBeanDef);
+		beanFactory.registerBeanDefinition(configClassName, configBeanDef, BeanVisibility.PUBLIC);
 	}
 
 	private void loadBeanDefinitionsForResourceBundles(ResourceBundles resourceBundles) {
@@ -135,7 +123,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		MessageSourceValueSource valueSource = new MessageSourceValueSource(ms);
 		if(logger.isInfoEnabled())
 			logger.info(format("Registering singleton ValueSource %s for @ResourceBundles %s", valueSource, resourceBundles));
-		((SingletonBeanRegistry)getInternalRegistry()).registerSingleton("valueSource", valueSource);
+		beanFactory.registerSingleton("valueSource", valueSource);
 	}
 
 	private void loadBeanDefinitionsForBeanMethod(ConfigurationClass configClass, BeanMethod beanMethod) {
@@ -163,7 +151,7 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// consider aliases
 		for(String alias : metadata.aliases())
-			getExternalRegistry().registerAlias(beanName, alias);
+			beanFactory.registerAlias(beanName, alias, BeanVisibility.PUBLIC);
 
 		// is this bean marked as primary for disambiguation?
 		if(metadata.primary() == Primary.TRUE)
@@ -193,21 +181,15 @@ public class ConfigurationModelBeanDefinitionReader {
 			targetDef.setAutowireCandidate(false);
 
 			// Register the target bean as separate bean in the factory
-			getExternalRegistry().registerBeanDefinition(targetBeanName, targetDef);
+			beanFactory.registerBeanDefinition(targetBeanName, targetDef, BeanVisibility.PUBLIC);
 
 			// replace the original bean definition with the target one
 			beanDef = scopedProxyDefinition;
 		}
 
-		if(Modifier.isPublic(beanMethod.getModifiers())) {
-			if(logger.isInfoEnabled())
-				logger.info(format("Registering externally visible bean definition for @Bean method %s.%s()", configClassName, beanName));
-			getExternalRegistry().registerBeanDefinition(beanName, beanDef);
-		} else {
-			if(logger.isInfoEnabled())
-				logger.info(format("Registering internally visible (hidden) bean definition for @Bean method %s.%s() ", configClassName, beanName));
-			getInternalRegistry().registerBeanDefinition(beanName, beanDef);
-		}
+		BeanVisibility visibility = visibilityOf(beanMethod.getModifiers());
+		logger.info(format("Registering %s bean definition for @Bean method %s.%s()", visibility, configClassName, beanName));
+		beanFactory.registerBeanDefinition(beanName, beanDef, visibility);
 	}
 
 	private void loadBeanDefinitionsForAutoBeanMethod(AutoBeanMethod method) {
@@ -217,7 +199,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		beanDef.setBeanClassName(returnType.getName());
 		beanDef.setAutowireMode(method.getMetadata().autowire().value());
 
-		getExternalRegistry().registerBeanDefinition(method.getName(), beanDef);
+		beanFactory.registerBeanDefinition(method.getName(), beanDef, PUBLIC);
 	}
 
 	private void loadBeanDefinitionsForAspectClass(AspectClass aspectClass) {
@@ -228,8 +210,8 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// @Aspect classes' bean names are always their fully-qualified classname
 		// don't overwrite any existing bean definition (in the case of an @Aspect @Configuration)
-		if(!getExternalRegistry().containsBeanDefinition(className))
-			getExternalRegistry().registerBeanDefinition(className, beanDef);
+		if(!beanFactory.containsBeanDefinition(className, PUBLIC))
+			beanFactory.registerBeanDefinition(className, beanDef, PUBLIC);
 	}
 
 	private void loadBeanDefinitionsForDeclaringClass(ConfigurationClass declaringClass) {
@@ -240,12 +222,13 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		BeanFactory parentBF;
 		String factoryName = BeanFactoryFactory.class.getName();
-		if(((ConfigurableListableBeanFactory)getInternalRegistry()).containsBean(factoryName))
-			parentBF = (BeanFactory) ((ConfigurableListableBeanFactory)getInternalRegistry()).getBean(factoryName, new Object[] { declaringClass.getName() });
+
+		if(beanFactory.containsBean(factoryName))
+			parentBF = (BeanFactory) beanFactory.getBean(factoryName, new Object[] { declaringClass.getName() });
 		else
 			parentBF = new DefaultListableBeanFactory();
 
-		((ConfigurableListableBeanFactory)getExternalRegistry()).setParentBeanFactory(parentBF);
+		beanFactory.getParentBeanFactory().setParentBeanFactory(parentBF);
 
 		// TODO: test for the case where more than one configuration class has a declaring class - this should be illegal
 		// because it would result in setParentBeanFactory being called more than once.

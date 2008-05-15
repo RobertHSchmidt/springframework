@@ -11,7 +11,7 @@
 	-->
 
 	<bean 
-		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.process.NewConfigurationPostProcessor" />
 		
 	<bean 
 		class="org.springframework.config.java.ConfigurationPostProcessorTests$ExternalBeanConfiguration" 

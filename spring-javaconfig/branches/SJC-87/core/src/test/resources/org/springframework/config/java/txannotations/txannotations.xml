@@ -11,6 +11,7 @@
     	http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 
+	<!-- TODO: [xml:tx] -->
 	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
 
 
