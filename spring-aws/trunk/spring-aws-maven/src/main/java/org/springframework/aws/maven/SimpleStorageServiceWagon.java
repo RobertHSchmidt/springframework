@@ -96,6 +96,10 @@ public class SimpleStorageServiceWagon extends AbstractWagon {
 			throw new ResourceDoesNotExistException("Resource " + resourceName + " does not exist in the repository", e);
 		}
 
+		if(!destination.getParentFile().exists()) {
+			destination.getParentFile().mkdirs();
+		}
+
 		InputStream in = null;
 		OutputStream out = null;
 		try {
