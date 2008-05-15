@@ -50,7 +50,7 @@ import org.springframework.util.ClassUtils;
  * @author Rod Johnson
  * @author Costin Leau
  */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware,
+public class LegacyConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware,
 ApplicationContextAware {
 
 	protected final Log log = LogFactory.getLog(getClass());

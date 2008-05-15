@@ -33,7 +33,7 @@ import org.springframework.util.ClassUtils;
  * @author Rod Johnson
  * 
  * @see ConfigurationProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
- * @see ConfigurationPostProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
+ * @see LegacyConfigurationPostProcessor#setConfigurationListenerRegistry(ConfigurationListenerRegistry)
  */
 class ConfigurationListenerRegistry {
 

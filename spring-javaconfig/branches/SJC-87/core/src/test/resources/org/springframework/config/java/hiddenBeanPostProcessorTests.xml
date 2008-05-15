@@ -6,7 +6,7 @@
 
 	<!-- TODO: [xml:hiding] -->
 	<bean 
-		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+		class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" />
 		
 	<bean 
 		class="org.springframework.config.java.HiddenBeanPostProcessorTests$HasHiddenBeansNeedingPostProcessing" 

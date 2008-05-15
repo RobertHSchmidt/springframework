@@ -13,7 +13,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
@@ -89,7 +89,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	/**
 	 * Loads any specified {@link Configuration @Configuration} classes and {@link Aspect @Aspect} classes
-	 * as bean definitions within this context's BeanFactory for later processing by {@link ConfigurationPostProcessor}
+	 * as bean definitions within this context's BeanFactory for later processing by {@link LegacyConfigurationPostProcessor}
 	 * @see #JavaConfigApplicationContext(Class...)
 	 * @see #addConfigClasses(Class...)
 	 * @see #addAspectClasses(Class...)

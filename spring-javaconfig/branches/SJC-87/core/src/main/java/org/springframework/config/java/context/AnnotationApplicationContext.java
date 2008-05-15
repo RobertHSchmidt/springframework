@@ -23,7 +23,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -170,7 +170,7 @@ public class AnnotationApplicationContext extends AbstractRefreshableApplication
 	 *
 	 */
 	protected void registerDefaultPostProcessors() {
-		addBeanFactoryPostProcessor(new ConfigurationPostProcessor());
+		addBeanFactoryPostProcessor(new LegacyConfigurationPostProcessor());
 	}
 
 	@Override

@@ -6,7 +6,7 @@
 
 
 	<!-- TODO: [xml:bean-override] -->
-	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+	<bean class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" />
 
 	<bean class="org.springframework.config.java.BeanOverridingTests$IllegalShadowConfiguration" />
 
