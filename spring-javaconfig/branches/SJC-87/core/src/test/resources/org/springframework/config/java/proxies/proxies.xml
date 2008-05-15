@@ -11,7 +11,7 @@
 	<aop:aspectj-autoproxy
 		proxy-target-class="true"/>
 	
-	<bean class="org.springframework.config.java.process.NewConfigurationPostProcessor" />
+	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 	
 
 	<context:component-scan 

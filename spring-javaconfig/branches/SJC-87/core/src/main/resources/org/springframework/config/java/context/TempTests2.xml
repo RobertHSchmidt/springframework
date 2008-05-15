@@ -5,6 +5,6 @@
 	
 	
 	<bean class="org.springframework.config.java.context.TempTests$Config"/>
-	<bean class="org.springframework.config.java.process.NewConfigurationPostProcessor"/>
+	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
 
 </beans>

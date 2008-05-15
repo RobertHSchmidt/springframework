@@ -12,7 +12,7 @@
 		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 		
 	<bean 
-		class="org.springframework.config.java.process.NewConfigurationPostProcessor" />
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 	
 		
 		
