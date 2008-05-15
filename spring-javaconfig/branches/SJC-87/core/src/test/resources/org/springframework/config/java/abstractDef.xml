@@ -3,9 +3,14 @@
 
 <beans>
 
-	<bean id="postProcessor"
-		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+    <!-- Tests that @Configuration bean definitions marked as abstract="true" are not processed -->
+
+	<bean class="org.springframework.config.java.process.NewConfigurationPostProcessor" />
 		
-	<bean id="abstractBean" class="org.springframework.config.java.ConfigurationPostProcessorTests$AbstractConfig" abstract="true"/>
+	<bean class="org.springframework.config.java.ConfigurationPostProcessorTests$AbstractConfig" abstract="true"/>
+	
+	<!-- Include a non-abstract @Configuration that defines at
+	     least one @Bean so we don't throw a MalformedJavaConfigurationException -->
+	<bean class="org.springframework.config.java.ConfigurationPostProcessorTests$PlaceholderConfig" abstract="false"/>
 	
 </beans>

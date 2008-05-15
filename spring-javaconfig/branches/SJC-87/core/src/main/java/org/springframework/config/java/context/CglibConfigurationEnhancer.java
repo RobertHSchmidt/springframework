@@ -1,6 +1,7 @@
 package org.springframework.config.java.context;
 
 import static java.lang.String.format;
+import static org.springframework.config.java.context.BeanVisibility.visibilityOf;
 import static org.springframework.config.java.core.ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName;
 import static org.springframework.config.java.util.DefaultScopes.SINGLETON;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
@@ -28,7 +29,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -44,9 +44,9 @@ import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
-	private final ConfigurableListableBeanFactory beanFactory;
+	private final DefaultJavaConfigBeanFactory beanFactory;
 
-	public CglibConfigurationEnhancer(ConfigurableListableBeanFactory beanFactory) {
+	public CglibConfigurationEnhancer(DefaultJavaConfigBeanFactory beanFactory) {
 		notNull(beanFactory, "beanFactory must be non-null");
 		this.beanFactory = beanFactory;
 	}
@@ -220,10 +220,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	 * @author Chris Beams
 	 */
 	static class BeanMethodInterceptor implements MethodInterceptor {
-		private final ConfigurableListableBeanFactory beanFactory;
+		private final DefaultJavaConfigBeanFactory beanFactory;
 		private final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
 
-		public BeanMethodInterceptor(ConfigurableListableBeanFactory beanFactory) {
+		public BeanMethodInterceptor(DefaultJavaConfigBeanFactory beanFactory) {
 			this.beanFactory = beanFactory;
 		}
 
@@ -272,10 +272,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
 							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
 
-					if(Modifier.isPublic(m.getModifiers()))
-						((SingletonBeanRegistry)beanFactory.getParentBeanFactory()).registerSingleton(beanName, bean);
-					else
-						beanFactory.registerSingleton(beanName, bean);
+					beanFactory.registerSingleton(beanName, bean, visibilityOf(m.getModifiers()));
 				}
 			}
 

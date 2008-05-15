@@ -30,7 +30,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.NewConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -181,7 +181,8 @@ public class ConfigurationSupportTests {
 	@Test
 	public void testApplicationContextCallbacks() {
 		GenericApplicationContext gac = new GenericApplicationContext();
-		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
+		NewConfigurationPostProcessor cpp = new NewConfigurationPostProcessor();
+		cpp.setApplicationContext(gac);
 		gac.getDefaultListableBeanFactory().registerSingleton("not_significant", cpp);
 
 		gac.getDefaultListableBeanFactory().registerBeanDefinition("doesnt_matter",

@@ -7,7 +7,7 @@
 
     <bean class="issues.Sjc60Tests$ApplicationConfiguration" />
 
-    <bean class="org.springframework.config.java.process.ConfigurationPostProcessor" lazy-init="false"/>
+    <bean class="org.springframework.config.java.process.NewConfigurationPostProcessor" lazy-init="false"/>
 
     <bean id="foo" class="org.springframework.beans.TestBean" lazy-init="false"/>
 

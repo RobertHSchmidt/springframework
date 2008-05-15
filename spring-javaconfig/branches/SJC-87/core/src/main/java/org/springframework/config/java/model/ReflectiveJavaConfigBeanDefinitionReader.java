@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -19,7 +19,7 @@ import org.springframework.util.ClassUtils;
 public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 
-	public ReflectiveJavaConfigBeanDefinitionReader(BeanDefinitionRegistry registry,
+	public ReflectiveJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry,
 			List<ClassPathResource> aspectClassResources) {
 		super(registry, aspectClassResources);
 	}

@@ -43,7 +43,7 @@ import org.springframework.config.java.ConfigurationProcessorTests.BaseConfigura
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.NewConfigurationPostProcessor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -53,7 +53,7 @@ public class ConfigurationPostProcessorTests {
 
 	@Test
 	public void testPriorityOrdering() {
-		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
+		NewConfigurationPostProcessor cpp = new NewConfigurationPostProcessor();
 		assertEquals(Integer.MIN_VALUE, cpp.getOrder());
 	}
 
@@ -190,9 +190,8 @@ public class ConfigurationPostProcessorTests {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/abstractDef.xml");
 
-		// there should be two, nothing more!
-		assertEquals(2, bf.getBeanDefinitionCount());
-		assertFalse(AbstractConfig.testBeanCreated);
+		assertFalse("AbstractConfig @Beans should not have been processed", AbstractConfig.testBeanCreated);
+		assertEquals("AbstractConfig should not be registrered as bean", 0, bf.getBeanNamesForType(AbstractConfig.class).length);
 	}
 
 	@Configuration
@@ -206,6 +205,11 @@ public class ConfigurationPostProcessorTests {
 			testBeanCreated = true;
 			return new TestBean();
 		}
+	}
+
+	@Configuration
+	static class PlaceholderConfig {
+		public @Bean TestBean placeholder() { return new TestBean(); }
 	}
 
 	@Configuration

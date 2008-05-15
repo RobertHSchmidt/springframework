@@ -7,14 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.Assert;
+import org.springframework.core.PriorityOrdered;
 
 /**
  * Post-processes a BeanFactory in search of Configuration class BeanDefinitions;
@@ -27,57 +22,27 @@ import org.springframework.util.Assert;
  *
  * @author Chris Beams
  */
-public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, ApplicationContextAware {
+public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 	private static final Log log = LogFactory.getLog(ConfigurationEnhancingBeanFactoryPostProcessor.class);
 
 	private ConfigurationEnhancer enhancer;
-	private ConfigurableListableBeanFactory internalBeanFactory;
-	private ApplicationContext context;
 
-	public void setConfigurationEnhancer(ConfigurationEnhancer enhancer) {
-		this.enhancer = enhancer;
-	}
+	/** optional for unit-testing purposes */
+	public void setConfigurationEnhancer(ConfigurationEnhancer enhancer) { this.enhancer = enhancer; }
 
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		Assert.isInstanceOf(ConfigurableApplicationContext.class, context);
-		// TODO: Assert.isInstanceOf(JavaConfigApplicationContext.class, context);
-		this.context = context;
-	}
 
-	protected ConfigurationEnhancer initConfigurationEnhancer(ConfigurableListableBeanFactory externalBeanFactory) {
-		if(context instanceof JavaConfigApplicationContext)
-			internalBeanFactory = ((JavaConfigApplicationContext) context).getInternalBeanFactory();
-		else {
-			// TODO: replace with JavaConfigBeanFactory / InformationHidingBeanFactory
-			internalBeanFactory = new DefaultListableBeanFactory(externalBeanFactory) {
-				@Override
-				public boolean isCurrentlyInCreation(String beanName) {
-					if(super.isCurrentlyInCreation(beanName))
-						return true;
-
-					ConfigurableBeanFactory bf = (ConfigurableBeanFactory) this.getParentBeanFactory();
-					while(bf != null) {
-						if(bf.isCurrentlyInCreation(beanName))
-							return true;
-						bf = (ConfigurableBeanFactory) bf.getParentBeanFactory();
-					}
-					return false;
-				}
-			};
-		}
-		return new CglibConfigurationEnhancer(internalBeanFactory);
-	}
-
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		log.info("Post-processing " + beanFactory);
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) throws BeansException {
+		log.info("Post-processing " + externalBeanFactory);
+		DefaultJavaConfigBeanFactory internalBeanFactory = JavaConfigApplicationContextUtils.getRequiredInternalBeanFactory(externalBeanFactory);
+		//Assert.isTrue(internalBeanFactory.getParentBeanFactory() == externalBeanFactory);
 
 		if(enhancer == null)
-			enhancer = initConfigurationEnhancer(beanFactory);
+			enhancer = new CglibConfigurationEnhancer(internalBeanFactory);
 
 		int configClassesEnhanced = 0;
 
-		for(String beanName : beanFactory.getBeanDefinitionNames()) {
-			BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+		for(String beanName : externalBeanFactory.getBeanDefinitionNames()) {
+			BeanDefinition beanDef = externalBeanFactory.getBeanDefinition(beanName);
 
 			// is the beanDef marked as representing a configuration class?
 			if(!beanDef.hasAttribute(ConfigurationClass.BEAN_ATTR_NAME))
@@ -96,7 +61,12 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 		}
 
 		if(configClassesEnhanced == 0)
-			log.warn("Found no @Configuration class BeanDefinitions within " + beanFactory);
+			log.warn("Found no @Configuration class BeanDefinitions within " + internalBeanFactory);
 	}
 
+	public int getOrder() {
+		return ORDER;
+	}
+
+	public static final int ORDER = ConfigurationClassParsingBeanFactoryPostProcessor.ORDER+1;
 }
