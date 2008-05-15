@@ -1,0 +1,108 @@
+package org.springframework.faces.config;
+
+import junit.framework.TestCase;
+
+import org.springframework.binding.convert.ConversionExecutionException;
+import org.springframework.binding.convert.ConversionExecutor;
+import org.springframework.binding.convert.ConversionService;
+import org.springframework.binding.expression.Expression;
+import org.springframework.binding.expression.ExpressionParser;
+import org.springframework.binding.format.Formatter;
+import org.springframework.binding.format.FormatterRegistry;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.faces.model.converter.FacesConversionService;
+import org.springframework.faces.webflow.JSFMockHelper;
+import org.springframework.faces.webflow.JsfManagedBeanAwareELExpressionParser;
+import org.springframework.faces.webflow.JsfViewFactoryCreator;
+import org.springframework.webflow.engine.builder.ViewFactoryCreator;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.ViewFactory;
+import org.springframework.webflow.expression.el.WebFlowELExpressionParser;
+
+public class FacesFlowBuilderServicesBeanDefinitionParserTests extends TestCase {
+
+	private ClassPathXmlApplicationContext context;
+	private FlowBuilderServices builderServices;
+	private JSFMockHelper jsf = new JSFMockHelper();
+
+	public void setUp() throws Exception {
+		jsf.setUp();
+		context = new ClassPathXmlApplicationContext("org/springframework/faces/config/flow-builder-services.xml");
+	}
+
+	protected void tearDown() throws Exception {
+		jsf.tearDown();
+	}
+
+	public void testConfigureDefaults() {
+		builderServices = (FlowBuilderServices) context.getBean("flowBuilderServicesDefault");
+		assertNotNull(builderServices);
+		assertTrue(builderServices.getExpressionParser() instanceof WebFlowELExpressionParser);
+		assertTrue(builderServices.getViewFactoryCreator() instanceof JsfViewFactoryCreator);
+		assertTrue(builderServices.getConversionService() instanceof FacesConversionService);
+	}
+
+	public void testEnableManagedBeans() {
+		builderServices = (FlowBuilderServices) context.getBean("flowBuilderServicesLegacy");
+		assertNotNull(builderServices);
+		assertTrue(builderServices.getExpressionParser() instanceof JsfManagedBeanAwareELExpressionParser);
+		assertTrue(builderServices.getViewFactoryCreator() instanceof JsfViewFactoryCreator);
+		assertTrue(builderServices.getConversionService() instanceof FacesConversionService);
+	}
+
+	public void testFlowBuilderServicesCustomized() {
+		builderServices = (FlowBuilderServices) context.getBean("flowBuilderServicesCustom");
+		assertNotNull(builderServices);
+		assertNotNull(builderServices.getExpressionParser());
+		assertTrue(builderServices.getViewFactoryCreator() instanceof TestViewFactoryCreator);
+		assertTrue(builderServices.getConversionService() instanceof TestConversionService);
+		assertTrue(builderServices.getFormatterRegistry() instanceof TestFormatterRegistry);
+	}
+
+	public static class TestViewFactoryCreator implements ViewFactoryCreator {
+
+		public ViewFactory createViewFactory(Expression viewIdExpression, ExpressionParser expressionParser,
+				FormatterRegistry formatterRegistry) {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public String getViewIdByConvention(String viewStateId) {
+			return viewStateId;
+		}
+
+	}
+
+	public static class TestConversionService implements ConversionService {
+
+		public Class getClassByAlias(String alias) throws ConversionExecutionException {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public ConversionExecutor getConversionExecutor(Class sourceClass, Class targetClass)
+				throws ConversionExecutionException {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public ConversionExecutor getConversionExecutorByTargetAlias(Class sourceClass, String targetAlias)
+				throws ConversionExecutionException {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public ConversionExecutor[] getConversionExecutorsForSource(Class sourceClass) throws ConversionExecutionException {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+	}
+
+	public static class TestFormatterRegistry implements FormatterRegistry {
+
+		public Formatter getFormatter(Class clazz) {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+		public Formatter getFormatter(String id) {
+			throw new UnsupportedOperationException("Auto-generated method stub");
+		}
+
+	}
+}
