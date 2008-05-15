@@ -6,7 +6,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <!-- TODO: [xml:naming] -->
-	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" >
+	<bean class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" >
 		<property name="namingStrategy">
 			<bean class="org.springframework.config.java.naming.PropagateBeanNamingTests$TestNamingStrategy" />
 		</property>

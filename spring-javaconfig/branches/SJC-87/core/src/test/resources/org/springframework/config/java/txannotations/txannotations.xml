@@ -12,7 +12,7 @@
 
 
 	<!-- TODO: [xml:tx] -->
-	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
+	<bean class="org.springframework.config.java.process.LegacyConfigurationPostProcessor"/>
 
 
 <!-- depends-on="privateSampleDataSource" -->

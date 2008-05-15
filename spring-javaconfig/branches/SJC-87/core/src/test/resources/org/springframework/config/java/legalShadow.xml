@@ -5,7 +5,7 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- TODO: [xml:bean-override] -->
-	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
+	<bean class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" />
 
 	<bean class="org.springframework.config.java.BeanOverridingTests$LegalShadowConfiguration" />
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -35,7 +35,7 @@ class JavaConfigBeanFactoryPostProcessorRegistry {
 	 * register all default BFPPs
 	 */
 	{
-		postProcessors.add(new ConfigurationPostProcessor());
+		postProcessors.add(new LegacyConfigurationPostProcessor());
 	}
 
 	/**

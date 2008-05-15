@@ -221,11 +221,11 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 		// two suffice?
 		List<BeanFactoryPostProcessor> bfpps = new LinkedList<BeanFactoryPostProcessor>();
 		for (Object o : source.getBeansOfType(BeanFactoryPostProcessor.class).values())
-			if (!(o instanceof ConfigurationPostProcessor))
+			if (!(o instanceof LegacyConfigurationPostProcessor))
 				bfpps.add((BeanFactoryPostProcessor) o);
 
 		for (Object o : source.getBeanFactoryPostProcessors())
-			if (!(o instanceof ConfigurationPostProcessor))
+			if (!(o instanceof LegacyConfigurationPostProcessor))
 				bfpps.add((BeanFactoryPostProcessor) o);
 
 		// Add all BeanFactoryPostProcessors to the child context
@@ -388,7 +388,7 @@ public class ConfigurationProcessor implements InitializingBean, ResourceLoaderA
 	int beanDefsGenerated = -1;
 
 	/**
-	 * Primary point of entry used by {@link ConfigurationPostProcessor}.
+	 * Primary point of entry used by {@link LegacyConfigurationPostProcessor}.
 	 *
 	 * @param configurationBeanName
 	 * @return
