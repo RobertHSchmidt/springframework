@@ -26,7 +26,7 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 	public ReflectiveJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry,
 			List<ClassPathResource> aspectClassResources) {
 		super(registry, aspectClassResources);
-		aspectRegistry = initializeAspectRegistry();
+		aspectRegistry = new JavaConfigAspectRegistry(beanFactory);
 	}
 
 
@@ -73,11 +73,6 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 
 		aspectRegistry.registerAspects(atAspectClasses);
 	}
-
-	private JavaConfigAspectRegistry initializeAspectRegistry() {
-		return new JavaConfigAspectRegistry(beanFactory);
-	}
-
 
 	private Class<?> loadClassFromResource(Resource configClass) throws BeanDefinitionStoreException {
 		// load resource as class
