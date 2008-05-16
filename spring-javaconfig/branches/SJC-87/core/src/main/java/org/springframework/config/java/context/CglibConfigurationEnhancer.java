@@ -28,7 +28,7 @@ import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.model.ConfigurationModelAspectRegistry;
+import org.springframework.config.java.model.JavaConfigAspectRegistry;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -215,15 +215,15 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	static class BeanMethodInterceptor implements MethodInterceptor {
 		private static final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
 		private final DefaultJavaConfigBeanFactory beanFactory;
-		private final ConfigurationModelAspectRegistry aspectRegistry;
+		private final JavaConfigAspectRegistry aspectRegistry;
 
 		public BeanMethodInterceptor(DefaultJavaConfigBeanFactory beanFactory) {
 			this.beanFactory = beanFactory;
 
-			String aspectRegistryBeanName = ConfigurationModelAspectRegistry.BEAN_NAME;
+			String aspectRegistryBeanName = JavaConfigAspectRegistry.BEAN_NAME;
 			if(!beanFactory.containsBean(aspectRegistryBeanName))
 				throw new IllegalStateException("aspect registry bean is not present in bean factory");
-			this.aspectRegistry = (ConfigurationModelAspectRegistry) beanFactory.getBean(aspectRegistryBeanName);
+			this.aspectRegistry = (JavaConfigAspectRegistry) beanFactory.getBean(aspectRegistryBeanName);
 		}
 
 		/**

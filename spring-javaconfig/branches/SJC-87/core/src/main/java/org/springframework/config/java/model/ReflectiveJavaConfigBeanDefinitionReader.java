@@ -20,7 +20,7 @@ import org.springframework.util.ClassUtils;
 public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 
-	private final ConfigurationModelAspectRegistry aspectRegistry;
+	private final JavaConfigAspectRegistry aspectRegistry;
 
 
 	public ReflectiveJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry,
@@ -74,8 +74,8 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 		aspectRegistry.registerAspects(atAspectClasses);
 	}
 
-	private ConfigurationModelAspectRegistry initializeAspectRegistry() {
-		return new ConfigurationModelAspectRegistry(beanFactory);
+	private JavaConfigAspectRegistry initializeAspectRegistry() {
+		return new JavaConfigAspectRegistry(beanFactory);
 	}
 
 

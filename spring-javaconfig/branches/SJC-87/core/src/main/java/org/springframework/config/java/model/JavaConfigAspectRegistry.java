@@ -29,11 +29,11 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
 /**
  * @author Chris Beams
  */
-public class ConfigurationModelAspectRegistry {
+public class JavaConfigAspectRegistry {
 
-	public static final String BEAN_NAME = ConfigurationModelAspectRegistry.class.getName();
+	public static final String BEAN_NAME = JavaConfigAspectRegistry.class.getName();
 
-	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectRegistry.class);
+	private static final Log logger = LogFactory.getLog(JavaConfigAspectRegistry.class);
 
 	private final Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
 
@@ -43,13 +43,13 @@ public class ConfigurationModelAspectRegistry {
 
 	private final JavaConfigBeanFactory beanFactory;
 
-	public ConfigurationModelAspectRegistry(JavaConfigBeanFactory beanFactory) {
+	public JavaConfigAspectRegistry(JavaConfigBeanFactory beanFactory) {
 		registerSelfWithBeanFactory(beanFactory);
 		this.beanFactory = beanFactory;
 	}
 
 	private void registerSelfWithBeanFactory(JavaConfigBeanFactory beanFactory) {
-		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.BEAN_NAME;
+		String aspectRegistryBeanName = JavaConfigAspectRegistry.BEAN_NAME;
 		if(beanFactory.containsSingleton(aspectRegistryBeanName))
 			throw new IllegalStateException("aspect registry has already been registered with bean factory");
 		beanFactory.registerSingleton(aspectRegistryBeanName, this);
