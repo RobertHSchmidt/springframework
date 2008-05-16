@@ -4,6 +4,7 @@ package org.springframework.config.java.model;
 import static java.lang.String.format;
 import static org.springframework.config.java.context.BeanVisibility.PUBLIC;
 import static org.springframework.config.java.context.BeanVisibility.visibilityOf;
+import static org.springframework.util.StringUtils.hasText;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.context.BeanVisibility;
@@ -142,8 +144,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		// consider autowiring
 		if(metadata.autowire() != AnnotationUtils.getDefaultValue(Bean.class, "autowire"))
 			beanDef.setAutowireMode(metadata.autowire().value());
-		else
-			if(defaults.defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
+		else if(defaults.defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
 				beanDef.setAutowireMode(defaults.defaultAutowire().value());
 
 		// TODO: plug in NamingStrategy here
@@ -156,6 +157,19 @@ public class ConfigurationModelBeanDefinitionReader {
 		// is this bean marked as primary for disambiguation?
 		if(metadata.primary() == Primary.TRUE)
 			beanDef.setPrimary(true);
+
+		// is this bean lazily instantiated?
+		if(metadata.lazy() == Lazy.TRUE ||
+				(metadata.lazy() == Lazy.UNSPECIFIED && defaults.defaultLazy() == Lazy.TRUE))
+			beanDef.setLazyInit(true);
+
+		// does this bean have a custom init-method specified?
+		String initMethodName = metadata.initMethodName();
+		if(hasText(initMethodName)) beanDef.setInitMethodName(initMethodName);
+
+		// does this bean have a custom destroy-method specified?
+		String destroyMethodName = metadata.destroyMethodName();
+		if(hasText(destroyMethodName)) beanDef.setDestroyMethodName(destroyMethodName);
 
 		// is this method annotated with @ScopedProxy?
 		if(beanMethod.isScopedProxy()) {

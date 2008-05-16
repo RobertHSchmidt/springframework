@@ -608,7 +608,7 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop, autowiring]
+	// XXX: [aop, autowiring]
 	public @Test void testAutowiringOnProxiedBean() {
 		ctx = new JavaConfigApplicationContext(AdvisedAutowiring.class);
 		Husband husband = ctx.getBean(Husband.class, "husband");
