@@ -50,7 +50,6 @@ import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
 import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReaderTests;
 import org.springframework.config.java.model.ValidationError;
 import org.springframework.config.java.process.ConfigurationProcessor;
@@ -444,9 +443,9 @@ public class ConfigurationProcessorTests {
 	}
 
 
-	// TODO: [aop, hot-swap]
+	// XXX: [aop, hot-swap]
 	public @Test void testHotSwappable() {
-		ctx = new LegacyJavaConfigApplicationContext(HotSwapConfiguration.class);
+		ctx = new JavaConfigApplicationContext(HotSwapConfiguration.class);
 
 		TestBean hs = (TestBean) ctx.getBean("hotSwappable");
 		assertTrue(AopUtils.isCglibProxy(hs));

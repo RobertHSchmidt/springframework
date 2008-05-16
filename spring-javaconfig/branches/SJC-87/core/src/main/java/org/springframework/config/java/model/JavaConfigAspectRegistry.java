@@ -20,7 +20,9 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
@@ -84,13 +86,22 @@ public class JavaConfigAspectRegistry {
 			pf.addAdvisor(advisor);
 		}
 
-		if(pf.getAdvisors().length == 0)
-			// no pointcuts apply -> return the unadorned target object
+		boolean isHotSwappable = method.getAnnotation(HotSwappable.class) != null;
+
+		// if no pointcuts apply and the bean is not hot-swappable
+		// then return the original object, unadorned
+		if(pf.getAdvisors().length == 0 && !isHotSwappable)
 			return bean;
 
+		// See JavaDoc on ExposeInvocationInterceptor for details
 		pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
 
 		determineProxyStrategy(pf, method, metadata);
+
+		if(isHotSwappable) {
+			HotSwappableTargetSource hotSwapTS = new HotSwappableTargetSource(bean);
+			pf.setTargetSource(hotSwapTS);
+		}
 
 		if(logger.isInfoEnabled())
 			logger.info(format("Wrapping object [%s] for @Bean method %s.%s in AOP proxy",
