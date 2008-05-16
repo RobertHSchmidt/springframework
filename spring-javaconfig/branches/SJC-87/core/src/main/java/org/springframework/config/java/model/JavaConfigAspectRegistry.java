@@ -68,7 +68,7 @@ public class JavaConfigAspectRegistry {
 			registerAspect(atAspectClass);
 	}
 
-	public Object proxyIfAnyPointcutsApply(Object bean, Method method) {
+	public Object proxyIfAnyPointcutsApply(Object bean, Method method, Bean metadata) {
 		ProxyFactory pf = new ProxyFactory(bean);
 
 		for(String adviceName : pointcuts.keySet()) {
@@ -90,18 +90,28 @@ public class JavaConfigAspectRegistry {
 
 		pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
 
-		Class<?> returnType = method.getReturnType();
-		if(returnType.isInterface()) {
-			pf.setInterfaces(new Class[] { returnType });
-			pf.setProxyTargetClass(false);
-		} else {
-			pf.setProxyTargetClass(true);
-		}
+		determineProxyStrategy(pf, method, metadata);
 
 		if(logger.isInfoEnabled())
 			logger.info(format("Wrapping object [%s] for @Bean method %s.%s in AOP proxy",
 					bean, method.getDeclaringClass().getSimpleName(), method.getName()));
 		return pf.getProxy();
+	}
+
+	/**
+	 * Configure <var>pf</var> to use class proxies only if the return type isn't an interface or if
+	 * autowire is required (as an interface based proxy excludes the setters).
+	 */
+	private void determineProxyStrategy(ProxyFactory pf, Method method, Bean metadata) {
+		Class<?> returnType = method.getReturnType();
+		boolean beanIsAutowired = metadata.autowire().isAutowire();
+
+		if(returnType.isInterface() && !beanIsAutowired) {
+			pf.setInterfaces(new Class[] { returnType });
+			pf.setProxyTargetClass(false);
+		} else {
+			pf.setProxyTargetClass(true);
+		}
 	}
 
 	private void registerAspect(final Class<?> atAspectClass) {
