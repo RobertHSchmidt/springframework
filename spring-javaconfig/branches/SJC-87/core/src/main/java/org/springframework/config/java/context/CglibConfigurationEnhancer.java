@@ -10,7 +10,6 @@ import static org.springframework.util.StringUtils.hasLength;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
 
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.CallbackFilter;
@@ -19,14 +18,8 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 
-import org.aopalliance.aop.Advice;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.aop.Pointcut;
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
@@ -259,7 +252,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			// no instance exists yet -> create a new one
 			Object bean = mp.invokeSuper(o, args);
 
-			bean = proxyIfAnyPointcutsApply(bean, m);
+			bean = aspectRegistry.proxyIfAnyPointcutsApply(bean, m);
 
 			Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
 			if(metadata.scope().equals(SINGLETON)) {
@@ -272,45 +265,6 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			}
 
 			return bean;
-		}
-
-		private Object proxyIfAnyPointcutsApply(Object bean, Method method) {
-			Map<String, Pointcut> pointcuts = aspectRegistry.pointcuts;
-			Map<String, Advice> advices = aspectRegistry.advices;
-
-			ProxyFactory pf = new ProxyFactory(bean);
-
-			for(String adviceName : pointcuts.keySet()) {
-				Pointcut pc = pointcuts.get(adviceName);
-				if(!AopUtils.canApply(pc, bean.getClass()))
-					continue;
-
-				Advice advice = advices.get(adviceName);
-				DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pc, advice);
-
-				// TODO: [aop] respect Ordering
-
-				pf.addAdvisor(advisor);
-			}
-
-			if(pf.getAdvisors().length == 0)
-				// no pointcuts apply -> return the unadorned target object
-				return bean;
-
-			pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
-
-			Class<?> returnType = method.getReturnType();
-			if(returnType.isInterface()) {
-    			pf.setInterfaces(new Class[] { returnType });
-    			pf.setProxyTargetClass(false);
-			} else {
-				pf.setProxyTargetClass(true);
-			}
-
-			if(log.isInfoEnabled())
-				log.info(format("Wrapping object [%s] for @Bean method %s.%s in AOP proxy",
-						bean, method.getDeclaringClass().getSimpleName(), method.getName()));
-			return pf.getProxy();
 		}
 
 		/**
