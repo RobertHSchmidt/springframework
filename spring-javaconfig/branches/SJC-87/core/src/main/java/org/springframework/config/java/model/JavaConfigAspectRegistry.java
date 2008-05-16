@@ -31,7 +31,7 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
  */
 public class JavaConfigAspectRegistry {
 
-	public static final String BEAN_NAME = JavaConfigAspectRegistry.class.getName();
+	private static final String BEAN_NAME = JavaConfigAspectRegistry.class.getName();
 
 	private static final Log logger = LogFactory.getLog(JavaConfigAspectRegistry.class);
 
@@ -49,7 +49,7 @@ public class JavaConfigAspectRegistry {
 	}
 
 	private void registerSelfWithBeanFactory(JavaConfigBeanFactory beanFactory) {
-		String aspectRegistryBeanName = JavaConfigAspectRegistry.BEAN_NAME;
+		String aspectRegistryBeanName = BEAN_NAME;
 		if(beanFactory.containsSingleton(aspectRegistryBeanName))
 			throw new IllegalStateException("aspect registry has already been registered with bean factory");
 		beanFactory.registerSingleton(aspectRegistryBeanName, this);
@@ -142,6 +142,15 @@ public class JavaConfigAspectRegistry {
 
 	private String getAspectName(Class<?> atAspectClass) {
 		return atAspectClass.getName();
+	}
+
+	public static JavaConfigAspectRegistry retrieveFrom(JavaConfigBeanFactory beanFactory) {
+		String aspectRegistryBeanName = BEAN_NAME;
+
+		if(!beanFactory.containsBean(aspectRegistryBeanName))
+			throw new IllegalStateException("aspect registry bean is not present as expected in bean factory");
+
+		return (JavaConfigAspectRegistry) beanFactory.getBean(aspectRegistryBeanName);
 	}
 
 }

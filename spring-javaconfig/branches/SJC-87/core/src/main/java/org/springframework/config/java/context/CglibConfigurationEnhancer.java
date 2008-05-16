@@ -37,9 +37,9 @@ import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
-	private final DefaultJavaConfigBeanFactory beanFactory;
+	private final JavaConfigBeanFactory beanFactory;
 
-	public CglibConfigurationEnhancer(DefaultJavaConfigBeanFactory beanFactory) {
+	public CglibConfigurationEnhancer(JavaConfigBeanFactory beanFactory) {
 		notNull(beanFactory, "beanFactory must be non-null");
 		this.beanFactory = beanFactory;
 	}
@@ -214,16 +214,12 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	 */
 	static class BeanMethodInterceptor implements MethodInterceptor {
 		private static final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
-		private final DefaultJavaConfigBeanFactory beanFactory;
 		private final JavaConfigAspectRegistry aspectRegistry;
+		private final JavaConfigBeanFactory beanFactory;
 
-		public BeanMethodInterceptor(DefaultJavaConfigBeanFactory beanFactory) {
+		public BeanMethodInterceptor(JavaConfigBeanFactory beanFactory) {
+			this.aspectRegistry = JavaConfigAspectRegistry.retrieveFrom(beanFactory);
 			this.beanFactory = beanFactory;
-
-			String aspectRegistryBeanName = JavaConfigAspectRegistry.BEAN_NAME;
-			if(!beanFactory.containsBean(aspectRegistryBeanName))
-				throw new IllegalStateException("aspect registry bean is not present in bean factory");
-			this.aspectRegistry = (JavaConfigAspectRegistry) beanFactory.getBean(aspectRegistryBeanName);
 		}
 
 		/**
