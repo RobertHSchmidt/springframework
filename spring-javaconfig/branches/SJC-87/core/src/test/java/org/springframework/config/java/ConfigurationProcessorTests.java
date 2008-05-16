@@ -610,7 +610,7 @@ public class ConfigurationProcessorTests {
 
 	// TODO: [aop, autowiring]
 	public @Test void testAutowiringOnProxiedBean() {
-		ctx = new LegacyJavaConfigApplicationContext(AdvisedAutowiring.class);
+		ctx = new JavaConfigApplicationContext(AdvisedAutowiring.class);
 		Husband husband = ctx.getBean(Husband.class, "husband");
 		assertTrue(AopUtils.isAopProxy(husband));
 		assertNotNull("Advised object should have still been autowired", husband.getWife());
@@ -624,6 +624,19 @@ public class ConfigurationProcessorTests {
 
 		@Before("execution(* getWife())")
 		protected void log() { /* nothing */ }
+	}
+	public @Test void testAutowiringOnNonProxiedBean() {
+		ctx = new JavaConfigApplicationContext(NonAdvisedAutowiring.class);
+		Husband husband = ctx.getBean(Husband.class, "husband");
+		assertFalse(AopUtils.isAopProxy(husband));
+		assertNotNull("Non-advised object should have been autowired", husband.getWife());
+	}
+	@Configuration
+	public static class NonAdvisedAutowiring {
+		@Bean(autowire = Autowire.BY_TYPE)
+		public Husband husband() { return new HusbandImpl(); }
+
+		public @Bean Wife wife() { return new Wife(); }
 	}
 	public static class Wife { }
 	public static interface Husband { Wife getWife(); }

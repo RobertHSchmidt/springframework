@@ -97,7 +97,7 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 
 	private ConfigurationModelAspectRegistry initializeAspectRegistry() {
 		ConfigurationModelAspectRegistry aspectRegistry = new ConfigurationModelAspectRegistry();
-		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.class.getName();
+		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.BEAN_NAME;
 		if(!beanFactory.containsSingleton(aspectRegistryBeanName))
 			beanFactory.registerSingleton(aspectRegistryBeanName, aspectRegistry);
 		return aspectRegistry;

@@ -26,6 +26,8 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
 public class ConfigurationModelAspectRegistry {
 	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectRegistry.class);
 
+	public static final String BEAN_NAME = ConfigurationModelAspectRegistry.class.getName();
+
 	public Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
 
 	public Map<String, Advice> advices = new HashMap<String, Advice>();

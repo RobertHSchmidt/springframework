@@ -112,8 +112,8 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// @Configuration classes' bean names are always their fully-qualified classname
 		if(logger.isInfoEnabled())
-			logger.info(format("Registering externally visible bean definition for @Configuration class %s", configClassName));
-		beanFactory.registerBeanDefinition(configClassName, configBeanDef, BeanVisibility.PUBLIC);
+			logger.info(format("Registering %s bean definition for @Configuration class %s", PUBLIC, configClassName));
+		beanFactory.registerBeanDefinition(configClassName, configBeanDef, PUBLIC);
 	}
 
 	private void loadBeanDefinitionsForResourceBundles(ResourceBundles resourceBundles) {
@@ -151,7 +151,7 @@ public class ConfigurationModelBeanDefinitionReader {
 
 		// consider aliases
 		for(String alias : metadata.aliases())
-			beanFactory.registerAlias(beanName, alias, BeanVisibility.PUBLIC);
+			beanFactory.registerAlias(beanName, alias, PUBLIC);
 
 		// is this bean marked as primary for disambiguation?
 		if(metadata.primary() == Primary.TRUE)
@@ -181,7 +181,7 @@ public class ConfigurationModelBeanDefinitionReader {
 			targetDef.setAutowireCandidate(false);
 
 			// Register the target bean as separate bean in the factory
-			beanFactory.registerBeanDefinition(targetBeanName, targetDef, BeanVisibility.PUBLIC);
+			beanFactory.registerBeanDefinition(targetBeanName, targetDef, PUBLIC);
 
 			// replace the original bean definition with the target one
 			beanDef = scopedProxyDefinition;
