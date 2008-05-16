@@ -220,11 +220,17 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	 * @author Chris Beams
 	 */
 	static class BeanMethodInterceptor implements MethodInterceptor {
+		private static final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
 		private final DefaultJavaConfigBeanFactory beanFactory;
-		private final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
+		private final ConfigurationModelAspectRegistry aspectRegistry;
 
 		public BeanMethodInterceptor(DefaultJavaConfigBeanFactory beanFactory) {
 			this.beanFactory = beanFactory;
+
+			String aspectRegistryBeanName = ConfigurationModelAspectRegistry.BEAN_NAME;
+			if(!beanFactory.containsBean(aspectRegistryBeanName))
+				throw new IllegalStateException("aspect registry bean is not present in bean factory");
+			this.aspectRegistry = (ConfigurationModelAspectRegistry) beanFactory.getBean(aspectRegistryBeanName);
 		}
 
 		/**
@@ -232,11 +238,6 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		 * of this bean object
 		 */
 		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-			// TODO: casting here is atrocious... need to see about a) actually passing in a CAC, or b) providing
-			// conditional logic to test for whether 'beanFactory' is a CAC or a CBF and then acting as appropriate.
-			// should create a test that causes both types of objects to get injected to prove that ClassCastExceptions
-			// don't occur
-
 			// by default the bean will be named according to the name of the method
 			// TODO: incorporate BeanNamingStrategy here
 			String beanName = m.getName();
@@ -246,43 +247,36 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			if(isScopedProxy && beanFactory.isCurrentlyInCreation(scopedBeanName))
 				beanName = scopedBeanName;
 
-			// the target bean instance, whether retrieved as a cached singleton or created newly below
-			Object bean;
-
 			if(factoryContainsBean(beanName)) {
 				// we have an already existing cached instance of this bean -> retrieve it
-				bean = beanFactory.getBean(beanName);
-				if(log.isDebugEnabled())
-					log.debug(format("Returning cached singleton object [%s] for @Bean method %s.%s",
-							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
-			} else {
-				// no instance exists yet -> create a new one
-				bean = mp.invokeSuper(o, args);
+				Object cachedBean = beanFactory.getBean(beanName);
+				if(log.isInfoEnabled())
+					log.info(format("Returning cached singleton object [%s] for @Bean method %s.%s",
+							cachedBean, m.getDeclaringClass().getSimpleName(), m.getName()));
+				return cachedBean;
+			}
 
+			// no instance exists yet -> create a new one
+			Object bean = mp.invokeSuper(o, args);
 
-				if(log.isDebugEnabled())
-					log.debug(format("Wrapping singleton object [%s] for @Bean method %s.%s in AOP proxy",
-							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
-				bean = proxyIfAnyPointcutsApply(bean, m.getReturnType());
+			bean = proxyIfAnyPointcutsApply(bean, m);
 
-				// TODO: replace with static call to BeanMethod?
-				Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
-				if(metadata.scope().equals(SINGLETON)) {
-					if(log.isDebugEnabled())
-						log.debug(format("Registering new singleton object [%s] for @Bean method %s.%s",
-							bean, m.getDeclaringClass().getSimpleName(), m.getName()));
+			Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
+			if(metadata.scope().equals(SINGLETON)) {
+				BeanVisibility visibility = visibilityOf(m.getModifiers());
+				if(log.isInfoEnabled())
+					log.info(format("Registering new %s singleton object [%s] for @Bean method %s.%s",
+						visibility, bean, m.getDeclaringClass().getSimpleName(), m.getName()));
 
-					beanFactory.registerSingleton(beanName, bean, visibilityOf(m.getModifiers()));
-				}
+				beanFactory.registerSingleton(beanName, bean, visibility);
 			}
 
 			return bean;
 		}
 
-		private Object proxyIfAnyPointcutsApply(Object bean, Class<?> returnType) {
-			ConfigurationModelAspectRegistry cmap = (ConfigurationModelAspectRegistry) beanFactory.getBean(ConfigurationModelAspectRegistry.class.getName());
-			Map<String, Pointcut> pointcuts = cmap.pointcuts;
-			Map<String, Advice> advices = cmap.advices;
+		private Object proxyIfAnyPointcutsApply(Object bean, Method method) {
+			Map<String, Pointcut> pointcuts = aspectRegistry.pointcuts;
+			Map<String, Advice> advices = aspectRegistry.advices;
 
 			ProxyFactory pf = new ProxyFactory(bean);
 
@@ -305,6 +299,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 			pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
 
+			Class<?> returnType = method.getReturnType();
 			if(returnType.isInterface()) {
     			pf.setInterfaces(new Class[] { returnType });
     			pf.setProxyTargetClass(false);
@@ -312,6 +307,9 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				pf.setProxyTargetClass(true);
 			}
 
+			if(log.isInfoEnabled())
+				log.info(format("Wrapping object [%s] for @Bean method %s.%s in AOP proxy",
+						bean, method.getDeclaringClass().getSimpleName(), method.getName()));
 			return pf.getProxy();
 		}
 
