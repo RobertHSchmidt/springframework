@@ -248,9 +248,9 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 			// no instance exists yet -> create a new one
 			Object bean = mp.invokeSuper(o, args);
 
-			bean = aspectRegistry.proxyIfAnyPointcutsApply(bean, m);
-
 			Bean metadata = AnnotationUtils.findAnnotation(m, Bean.class);
+			bean = aspectRegistry.proxyIfAnyPointcutsApply(bean, m, metadata);
+
 			if(metadata.scope().equals(SINGLETON)) {
 				BeanVisibility visibility = visibilityOf(m.getModifiers());
 				if(log.isInfoEnabled())
