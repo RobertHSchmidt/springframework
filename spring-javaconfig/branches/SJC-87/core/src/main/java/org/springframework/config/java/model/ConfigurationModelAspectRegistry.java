@@ -1,5 +1,7 @@
 package org.springframework.config.java.model;
 
+import static java.lang.String.format;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +16,12 @@ import org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory;
 import org.springframework.aop.aspectj.annotation.BeanFactoryAspectInstanceFactory;
 import org.springframework.aop.aspectj.annotation.MetadataAwareAspectInstanceFactory;
 import org.springframework.aop.aspectj.annotation.ReflectiveAspectJAdvisorFactory;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.interceptor.ExposeInvocationInterceptor;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.ReflectionUtils.MethodFilter;
@@ -24,13 +30,30 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
  * @author Chris Beams
  */
 public class ConfigurationModelAspectRegistry {
-	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectRegistry.class);
 
 	public static final String BEAN_NAME = ConfigurationModelAspectRegistry.class.getName();
 
-	public Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
+	private static final Log logger = LogFactory.getLog(ConfigurationModelAspectRegistry.class);
 
-	public Map<String, Advice> advices = new HashMap<String, Advice>();
+	private final Map<String, Pointcut> pointcuts = new HashMap<String, Pointcut>();
+
+	private final Map<String, Advice> advices = new HashMap<String, Advice>();
+
+	private final AspectJAdvisorFactory advisorFactory = new ReflectiveAspectJAdvisorFactory();
+
+	private final JavaConfigBeanFactory beanFactory;
+
+	public ConfigurationModelAspectRegistry(JavaConfigBeanFactory beanFactory) {
+		registerSelfWithBeanFactory(beanFactory);
+		this.beanFactory = beanFactory;
+	}
+
+	private void registerSelfWithBeanFactory(JavaConfigBeanFactory beanFactory) {
+		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.BEAN_NAME;
+		if(beanFactory.containsSingleton(aspectRegistryBeanName))
+			throw new IllegalStateException("aspect registry has already been registered with bean factory");
+		beanFactory.registerSingleton(aspectRegistryBeanName, this);
+	}
 
 	/**
 	 * Finds any aspects specified within <var>model</var> and registers associated pointcuts
@@ -40,48 +63,85 @@ public class ConfigurationModelAspectRegistry {
 	 * @param model
 	 * @param beanFactory
 	 */
-	public void registerAspects(ConfigurationModel model, final BeanFactory beanFactory) {
-		logger.info("Registering aspects from " + model);
+	public void registerAspects(Class<?>[] atAspectClasses) {
+		for(Class<?> atAspectClass : atAspectClasses)
+			registerAspect(atAspectClass);
+	}
 
-		for(AspectClass aspectClass : model.getAspectClasses()) {
-			final Class<?> literalClass;
-			try {
-				literalClass = Class.forName(aspectClass.getName());
-			}
-			catch (ClassNotFoundException ex) { throw new RuntimeException(ex); }
+	public Object proxyIfAnyPointcutsApply(Object bean, Method method) {
+		ProxyFactory pf = new ProxyFactory(bean);
 
-			final AspectJAdvisorFactory advisorFactory = new ReflectiveAspectJAdvisorFactory();
+		for(String adviceName : pointcuts.keySet()) {
+			Pointcut pc = pointcuts.get(adviceName);
+			if(!AopUtils.canApply(pc, bean.getClass()))
+				continue;
 
-    		ReflectionUtils.doWithMethods(literalClass,
-    			new MethodCallback() {
-    				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-        				// examine this method to see if it's an advice method
-        				String aspectName = literalClass.getName();
-        				advisorFactory.validate(literalClass);
-        				MetadataAwareAspectInstanceFactory aif = new BeanFactoryAspectInstanceFactory(beanFactory, aspectName, literalClass);
-        				Advisor pa = advisorFactory.getAdvisor(method, aif, 0, aspectName);
-                		if (pa != null && (pa instanceof PointcutAdvisor)) {
-                			String adviceName = method.getName();
-                			Advice advice = pa.getAdvice();
-                			// advice may return null in the case of named pointcuts (@Pointcut)
-                			if (advice != null) {
-                				Pointcut pointcut = ((PointcutAdvisor) pa).getPointcut();
-                				pointcuts.put(adviceName, pointcut);
-                				advices.put(adviceName, advice);
-                			}
-                		}
-        			}
-        		},
-        		// exclude all Object.* methods
-        		new MethodFilter() {
-        			public boolean matches(Method method) {
-        				if(method.getDeclaringClass().equals(Object.class))
-        					return false;
-        				return true;
-        			}
-        		}
-        	);
+			Advice advice = advices.get(adviceName);
+			DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pc, advice);
+
+			// TODO: [aop] respect Ordering
+
+			pf.addAdvisor(advisor);
 		}
+
+		if(pf.getAdvisors().length == 0)
+			// no pointcuts apply -> return the unadorned target object
+			return bean;
+
+		pf.addAdvice(0, ExposeInvocationInterceptor.INSTANCE);
+
+		Class<?> returnType = method.getReturnType();
+		if(returnType.isInterface()) {
+			pf.setInterfaces(new Class[] { returnType });
+			pf.setProxyTargetClass(false);
+		} else {
+			pf.setProxyTargetClass(true);
+		}
+
+		if(logger.isInfoEnabled())
+			logger.info(format("Wrapping object [%s] for @Bean method %s.%s in AOP proxy",
+					bean, method.getDeclaringClass().getSimpleName(), method.getName()));
+		return pf.getProxy();
+	}
+
+	private void registerAspect(final Class<?> atAspectClass) {
+		advisorFactory.validate(atAspectClass);
+
+		ReflectionUtils.doWithMethods(atAspectClass,
+			new MethodCallback() {
+				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+    				registerPointcutAndAdviceIfMethodIsPointcutAdvisor(atAspectClass, method);
+    			}
+    		},
+    		// exclude all Object.* methods
+    		new MethodFilter() {
+    			public boolean matches(Method method) {
+    				if(method.getDeclaringClass().equals(Object.class))
+    					return false;
+    				return true;
+    			}
+    		}
+    	);
+	}
+
+	private void registerPointcutAndAdviceIfMethodIsPointcutAdvisor(final Class<?> atAspectClass, Method method) {
+		String aspectName = getAspectName(atAspectClass);
+		MetadataAwareAspectInstanceFactory aif = new BeanFactoryAspectInstanceFactory(beanFactory, aspectName, atAspectClass);
+		Advisor pa = advisorFactory.getAdvisor(method, aif, 0, aspectName);
+		if (pa != null && (pa instanceof PointcutAdvisor)) {
+			String adviceName = method.getName();
+			Advice advice = pa.getAdvice();
+			// advice may return null in the case of named pointcuts (@Pointcut)
+			if (advice != null) {
+				Pointcut pointcut = ((PointcutAdvisor) pa).getPointcut();
+				pointcuts.put(adviceName, pointcut);
+				advices.put(adviceName, advice);
+			}
+		}
+	}
+
+	private String getAspectName(Class<?> atAspectClass) {
+		return atAspectClass.getName();
 	}
 
 }

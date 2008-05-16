@@ -17,31 +17,35 @@ package org.springframework.config.java.model;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
+
 	private final List<ClassPathResource> aspectClassResources;
-	private final ConfigurationModelAspectRegistry aspectRegistry;
+
 	private final ConfigurationModelBeanDefinitionReader modelBeanDefinitionReader;
-	protected final DefaultJavaConfigBeanFactory beanFactory;
+
+	protected final JavaConfigBeanFactory beanFactory;
+
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	@Deprecated
-	protected AbstractJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry) {
+	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry) {
 		this(registry, null);
 	}
 
-	protected AbstractJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry, List<ClassPathResource> aspectClassResources) {
+	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry, List<ClassPathResource> aspectClassResources) {
 		this.beanFactory = registry;
 
 		this.aspectClassResources = aspectClassResources;
 
 		initializeDeclaringClassBeanFactoryFactory();
-
-		aspectRegistry = initializeAspectRegistry();
 
 		modelBeanDefinitionReader = initializeConfigurationModelBeanDefinitionReader();
 	}
@@ -70,9 +74,7 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 		model.assertIsValid();
 	}
 
-	protected void registerAspectsFromModel(ConfigurationModel model) {
-		aspectRegistry.registerAspects(model, beanFactory.getParentBeanFactory());
-	}
+	protected abstract void registerAspectsFromModel(ConfigurationModel model);
 
 	/**
 	 * @param model
@@ -93,14 +95,6 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 
 	private ConfigurationModelBeanDefinitionReader initializeConfigurationModelBeanDefinitionReader() {
 		return new ConfigurationModelBeanDefinitionReader(beanFactory);
-	}
-
-	private ConfigurationModelAspectRegistry initializeAspectRegistry() {
-		ConfigurationModelAspectRegistry aspectRegistry = new ConfigurationModelAspectRegistry();
-		String aspectRegistryBeanName = ConfigurationModelAspectRegistry.BEAN_NAME;
-		if(!beanFactory.containsSingleton(aspectRegistryBeanName))
-			beanFactory.registerSingleton(aspectRegistryBeanName, aspectRegistry);
-		return aspectRegistry;
 	}
 
 }

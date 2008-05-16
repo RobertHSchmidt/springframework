@@ -2,6 +2,7 @@ package org.springframework.config.java.model;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.aspectj.lang.annotation.Aspect;
@@ -19,9 +20,13 @@ import org.springframework.util.ClassUtils;
 public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader implements JavaConfigBeanDefinitionReader {
 
 
+	private final ConfigurationModelAspectRegistry aspectRegistry;
+
+
 	public ReflectiveJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry,
 			List<ClassPathResource> aspectClassResources) {
 		super(registry, aspectClassResources);
+		aspectRegistry = initializeAspectRegistry();
 	}
 
 
@@ -50,6 +55,27 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 			Aspect metadata = aspectClass.getAnnotation(Aspect.class); // may be null
 			model.add(new AspectClass(aspectClass.getName(), metadata));
 		}
+	}
+
+	@Override
+	protected void registerAspectsFromModel(ConfigurationModel model) {
+		if(log.isInfoEnabled())
+			log.info("Registering aspects from " + model);
+
+		ArrayList<Class<?>> aspectClasses = new ArrayList<Class<?>>();
+		for(AspectClass aspectClass : model.getAspectClasses()) {
+			try {
+				aspectClasses.add(Class.forName(aspectClass.getName()));
+			}
+			catch (ClassNotFoundException ex) { throw new RuntimeException(ex); }
+		}
+		Class<?>[] atAspectClasses = aspectClasses.toArray(new Class<?>[aspectClasses.size()]);
+
+		aspectRegistry.registerAspects(atAspectClasses);
+	}
+
+	private ConfigurationModelAspectRegistry initializeAspectRegistry() {
+		return new ConfigurationModelAspectRegistry(beanFactory);
 	}
 
 

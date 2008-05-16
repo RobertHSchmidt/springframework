@@ -71,4 +71,9 @@ public class LegacyReflectiveJavaConfigBeanDefinitionReader extends AbstractJava
 	protected ConfigurationModel createConfigurationModel(Resource... configClassResources) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	protected void registerAspectsFromModel(ConfigurationModel model) {
+		throw new UnsupportedOperationException();
+	}
 }
