@@ -30,7 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
-import org.springframework.config.java.context.LegacyJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -47,7 +47,7 @@ public class LifecycleTests {
 	@Before
 	public void setUp() throws Exception {
 		// TODO: change to JCAC (see todos below)
-		ctx = new LegacyJavaConfigApplicationContext();
+		ctx = new JavaConfigApplicationContext();
 		ctx.registerShutdownHook();
 
 		AwareBean.DESTROYED = 0;
@@ -62,7 +62,7 @@ public class LifecycleTests {
 			ctx.close();
 	}
 
-	// TODO: [lifecycle]
+	// XXX: [lifecycle]
 	public @Test void testSimpleObject() throws Exception {
 		assertEquals(0, AwareBean.INITIALIZED);
 		assertEquals(0, AwareBean.DESTROYED);
@@ -75,7 +75,7 @@ public class LifecycleTests {
 		assertEquals(0, AwareBean.INITIALIZED);
 
 		String name = "simple";
-		AwareBean simple = (AwareBean) ctx.getBean(name);
+		AwareBean simple = ctx.getBean(AwareBean.class, name);
 		assertNotNull(simple.getBeanFactory());
 
 		assertEquals(1, AwareBean.INITIALIZED);
@@ -87,7 +87,7 @@ public class LifecycleTests {
 		ctx.close();
 		assertEquals(1, AwareBean.DESTROYED);
 	}
-	// TODO: [lifecycle]
+	// XXX: [lifecycle]
 	public @Test void testCustomMethods() throws Exception {
 		assertEquals(0, AwareBean.INITIALIZED);
 		assertEquals(0, AwareBean.DESTROYED);
@@ -101,7 +101,7 @@ public class LifecycleTests {
 		String name = "custom";
 
 		assertEquals(0, AwareBean.CUSTOM_INITIALIZED);
-		AwareBean custom = (AwareBean) ctx.getBean(name);
+		AwareBean custom = ctx.getBean(AwareBean.class, name);
 		assertNotNull(custom.getBeanFactory());
 
 		assertEquals(1, AwareBean.INITIALIZED);
