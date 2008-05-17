@@ -48,15 +48,6 @@ public class Configuration {
 
 		home.trim();
 		host.trim();
-
-		try {
-			// get localhost
-			if (host.length() < 1)
-				host = InetAddress.getLocalHost().getHostName();
-		}
-		catch (UnknownHostException ex) {
-			throw (RuntimeException) new IllegalArgumentException("unknown host " + host).initCause(ex);
-		}
 	}
 
 	/**
