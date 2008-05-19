@@ -44,10 +44,22 @@ public class Configuration {
 	public Configuration(Properties userProps) {
 		home = userProps.getProperty(HOME_KEY);
 		host = userProps.getProperty(HOST_KEY);
-		port = Integer.valueOf(userProps.getProperty(PORT_KEY)).intValue();
+		String portAsString = userProps.getProperty(PORT_KEY);
 
-		home.trim();
-		host.trim();
+		if (home != null) {
+			home = home.trim();
+		}
+		if (host != null) {
+			host = host.trim();
+		}
+		if (portAsString != null) {
+			portAsString = portAsString.trim();
+		}
+
+		if (portAsString == null || portAsString.length() < 1)
+			port = 0;
+		else
+			port = Integer.valueOf(portAsString).intValue();
 	}
 
 	/**
