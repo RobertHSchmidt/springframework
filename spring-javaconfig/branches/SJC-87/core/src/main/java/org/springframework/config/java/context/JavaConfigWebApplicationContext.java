@@ -19,16 +19,20 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanMetadataAttribute;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.util.Assert;
 import org.springframework.web.context.support.AbstractRefreshableWebApplicationContext;
 
@@ -40,16 +44,19 @@ import org.springframework.web.context.support.AbstractRefreshableWebApplication
  * @see org.springframework.web.context.WebApplicationContext
  * @see org.springframework.web.servlet.DispatcherServlet
  *
+ * TODO: This class is almost wholly copy-and-pasted from {@link JavaConfigApplicationContext}.
+ * Because it the two classes must maintain mutually exclusive ancestries, acheiving reuse is
+ * quite challenging. Consider a code-generation approach for JCWAC?
+ *
  * @author Chris Beams
  */
-// TODO: port to behave like the newly refactored JavaConfigApplicationContext
 public class JavaConfigWebApplicationContext extends AbstractRefreshableWebApplicationContext
-implements ConfigurableJavaConfigApplicationContext {
+                                             implements ConfigurableJavaConfigApplicationContext {
 
 	private Log log = LogFactory.getLog(getClass());
 
-	private final ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningConfigurationProviderFactory()
-	.getProvider(this);
+	private final ClassPathScanningCandidateComponentProvider scanner =
+		new ClassPathScanningConfigurationProviderFactory().getProvider(this);
 
 	private ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
 
@@ -59,8 +66,14 @@ implements ConfigurableJavaConfigApplicationContext {
 	protected void prepareRefresh() {
 		super.prepareRefresh();
 		initConfigLocations();
-		processAnyOuterClasses();
-		registerDefaultPostProcessors();
+	}
+
+	@Override
+	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this).postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		super.invokeBeanFactoryPostProcessors(beanFactory);
 	}
 
 	protected void initConfigLocations() {
@@ -83,66 +96,39 @@ implements ConfigurableJavaConfigApplicationContext {
 		}
 	}
 
-	private void processAnyOuterClasses() {
-		Class<?> outerConfig = null;
-		if (configClasses != null && configClasses.size() > 0) {
-			for (Class<?> configClass : configClasses) {
-				Class<?> candidate = configClass.getDeclaringClass();
-				if (candidate != null && ConfigurationProcessor.isConfigurationClass(candidate)) {
-					if (outerConfig != null) {
-						// TODO: throw a better exception
-						throw new RuntimeException("cannot specify more than one inner configuration class");
-					}
-					outerConfig = candidate;
-				}
-			}
-		}
-
-		if (outerConfig != null)
-			this.setParent(new LegacyJavaConfigApplicationContext(outerConfig));
-	}
-
 	/**
-	 * Processes contents of <var>configLocations</var>, setting the values of
-	 * configClasses and basePackages appropriately.
-	 *
-	 * @throws IllegalArgumentException if the <code>configLocations</code>
-	 * array is null, contains any null elements, or contains names of any
-	 * classes that cannot be found
+	 * Loads any specified {@link Configuration @Configuration} classes and {@link Aspect @Aspect} classes
+	 * as bean definitions within this context's BeanFactory for later processing by {@link LegacyConfigurationPostProcessor}
+	 * @see #JavaConfigApplicationContext(Class...)
+	 * @see #addConfigClasses(Class...)
+	 * @see #addAspectClasses(Class...)
 	 */
 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException {
-		for (Class<?> cz : configClasses) {
-			RootBeanDefinition beanDef = new RootBeanDefinition(cz, true);
-			ConfigurationProcessor.processExternalValueConstructorArgs(beanDef, this);
-			beanFactory.registerBeanDefinition(cz.getName(), beanDef);
-		}
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws IOException, BeansException {
+		for(Class<?> configClass : configClasses)
+			loadBeanDefinitionForConfigurationClass(beanFactory, configClass);
 
-		for (String basePackage : basePackages) {
-			Set<BeanDefinition> beandefs = scanner.findCandidateComponents(basePackage);
-			if (beandefs.size() > 0) {
-				for (BeanDefinition bd : beandefs) {
-					ConfigurationProcessor.processExternalValueConstructorArgs((AbstractBeanDefinition)bd, this);
-					beanFactory.registerBeanDefinition(bd.getBeanClassName(), bd);
-				}
-			}
-			else {
-				String message = "[%s] is either specifying a configuration class that does not exist "
-					+ "or is a base package pattern that does not match any configuration classes. "
-					+ "No bean definitions were found as a result of processing this configLocation";
-				log.warn(format(message, basePackage));
-			}
+		for(String basePackage : basePackages)
+			loadBeanDefinitionsForBasePackage(beanFactory, basePackage);
+	}
+
+	private void loadBeanDefinitionForConfigurationClass(DefaultListableBeanFactory beanFactory, Class<?> configClass) {
+		String configBeanName = configClass.getName(); // TODO: {naming strategy} should end in # mark?
+		RootBeanDefinition configBeanDef = new RootBeanDefinition();
+		configBeanDef.setBeanClassName(configBeanName);
+		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+		beanFactory.registerBeanDefinition(configBeanName, configBeanDef);
+	}
+
+	private void loadBeanDefinitionsForBasePackage(DefaultListableBeanFactory beanFactory, String basePackage) {
+		for(BeanDefinition beanDef : scanner.findCandidateComponents(basePackage)) {
+			ScannedGenericBeanDefinition configBeanDef = (ScannedGenericBeanDefinition) beanDef; // TODO: unfortunate cast
+			String configBeanName = configBeanDef.getBeanClassName(); // TODO: {naming strategy}
+			configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
+			beanFactory.registerBeanDefinition(configBeanName, configBeanDef);
 		}
 	}
 
-	/**
-	 * Register the default post processors used for parsing Spring classes.
-	 *
-	 * @see JavaConfigBeanFactoryPostProcessorRegistry
-	 */
-	protected void registerDefaultPostProcessors() {
-		new JavaConfigBeanFactoryPostProcessorRegistry().addAllPostProcessors(this);
-	}
 
 	public <T> T getBean(Class<T> type) {
 		return TypeSafeBeanFactoryUtils.getBean(this.getBeanFactory(), type);
