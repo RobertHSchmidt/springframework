@@ -251,10 +251,9 @@ public class Activator implements BundleActivator {
 		// add listener(s) (removed since it only works on 6.0.x+ )
 		// embedded.addLifecycleListener(new JasperListener());
 
-		String hostName = configuration.getHost();
 		// create host
 		StandardHost host = new StandardHost();
-		host.setName(hostName);
+		host.setName("Catalina");
 		host.setDeployOnStartup(false);
 		host.setLiveDeploy(false);
 		host.setAutoDeploy(false);
@@ -266,7 +265,7 @@ public class Activator implements BundleActivator {
 
 		// create engine
 		Engine engine = embedded.createEngine();
-		engine.setDefaultHost(hostName);
+		engine.setDefaultHost(host.getName());
 		engine.setName("Catalina");
 
 		// add the host -> engine
@@ -276,7 +275,7 @@ public class Activator implements BundleActivator {
 		embedded.addEngine(engine);
 
 		// create a plain HTTP server (no HTTPS)
-
+		String hostName = configuration.getHost();
 		Connector http = embedded.createConnector((hostName.length() < 1 ? null : hostName), configuration.getPort(),
 			false);
 		http.setEnableLookups(false);
