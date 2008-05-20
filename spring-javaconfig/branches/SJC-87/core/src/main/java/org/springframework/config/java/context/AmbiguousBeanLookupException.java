@@ -26,7 +26,7 @@ import org.springframework.beans.BeansException;
  * there exists more than one match.
  *
  * <p/>Note: currently used only by
- * {@link org.springframework.config.java.context.LegacyJavaConfigApplicationContext} -
+ * {@link TypeSafeBeanFactory} -
  * may potentially be promoted and used more widely in the future.
  * Package-private visibility to avoid backward-compat problems when we want to
  * move/rename this.
