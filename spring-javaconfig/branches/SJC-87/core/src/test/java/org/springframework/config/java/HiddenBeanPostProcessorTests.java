@@ -16,8 +16,10 @@
 package org.springframework.config.java;
 
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,13 +29,16 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -74,6 +79,35 @@ public class HiddenBeanPostProcessorTests {
 		}
 	}
 
+	public @Test void testBasicBeanPostProcessorDeclaredInXmlAppliesToJavaConfigBeans() {
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beanPostProcessingTests.xml", this.getClass());
+		BasicBeanPostProcessor bpp = (BasicBeanPostProcessor) ctx.getBean("bpp");
+		assertNotNull(ctx.getBean("publicBean"));
+		assertTrue("bean post processor was not invoked as expected", bpp.beansInvokedFor.contains("publicBean"));
+	}
+	public @Test void testBasicBeanPostProcessorDeclaredInXmlAppliesToHiddenJavaConfigBeans() {
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beanPostProcessingTests.xml", this.getClass());
+		BasicBeanPostProcessor bpp = (BasicBeanPostProcessor) ctx.getBean("bpp");
+		assertTrue("bean post processor was not invoked as expected", bpp.beansInvokedFor.contains("hiddenBean"));
+	}
+	public static class BasicBeanPostProcessor implements BeanPostProcessor {
+
+		ArrayList<String> beansInvokedFor = new ArrayList<String>();
+
+		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+			beansInvokedFor.add(beanName);
+			return bean;
+		}
+
+		public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+			return bean;
+		}
+	}
+	@Configuration
+	public static class ConfigWithHiddenBean {
+		public @Bean TestBean publicBean() { return new TestBean(); }
+		@Bean TestBean hiddenBean() { return new TestBean(); }
+	}
 
 	public @Test void testBeanFactoryPostProcessorActsOnHiddenBeans() {
 		RememberingBeanFactoryPostProcessor rememberingFactoryPostProcessor = new RememberingBeanFactoryPostProcessor();
@@ -110,7 +144,6 @@ public class HiddenBeanPostProcessorTests {
 
 		public void postProcessBeanFactory(ConfigurableListableBeanFactory clbf) throws BeansException {
 			for (String beanName : clbf.getBeanDefinitionNames()) {
-
 				if (beansSeen.contains(beanName)) {
 					throw new IllegalStateException("Cannot process a bean twice");
 				}

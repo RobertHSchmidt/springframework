@@ -4,9 +4,8 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-	<!-- TODO: [xml:hiding] -->
 	<bean 
-		class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" />
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 		
 	<bean 
 		class="org.springframework.config.java.HiddenBeanPostProcessorTests$HasHiddenBeansNeedingPostProcessing" 

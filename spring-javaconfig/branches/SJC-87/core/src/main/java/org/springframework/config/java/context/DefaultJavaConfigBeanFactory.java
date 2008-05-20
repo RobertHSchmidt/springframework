@@ -37,15 +37,6 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 		return super.isCurrentlyInCreation(beanName);
 	}
 
-	/*
-	@Override
-	public List getBeanPostProcessors() {
-		List allBPPs = getParentBeanFactory().getBeanPostProcessors();
-		allBPPs.addAll(super.getBeanPostProcessors());
-		return allBPPs;
-	}
-	*/
-
 	/**
 	 * Overridden to exploit covariant return type
 	 */
