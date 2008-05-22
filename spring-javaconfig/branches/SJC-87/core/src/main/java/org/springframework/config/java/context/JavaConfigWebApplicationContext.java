@@ -29,8 +29,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -72,10 +70,9 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		BeanNamingStrategy namingStrategy = new MethodNameStrategy(); // default
 		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this).postProcessBeanFactory(beanFactory);
-		new ConfigurationClassParsingBeanFactoryPostProcessor(namingStrategy).postProcessBeanFactory(beanFactory);
-		new ConfigurationEnhancingBeanFactoryPostProcessor(namingStrategy).postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
 		super.invokeBeanFactoryPostProcessors(beanFactory);
 	}
 

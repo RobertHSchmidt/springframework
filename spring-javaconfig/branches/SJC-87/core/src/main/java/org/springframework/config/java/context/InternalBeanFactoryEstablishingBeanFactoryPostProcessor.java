@@ -10,6 +10,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -25,6 +26,8 @@ public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements 
 
 	private static final Log log = LogFactory.getLog(InternalBeanFactoryEstablishingBeanFactoryPostProcessor.class);
 	private final AbstractApplicationContext ctx;
+
+	private BeanNamingStrategy beanNamingStrategy;
 
 
 	public InternalBeanFactoryEstablishingBeanFactoryPostProcessor(AbstractApplicationContext ctx) {
@@ -42,9 +45,11 @@ public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements 
 		Assert.notNull(ctx, "ApplicationContext must be non-null");
 		final DefaultJavaConfigBeanFactory internalBeanFactory = new DefaultJavaConfigBeanFactory(externalBeanFactory);
 
-		for (String bppName : externalBeanFactory.getBeanNamesForType(BeanPostProcessor.class)) {
+		if(beanNamingStrategy != null)
+			internalBeanFactory.setBeanNamingStrategy(beanNamingStrategy);
+
+		for (String bppName : externalBeanFactory.getBeanNamesForType(BeanPostProcessor.class))
 			internalBeanFactory.registerSingleton(bppName, externalBeanFactory.getBean(bppName));
-		}
 
 		final AbstractApplicationContext internalContext = new GenericApplicationContext(internalBeanFactory);
 		internalContext.setDisplayName("JavaConfig internal application context");
@@ -59,6 +64,10 @@ public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements 
 
 	public int getOrder() {
 		return ORDER;
+	}
+
+	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
+		this.beanNamingStrategy = beanNamingStrategy;
 	}
 
 }

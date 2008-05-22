@@ -9,7 +9,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.PriorityOrdered;
 
 /**
@@ -28,23 +27,17 @@ public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFacto
 
 	private ConfigurationEnhancer enhancer;
 
-	private final BeanNamingStrategy namingStrategy;
-
-	public ConfigurationEnhancingBeanFactoryPostProcessor(BeanNamingStrategy namingStrategy) {
-		this.namingStrategy = namingStrategy;
-	}
-
 	/** optional for unit-testing purposes */
 	public void setConfigurationEnhancer(ConfigurationEnhancer enhancer) { this.enhancer = enhancer; }
 
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) throws BeansException {
 		log.info("Post-processing " + externalBeanFactory);
-		DefaultJavaConfigBeanFactory internalBeanFactory = JavaConfigApplicationContextUtils.getRequiredInternalBeanFactory(externalBeanFactory);
+		JavaConfigBeanFactory internalBeanFactory = JavaConfigApplicationContextUtils.getRequiredInternalBeanFactory(externalBeanFactory);
 		//Assert.isTrue(internalBeanFactory.getParentBeanFactory() == externalBeanFactory);
 
 		if(enhancer == null)
-			enhancer = new CglibConfigurationEnhancer(internalBeanFactory, namingStrategy);
+			enhancer = new CglibConfigurationEnhancer(internalBeanFactory);
 
 		int configClassesEnhanced = 0;
 

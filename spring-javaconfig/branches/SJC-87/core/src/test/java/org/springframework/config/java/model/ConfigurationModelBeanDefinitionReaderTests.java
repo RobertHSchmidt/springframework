@@ -39,7 +39,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 	@Before
 	public void setUp() {
 		registry = createMock(JavaConfigBeanFactory.class);
-		renderer = new ConfigurationModelBeanDefinitionReader(registry, new MethodNameStrategy());
+		renderer = new ConfigurationModelBeanDefinitionReader(registry);
 		model = new ConfigurationModel();
 	}
 
@@ -53,6 +53,8 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 
 		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
+
+		expect(registry.getBeanNamingStrategy()).andReturn(new MethodNameStrategy());
 
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
@@ -91,6 +93,8 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 
 		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
+
+		expect(registry.getBeanNamingStrategy()).andReturn(new MethodNameStrategy());
 
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
@@ -164,6 +168,8 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
 
+		expect(registry.getBeanNamingStrategy()).andReturn(new MethodNameStrategy());
+
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
 		configBeanDef.addMetadataAttribute(new BeanMetadataAttribute(ConfigurationClass.BEAN_ATTR_NAME, true));
@@ -205,6 +211,8 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 
 		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
+
+		expect(registry.getBeanNamingStrategy()).andReturn(new MethodNameStrategy());
 
 		// expect the registration of our Configuration class above
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
@@ -250,6 +258,8 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
 
+		expect(registry.getBeanNamingStrategy()).andReturn(new MethodNameStrategy());
+
 		// expect the registration of our Configuration class above
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();
 		configBeanDef.setBeanClassName(configClassName);
@@ -290,6 +300,8 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 
 		// encode expectations
 		expect(registry.getBeanDefinitionCount()).andReturn(0);
+
+		expect(registry.getBeanNamingStrategy()).andReturn(new MethodNameStrategy());
 
 		// expect the registration of our Configuration class above
 		RootBeanDefinition configBeanDef = new RootBeanDefinition();

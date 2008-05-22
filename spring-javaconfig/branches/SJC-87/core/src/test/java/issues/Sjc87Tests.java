@@ -25,7 +25,6 @@ import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
 import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -128,7 +127,7 @@ public abstract class Sjc87Tests {
 	public static class ReflectiveSjc87Tests extends Sjc87Tests {
 		@Override
 		protected JavaConfigBeanDefinitionReader getBeanDefinitionReader(JavaConfigBeanFactory registry, String configurationBeanName) {
-			return new ReflectiveJavaConfigBeanDefinitionReader(registry, new ArrayList<ClassPathResource>(), new MethodNameStrategy());
+			return new ReflectiveJavaConfigBeanDefinitionReader(registry, new ArrayList<ClassPathResource>());
 		}
 	}
 

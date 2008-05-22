@@ -33,13 +33,13 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		new ClassPathScanningConfigurationProviderFactory().getProvider(this);
 
 	// TODO: should be LinkedHashSet?
-	private ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
+	private final ArrayList<Class<?>> configClasses = new ArrayList<Class<?>>();
 
-	private ArrayList<Class<?>> aspectClasses = new ArrayList<Class<?>>();
+	private final ArrayList<Class<?>> aspectClasses = new ArrayList<Class<?>>();
 
-	private ArrayList<String> basePackages = new ArrayList<String>();
+	private final ArrayList<String> basePackages = new ArrayList<String>();
 
-	private BeanNamingStrategy namingStrategy = new MethodNameStrategy();
+	private BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
 	/** context is configurable until refresh() is called */
 	private boolean openForConfiguration = true;
@@ -79,9 +79,12 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this).postProcessBeanFactory(beanFactory);
-		new ConfigurationClassParsingBeanFactoryPostProcessor(this.getNamingStrategy()).postProcessBeanFactory(beanFactory);
-		new ConfigurationEnhancingBeanFactoryPostProcessor(this.getNamingStrategy()).postProcessBeanFactory(beanFactory);
+		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this);
+		if(this.getBeanNamingStrategy() != null)
+			iBPP.setBeanNamingStrategy(this.getBeanNamingStrategy());
+		iBPP.postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
 		super.invokeBeanFactoryPostProcessors(beanFactory);
 	}
 
@@ -141,12 +144,12 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 		super.setParent(parent);
 	}
 
-	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
-		this.namingStrategy = namingStrategy;
+	public void setBeanNamingStrategy(BeanNamingStrategy namingStrategy) {
+		this.beanNamingStrategy = namingStrategy;
 	}
 
-	public BeanNamingStrategy getNamingStrategy() {
-		return namingStrategy;
+	public BeanNamingStrategy getBeanNamingStrategy() {
+		return beanNamingStrategy;
 	}
 
 	public void addConfigClasses(Class<?>... classes) {

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.naming.MethodNameStrategy;
 
 public class ConfigurationEnhancingBeanFactoryPostProcessorTests {
 
@@ -45,7 +44,7 @@ public class ConfigurationEnhancingBeanFactoryPostProcessorTests {
 		replay(enhancer);
 
 		// execute the scenario
-		ConfigurationEnhancingBeanFactoryPostProcessor processor = new ConfigurationEnhancingBeanFactoryPostProcessor(new MethodNameStrategy());
+		ConfigurationEnhancingBeanFactoryPostProcessor processor = new ConfigurationEnhancingBeanFactoryPostProcessor();
 		processor.setConfigurationEnhancer(enhancer);
 		processor.postProcessBeanFactory(beanFactory);
 
