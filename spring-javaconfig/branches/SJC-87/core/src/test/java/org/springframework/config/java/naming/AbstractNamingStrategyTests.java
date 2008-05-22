@@ -15,17 +15,24 @@
  */
 package org.springframework.config.java.naming;
 
-import java.lang.reflect.Method;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.config.java.model.BeanMethod;
+import org.springframework.config.java.model.BeanMethodTests;
+import org.springframework.config.java.model.ConfigurationClass;
 
 public abstract class AbstractNamingStrategyTests {
 
 	protected BeanNamingStrategy strategy;
 
-	protected Method sampleMethod;
+	protected BeanMethod sampleMethod;
+
+	protected String expectedMethodName;
+
+	protected String expectedClassName;
+
+	protected String expectedFqClassName;
 
 	/*
 	 * (non-Javadoc)
@@ -34,7 +41,12 @@ public abstract class AbstractNamingStrategyTests {
 	@Before
 	public void setUp() throws Exception {
 		strategy = createNamingStrategy();
-		sampleMethod = AbstractNamingStrategyTests.class.getDeclaredMethod("setUp", (Class[]) null);
+		ConfigurationClass sampleConfigClass = new ConfigurationClass("MyConfig").setPackage("com.acme");
+		sampleMethod = BeanMethodTests.VALID_BEAN_METHOD;
+		sampleMethod.setDeclaringClass(sampleConfigClass);
+		expectedMethodName = sampleMethod.getName();
+		expectedClassName = sampleConfigClass.getName();
+		expectedFqClassName = sampleConfigClass.getFullyQualifiedName();
 	}
 
 	/*
@@ -51,6 +63,6 @@ public abstract class AbstractNamingStrategyTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNullMethod() {
-		strategy.getBeanName(null);
+		strategy.getBeanName((BeanMethod) null);
 	}
 }

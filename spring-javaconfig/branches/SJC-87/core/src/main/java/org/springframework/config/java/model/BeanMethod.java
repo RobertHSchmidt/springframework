@@ -29,14 +29,11 @@ import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.util.Assert;
 
-public class BeanMethod {
+public class BeanMethod extends ModelMethod {
 	private static final Bean DEFAULT_BEAN_ANNOTATION =
 		extractMethodAnnotation(Bean.class, new MethodAnnotationPrototype() { public @Bean void targetMethod() {} }.getClass());
-	private final String name;
-	private final int modifiers;
 	private final Bean metadata;
 	private final ScopedProxy scopedProxyMetadata;
-	private final Annotation[] annotations;
 
 	/** for testing convenience */
 	BeanMethod(String name) { this(name, DEFAULT_BEAN_ANNOTATION); }
@@ -54,19 +51,13 @@ public class BeanMethod {
 	 * (must be within org.springframework.config.java)
 	 */
 	public BeanMethod(String name, int modifiers, Annotation... annotations) {
-		Assert.hasText(name);
-		this.name = name;
+		super(name, modifiers, annotations);
 
-		Assert.notNull(annotations);
 		this.metadata = findAnnotation(Bean.class, annotations);
 		Assert.notNull(metadata, "could not find target annotation @" + Bean.class.getName());
-		this.annotations = annotations;
 
 		// may be null, it's ok
 		this.scopedProxyMetadata = findAnnotation(ScopedProxy.class, annotations);
-
-		Assert.isTrue(modifiers >= 0, "modifiers must be non-negative: " + modifiers);
-		this.modifiers = modifiers;
 	}
 
 	/**
@@ -76,18 +67,10 @@ public class BeanMethod {
 		return (AnnotationExtractionUtils.findAnnotation(Bean.class, annotations) != null);
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public Bean getMetadata() {
 		return metadata;
 	}
 
-	/** @see java.lang.reflect.Modifier */
-	public int getModifiers() {
-		return modifiers;
-	}
 
 	public boolean isScopedProxy() {
 		return scopedProxyMetadata != null;
@@ -127,6 +110,7 @@ public class BeanMethod {
 
 		return false;
 	}
+
 
 	@Override
 	public String toString() {

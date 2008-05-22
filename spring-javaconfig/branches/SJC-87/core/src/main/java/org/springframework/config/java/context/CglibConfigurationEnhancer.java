@@ -20,7 +20,6 @@ import net.sf.cglib.proxy.NoOp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
@@ -29,19 +28,23 @@ import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.JavaConfigAspectRegistry;
+import org.springframework.config.java.model.ModelMethod;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
 	private final JavaConfigBeanFactory beanFactory;
+	private final BeanNamingStrategy namingStrategy;
 
-	public CglibConfigurationEnhancer(JavaConfigBeanFactory beanFactory) {
+	public CglibConfigurationEnhancer(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
 		notNull(beanFactory, "beanFactory must be non-null");
+		notNull(namingStrategy, "namingStrategy must be non-null");
 		this.beanFactory = beanFactory;
+		this.namingStrategy = namingStrategy;
 	}
 
 	public String enhance(String configClassName) {
@@ -80,10 +83,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		Enhancer.registerCallbacks(enhancedSubclass,
 			new Callback[] {
 				NoOp.INSTANCE,
-				new BeanMethodInterceptor(beanFactory),
-				new ExternalBeanMethodInterceptor(beanFactory),
-				new AutoBeanMethodInterceptor(beanFactory),
-				new ExternalValueMethodInterceptor(beanFactory)
+				new BeanMethodInterceptor(beanFactory, namingStrategy),
+				new ExternalBeanMethodInterceptor(beanFactory, namingStrategy),
+				new AutoBeanMethodInterceptor(beanFactory, namingStrategy),
+				new ExternalValueMethodInterceptor(beanFactory, namingStrategy)
 			});
 
 		if(log.isInfoEnabled())
@@ -102,38 +105,51 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		}
 	}
 
-	static class ExternalBeanMethodInterceptor implements MethodInterceptor {
-		private final BeanFactory beanFactory;
+	static abstract class AbstractMethodInterceptor implements MethodInterceptor {
+		protected final Log log = LogFactory.getLog(this.getClass());
+		protected final JavaConfigBeanFactory beanFactory;
+		protected final BeanNamingStrategy namingStrategy;
 
-		public ExternalBeanMethodInterceptor(BeanFactory beanFactory) {
+		public AbstractMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
 			this.beanFactory = beanFactory;
+			this.namingStrategy = namingStrategy;
 		}
 
 		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-			final String name;
+			ModelMethod beanMethod = ModelMethod.forMethod(m);
+			String beanName = namingStrategy.getBeanName(beanMethod);
+			return doIntercept(o, m, args, mp, beanName);
+		}
 
+		protected abstract Object doIntercept(Object o, Method m, Object[] args, MethodProxy mp, String beanName) throws Throwable;
+	}
+
+	static class ExternalBeanMethodInterceptor extends AbstractMethodInterceptor {
+
+		public ExternalBeanMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+			super(beanFactory, namingStrategy);
+		}
+
+		@Override
+		public Object doIntercept(Object o, Method m, Object[] args, MethodProxy mp, String beanName) throws Throwable {
 			ExternalBean extBean = AnnotationUtils.findAnnotation(m, ExternalBean.class);
 			Assert.notNull(extBean, "ExternalBean methods must be annotated with @ExternalBean");
 
 			String alternateName = extBean.value();
-			if(StringUtils.hasLength(alternateName))
-				name = alternateName;
-			else
-				name = m.getName();
 
-			return beanFactory.getBean(name);
+			return beanFactory.getBean(hasLength(alternateName) ? alternateName : beanName);
 		}
 	}
 
-	static class ExternalValueMethodInterceptor implements MethodInterceptor {
-		private final BeanFactory beanFactory;
+	static class ExternalValueMethodInterceptor extends AbstractMethodInterceptor {
 		private ValueSource valueSource;
 
-		public ExternalValueMethodInterceptor(BeanFactory beanFactory) {
-			this.beanFactory = beanFactory;
+		public ExternalValueMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+			super(beanFactory, namingStrategy);
 		}
 
-		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
+		@Override
+		public Object doIntercept(Object o, Method m, Object[] args, MethodProxy mp, String beanName) throws Throwable {
 			ExternalValue metadata = AnnotationUtils.findAnnotation(m, ExternalValue.class);
 			Assert.notNull(metadata, "ExternalValue methods must be annotated with @ExternalValue");
 
@@ -177,6 +193,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
     		}
     		else {
     			String className = m.getDeclaringClass().getSimpleName();
+    			// TODO: incorporate BeanNamingStrategy here
     			String methodName = m.getName();
     			throw new IllegalStateException(format("No ValueSource bean could be found in " +
     					"beanFactory while trying to resolve @ExternalValue method %s.%s. " +
@@ -186,22 +203,18 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		}
 	}
 
-	static class AutoBeanMethodInterceptor implements MethodInterceptor {
-		private final BeanFactory beanFactory;
+	static class AutoBeanMethodInterceptor extends AbstractMethodInterceptor {
 
-		public AutoBeanMethodInterceptor(BeanFactory beanFactory) {
-			this.beanFactory = beanFactory;
+		public AutoBeanMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+			super(beanFactory, namingStrategy);
 		}
 
-		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-			final String name;
-
+		@Override
+		public Object doIntercept(Object o, Method m, Object[] args, MethodProxy mp, String beanName) throws Throwable {
 			AutoBean metadata = AnnotationUtils.findAnnotation(m, AutoBean.class);
 			Assert.notNull(metadata, "AutoBean methods must be annotated with @AutoBean");
 
-			name = m.getName();
-
-			return beanFactory.getBean(name);
+			return beanFactory.getBean(beanName);
 		}
 	}
 
@@ -212,25 +225,20 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	 *
 	 * @author Chris Beams
 	 */
-	static class BeanMethodInterceptor implements MethodInterceptor {
-		private static final Log log = LogFactory.getLog(BeanMethodInterceptor.class);
+	static class BeanMethodInterceptor extends AbstractMethodInterceptor {
 		private final JavaConfigAspectRegistry aspectRegistry;
-		private final JavaConfigBeanFactory beanFactory;
 
-		public BeanMethodInterceptor(JavaConfigBeanFactory beanFactory) {
+		public BeanMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+			super(beanFactory, namingStrategy);
 			this.aspectRegistry = JavaConfigAspectRegistry.retrieveFrom(beanFactory);
-			this.beanFactory = beanFactory;
 		}
 
 		/**
 		 * Enhances a {@link Bean @Bean} method to check the supplied BeanFactory for the existence
 		 * of this bean object
 		 */
-		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
-			// by default the bean will be named according to the name of the method
-			// TODO: incorporate BeanNamingStrategy here
-			String beanName = m.getName();
-
+		@Override
+		public Object doIntercept(Object o, Method m, Object[] args, MethodProxy mp, String beanName) throws Throwable {
 			boolean isScopedProxy = (AnnotationUtils.findAnnotation(m, ScopedProxy.class) != null);
 			String scopedBeanName = resolveHiddenScopedProxyBeanName(beanName);
 			if(isScopedProxy && beanFactory.isCurrentlyInCreation(scopedBeanName))
@@ -241,7 +249,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				Object cachedBean = beanFactory.getBean(beanName);
 				if(log.isInfoEnabled())
 					log.info(format("Returning cached singleton object [%s] for @Bean method %s.%s",
-							cachedBean, m.getDeclaringClass().getSimpleName(), m.getName()));
+							cachedBean, m.getDeclaringClass().getSimpleName(), beanName));
 				return cachedBean;
 			}
 
@@ -255,7 +263,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 				BeanVisibility visibility = visibilityOf(m.getModifiers());
 				if(log.isInfoEnabled())
 					log.info(format("Registering new %s singleton object [%s] for @Bean method %s.%s",
-						visibility, bean, m.getDeclaringClass().getSimpleName(), m.getName()));
+						visibility, bean, m.getDeclaringClass().getSimpleName(), beanName));
 
 				beanFactory.registerSingleton(beanName, bean, visibility);
 			}

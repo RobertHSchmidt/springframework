@@ -18,6 +18,7 @@ package org.springframework.config.java.model;
 import java.util.List;
 
 import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.core.io.ClassPathResource;
 
 // import issues.MyConfig;
@@ -37,7 +38,7 @@ public abstract class AsmJavaConfigBeanDefinitionReader extends AbstractJavaConf
 
 	protected AsmJavaConfigBeanDefinitionReader(DefaultJavaConfigBeanFactory registry,
 			List<ClassPathResource> aspectClassResources) {
-		super(registry, aspectClassResources);
+		super(registry, aspectClassResources, new MethodNameStrategy());
 	}
 
 }

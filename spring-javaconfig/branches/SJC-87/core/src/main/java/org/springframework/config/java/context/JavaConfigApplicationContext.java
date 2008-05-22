@@ -13,6 +13,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -36,6 +38,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	private ArrayList<Class<?>> aspectClasses = new ArrayList<Class<?>>();
 
 	private ArrayList<String> basePackages = new ArrayList<String>();
+
+	private BeanNamingStrategy namingStrategy = new MethodNameStrategy();
 
 	/** context is configurable until refresh() is called */
 	private boolean openForConfiguration = true;
@@ -76,8 +80,8 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this).postProcessBeanFactory(beanFactory);
-		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
-		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor(this.getNamingStrategy()).postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor(this.getNamingStrategy()).postProcessBeanFactory(beanFactory);
 		super.invokeBeanFactoryPostProcessors(beanFactory);
 	}
 
@@ -135,6 +139,14 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 	public void setParent(ApplicationContext parent) {
 		assertOpenForConfiguration("setParent");
 		super.setParent(parent);
+	}
+
+	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
+		this.namingStrategy = namingStrategy;
+	}
+
+	public BeanNamingStrategy getNamingStrategy() {
+		return namingStrategy;
 	}
 
 	public void addConfigClasses(Class<?>... classes) {

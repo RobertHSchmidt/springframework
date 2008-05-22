@@ -17,9 +17,11 @@ package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 
+import org.springframework.config.java.model.ModelMethod;
+
 /**
  * Strategy interface for constructing a bean name from the java method.
- * 
+ *
  * @author Costin Leau
  */
 public interface BeanNamingStrategy {
@@ -28,10 +30,13 @@ public interface BeanNamingStrategy {
 	 * Create the bean name based on the given method. If more contextual
 	 * information is needed, consider using the Method API to get access to it
 	 * or provide hooks inside the implementations.
-	 * 
+	 *
 	 * @param beanCreationMethod the method which creates the actual bean
 	 * instance
 	 * @return the bean name
 	 */
+	@Deprecated
 	String getBeanName(Method beanCreationMethod);
+
+	String getBeanName(ModelMethod beanMethod);
 }

@@ -22,6 +22,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.config.java.util.DefaultScopes;
 
 /**
@@ -38,7 +39,7 @@ public class ConfigurationModelBeanDefinitionReaderTests {
 	@Before
 	public void setUp() {
 		registry = createMock(JavaConfigBeanFactory.class);
-		renderer = new ConfigurationModelBeanDefinitionReader(registry);
+		renderer = new ConfigurationModelBeanDefinitionReader(registry, new MethodNameStrategy());
 		model = new ConfigurationModel();
 	}
 

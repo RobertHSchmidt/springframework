@@ -22,6 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
+import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -35,19 +37,21 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
+	private final BeanNamingStrategy namingStrategy;
+
 	@Deprecated
 	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry) {
-		this(registry, null);
+		this(registry, null, new MethodNameStrategy());
 	}
 
-	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry, List<ClassPathResource> aspectClassResources) {
+	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry,
+                                                     List<ClassPathResource> aspectClassResources,
+                                                     BeanNamingStrategy namingStrategy) {
 		this.beanFactory = registry;
-
 		this.aspectClassResources = aspectClassResources;
-
 		initializeDeclaringClassBeanFactoryFactory();
-
-		modelBeanDefinitionReader = initializeConfigurationModelBeanDefinitionReader();
+		this.namingStrategy = namingStrategy;
+		this.modelBeanDefinitionReader = new ConfigurationModelBeanDefinitionReader(beanFactory, namingStrategy);
 	}
 
 	public int loadBeanDefinitions(Resource[] configClassResources) throws BeanDefinitionStoreException {
@@ -91,10 +95,6 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 	// TODO: document this extensively.  the declaring class logic is quite complex, potentially confusing right now.
 	private void initializeDeclaringClassBeanFactoryFactory() {
 		beanFactory.registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
-	}
-
-	private ConfigurationModelBeanDefinitionReader initializeConfigurationModelBeanDefinitionReader() {
-		return new ConfigurationModelBeanDefinitionReader(beanFactory);
 	}
 
 }

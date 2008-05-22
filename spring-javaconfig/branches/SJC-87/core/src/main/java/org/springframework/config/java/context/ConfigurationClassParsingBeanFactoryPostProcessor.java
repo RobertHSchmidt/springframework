@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ClassUtils;
@@ -18,6 +19,11 @@ import org.springframework.util.ClassUtils;
 public class ConfigurationClassParsingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
 	private static final Log log = LogFactory.getLog(ConfigurationClassParsingBeanFactoryPostProcessor.class);
+	private final BeanNamingStrategy namingStrategy;
+
+	public ConfigurationClassParsingBeanFactoryPostProcessor(BeanNamingStrategy namingStrategy) {
+		this.namingStrategy = namingStrategy;
+	}
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) throws BeansException {
 		log.info("Parsing @Configuration classes within " + externalBeanFactory);
@@ -38,7 +44,7 @@ public class ConfigurationClassParsingBeanFactoryPostProcessor implements BeanFa
 			}
 		}
 
-		ReflectiveJavaConfigBeanDefinitionReader reader = new ReflectiveJavaConfigBeanDefinitionReader(internalBeanFactory, aspectClassResources);
+		ReflectiveJavaConfigBeanDefinitionReader reader = new ReflectiveJavaConfigBeanDefinitionReader(internalBeanFactory, aspectClassResources, namingStrategy);
 		reader.loadBeanDefinitions(configClassResources.toArray(new ClassPathResource[configClassResources.size()]));
 	}
 

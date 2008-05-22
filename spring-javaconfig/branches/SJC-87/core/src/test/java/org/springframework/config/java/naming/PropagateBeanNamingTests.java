@@ -16,32 +16,23 @@
 package org.springframework.config.java.naming;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 
-import javax.annotation.Resource;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.model.ModelMethod;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@ContextConfiguration(locations = { "classpath:org/springframework/config/java/naming/PropagateBeanNamingTest.xml" })
-@RunWith(SpringJUnit4ClassRunner.class)
 public class PropagateBeanNamingTests {
-	/**
-	 * We are autowired by name and the naming strategy will name our bean
-	 * "test" + [method name]. So we expect this property to be set with
-	 * TestConfiguration.bean().
-	 */
-	private Object testbean;
 
 	@Configuration
 	public static class TestConfiguration {
-		@Bean
-		public Object bean() {
+		public @Bean Object bean() {
 			return "Test";
 		}
 	}
@@ -50,19 +41,46 @@ public class PropagateBeanNamingTests {
 		public String getBeanName(Method pBeanCreationMethod) {
 			return "test" + pBeanCreationMethod.getName();
 		}
+
+    	public String getBeanName(ModelMethod modelMethod) {
+			return "test" + modelMethod.getName();
+    	}
 	}
 
-	@Test
-	public void testNamingStrategy() {
-		assertEquals("Test", testbean);
+	public @Test void testNamingStrategyViaXml() {
+		ClassPathXmlApplicationContext ctx =
+			new ClassPathXmlApplicationContext("PropagateBeanNamingTests.xml", PropagateBeanNamingTests.class);
+
+		assertContextContainsProperlyNamedBean(ctx);
 	}
 
-	public Object getTestbean() {
-		return testbean;
+	public @Test void testNamingStrategyViaJcac() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
+		ctx.setNamingStrategy(new TestNamingStrategy());
+		ctx.addConfigClasses(TestConfiguration.class);
+		ctx.refresh();
+
+		assertContextContainsProperlyNamedBean(ctx);
 	}
 
-	@Resource
-	public void setTestbean(Object pTestbean) {
-		testbean = pTestbean;
+	public @Test void testNamingStrategyViaJcacSubclass() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(TestConfiguration.class) {
+			@Override
+			public BeanNamingStrategy getNamingStrategy() {
+				return new TestNamingStrategy();
+			}
+		};
+
+		assertContextContainsProperlyNamedBean(ctx);
 	}
+
+	private void assertContextContainsProperlyNamedBean(AbstractApplicationContext ctx) {
+		assertTrue("context should have contained bean named 'testbean'." +
+				"actual contents of bean factory were: " + ctx.getBeanFactory(),
+				ctx.containsBean("testbean"));
+
+		assertEquals("Test", ctx.getBean("testbean"));
+	}
+
+
 }
