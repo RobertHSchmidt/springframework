@@ -37,6 +37,7 @@
 		<config>src/test/resources/org/springframework/config/java/txannotations/txannotations.xml</config>
 		<config>src/test/resources/org/springframework/config/java/illegalShadow.xml</config>
 		<config>src/test/resources/org/springframework/config/java/beanPostProcessingTests.xml</config>
+		<config>src/test/resources/org/springframework/config/java/testHiddenBeanPostProcessorAppliesOnlyToJavaConfigBeans.xml</config>
 	</configs>
 	<configSets>
 	</configSets>
