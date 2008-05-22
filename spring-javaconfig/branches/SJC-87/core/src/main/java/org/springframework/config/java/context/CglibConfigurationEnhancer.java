@@ -29,7 +29,6 @@ import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.model.JavaConfigAspectRegistry;
 import org.springframework.config.java.model.ModelMethod;
-import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -38,13 +37,10 @@ import org.springframework.util.Assert;
 public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	private static final Log log = LogFactory.getLog(CglibConfigurationEnhancer.class);
 	private final JavaConfigBeanFactory beanFactory;
-	private final BeanNamingStrategy namingStrategy;
 
-	public CglibConfigurationEnhancer(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+	public CglibConfigurationEnhancer(JavaConfigBeanFactory beanFactory) {
 		notNull(beanFactory, "beanFactory must be non-null");
-		notNull(namingStrategy, "namingStrategy must be non-null");
 		this.beanFactory = beanFactory;
-		this.namingStrategy = namingStrategy;
 	}
 
 	public String enhance(String configClassName) {
@@ -83,10 +79,10 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		Enhancer.registerCallbacks(enhancedSubclass,
 			new Callback[] {
 				NoOp.INSTANCE,
-				new BeanMethodInterceptor(beanFactory, namingStrategy),
-				new ExternalBeanMethodInterceptor(beanFactory, namingStrategy),
-				new AutoBeanMethodInterceptor(beanFactory, namingStrategy),
-				new ExternalValueMethodInterceptor(beanFactory, namingStrategy)
+				new BeanMethodInterceptor(beanFactory),
+				new ExternalBeanMethodInterceptor(beanFactory),
+				new AutoBeanMethodInterceptor(beanFactory),
+				new ExternalValueMethodInterceptor(beanFactory)
 			});
 
 		if(log.isInfoEnabled())
@@ -108,16 +104,14 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	static abstract class AbstractMethodInterceptor implements MethodInterceptor {
 		protected final Log log = LogFactory.getLog(this.getClass());
 		protected final JavaConfigBeanFactory beanFactory;
-		protected final BeanNamingStrategy namingStrategy;
 
-		public AbstractMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+		public AbstractMethodInterceptor(JavaConfigBeanFactory beanFactory) {
 			this.beanFactory = beanFactory;
-			this.namingStrategy = namingStrategy;
 		}
 
 		public Object intercept(Object o, Method m, Object[] args, MethodProxy mp) throws Throwable {
 			ModelMethod beanMethod = ModelMethod.forMethod(m);
-			String beanName = namingStrategy.getBeanName(beanMethod);
+			String beanName = beanFactory.getBeanNamingStrategy().getBeanName(beanMethod);
 			return doIntercept(o, m, args, mp, beanName);
 		}
 
@@ -126,8 +120,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	static class ExternalBeanMethodInterceptor extends AbstractMethodInterceptor {
 
-		public ExternalBeanMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
-			super(beanFactory, namingStrategy);
+		public ExternalBeanMethodInterceptor(JavaConfigBeanFactory beanFactory) {
+			super(beanFactory);
 		}
 
 		@Override
@@ -144,8 +138,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	static class ExternalValueMethodInterceptor extends AbstractMethodInterceptor {
 		private ValueSource valueSource;
 
-		public ExternalValueMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
-			super(beanFactory, namingStrategy);
+		public ExternalValueMethodInterceptor(JavaConfigBeanFactory beanFactory) {
+			super(beanFactory);
 		}
 
 		@Override
@@ -205,8 +199,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 
 	static class AutoBeanMethodInterceptor extends AbstractMethodInterceptor {
 
-		public AutoBeanMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
-			super(beanFactory, namingStrategy);
+		public AutoBeanMethodInterceptor(JavaConfigBeanFactory beanFactory) {
+			super(beanFactory);
 		}
 
 		@Override
@@ -228,8 +222,8 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 	static class BeanMethodInterceptor extends AbstractMethodInterceptor {
 		private final JavaConfigAspectRegistry aspectRegistry;
 
-		public BeanMethodInterceptor(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
-			super(beanFactory, namingStrategy);
+		public BeanMethodInterceptor(JavaConfigBeanFactory beanFactory) {
+			super(beanFactory);
 			this.aspectRegistry = JavaConfigAspectRegistry.retrieveFrom(beanFactory);
 		}
 

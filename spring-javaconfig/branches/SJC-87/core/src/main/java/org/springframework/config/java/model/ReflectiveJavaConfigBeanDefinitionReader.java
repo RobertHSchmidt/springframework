@@ -8,7 +8,6 @@ import java.util.List;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
-import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
@@ -24,8 +23,8 @@ public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfig
 	private final JavaConfigAspectRegistry aspectRegistry;
 
 	public ReflectiveJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry,
-			List<ClassPathResource> aspectClassResources, BeanNamingStrategy namingStrategy) {
-		super(registry, aspectClassResources, namingStrategy);
+			List<ClassPathResource> aspectClassResources) {
+		super(registry, aspectClassResources);
 		this.aspectRegistry = new JavaConfigAspectRegistry(beanFactory);
 	}
 

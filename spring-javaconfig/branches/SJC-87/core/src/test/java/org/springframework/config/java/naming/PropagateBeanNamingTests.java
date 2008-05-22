@@ -56,7 +56,7 @@ public class PropagateBeanNamingTests {
 
 	public @Test void testNamingStrategyViaJcac() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
-		ctx.setNamingStrategy(new TestNamingStrategy());
+		ctx.setBeanNamingStrategy(new TestNamingStrategy());
 		ctx.addConfigClasses(TestConfiguration.class);
 		ctx.refresh();
 
@@ -66,7 +66,7 @@ public class PropagateBeanNamingTests {
 	public @Test void testNamingStrategyViaJcacSubclass() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(TestConfiguration.class) {
 			@Override
-			public BeanNamingStrategy getNamingStrategy() {
+			public BeanNamingStrategy getBeanNamingStrategy() {
 				return new TestNamingStrategy();
 			}
 		};

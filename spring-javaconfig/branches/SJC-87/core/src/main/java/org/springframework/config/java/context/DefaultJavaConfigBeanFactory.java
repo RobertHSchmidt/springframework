@@ -18,8 +18,15 @@ package org.springframework.config.java.context;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.naming.BeanNamingStrategy;
+import org.springframework.config.java.naming.MethodNameStrategy;
 
 public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory implements JavaConfigBeanFactory {
+
+	/** Defaults to {@link MethodNameStrategy}
+	 * @see #setBeanNamingStrategy(BeanNamingStrategy) to override
+	 */
+	BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
 	public DefaultJavaConfigBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) {
 		super(externalBeanFactory);
@@ -87,6 +94,14 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 			default:
 				throw new IllegalArgumentException();
 		}
+	}
+
+	public void setBeanNamingStrategy(BeanNamingStrategy beanNamingStrategy) {
+		this.beanNamingStrategy = beanNamingStrategy;
+	}
+
+	public BeanNamingStrategy getBeanNamingStrategy() {
+		return beanNamingStrategy;
 	}
 
 	/*

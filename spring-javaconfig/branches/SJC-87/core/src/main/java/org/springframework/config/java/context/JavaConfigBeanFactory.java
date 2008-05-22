@@ -4,6 +4,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.config.java.naming.BeanNamingStrategy;
 
 public interface JavaConfigBeanFactory extends ConfigurableListableBeanFactory, BeanDefinitionRegistry {
 
@@ -21,4 +22,6 @@ public interface JavaConfigBeanFactory extends ConfigurableListableBeanFactory, 
 	void registerAlias(String beanName, String alias, BeanVisibility visibility);
 
 	boolean containsBeanDefinition(String className, BeanVisibility visibility);
+
+	public BeanNamingStrategy getBeanNamingStrategy();
 }

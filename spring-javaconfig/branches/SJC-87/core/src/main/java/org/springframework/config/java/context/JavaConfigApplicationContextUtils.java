@@ -9,12 +9,12 @@ class JavaConfigApplicationContextUtils {
 
 	private JavaConfigApplicationContextUtils() { }
 
-	public static DefaultJavaConfigBeanFactory getRequiredInternalBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) {
+	public static JavaConfigBeanFactory getRequiredInternalBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) {
 		if(!externalBeanFactory.containsSingleton(INTERNAL_BEAN_FACTORY_NAME))
 			throw new IllegalStateException(
 				format("No internal BeanFactory found: perhaps %s was not registered?",
 					InternalBeanFactoryEstablishingBeanFactoryPostProcessor.class.getSimpleName()));
-		return (DefaultJavaConfigBeanFactory) externalBeanFactory.getBean(INTERNAL_BEAN_FACTORY_NAME);
+		return (JavaConfigBeanFactory) externalBeanFactory.getBean(INTERNAL_BEAN_FACTORY_NAME);
 	}
 
 }

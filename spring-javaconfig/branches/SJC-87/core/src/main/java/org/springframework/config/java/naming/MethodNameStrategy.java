@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
  * Allows configuration for include the owning class short name or FQN as well.
  *
  * @author Costin Leau
+ * @author Chris Beams
  */
 public class MethodNameStrategy implements BeanNamingStrategy {
 

@@ -9,7 +9,6 @@ import org.springframework.config.java.context.ConfigurationEnhancingBeanFactory
 import org.springframework.config.java.context.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
 import org.springframework.config.java.context.JavaConfigInternalPostProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
-import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -19,13 +18,16 @@ import org.springframework.util.Assert;
 public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, ApplicationContextAware, Ordered, JavaConfigInternalPostProcessor {
 
 	private AbstractApplicationContext ctx;
-	private BeanNamingStrategy namingStrategy = new MethodNameStrategy();
+	private BeanNamingStrategy beanNamingStrategy;
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		new ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
-		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(ctx).postProcessBeanFactory(beanFactory);
-		new ConfigurationClassParsingBeanFactoryPostProcessor(namingStrategy).postProcessBeanFactory(beanFactory);
-		new ConfigurationEnhancingBeanFactoryPostProcessor(namingStrategy).postProcessBeanFactory(beanFactory);
+		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(ctx);
+		if(beanNamingStrategy != null)
+			iBPP.setBeanNamingStrategy(beanNamingStrategy);
+		iBPP.postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
@@ -37,8 +39,18 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, App
 		return Ordered.HIGHEST_PRECEDENCE;
 	}
 
+	/**
+	 * In place for backward-compatibility with existing milestone releases
+	 * TODO: [breaks-backward-compat] (or will when removed)
+	 * @deprecated Use {@link #setBeanNamingStrategy(BeanNamingStrategy)} instead
+	 */
+	@Deprecated
 	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
-		this.namingStrategy = namingStrategy;
+		setBeanNamingStrategy(namingStrategy);
+	}
+
+	public void setBeanNamingStrategy(BeanNamingStrategy namingStrategy) {
+		this.beanNamingStrategy = namingStrategy;
 	}
 
 }

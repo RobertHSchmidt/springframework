@@ -25,7 +25,6 @@ import org.springframework.config.java.context.BeanVisibility;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.config.java.core.ScopedProxyMethodProcessor;
-import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.type.Type;
 import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -45,11 +44,9 @@ public class ConfigurationModelBeanDefinitionReader {
 	private static final Log logger = LogFactory.getLog(ConfigurationModelBeanDefinitionReader.class);
 
 	private final JavaConfigBeanFactory beanFactory;
-	private final BeanNamingStrategy namingStrategy;
 
-	public ConfigurationModelBeanDefinitionReader(JavaConfigBeanFactory beanFactory, BeanNamingStrategy namingStrategy) {
+	public ConfigurationModelBeanDefinitionReader(JavaConfigBeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
-		this.namingStrategy = namingStrategy;
 	}
 
 	/**
@@ -150,7 +147,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		else if(defaults.defaultAutowire() != AnnotationUtils.getDefaultValue(Configuration.class, "defaultAutowire"))
 				beanDef.setAutowireMode(defaults.defaultAutowire().value());
 
-		String beanName = namingStrategy.getBeanName(beanMethod);
+		String beanName = beanFactory.getBeanNamingStrategy().getBeanName(beanMethod);
 
 		// consider aliases
 		for(String alias : metadata.aliases())
