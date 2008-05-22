@@ -16,6 +16,7 @@
 package org.springframework.config.java;
 
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.awt.Point;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TestBean;
@@ -47,6 +49,60 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Chris Beams
  */
 public class HiddenBeanPostProcessorTests {
+
+	public @Test void testBeanPostProcessorViaJcac() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(BppConfig.class);
+		RememberingBeanPostProcessor bpp = (RememberingBeanPostProcessor) ctx.getBean("bpp");
+		assertTrue(bpp.beansSeen.containsKey("beanA"));
+	}
+	/** tests that public bean factory post processors defined within a Configuration class
+	 *  are also applied to beans externally defined in XML */
+	public @Test void testBeanPostProcessorViaXml() {
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("testBeanPostProcessorViaXml.xml", this.getClass());
+		RememberingBeanPostProcessor bpp = (RememberingBeanPostProcessor) ctx.getBean("bpp");
+		assertTrue(bpp.beansSeen.containsKey("beanA"));
+		assertTrue(bpp.beansSeen.containsKey("xmlBean"));
+	}
+	static class BppConfig {
+		public @Bean TestBean beanA() { return new TestBean(); }
+		public @Bean BeanPostProcessor bpp() { return new RememberingBeanPostProcessor(); }
+	}
+
+	/**
+	 * Hidden bean post processors should not be applied to beans externally defined in XML
+	 *
+	 * TODO: {bean post processing} not a compatibility issue - potential new functionality - nice to have
+	 */
+	@Ignore
+	public @Test void testHiddenBeanPostProcessorAppliesOnlyToJavaConfigBeans() {
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("testHiddenBeanPostProcessorAppliesOnlyToJavaConfigBeans.xml", this.getClass());
+
+		TestBean sjcBean = (TestBean) ctx.getBean("sjcBean");
+		assertEquals("setByBpp", sjcBean.getSpouse().getName());
+
+		TestBean xmlBean = (TestBean) ctx.getBean("xmlBean");
+		assertEquals("setByXml", xmlBean.getName());
+	}
+	static class HiddenBppConfig {
+		public @Bean TestBean sjcBean() { return new TestBean(spouse()); }
+		@Bean TestBean spouse() { return new TestBean("originalName"); }
+
+		/** should only affect wife() */
+		@Bean BeanPostProcessor bpp() { return new NameSettingBeanPostProcessor(); }
+	}
+	static class NameSettingBeanPostProcessor implements BeanPostProcessor {
+
+		public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+			return bean;
+		}
+
+		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+			if(bean instanceof TestBean)
+				((TestBean) bean).setName("setByBpp");
+			return bean;
+		}
+
+	}
 
 	public @Test void testBeanPostProcessorActsOnHiddenBeans() {
 		final RememberingBeanPostProcessor rememberingPostProcessor = new RememberingBeanPostProcessor();
