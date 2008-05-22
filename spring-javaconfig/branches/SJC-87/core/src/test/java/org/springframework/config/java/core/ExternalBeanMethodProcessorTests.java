@@ -25,6 +25,7 @@ import org.easymock.EasyMock;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanFactory;
@@ -34,6 +35,7 @@ import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
 
+@Ignore
 public class ExternalBeanMethodProcessorTests {
 	private ExternalBeanMethodProcessor externalBeanMethodProcessor;
 

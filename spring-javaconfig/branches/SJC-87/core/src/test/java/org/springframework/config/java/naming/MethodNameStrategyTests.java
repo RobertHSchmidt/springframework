@@ -22,6 +22,7 @@ import org.springframework.config.java.naming.MethodNameStrategy.Prefix;
 
 /**
  * @author Costin Leau
+ * @author Chris Beams
  */
 public class MethodNameStrategyTests extends AbstractNamingStrategyTests {
 
@@ -38,14 +39,14 @@ public class MethodNameStrategyTests extends AbstractNamingStrategyTests {
 	@Test
 	public void testClass() {
 		((MethodNameStrategy) strategy).setPrefix(Prefix.CLASS);
-		assertEquals(AbstractNamingStrategyTests.class.getSimpleName().concat(".setUp"), strategy
+		assertEquals(expectedClassName.concat(".").concat(expectedMethodName), strategy
 				.getBeanName(sampleMethod));
 	}
 
 	@Test
 	public void testFQN() {
 		((MethodNameStrategy) strategy).setPrefix(Prefix.FQN);
-		assertEquals(AbstractNamingStrategyTests.class.getName().concat(".setUp"), strategy.getBeanName(sampleMethod));
+		assertEquals(expectedFqClassName.concat(".").concat(expectedMethodName), strategy.getBeanName(sampleMethod));
 	}
 
 }

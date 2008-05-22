@@ -75,6 +75,8 @@ public class ConfigurationClass {
 
 	private ConfigurationClass declaringClass;
 
+	private String pkg;
+
 	/**
 	 * Creates a new ConfigurationClass named <var>className</var>
 	 * @param name fully-qualified Configuration class being represented
@@ -109,6 +111,7 @@ public class ConfigurationClass {
 	 */
 	public ConfigurationClass add(BeanMethod method) {
 		beanMethods.add(method);
+		method.setDeclaringClass(this);
 		return this;
 	}
 
@@ -202,6 +205,21 @@ public class ConfigurationClass {
 		return declaringClass;
 	}
 
+	public String getFullyQualifiedName() {
+		Assert.notNull("package must be non-null", getPackage());
+		return getPackage().concat(".").concat(getName());
+	}
+
+	public ConfigurationClass setPackage(String pkg) {
+		this.pkg = pkg;
+		return this;
+	}
+
+	public String getPackage() {
+		return this.pkg;
+	}
+
+
 
 
 	/**
@@ -283,6 +301,16 @@ public class ConfigurationClass {
 
 		return errors;
 	}
+
+	/**
+	 * Create a new ConfigurationClass for a given {@link java.lang.Class}.
+	 * A very limited subset of data is populated for the class, just class name
+	 * and package name.
+	 */
+	public static ConfigurationClass forClass(Class<?> clazz) {
+		return new ConfigurationClass(clazz.getSimpleName()).setPackage(clazz.getPackage().getName());
+	}
+
 
 	@Override
 	public String toString() {

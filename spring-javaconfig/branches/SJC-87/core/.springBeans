@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.0.4.v200802202100]]></pluginVersion>
+	<pluginVersion><![CDATA[2.0.4.v200803111444]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -32,7 +32,6 @@
 		<config>src/test/resources/issues/Sjc74Tests.xml</config>
 		<config>src/test/resources/issues/Sjc87Tests_Imported.xml</config>
 		<config>src/test/resources/org/springframework/config/java/context/simpleConfiguration.xml</config>
-		<config>src/test/resources/org/springframework/config/java/naming/PropagateBeanNamingTest.xml</config>
 		<config>src/test/resources/org/springframework/config/java/proxies/proxies.xml</config>
 		<config>src/test/resources/org/springframework/config/java/txannotations/txannotations.xml</config>
 		<config>src/test/resources/org/springframework/config/java/illegalShadow.xml</config>

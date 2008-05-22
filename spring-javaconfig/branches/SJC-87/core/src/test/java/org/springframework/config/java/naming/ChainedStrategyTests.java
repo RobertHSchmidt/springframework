@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Method;
 
 import org.junit.Test;
+import org.springframework.config.java.model.ModelMethod;
 
 /**
  * @author Rod Johnson
@@ -40,14 +41,14 @@ public class ChainedStrategyTests {
 	public void testSkipsNull() {
 		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] { new DummyNameStrategy(null),
 				new DummyNameStrategy("one"), new DummyNameStrategy("two") });
-		assertEquals("one", cs.getBeanName(null));
+		assertEquals("one", cs.getBeanName((Method) null));
 	}
 
 	@Test
 	public void testReturnsFirst() {
 		ChainedStrategy cs = new ChainedStrategy(new BeanNamingStrategy[] { new DummyNameStrategy("zero"),
 				new DummyNameStrategy(null), new DummyNameStrategy("two") });
-		assertEquals("zero", cs.getBeanName(null));
+		assertEquals("zero", cs.getBeanName((Method) null));
 	}
 
 	private class DummyNameStrategy implements BeanNamingStrategy {
@@ -60,5 +61,11 @@ public class ChainedStrategyTests {
 		public String getBeanName(Method beanCreationMethod) {
 			return name;
 		}
+
+    	public String getBeanName(ModelMethod modelMethod) {
+    		throw new UnsupportedOperationException();
+    	}
+
 	}
+
 }

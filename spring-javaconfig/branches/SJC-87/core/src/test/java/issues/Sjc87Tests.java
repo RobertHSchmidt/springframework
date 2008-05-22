@@ -3,6 +3,7 @@ package issues;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,30 +14,34 @@ import org.springframework.asm.Type;
 import org.springframework.asm.commons.EmptyVisitor;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
-import org.springframework.config.java.model.LegacyReflectiveJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.naming.MethodNameStrategy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;
 
 /*
  * TODO:
- * 
+ *
  * Using the format in MethodInvokingFactoryBean, register [Composite?]ComponentDefinitions with source
  * references that Spring IDE can use to get back to the original @Bean method
- * 
+ *
  * See:
  *  ComponentScanBeanDefinitionParser
  *  MethodInvokingFactoryBean
  *  ComponentDefinition
  *  CompositeComponentDefinition
- * 
+ *
  * First, simply create a ClassVisitor that can find @Bean-annotated methods.
  */
 public abstract class Sjc87Tests {
@@ -118,24 +123,25 @@ public abstract class Sjc87Tests {
 		assertNotNull(config);
 	}
 
-	protected abstract JavaConfigBeanDefinitionReader getBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName);
+	protected abstract JavaConfigBeanDefinitionReader getBeanDefinitionReader(JavaConfigBeanFactory registry, String configurationBeanName);
 
 	public static class ReflectiveSjc87Tests extends Sjc87Tests {
 		@Override
-		protected JavaConfigBeanDefinitionReader getBeanDefinitionReader(BeanDefinitionRegistry registry, String configurationBeanName) {
-			return new LegacyReflectiveJavaConfigBeanDefinitionReader(registry, configurationBeanName);
+		protected JavaConfigBeanDefinitionReader getBeanDefinitionReader(JavaConfigBeanFactory registry, String configurationBeanName) {
+			return new ReflectiveJavaConfigBeanDefinitionReader(registry, new ArrayList<ClassPathResource>(), new MethodNameStrategy());
 		}
 	}
 
 	public @Test void populateAndRenderModel() {
 		Resource classResource = new ClassPathResource(ClassUtils.convertClassNameToResourcePath(MyConfig.class.getName()));
 
-		BeanFactory bf = new DefaultListableBeanFactory();
+		ConfigurableListableBeanFactory extBf = new DefaultListableBeanFactory();
+		JavaConfigBeanFactory bf = new DefaultJavaConfigBeanFactory(extBf);
 		RootBeanDefinition rbd = new RootBeanDefinition();
 		String beanClassName = MyConfig.class.getName();
 		rbd.setBeanClassName(beanClassName);
 		((BeanDefinitionRegistry) bf).registerBeanDefinition(beanClassName, rbd);
-		getBeanDefinitionReader((BeanDefinitionRegistry) bf, beanClassName).loadBeanDefinitions(classResource);
+		getBeanDefinitionReader(bf, beanClassName).loadBeanDefinitions(classResource);
 
 		// ensure that the configuration class was registered as a bean
 		MyConfig config = (MyConfig) bf.getBean(MyConfig.class.getName());

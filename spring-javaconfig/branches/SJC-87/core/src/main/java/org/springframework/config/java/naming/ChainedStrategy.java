@@ -18,14 +18,15 @@ package org.springframework.config.java.naming;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import org.springframework.config.java.model.ModelMethod;
 import org.springframework.util.Assert;
 
 /**
  * Chain-like implementation naming strategy.
- * 
+ *
  * Allows a stack of strategies to be specified, returning the first non-null
  * name.
- * 
+ *
  * @author Costin Leau
  */
 public class ChainedStrategy implements BeanNamingStrategy {
@@ -53,6 +54,10 @@ public class ChainedStrategy implements BeanNamingStrategy {
 
 		throw new IllegalArgumentException("no strategy returned a name; consider using different naming strategies "
 				+ Arrays.toString(strategies));
+	}
+
+	public String getBeanName(ModelMethod modelMethod) {
+		throw new UnsupportedOperationException();
 	}
 
 }

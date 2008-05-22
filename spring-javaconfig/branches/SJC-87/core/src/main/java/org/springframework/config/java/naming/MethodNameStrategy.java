@@ -17,21 +17,23 @@ package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 
+import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.config.java.model.ModelMethod;
 import org.springframework.util.Assert;
 
 /**
  * Naming strategy which uses the method name for generating the bean name.
  * Allows configuration for include the owning class short name or FQN as well.
- * 
+ *
  * @author Costin Leau
  */
 public class MethodNameStrategy implements BeanNamingStrategy {
 
 	/**
 	 * Naming prefix.
-	 * 
+	 *
 	 * @author Costin Leau
-	 * 
+	 *
 	 */
 	public enum Prefix {
 
@@ -86,29 +88,37 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 	 * org.springframework.config.java.annotation.Configuration)
 	 */
 	public String getBeanName(Method beanCreationMethod) {
-		Assert.notNull(beanCreationMethod, "beanCreationMethod is required");
+		throw new UnsupportedOperationException();
+	}
 
-		String name = beanCreationMethod.getName();
-		Class<?> enclosingClass = beanCreationMethod.getDeclaringClass();
+	public String getBeanName(ModelMethod modelMethod) {
+		Assert.notNull(modelMethod, "modelMethod is required");
+
+		String beanName = modelMethod.getName();
+		ConfigurationClass declaringClass = modelMethod.getDeclaringClass();
+		Assert.notNull(declaringClass, "declaringClass was not specified for " + modelMethod);
 
 		switch (prefix) {
-		case CLASS:
-			name = enclosingClass.getSimpleName().concat(".").concat(name);
-			break;
+    		case CLASS:
+    			beanName = declaringClass.getName().concat(".").concat(beanName);
+    			break;
 
-		case FQN:
-			name = enclosingClass.getName().concat(".").concat(name);
-			break;
+    		case FQN:
+    			beanName = declaringClass.getFullyQualifiedName().concat(".").concat(beanName);
+    			break;
 
-		default:
-			// no-op
-			break;
+    		default:
+    			// no-op
+    			break;
 		}
-		return name;
+
+		return beanName;
 	}
 
 	public void setPrefix(Prefix prefix) {
 		this.prefix = prefix;
 	}
+
+
 
 }
