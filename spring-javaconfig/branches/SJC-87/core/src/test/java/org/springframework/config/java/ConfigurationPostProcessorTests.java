@@ -25,6 +25,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
@@ -405,8 +406,16 @@ public class ConfigurationPostProcessorTests {
 		}
 	}
 
-	@Test
-	public void testAspectsAreIndependent() {
+	/**
+	 * TODO: [breaks-backward-compat] aspects now apply to all beans in a given configuration model
+	 * Ignoring this test, then, as it was designed to prove the opposite.  Considerable effort was
+	 * put forth in supporting the idea of distinguishing 'global' vs. 'local' aspects, where aspects
+	 * imported by or inlined within a given Configuration would be applied only to beans defined by
+	 * that Configuration, but the amount of complexity this introduced hardly seemed worth it.  We'll
+	 * wait to see if users request this functionality.
+	 */
+	@Ignore
+	public @Test void testAspectsAreIndependent() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/independenceTest.xml");
 
