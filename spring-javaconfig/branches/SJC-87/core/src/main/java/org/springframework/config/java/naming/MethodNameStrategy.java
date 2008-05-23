@@ -88,8 +88,30 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 	 * org.springframework.config.java.annotation.Bean,
 	 * org.springframework.config.java.annotation.Configuration)
 	 */
-	public String getBeanName(Method beanCreationMethod) {
-		throw new UnsupportedOperationException();
+	@Deprecated
+	public String getBeanName(Method beanMethod) {
+		//throw new UnsupportedOperationException();
+		Assert.notNull(beanMethod, "modelMethod is required");
+
+		String beanName = beanMethod.getName();
+		Class<?> declaringClass = beanMethod.getDeclaringClass();
+		Assert.notNull(declaringClass, "declaringClass was not specified for " + beanMethod);
+
+		switch (prefix) {
+    		case CLASS:
+    			beanName = declaringClass.getSimpleName().concat(".").concat(beanName);
+    			break;
+
+    		case FQN:
+    			beanName = declaringClass.getName().concat(".").concat(beanName);
+    			break;
+
+    		default:
+    			// no-op
+    			break;
+		}
+
+		return beanName;
 	}
 
 	public String getBeanName(ModelMethod modelMethod) {
