@@ -9,9 +9,9 @@
 		from each other and doesn't affect owning factory
 	-->
 
-	<!-- TODO: [xml:aop] -->
+	<!-- XXX: [xml:aop] -->
 	<bean 
-		class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" />
+		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 		
 	<bean 
 		class="org.springframework.config.java.ConfigurationPostProcessorTests$Advised1" />

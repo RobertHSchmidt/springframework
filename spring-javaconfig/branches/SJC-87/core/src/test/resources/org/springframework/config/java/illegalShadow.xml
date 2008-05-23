@@ -5,34 +5,13 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
-	<!-- TODO: [xml:bean-override] -->
-	<bean class="org.springframework.config.java.process.LegacyConfigurationPostProcessor" />
+	<!-- XXX: [xml:bean-override] -->
+	<bean class="org.springframework.config.java.process.ConfigurationPostProcessor" />
 
 	<bean class="org.springframework.config.java.BeanOverridingTests$IllegalShadowConfiguration" />
 
-	<!-- TODO: what should the override precedence be?
-	     i.e.: should beans defined in XML override those defined in
-	     @Configuration classes bootstrapped by XML?  Currently
-	     it's the other way around, but this is an accident of the
-	     way the implementation works  -->
-	<!-- 
-	Currently, beans defined in @Configuration lasses have precedence.  any beans 
-	specified in XML do NOT override the @Configuration-specified beans.  This
-	breaks backward compatibility, but raises the question,
-	what's the appropriate behavior?
-	
-	I think a case can be made either way.  A fixed set of @Configurations, where
-	the user wants to bootstrap them vio XML.  Or, plugging a @Configuration
-	into a network of (probably imported) XML files, or as part of a hierarchy
-	where the user wants the beans in the @Configuration to 'override'.	
-	
-	Also, the semantics of @Bean(allowOverride=false) would be hard to get right.
-	
-	I think the answer here is to leave the behavior as it is, mark it as a place
-	that the rewrite breaks backward-compat, and leave it to the users to point out
-	that they'd like the extra configurability (and the complexity that comes with it)
-	-->
-	<!-- TODO: [breaks-backward-compat] see comments above -->
+	<!-- This bean definition is an 'illegal override' because the @Configuration
+	     above defines a @Bean named ann and also sets allowOverride=false -->
 	<bean id="ann" class="org.springframework.beans.TestBean" p:name="Ann" />
 
 </beans>

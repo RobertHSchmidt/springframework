@@ -20,7 +20,6 @@ import net.sf.cglib.proxy.NoOp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -276,12 +275,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		 * @return true if <var>beanName</var> already exists in beanFactory
 		 */
 		private boolean factoryContainsBean(String beanName) {
-			// TODO: stopgap check; see todos above, this type wrangling needs to get worked out better
-			Assert.isInstanceOf(ConfigurableListableBeanFactory.class, beanFactory,
-					"beanFactory must be of type ConfigurableListableBeanFactory. Actual type: " +
-					beanFactory.getClass().getSimpleName());
-
-			return beanFactory.containsBean(beanName)
+		 	return beanFactory.containsBean(beanName)
 				&& !beanFactory.isCurrentlyInCreation(beanName);
 		}
 
