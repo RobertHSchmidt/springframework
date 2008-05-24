@@ -1,7 +1,7 @@
 package org.springframework.config.java.model;
 
 import static org.junit.Assert.*;
-import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
 
 import java.lang.reflect.Modifier;
 
@@ -16,6 +16,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
+import org.springframework.config.java.parsing.ConfigurationParser;
+import org.springframework.config.java.parsing.ReflectiveConfigurationParser;
 
 /**
  * Integration test for {@link ConfigurationParser} implementations.

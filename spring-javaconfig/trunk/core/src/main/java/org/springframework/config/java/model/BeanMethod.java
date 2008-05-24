@@ -16,8 +16,8 @@
 package org.springframework.config.java.model;
 
 import static java.lang.String.format;
-import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
-import static org.springframework.config.java.model.AnnotationExtractionUtils.findAnnotation;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.extractMethodAnnotation;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.findAnnotation;
 import static org.springframework.config.java.util.DefaultScopes.PROTOTYPE;
 import static org.springframework.config.java.util.DefaultScopes.SINGLETON;
 
@@ -27,6 +27,8 @@ import java.lang.reflect.Modifier;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
+import org.springframework.config.java.util.AnnotationExtractionUtils;
+import org.springframework.config.java.util.MethodAnnotationPrototype;
 import org.springframework.util.Assert;
 
 public class BeanMethod extends ModelMethod {

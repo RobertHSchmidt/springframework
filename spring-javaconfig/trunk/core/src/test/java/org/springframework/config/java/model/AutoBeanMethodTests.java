@@ -3,7 +3,7 @@ package org.springframework.config.java.model;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
-import static org.springframework.config.java.model.AnnotationExtractionUtils.extractMethodAnnotation;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.extractMethodAnnotation;
 
 import java.lang.reflect.Modifier;
 
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.type.ReflectiveType;
 import org.springframework.config.java.type.Type;
+import org.springframework.config.java.util.MethodAnnotationPrototype;
 
 /**
  * Unit tests for {@link AutoBeanMethod}
