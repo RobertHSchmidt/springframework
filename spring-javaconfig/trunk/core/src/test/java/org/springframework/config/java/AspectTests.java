@@ -28,9 +28,9 @@ import org.junit.Test;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.config.java.annotation.Aspects;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.aop.Aspects;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 

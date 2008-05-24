@@ -47,7 +47,7 @@ import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
-import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
+import org.springframework.config.java.annotation.aop.HotSwappable;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReaderTests;

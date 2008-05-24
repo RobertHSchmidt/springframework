@@ -6,9 +6,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
-import org.springframework.config.java.annotation.Aspects;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.aop.Aspects;
 
 /**
  * Quick and dirty brainstorm on everything that should be possible from

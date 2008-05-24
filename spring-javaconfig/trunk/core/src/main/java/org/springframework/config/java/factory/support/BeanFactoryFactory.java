@@ -1,10 +1,11 @@
-package org.springframework.config.java.core;
+package org.springframework.config.java.factory.support;
 
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
+import org.springframework.config.java.core.Constants;
 
 public class BeanFactoryFactory {
 	private static final String FACTORY_METHOD_NAME = "newBeanFactory";

@@ -25,8 +25,9 @@ import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 
 /**
- * re-implementing a simplified version of the context.  This will be swapped
- * in for the existing {@link LegacyJavaConfigApplicationContext} when feature-complete.
+ * TODO: document
+ *
+ * @author Chris Beams
  */
 public class JavaConfigApplicationContext extends AbstractRefreshableApplicationContext
                                           implements ConfigurableJavaConfigApplicationContext {

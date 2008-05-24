@@ -24,7 +24,6 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.config.java.core.Constants;
 import org.springframework.config.java.factory.BeanVisibility;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
