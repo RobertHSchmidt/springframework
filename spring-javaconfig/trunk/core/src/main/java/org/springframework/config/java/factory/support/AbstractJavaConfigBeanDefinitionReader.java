@@ -35,16 +35,10 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	@Deprecated
-	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry) {
-		this(registry, null);
-	}
-
 	protected AbstractJavaConfigBeanDefinitionReader(JavaConfigBeanFactory registry,
                                                      List<ClassPathResource> aspectClassResources) {
 		this.beanFactory = registry;
 		this.aspectClassResources = aspectClassResources;
-		initializeDeclaringClassBeanFactoryFactory();
 		this.modelBeanDefinitionReader = new ConfigurationModelBeanDefinitionReader(beanFactory);
 	}
 
@@ -84,11 +78,6 @@ public abstract class AbstractJavaConfigBeanDefinitionReader implements JavaConf
 
 	protected ClassPathResource[] getAspectClassResources() {
 		return aspectClassResources.toArray(new ClassPathResource[aspectClassResources.size()]);
-	}
-
-	// TODO: document this extensively.  the declaring class logic is quite complex, potentially confusing right now.
-	private void initializeDeclaringClassBeanFactoryFactory() {
-		beanFactory.registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, BeanFactoryFactory.createBeanDefinition());
 	}
 
 }

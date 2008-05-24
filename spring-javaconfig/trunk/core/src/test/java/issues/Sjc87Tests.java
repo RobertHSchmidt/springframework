@@ -21,6 +21,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.context.DefaultParentBeanFactoryProvider;
 import org.springframework.config.java.factory.DefaultJavaConfigBeanFactory;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.factory.support.JavaConfigBeanDefinitionReader;
@@ -135,7 +136,7 @@ public abstract class Sjc87Tests {
 		Resource classResource = new ClassPathResource(ClassUtils.convertClassNameToResourcePath(MyConfig.class.getName()));
 
 		ConfigurableListableBeanFactory extBf = new DefaultListableBeanFactory();
-		JavaConfigBeanFactory bf = new DefaultJavaConfigBeanFactory(extBf);
+		JavaConfigBeanFactory bf = new DefaultJavaConfigBeanFactory(extBf, new DefaultParentBeanFactoryProvider());
 		RootBeanDefinition rbd = new RootBeanDefinition();
 		String beanClassName = MyConfig.class.getName();
 		rbd.setBeanClassName(beanClassName);

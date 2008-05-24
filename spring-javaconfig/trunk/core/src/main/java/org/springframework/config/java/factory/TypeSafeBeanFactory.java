@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.context;
+package org.springframework.config.java.factory;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
@@ -23,18 +23,18 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
  * Provides type-safe {@link #getBean(Class) getBean} methods to allow retrieval
  * of beans from a context without casting or relying on fragile string-based
  * bean identifiers. Requires Java5 or better.
- * 
+ *
  * <p/> XXX: Review
- * 
+ *
  * @author Chris Beams
  */
-interface TypeSafeBeanFactory extends BeanFactory {
+public interface TypeSafeBeanFactory extends BeanFactory {
 
 	/**
 	 * Return an instance of the given <var>type</var>. If multiple instances
 	 * of the same type exist, instances are inspected to see if exactly one is
 	 * marked as {@link org.springframework.config.java.annotation.Primary}
-	 * 
+	 *
 	 * @see org.springframework.config.java.annotation.Primary
 	 * @param type desired instance type
 	 * @throws NoSuchBeanDefinitionException if no instance matches <var>type</var>
@@ -51,11 +51,11 @@ interface TypeSafeBeanFactory extends BeanFactory {
 	 * Useful in disambiguation cases where there is more than one bean of a
 	 * given type within the factory and none is marked as
 	 * {@link org.springframework.config.java.annotation.Primary}
-	 * 
+	 *
 	 * <p/>This method is similar to its predecessor
 	 * {@link BeanFactory#getBean(String, Class)}, but this variant takes
 	 * advantages of generics and removes the casting burden from the caller.
-	 * 
+	 *
 	 * @throws NoSuchBeanDefinitionException if <var>beanName</var> cannot be
 	 * found
 	 * @throws BeanNotOfRequiredTypeException if <var>beanName</var> is found

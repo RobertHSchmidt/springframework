@@ -25,6 +25,7 @@ import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.core.Constants;
+import org.springframework.config.java.factory.BeanFactoryFactory;
 import org.springframework.config.java.factory.BeanVisibility;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.AspectClass;

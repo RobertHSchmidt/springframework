@@ -32,9 +32,10 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 	 */
 	BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
-	public DefaultJavaConfigBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) {
+	public DefaultJavaConfigBeanFactory(ConfigurableListableBeanFactory externalBeanFactory, BeanFactoryFactory bff) {
 		super(externalBeanFactory);
 		this.copyConfigurationFrom(externalBeanFactory);
+		bff.registerBeanDefinition(this);
 	}
 
 	@Override
