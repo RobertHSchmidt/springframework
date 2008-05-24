@@ -1,6 +1,6 @@
 package org.springframework.config.java.context;
 
-import org.springframework.config.java.factory.TypeSafeBeanFactory;
+import org.springframework.config.java.internal.factory.TypeSafeBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public interface ConfigurableJavaConfigApplicationContext extends ConfigurableApplicationContext, TypeSafeBeanFactory {

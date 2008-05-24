@@ -17,7 +17,7 @@ package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 
-import org.springframework.config.java.model.ModelMethod;
+import org.springframework.config.java.internal.model.ModelMethod;
 
 /**
  * Strategy interface for constructing a bean name from the java method.

@@ -21,7 +21,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.model.MalformedJavaConfigurationException;
+import org.springframework.config.java.internal.model.MalformedJavaConfigurationException;
 
 /**
  * SJC-54 revealed a bug wherein abstract Configurations would not be processed

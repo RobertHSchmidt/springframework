@@ -17,8 +17,8 @@ package org.springframework.config.java.naming;
 
 import java.lang.reflect.Method;
 
-import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.model.ModelMethod;
+import org.springframework.config.java.internal.model.ConfigurationClass;
+import org.springframework.config.java.internal.model.ModelMethod;
 import org.springframework.util.Assert;
 
 /**

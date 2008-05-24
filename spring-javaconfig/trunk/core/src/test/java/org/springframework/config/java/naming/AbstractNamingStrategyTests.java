@@ -18,9 +18,9 @@ package org.springframework.config.java.naming;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.config.java.model.BeanMethod;
-import org.springframework.config.java.model.BeanMethodTests;
-import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.config.java.internal.model.BeanMethod;
+import org.springframework.config.java.internal.model.BeanMethodTests;
+import org.springframework.config.java.internal.model.ConfigurationClass;
 
 public abstract class AbstractNamingStrategyTests {
 

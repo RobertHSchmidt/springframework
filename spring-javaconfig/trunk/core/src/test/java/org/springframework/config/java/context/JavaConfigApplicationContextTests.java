@@ -31,8 +31,8 @@ import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.model.MalformedJavaConfigurationException;
-import org.springframework.config.java.model.ValidationError;
+import org.springframework.config.java.internal.model.MalformedJavaConfigurationException;
+import org.springframework.config.java.internal.model.ValidationError;
 import org.springframework.config.java.simple.SimpleConfigurationWithOneBean;
 import org.springframework.config.java.support.ConfigurationSupport;
 

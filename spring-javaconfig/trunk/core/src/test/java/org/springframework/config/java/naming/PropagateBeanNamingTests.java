@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.model.ModelMethod;
+import org.springframework.config.java.internal.model.ModelMethod;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
