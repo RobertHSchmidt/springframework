@@ -298,7 +298,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		logger.info(format("Found declaring class [%s] on configClass [%s]", declaringClass, declaringClass));
 
 		BeanFactory parentBF;
-		String factoryName = BeanFactoryFactory.class.getName();
+		String factoryName = BeanFactoryFactory.BEAN_NAME;
 
 		if(beanFactory.containsBean(factoryName))
 			parentBF = (BeanFactory) beanFactory.getBean(factoryName, new Object[] { declaringClass.getName() });
