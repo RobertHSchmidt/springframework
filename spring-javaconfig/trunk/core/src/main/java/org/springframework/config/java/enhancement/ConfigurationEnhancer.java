@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.enhancement;
 
 public interface ConfigurationEnhancer {
 

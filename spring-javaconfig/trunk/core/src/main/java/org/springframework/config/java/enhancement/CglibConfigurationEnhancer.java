@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.enhancement;
 
 import static java.lang.String.format;
 import static org.springframework.config.java.factory.BeanVisibility.visibilityOf;
