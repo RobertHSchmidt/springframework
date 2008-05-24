@@ -25,6 +25,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.complex.ComplexConfiguration;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.web.context.ContextLoaderListener;
 
 public class JavaConfigWebApplicationContextTests {
@@ -46,17 +47,19 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.refresh();
 	}
 
-	@Test(expected = NullPointerException.class)
+	// this test used to throw NullPointerException, but upon
+	// upgrading to 2.5.3 it no longer does.
+	@Test
 	public void testSetConfigLocationsWithNullArray() {
 		ctx.setConfigLocations(null);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testSetConfigLocationsWithArrayContainingNullElement() {
 		ctx.setConfigLocations(new String[] { class1, null });
 	}
 
-	@Test
+	@Test(expected=MalformedJavaConfigurationException.class)
 	public void testSetConfigLocationsWithArrayContainingBogusClassName() {
 		ctx.setConfigLocations(new String[] { "com.foo.NotExist" });
 		ctx.refresh();
@@ -121,12 +124,12 @@ public class JavaConfigWebApplicationContextTests {
 
 	@Test
 	public void testConstructionWithMixOfClassesAndBasePackages() {
-		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
+		String pkg1 = org.springframework.config.java.simple.SimpleConfigurationWithOneBean.class.getPackage().getName();
 
 		ctx.setConfigLocations(new String[] { ComplexConfiguration.class.getName(), pkg1 });
 		ctx.refresh();
 
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	@Test
@@ -135,7 +138,7 @@ public class JavaConfigWebApplicationContextTests {
 		ctx.setConfigLocations(new String[] { "org.springframework.config.java.*ple*" });
 		ctx.refresh();
 
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	@Configuration

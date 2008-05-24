@@ -28,7 +28,7 @@ import org.springframework.config.java.context.JavaConfigApplicationContext;
  * then being available for further (setter) autowiring. A number of other
  * issues presented themselves while writing this test; their verbosely-named
  * methods tell the tale.
- * 
+ *
  * @author Chris Beams
  * @author Jim Moore
  */

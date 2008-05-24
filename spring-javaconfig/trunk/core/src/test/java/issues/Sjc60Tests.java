@@ -25,7 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * SJC-60 exposed a bug with JavaConfig calling refresh() multiple times in the
  * hierarchical context situation below.
- * 
+ *
  * @author Serge Bogatyrev
  * @author Chris Beams
  */

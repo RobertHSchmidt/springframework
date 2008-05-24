@@ -30,7 +30,7 @@ import org.springframework.config.java.context.JavaConfigApplicationContext;
  * overrides. As Mark points out, the current (buggy) functionality is that bean
  * overriding is happening in a first-in-first-out fashion. It should be
  * last-in-first-out.
- * 
+ *
  * @author Mark Rohan
  * @author Chris Beams
  */
@@ -77,7 +77,6 @@ public class Sjc69Tests {
 		}
 	}
 
-	@Ignore
 	@Test
 	public void reproPerOriginalBugReport() {
 		MySpringContext msc = new MySpringContext();
@@ -90,7 +89,6 @@ public class Sjc69Tests {
 	 * Simply demonstrates the bug applies when using the
 	 * JavaConfigApplicationContext API directly as well.
 	 */
-	@Ignore
 	@Test
 	public void reproWithJavaConfigApplicationContext() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();
@@ -104,7 +102,10 @@ public class Sjc69Tests {
 
 	/**
 	 * To work around this issue until fixed, simply reverse the ordering.
+	 *
+	 * Update: this workaround worked previously, but now that the issue is fixed, is no longer valid
 	 */
+	@Ignore
 	@Test
 	public void workaround() {
 		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext();

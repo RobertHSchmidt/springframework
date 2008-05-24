@@ -18,28 +18,53 @@ package org.springframework.config.java;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * Test for properties resolution
- * 
+ *
  * @author Rod Johnson
+ * @author Chris Beams
  */
 public class ExternalValueTests {
 
-	@Configuration
+	/**
+	 * Test fixture: each test method must initialize
+	 */
+	private ConfigurableJavaConfigApplicationContext ctx;
+
+	/**
+	 * It is up to each individual test to initialize the context;
+	 * null it out before each subsequent test just to be safe
+	 */
+	@After
+	public void nullOutContext() { ctx = null; }
+
+
+	// XXX: [@ExternalValue]
+	public @Test void testStringAndBooleanProperty() throws Exception {
+		ctx = new JavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
+		TestBean rod = ctx.getBean(TestBean.class, "rod");
+		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
+		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
+	}
+	// XXX: [@ExternalValue]
+	public @Test void testIntProperty() throws Exception {
+		ctx = new JavaConfigApplicationContext(AbstractConfigurationDependsOnProperties.class);
+		TestBean rod = ctx.getBean(TestBean.class, "rod");
+		assertEquals("int property must be resolved correctly", 37, rod.getAge());
+	}
 	@ResourceBundles("classpath:/org/springframework/config/java/simple")
 	static abstract class AbstractConfigurationDependsOnProperties {
-		@Bean
-		public TestBean rod() {
+		public @Bean TestBean rod() {
 			TestBean rod = new TestBean();
 			rod.setName(getName());
 			rod.setAge(ignoreThisNameDueToAnnotationValue());
@@ -48,87 +73,41 @@ public class ExternalValueTests {
 			return rod;
 		}
 
-		@ExternalValue
-		public abstract String getName();
-
-		@ExternalValue("age")
-		public abstract int ignoreThisNameDueToAnnotationValue();
-
-		@ExternalValue
-		protected abstract boolean jedi();
-
+		public abstract @ExternalValue String getName();
+		public abstract @ExternalValue("age") int ignoreThisNameDueToAnnotationValue();
+		protected abstract @ExternalValue boolean jedi();
 	}
 
-	@Configuration
+
+	// XXX: [@ExternalValue]
+	public @Test void testDefaultValueInImplementationBody() throws Exception {
+		ctx = new JavaConfigApplicationContext(DefaultValuesConfig.class);
+		TestBean rod = ctx.getBean(TestBean.class, "rod");
+		assertEquals("int property must default correctly if there's a concrete method", 25, rod.getAge());
+	}
 	@ResourceBundles("classpath:/org/springframework/config/java/simple")
-	static abstract class DefaultValues {
-		@Bean
-		public TestBean rod() {
+	static abstract class DefaultValuesConfig {
+		public @Bean TestBean rod() {
 			TestBean rod = new TestBean();
 			rod.setName(getName());
 			rod.setAge(otherNumber());
 			return rod;
 		}
-
-		@ExternalValue
-		public abstract String getName();
-
-		@ExternalValue
-		public int otherNumber() {
-			return 25;
-		}
-
+		public abstract @ExternalValue String getName();
+		public @ExternalValue int otherNumber() { return 25; }
 	}
 
-	@Configuration
-	@ResourceBundles("classpath:/org/springframework/config/java/simple")
-	static abstract class MissingValues {
-		@Bean
-		public TestBean rod() {
-			TestBean rod = new TestBean();
-			rod.setName(unresolved());
-			return rod;
-		}
 
-		@ExternalValue
-		public abstract String unresolved();
-
-	}
-
-	@Test
-	public void testStringAndBooleanProperty() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(AbstractConfigurationDependsOnProperties.class);
-		TestBean rod = (TestBean) bf.getBean("rod");
-		assertEquals("String property must be resolved correctly", "Rod", rod.getName());
-		assertTrue("Boolean property must be resolved correctly", rod.isJedi());
-	}
-
-	@Test
-	public void testIntProperty() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(AbstractConfigurationDependsOnProperties.class);
-		TestBean rod = (TestBean) bf.getBean("rod");
-		assertEquals("int property must be resolved correctly", 37, rod.getAge());
-	}
-
-	@Test
-	public void testDefaultValueInImplementationBody() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(DefaultValues.class);
-		TestBean rod = (TestBean) bf.getBean("rod");
-		assertEquals("int property must default correctly if there's a concrete method", 25, rod.getAge());
-	}
-
+	// XXX: [@ExternalValue]
 	@Test(expected = BeanCreationException.class)
 	public void testUnresolved() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-		configurationProcessor.processClass(MissingValues.class);
-		bf.getBean("rod");
+		// unresolvedName will cause an exception
+		ctx = new JavaConfigApplicationContext(MissingValuesConfig.class);
+	}
+	@ResourceBundles("classpath:/org/springframework/config/java/simple")
+	static abstract class MissingValuesConfig {
+		public @Bean TestBean rod() { return new TestBean(unresolvedName()); }
+		public abstract @ExternalValue String unresolvedName();
 	}
 
 }

@@ -20,15 +20,14 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.springframework.beans.TestBean;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
-import org.springframework.config.java.process.ConfigurationProcessor;
+import org.springframework.config.java.context.JavaConfigApplicationContext;
 
 /**
  * Test multiple ExternalBean annotations that depends between each other.
- * 
+ *
  * @author Costin Leau
  */
 public class ExternalBeanDependenciesTests {
@@ -79,20 +78,16 @@ public class ExternalBeanDependenciesTests {
 
 	@Test
 	public void testCircularExternalBean() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(FirstConfiguration.class, SecondConfiguration.class);
 
-		configurationProcessor.processClass(FirstConfiguration.class);
-		configurationProcessor.processClass(SecondConfiguration.class);
-
-		TestBean beanA = (TestBean) bf.getBean("beanA");
-		TestBean beanB = (TestBean) bf.getBean("beanB");
+		TestBean beanA = (TestBean) ctx.getBean("beanA");
+		TestBean beanB = (TestBean) ctx.getBean("beanB");
 
 		assertNotNull(beanA.getSpouse());
 		assertNotNull(beanB.getSpouse());
 
-		TestBean spouseA = (TestBean) bf.getBean("spouseA");
-		TestBean spouseB = (TestBean) bf.getBean("spouseB");
+		TestBean spouseA = (TestBean) ctx.getBean("spouseA");
+		TestBean spouseB = (TestBean) ctx.getBean("spouseB");
 
 		assertSame(spouseB, beanA.getSpouse());
 		assertSame(spouseA, beanB.getSpouse());
@@ -108,17 +103,16 @@ public class ExternalBeanDependenciesTests {
 		@ExternalBean("nameOverride")
 		protected abstract Object namedExternal();
 	}
+	static class Foo {
+		static Object obj = new Object();
+		public @Bean Object nameOverride() { return obj; }
+	}
 
 	@Test
 	public void testNamedExternalBean() throws Exception {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		Object externalBeanVal = new Object();
-		bf.registerSingleton("nameOverride", externalBeanVal);
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(NamedExternalConfiguration.class, Foo.class);
 
-		configurationProcessor.processClass(NamedExternalConfiguration.class);
-
-		assertSame(externalBeanVal, bf.getBean("usesExternal"));
+		assertSame(Foo.obj, ctx.getBean("usesExternal"));
 	}
 
 }

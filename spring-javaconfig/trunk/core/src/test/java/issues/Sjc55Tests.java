@@ -55,7 +55,7 @@ class JavaConfigContextLoader implements org.springframework.test.context.Contex
 /**
  * SJC-55 proposes an improved programming model for configuring aspects with
  * JavaConfig. These tests validate that new approach.
- * 
+ *
  * @author Chris Beams
  */
 @ContextConfiguration(loader = JavaConfigContextLoader.class)
@@ -98,6 +98,19 @@ public class Sjc55Tests {
 
 	}
 
+	// TODO: {aop} work in progress
+	@Ignore
+	@Test
+	public void test() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(MyConfig.class);
+		TestBean foo = ctx.getBean(TestBean.class);
+		MyAspect aspect = ctx.getBean(MyAspect.class);
+
+		// the call to getName() below should trigger our aspect
+		assertThat("foo", equalTo(foo.getName()));
+
+		assertThat(aspect.getCount(), equalTo(1));
+	}
 	@Import(AspectJAutoProxyConfiguration.class)
 	@Configuration
 	@AspectJAutoProxy(proxyTargetClass = true, include = { "aspect1", "aspect2" })
@@ -121,19 +134,6 @@ public class Sjc55Tests {
 
 	}
 
-	// TODO: work in progress
-	@Ignore
-	@Test
-	public void test() {
-		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(MyConfig.class);
-		TestBean foo = ctx.getBean(TestBean.class);
-		MyAspect aspect = ctx.getBean(MyAspect.class);
-
-		// the call to getName() below should trigger our aspect
-		assertThat("foo", equalTo(foo.getName()));
-
-		assertThat(aspect.getCount(), equalTo(1));
-	}
 
 	/**
 	 * Of course, configuring our aspect via XML works fine.

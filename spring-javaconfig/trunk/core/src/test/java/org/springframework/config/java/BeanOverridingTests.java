@@ -100,13 +100,13 @@ public class BeanOverridingTests {
 		assertTrue(bf.containsBean("ann"));
 
 		String msg = "Property value must have come from XML override, not @Bean method";
-		assertThat(msg, "Ann", equalTo(bob.getSpouse().getName()));
+		assertThat(msg, bob.getSpouse().getName(), equalTo("XmlAnn"));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testIllegalShadowingViaXml() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext("illegalShadow.xml", getClass());
-		bf.getBean("ann");
+		System.out.println(bf.getBean("ann"));
 	}
 
 	@Configuration
@@ -120,7 +120,7 @@ public class BeanOverridingTests {
 
 		@Bean
 		public TestBean ann() {
-			return new TestBean();
+			return new TestBean("@BeanAnn");
 		}
 	}
 

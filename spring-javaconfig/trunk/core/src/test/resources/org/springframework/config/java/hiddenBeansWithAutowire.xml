@@ -13,7 +13,6 @@
 		
 	<bean 
 		class="org.springframework.config.java.process.ConfigurationPostProcessor" />
-		
 	
 		
 		

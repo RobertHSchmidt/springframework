@@ -16,6 +16,7 @@
 package org.springframework.config.java.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -23,14 +24,15 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to indicate an external bean, that must be supplied by the
  * environment.
- * 
+ *
  * <p/> Useful for injecting beans defined in a (parent) XML application
  * context.
- * 
+ *
  * @author Rod Johnson
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Inherited
 public @interface ExternalBean {
 
 	String value() default "";

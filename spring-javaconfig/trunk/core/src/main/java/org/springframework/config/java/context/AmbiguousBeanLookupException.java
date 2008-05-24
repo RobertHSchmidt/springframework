@@ -24,15 +24,15 @@ import org.springframework.beans.BeansException;
 /**
  * Exception thrown when a BeanFactory is asked for a bean by type for which
  * there exists more than one match.
- * 
+ *
  * <p/>Note: currently used only by
- * {@link org.springframework.config.java.context.JavaConfigApplicationContext} -
+ * {@link TypeSafeBeanFactory} -
  * may potentially be promoted and used more widely in the future.
  * Package-private visibility to avoid backward-compat problems when we want to
  * move/rename this.
- * 
+ *
  * <p/>XXX: Review
- * 
+ *
  * @see org.springframework.config.java.context.JavaConfigApplicationContext#getBean(Class)
  * @author Chris Beams
  */

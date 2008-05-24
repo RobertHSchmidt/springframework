@@ -13,11 +13,11 @@ import org.springframework.config.java.context.JavaConfigApplicationContext;
  * creation is fundamentally incompatible with
  * RequiredAnnotationBeanPostProcessor. SJC-91 addresses this issue by creating
  * a new strategy for checking {@link Required @Required} properties.
- * 
+ *
  * This test simply proves the incompatibility.
- * 
+ *
  * @author Chris Beams
- * 
+ *
  * @see Sjc91Tests
  */
 public class Sjc17Tests {
