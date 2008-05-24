@@ -29,8 +29,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.process.ConfigurationProcessor;
-import org.springframework.config.java.process.LegacyConfigurationPostProcessor;
+import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.util.Assert;
@@ -81,7 +80,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 		for (String location : getConfigLocations()) {
 			try {
 				Class<?> cz = Class.forName(location);
-				if (ConfigurationProcessor.isConfigurationClass(cz)) {
+				if (ConfigurationUtils.isConfigurationClass(cz)) {
 					configClasses.add(cz);
 				}
 				else {
@@ -98,7 +97,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	/**
 	 * Loads any specified {@link Configuration @Configuration} classes and {@link Aspect @Aspect} classes
-	 * as bean definitions within this context's BeanFactory for later processing by {@link LegacyConfigurationPostProcessor}
+	 * as bean definitions within this context's BeanFactory for later processing by {@link ConfigurationPostProcessor}
 	 * @see #JavaConfigApplicationContext(Class...)
 	 * @see #addConfigClasses(Class...)
 	 * @see #addAspectClasses(Class...)

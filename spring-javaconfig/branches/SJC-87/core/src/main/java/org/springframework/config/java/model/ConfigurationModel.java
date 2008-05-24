@@ -11,14 +11,15 @@ import org.springframework.config.java.process.MalformedJavaConfigurationExcepti
 /**
  * An abstract representation of a set of user-provided "Configuration classes",
  * usually but not necessarily annotated with {@link Configuration @Configuration}.
- * The model is populated with a
- * {@link org.springframework.config.java.process.ConfigurationProcessor} implementation,
- * which may be reflection-based or ASM-based.  Once a model has been populated, it
+ * The model is populated with a {@link org.springframework.config.java.model.ConfigurationParser}
+ * implementation which may be reflection-based or ASM-based.  Once a model has been populated, it
  * can then be rendered out to a set of BeanDefinitions.  The model provides an important
  * layer of indirection between the complexity of parsing a set of classes and the complexity
  * of representing the contents of those classes as BeanDefinitions.
  *
  * <p>Interface follows the builder pattern for method chaining.
+ *
+ * @see org.springframework.config.java.model.ConfigurationParser
  *
  * @author Chris Beams
  */

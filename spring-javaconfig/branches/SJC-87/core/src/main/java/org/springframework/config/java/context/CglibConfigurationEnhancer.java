@@ -2,7 +2,6 @@ package org.springframework.config.java.context;
 
 import static java.lang.String.format;
 import static org.springframework.config.java.context.BeanVisibility.visibilityOf;
-import static org.springframework.config.java.core.ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName;
 import static org.springframework.config.java.util.DefaultScopes.SINGLETON;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.Assert.notNull;
@@ -26,6 +25,7 @@ import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
+import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReader;
 import org.springframework.config.java.model.JavaConfigAspectRegistry;
 import org.springframework.config.java.model.ModelMethod;
 import org.springframework.config.java.valuesource.ValueResolutionException;
@@ -233,7 +233,7 @@ public class CglibConfigurationEnhancer implements ConfigurationEnhancer {
 		@Override
 		public Object doIntercept(Object o, Method m, Object[] args, MethodProxy mp, String beanName) throws Throwable {
 			boolean isScopedProxy = (AnnotationUtils.findAnnotation(m, ScopedProxy.class) != null);
-			String scopedBeanName = resolveHiddenScopedProxyBeanName(beanName);
+			String scopedBeanName = ConfigurationModelBeanDefinitionReader.resolveHiddenScopedProxyBeanName(beanName);
 			if(isScopedProxy && beanFactory.isCurrentlyInCreation(scopedBeanName))
 				beanName = scopedBeanName;
 

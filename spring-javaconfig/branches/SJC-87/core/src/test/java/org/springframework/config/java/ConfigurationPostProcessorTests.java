@@ -40,7 +40,7 @@ import org.springframework.beans.IOther;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.config.java.ConfigurationProcessorTests.BaseConfiguration;
+import org.springframework.config.java.JavaConfigApplicationContextIntegrationTests.BaseConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;

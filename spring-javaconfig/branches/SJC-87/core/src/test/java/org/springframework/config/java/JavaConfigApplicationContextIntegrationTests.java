@@ -42,7 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.AspectJConfigurationProcessorTests.AroundAdviceWithNamedPointcut;
-import org.springframework.config.java.ConfigurationProcessorTests.HiddenBeansConfig.BFAwareBean;
+import org.springframework.config.java.JavaConfigApplicationContextIntegrationTests.HiddenBeansConfig.BFAwareBean;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
@@ -52,7 +52,6 @@ import org.springframework.config.java.context.ConfigurableJavaConfigApplication
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReaderTests;
 import org.springframework.config.java.model.ValidationError;
-import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.config.java.util.DefaultScopes;
@@ -60,13 +59,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * Tests for {@link ConfigurationProcessor}
+ * Integration tests for {@link JavaConfigApplicationContext}
  *
- * @author Rod Johnson
  * @author Chris Beams
+ * @author Rod Johnson
  */
-// TODO: rename to JCACIntegrationTests?
-public class ConfigurationProcessorTests {
+public class JavaConfigApplicationContextIntegrationTests {
 
 	private ConfigurableJavaConfigApplicationContext ctx;
 
