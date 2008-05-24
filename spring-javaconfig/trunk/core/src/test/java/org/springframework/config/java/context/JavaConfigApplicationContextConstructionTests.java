@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.config.java.complex.ComplexConfiguration;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.testing.Company;
 import org.springframework.config.java.testing.SimpleConfiguration;
 import org.springframework.config.java.testing.Worker;
@@ -39,12 +40,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Tests that excercise the various constructors on
  * {@link JavaConfigApplicationContext}.
- * 
+ *
  * @author Chris Beams
  */
 public final class JavaConfigApplicationContextConstructionTests {
 
-	private JavaConfigApplicationContext ctx;
+	private ConfigurableJavaConfigApplicationContext ctx;
 
 	@After
 	public void nullOutContext() {
@@ -69,10 +70,9 @@ public final class JavaConfigApplicationContextConstructionTests {
 		assertBeanDefinitionCount(ctx, 5);
 	}
 
-	// strange to think someone would want to do this, but it's legal
-	// nonetheless
-	@Test
-	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsLegal() {
+	// XXX: [breaks-backward-compat] this used to be legal, now it's not
+	@Test(expected = MalformedJavaConfigurationException.class)
+	public void testOpenEndedConstructionWithoutSettingClassesOrPackagesIsIllegal() {
 		ctx = new JavaConfigApplicationContext();
 		ctx.refresh();
 		assertBeanDefinitionCount(ctx, 0);
@@ -128,18 +128,18 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test
 	public void testConstructionWithMultipleBasePackages() {
-		String packageName1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage()
+		String packageName1 = org.springframework.config.java.simple.SimpleConfigurationWithOneBean.class.getPackage()
 				.getName();
 		String packageName2 = org.springframework.config.java.complex.ComplexConfiguration.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(packageName1, packageName2);
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	@RunWith(Parameterized.class)
 	public static class BasePackageWildcardTests {
 		private final String basePackage;
 
-		private JavaConfigApplicationContext context;
+		private ConfigurableJavaConfigApplicationContext context;
 
 		@Parameters
 		public static Collection<String[]> validWildcardValues() {
@@ -164,10 +164,10 @@ public final class JavaConfigApplicationContextConstructionTests {
 
 	@Test
 	public void testConstructionWithMixOfClassesAndBasePackages() {
-		String pkg1 = org.springframework.config.java.simple.EmptySimpleConfiguration.class.getPackage().getName();
+		String pkg1 = org.springframework.config.java.simple.SimpleConfigurationWithOneBean.class.getPackage().getName();
 		ctx = new JavaConfigApplicationContext(new Class<?>[] { ComplexConfiguration.class }, new String[] { pkg1 });
 
-		assertBeanDefinitionCount(ctx, 6);
+		assertBeanDefinitionCount(ctx, 7);
 	}
 
 	private ClassPathXmlApplicationContext createSimpleXmlApplicationContext() {

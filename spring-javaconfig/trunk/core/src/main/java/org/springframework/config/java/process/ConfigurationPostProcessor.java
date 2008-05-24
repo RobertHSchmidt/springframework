@@ -1,142 +1,56 @@
-/*
- * Copyright 2002-2008 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.springframework.config.java.process;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.context.ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor;
+import org.springframework.config.java.context.ConfigurationClassParsingBeanFactoryPostProcessor;
+import org.springframework.config.java.context.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.context.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
+import org.springframework.config.java.context.JavaConfigInternalPostProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 
-/**
- * Post processor for use in a bean factory that can process multiple
- * configuration beans. See the ConfigurationProcessor class's documentation for
- * the semantics of a Configuration bean.
- * <p>
- * In the BeanFactoryPostProcessor implementation, this class adds factory bean
- * definitions for every Configuration bean found in the bean factory. It also
- * creates a child factory containing pointcuts and advisors required to
- * interpret Pointcut attributes.
- * 
- * @see org.springframework.config.java.process.ConfigurationProcessor
- * @see org.springframework.config.java.annotation.Bean
- * @see org.springframework.config.java.annotation.Configuration
- * 
- * @author Rod Johnson
- * @author Costin Leau
- */
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, Ordered, ResourceLoaderAware,
-		ApplicationContextAware {
+public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, ApplicationContextAware, Ordered, JavaConfigInternalPostProcessor {
 
-	protected final Log log = LogFactory.getLog(getClass());
+	private AbstractApplicationContext ctx;
+	private BeanNamingStrategy beanNamingStrategy;
 
-	private ConfigurationListenerRegistry configurationListenerRegistry;
-
-	private BeanNamingStrategy namingStrategy;
-
-	private ConfigurableApplicationContext applicationContext;
-
-	private ResourceLoader resourceLoader;
-
-	private boolean hasRun;
-
-	/**
-	 * Guarantee to execute before any other BeanFactoryPostProcessors
-	 */
-	public int getOrder() {
-		return Integer.MIN_VALUE;
-	}
-
-	/**
-	 * The listener registry used by this factory bean. Initially,
-	 * {@link DefaultConfigurationListenerRegistry} is used.
-	 * 
-	 * @param configurationListenerRegistry The configurationListenerRegistry to
-	 * set.
-	 */
-	public void setConfigurationListenerRegistry(ConfigurationListenerRegistry configurationListenerRegistry) {
-		this.configurationListenerRegistry = configurationListenerRegistry;
-	}
-
-	/**
-	 * BeanNamingStrategy used for generating the bean definitions.
-	 * 
-	 * @param namingStrategy The namingStrategy to set.
-	 */
-	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
-		this.namingStrategy = namingStrategy;
-	}
-
-	/**
-	 * Optional implementation of ResourceLoaderAware
-	 */
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
-
-	public void setApplicationContext(ApplicationContext ac) throws BeansException {
-		if (ac instanceof ConfigurableApplicationContext) {
-			this.applicationContext = (ConfigurableApplicationContext) ac;
-		}
-	}
-
-	/**
-	 * Generate BeanDefinitions and add them to factory for each Configuration
-	 * bean.
-	 */
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		if (hasRun) {
-			throw new IllegalStateException("ConfigurationPostProcessor cannot run on two BeanFactories");
-		}
-		hasRun = true;
+		new ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(ctx);
+		if(beanNamingStrategy != null)
+			iBPP.setBeanNamingStrategy(beanNamingStrategy);
+		iBPP.postProcessBeanFactory(beanFactory);
+		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+	}
 
-		String[] beanNames = beanFactory.getBeanDefinitionNames();
+	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+		Assert.isInstanceOf(AbstractApplicationContext.class, ctx);
+		this.ctx = (AbstractApplicationContext) ctx;
+	}
 
-		// before creating a new process, do some validation even though we
-		// might duplicate it inside ConfigurationProcessor
-		for (String beanName : beanNames) {
-			// get the class
-			Class<?> clazz = ProcessUtils.getBeanClass(beanName, beanFactory);
-			if (clazz != null && ConfigurationProcessor.isConfigurationClass(clazz, configurationListenerRegistry)) {
-				ConfigurationProcessor processor;
-				if (this.applicationContext != null)
-					processor = new ConfigurationProcessor(this.applicationContext);
-				else
-					processor = new ConfigurationProcessor(beanFactory);
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE;
+	}
 
-				if (configurationListenerRegistry != null)
-					processor.setConfigurationListenerRegistry(configurationListenerRegistry);
+	/**
+	 * In place for backward-compatibility with existing milestone releases
+	 * TODO: [breaks-backward-compat] (or will when removed)
+	 * @deprecated Use {@link #setBeanNamingStrategy(BeanNamingStrategy)} instead
+	 */
+	@Deprecated
+	public void setNamingStrategy(BeanNamingStrategy namingStrategy) {
+		setBeanNamingStrategy(namingStrategy);
+	}
 
-				if (namingStrategy != null)
-					processor.setBeanNamingStrategy(namingStrategy);
-
-				if (this.resourceLoader != null)
-					processor.setResourceLoader(resourceLoader);
-
-				processor.afterPropertiesSet();
-				processor.processConfigurationBean(beanName, clazz);
-			}
-		}
+	public void setBeanNamingStrategy(BeanNamingStrategy namingStrategy) {
+		this.beanNamingStrategy = namingStrategy;
 	}
 
 }

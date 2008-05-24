@@ -25,6 +25,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
@@ -39,7 +40,7 @@ import org.springframework.beans.IOther;
 import org.springframework.beans.ITestBean;
 import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.config.java.ConfigurationProcessorTests.BaseConfiguration;
+import org.springframework.config.java.JavaConfigApplicationContextIntegrationTests.BaseConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ExternalBean;
@@ -190,9 +191,8 @@ public class ConfigurationPostProcessorTests {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/abstractDef.xml");
 
-		// there should be two, nothing more!
-		assertEquals(2, bf.getBeanDefinitionCount());
-		assertFalse(AbstractConfig.testBeanCreated);
+		assertFalse("AbstractConfig @Beans should not have been processed", AbstractConfig.testBeanCreated);
+		assertEquals("AbstractConfig should not be registrered as bean", 0, bf.getBeanNamesForType(AbstractConfig.class).length);
 	}
 
 	@Configuration
@@ -206,6 +206,11 @@ public class ConfigurationPostProcessorTests {
 			testBeanCreated = true;
 			return new TestBean();
 		}
+	}
+
+	@Configuration
+	static class PlaceholderConfig {
+		public @Bean TestBean placeholder() { return new TestBean(); }
 	}
 
 	@Configuration
@@ -401,8 +406,16 @@ public class ConfigurationPostProcessorTests {
 		}
 	}
 
-	@Test
-	public void testAspectsAreIndependent() {
+	/**
+	 * TODO: [breaks-backward-compat] aspects now apply to all beans in a given configuration model
+	 * Ignoring this test, then, as it was designed to prove the opposite.  Considerable effort was
+	 * put forth in supporting the idea of distinguishing 'global' vs. 'local' aspects, where aspects
+	 * imported by or inlined within a given Configuration would be applied only to beans defined by
+	 * that Configuration, but the amount of complexity this introduced hardly seemed worth it.  We'll
+	 * wait to see if users request this functionality.
+	 */
+	@Ignore
+	public @Test void testAspectsAreIndependent() {
 		ClassPathXmlApplicationContext bf = new ClassPathXmlApplicationContext(
 				"/org/springframework/config/java/independenceTest.xml");
 

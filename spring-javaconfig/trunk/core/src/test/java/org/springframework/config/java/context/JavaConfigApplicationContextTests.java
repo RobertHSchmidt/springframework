@@ -15,8 +15,7 @@
  */
 package org.springframework.config.java.context;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.springframework.config.java.test.Assert.assertBeanDefinitionCount;
 
 import org.junit.After;
@@ -28,10 +27,13 @@ import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalB
 import org.springframework.config.java.ConfigurationPostProcessorTests.ExternalBeanProvidingConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.complex.AbstractConfigurationToIgnore;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.simple.EmptySimpleConfiguration;
+import org.springframework.config.java.model.ValidationError;
+import org.springframework.config.java.process.MalformedJavaConfigurationException;
+import org.springframework.config.java.simple.SimpleConfigurationWithOneBean;
 import org.springframework.config.java.support.ConfigurationSupport;
 
 /**
@@ -45,7 +47,6 @@ public final class JavaConfigApplicationContextTests {
 
 	@After
 	public void tearDown() {
-		ctx = null;
 		try {
 			// just in case some test fails during loading and refresh is not
 			// called
@@ -58,12 +59,24 @@ public final class JavaConfigApplicationContextTests {
 		ctx = null;
 	}
 
+	static class SimpleConfig { public @Bean TestBean alice() { return new TestBean("alice"); } }
+	public @Test void singleClass() {
+		ctx = new JavaConfigApplicationContext(SimpleConfig.class);
+
+		TestBean alice = ctx.getBean(TestBean.class);
+
+		assertNotNull(alice);
+		assertEquals("alice", alice.getName());
+		// prove singleton semantics are respected
+		assertSame(alice, ctx.getBean(TestBean.class));
+	}
+
 	@Test
 	public void testReadSimplePackage() {
 		ctx = new JavaConfigApplicationContext("/org/springframework/config/java/simple");
 
 		int classesInPackage = 2;
-		int beansInClasses = 2;
+		int beansInClasses = 3;
 
 		assertBeanDefinitionCount(ctx, (classesInPackage + beansInClasses));
 	}
@@ -81,10 +94,10 @@ public final class JavaConfigApplicationContextTests {
 
 	@Test
 	public void testReadClassesByName() {
-		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, EmptySimpleConfiguration.class);
+		ctx = new JavaConfigApplicationContext(ComplexConfiguration.class, SimpleConfigurationWithOneBean.class);
 
 		int classesInPackage = 2;
-		int beansInClasses = 1;
+		int beansInClasses = 2;
 
 		assertBeanDefinitionCount(ctx, (classesInPackage + beansInClasses));
 	}
@@ -159,20 +172,18 @@ public final class JavaConfigApplicationContextTests {
 		ctx = new JavaConfigApplicationContext(FirstLevel.class);
 
 		int configClasses = 3;
-		int beansInClasses = 3;
+		int beansInClasses = 5;
 
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import(SecondLevel.class)
 	@Configuration
-	static class FirstLevel {
-	}
+	static class FirstLevel { public @Bean TestBean m() { return new TestBean(); } }
 
 	@Import(ThirdLevel.class)
 	@Configuration
-	static class SecondLevel {
-	}
+	static class SecondLevel { public @Bean TestBean n() { return new TestBean(); } }
 
 	@Configuration
 	static class ThirdLevel {
@@ -199,30 +210,20 @@ public final class JavaConfigApplicationContextTests {
 		ctx = new JavaConfigApplicationContext(WithMultipleArgumentsToImportAnnotation.class);
 
 		int configClasses = 3;
-		int beansInClasses = 2;
+		int beansInClasses = 3;
 
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Import( { LeftConfig.class, RightConfig.class })
 	@Configuration
-	static class WithMultipleArgumentsToImportAnnotation {
-	}
+	static class WithMultipleArgumentsToImportAnnotation { public @Bean TestBean m() { return new TestBean(); } }
 
 	@Configuration
-	static class LeftConfig {
-		@Bean
-		public ITestBean left() {
-			return new TestBean();
-		}
-	}
+	static class LeftConfig { public @Bean ITestBean left() { return new TestBean(); } }
 
 	@Configuration
-	static class RightConfig {
-		@Bean
-		public ITestBean right() {
-			return new TestBean();
-		}
+	static class RightConfig { public @Bean ITestBean right() { return new TestBean(); }
 	}
 
 	// ------------------------------------------------------------------------
@@ -233,16 +234,16 @@ public final class JavaConfigApplicationContextTests {
 		try {
 			ctx = new JavaConfigApplicationContext(WithMultipleArgumentsThatWillCauseDuplication.class);
 		}
-		catch (IllegalStateException e) {
+		catch (MalformedJavaConfigurationException ex) {
+			assertTrue(ex.getMessage().contains(ValidationError.ILLEGAL_BEAN_OVERRIDE.toString()));
 			threw = true;
 		}
 		assertTrue("Did not detect duplication and throw as expected", threw);
 	}
 
-	@Import( { Foo1.class, Foo2.class })
+	@Import({ Foo1.class, Foo2.class })
 	@Configuration
-	static class WithMultipleArgumentsThatWillCauseDuplication {
-	}
+	static class WithMultipleArgumentsThatWillCauseDuplication { }
 
 	@Configuration
 	static class Foo1 {
@@ -272,40 +273,22 @@ public final class JavaConfigApplicationContextTests {
 		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
-	@Configuration
+	static class ExternalConfig { public @Bean ITestBean extBean() { return new TestBean(); } }
 	static class OuterConfig {
+		@Bean String whatev() { return "whatev"; }
 		@Import(ExternalConfig.class)
-		@Configuration
-		static class InnerConfig {
-			@Bean
-			public ITestBean innerBean() {
-				return new TestBean();
-			}
-		}
-	}
-
-	@Configuration
-	static class ExternalConfig {
-		@Bean
-		public ITestBean extBean() {
-			return new TestBean();
-		}
+		static class InnerConfig { public @Bean ITestBean innerBean() { return new TestBean(); } }
 	}
 
 	// ------------------------------------------------------------------------
 
-	@Test
+	@Test(expected=MalformedJavaConfigurationException.class)
 	public void testAbstractConfigurationDoesNotGetProcessed() {
 		ctx = new JavaConfigApplicationContext(AbstractConfigurationToIgnore.class);
-
-		int configClasses = 0;
-		int beansInClasses = 0;
-
-		assertBeanDefinitionCount(ctx, (configClasses + beansInClasses));
 	}
 
 	@Test
-	public void testAbstrectConfigurationWithExternalBeanDoesGetProcessed() {
+	public void testAbstractConfigurationWithExternalBeanDoesGetProcessed() {
 		ctx = new JavaConfigApplicationContext(ExternalBeanConfiguration.class,
 				ExternalBeanProvidingConfiguration.class);
 
@@ -332,6 +315,77 @@ public final class JavaConfigApplicationContextTests {
 	public void testAllVariationsOnOrderingOfClassesAndBasePackages() {
 		fail("not yet implemented");
 	}
+
+	// TODO: if two classes share a common outer class, this shouldn't cause a problem.
+
+	// TODO: PotentialConfigurationClass is not yet doing customized validation
+
+	// TODO: Declaring classes are not yet considered during validation (otherwise they would fail in cases such as this one)
+
+	// TODO: what about abstract outer classes?
+
+	public static class NameConfig { public @Bean String name() { return "lewis"; } }
+	@Import(NameConfig.class)
+	public abstract static class Outer {
+		public @Bean TestBean foo() { return new TestBean("foo"); }
+		public @Bean TestBean bar() { return new TestBean(name()); }
+		abstract @ExternalBean String name();
+		static class Other { @Bean TestBean alice() { return new TestBean("alice"); } }
+	}
+
+	@Import({Outer.Other.class})
+	public static class Config { }
+
+	public static class DeclaringClass {
+		public @Bean TestBean outer() { return new TestBean(); }
+		public static class MemberClass { public @Bean TestBean inner() { return new TestBean(); } }
+	}
+
+	// TODO: rename
+	public @Test void simplestPossibleRepro() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(DeclaringClass.MemberClass.class);
+		ctx.getBean("inner");
+		ctx.getBean("outer");
+	}
+
+	// TODO: rename
+	public @Test void main() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(Config.class);
+		String name = ctx.getBean(String.class, "name");
+		//ctx.getParent().getBean("foo");
+		ctx.getBean("foo");
+		TestBean bar = ctx.getBean(TestBean.class, "bar");
+		assertEquals("lewis", bar.getName());
+	}
+
+	static class Child { public @Bean TestBean child() { return new TestBean("alice"); } }
+	static class Parent { public @Bean TestBean parent() { return new TestBean("mother"); } }
+	// TODO: rename
+	public @Test void simple() {
+		JavaConfigApplicationContext c = new JavaConfigApplicationContext();
+		c.addConfigClasses(Child.class);
+		JavaConfigApplicationContext p = new JavaConfigApplicationContext(Parent.class);
+		c.setParent(p);
+		c.refresh();
+		assertEquals("alice", c.getBean(TestBean.class, "child").getName());
+		assertEquals("mother", p.getBean(TestBean.class, "parent").getName());
+		assertEquals("mother", c.getBean(TestBean.class, "parent").getName());
+	}
+
+	// TODO: rename
+	public @Test void simple2() {
+		final JavaConfigApplicationContext p = new JavaConfigApplicationContext(Parent.class);
+		assertEquals("mother", p.getBean(TestBean.class, "parent").getName());
+
+		JavaConfigApplicationContext c = new JavaConfigApplicationContext();
+		c.addConfigClasses(Child.class);
+		c.setParent(p);
+		c.refresh();
+		assertEquals("alice", c.getBean(TestBean.class, "child").getName());
+		assertEquals("mother", ((TestBean)c.getParent().getBean("parent")).getName());
+		assertEquals("mother", ((TestBean)c.getBean("parent")).getName());
+	}
+
 
 	// ------------------------------------------------------------------------
 

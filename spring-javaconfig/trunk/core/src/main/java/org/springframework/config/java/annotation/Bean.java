@@ -16,6 +16,7 @@
 package org.springframework.config.java.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -45,7 +46,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * Bean creation methods may reference other bean creation methods by calling
  * them directly, as follows. This ensures that references between beans are
  * strongly typed:
- * 
+ *
  * <pre class="code">
  * &#064;Bean
  * public Company springSource() {
@@ -53,28 +54,29 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * 	company.setChiefTechnologyOfficer(adrian());
  * 	return company;
  * }
- * 
+ *
  * &#064;Bean
  * public Person adrian() {
  * 	return new Person(&quot;Adrian Colyer&quot;);
  * }
  * </pre>
- * 
+ *
  * <p/> If a bean creation method is protected, rather than public, the the bean
  * will be hidden. This means that the bean will be added to a child factory
  * used internally by the ConfigurationProcessor, rather than the main factory,
  * meaning it won't be visible to other definitions. This is particularly useful
  * for Spring AOP Advisors or AspectJ aspects, which might otherwise alter
  * behaviour of the owning factory as a whole.
- * 
+ *
  * @author Rod Johnson
  * @author Costin Leau
  * @author Chris Beams
- * 
+ *
  * @see Configuration
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface Bean {
 
 	/**
@@ -101,7 +103,7 @@ public @interface Bean {
 	/**
 	 * A bean may be marked as primary, useful for disambiguation when looking
 	 * up beans by type.
-	 * 
+	 *
 	 * @see org.springframework.config.java.context.JavaConfigApplicationContext#getBean(Class);
 	 */
 	Primary primary() default Primary.UNSPECIFIED;
@@ -137,7 +139,7 @@ public @interface Bean {
 	 * non-Java configuration. This is consistent with
 	 * DefaultListableBeanFactory's allowBeanDefinitionOverriding property,
 	 * which defaults to true.
-	 * 
+	 *
 	 * @return whether overriding of this bean is allowed
 	 */
 	boolean allowOverriding() default true;

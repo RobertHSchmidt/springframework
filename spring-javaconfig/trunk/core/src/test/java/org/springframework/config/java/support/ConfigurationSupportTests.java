@@ -26,13 +26,11 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
-import org.springframework.config.java.process.ConfigurationProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -176,19 +174,15 @@ public class ConfigurationSupportTests {
 
 	@Test
 	public void testFactoryBeanCallbacks() {
-		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-		ConfigurationProcessor configurationProcessor = new ConfigurationProcessor(bf);
-
-		configurationProcessor.processClass(FactoryBeanTest.class);
-		assertEquals("whatever", bf.getBean("factoryTestBean"));
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(FactoryBeanTest.class);
+		assertEquals("whatever", ctx.getBean("factoryTestBean"));
 	}
 
 	@Test
 	public void testApplicationContextCallbacks() {
 		GenericApplicationContext gac = new GenericApplicationContext();
-		// ConfigurationProcessor configurationProcessor = new
-		// ConfigurationProcessor(gac);
 		ConfigurationPostProcessor cpp = new ConfigurationPostProcessor();
+		cpp.setApplicationContext(gac);
 		gac.getDefaultListableBeanFactory().registerSingleton("not_significant", cpp);
 
 		gac.getDefaultListableBeanFactory().registerBeanDefinition("doesnt_matter",

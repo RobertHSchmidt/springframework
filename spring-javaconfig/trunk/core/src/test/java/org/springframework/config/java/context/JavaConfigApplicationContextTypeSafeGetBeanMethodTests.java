@@ -20,15 +20,17 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.springframework.beans.TestBean;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
+import org.springframework.config.java.support.ConfigurationSupport;
 
 public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 
-	private JavaConfigApplicationContext ctx;
+	private ConfigurableJavaConfigApplicationContext ctx;
 
 	/** happy path */
 	@Test
@@ -95,15 +97,29 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 		ctx.getBean(TestBean.class, "serviceX"); // throws
 	}
 
-	@Test
-	public void testInnerConfigurationContextHierarchyWorksWhenDoingStringBasedLookup() {
+	static class OuterConfig extends ConfigurationSupport {
+		public @Bean TestBean testBean() { return new TestBean("outer"); }
+		static class InnerConfig { public @Bean String innerBean() { return "inner"; } }
+	}
+	static class IllegalOuterConfig extends ConfigurationSupport {
+		public @Bean TestBean testBean() { return new TestBean("outer"); }
+		public @Bean String illegalBean() { return getBean(String.class, "innerBean"); }
+		static class InnerConfig { public @Bean String innerBean() { return "inner"; } }
+	}
+	public @Test void outerClassesAreProcessedAsBeanFactoryHierarchy() {
+		try {
+			ctx = new JavaConfigApplicationContext(IllegalOuterConfig.InnerConfig.class);
+			fail("should have thrown exception - parent context should not be able to access child beans");
+		} catch(BeanCreationException ex) {
+			assertTrue(ex.getMostSpecificCause().getMessage().contains("No bean named 'innerBean'"));
+		}
+	}
+	public @Test void testInnerConfigurationContextHierarchyWorksWhenDoingStringBasedLookup() {
 		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
 		TestBean testBean = (TestBean) ctx.getBean("testBean");
 		assertEquals("outer", testBean.getName());
 	}
-
-	@Test
-	public void testInnerConfigurationContextHierarchyWorksWhenDoingTypeSafeLookup() {
+	public @Test void testInnerConfigurationContextHierarchyWorksWhenDoingTypeSafeLookup() {
 		ctx = new JavaConfigApplicationContext(OuterConfig.InnerConfig.class);
 		TestBean testBean = ctx.getBean(TestBean.class);
 		assertEquals("outer", testBean.getName());
@@ -159,20 +175,6 @@ public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {
 		@Bean(primary = Primary.TRUE)
 		public TestBean serviceB() {
 			return new TestBean("serviceB");
-		}
-	}
-
-	@Configuration
-	static class OuterConfig {
-
-		@Bean
-		public TestBean testBean() {
-			return new TestBean("outer");
-		}
-
-		@Configuration
-		static class InnerConfig {
-
 		}
 	}
 

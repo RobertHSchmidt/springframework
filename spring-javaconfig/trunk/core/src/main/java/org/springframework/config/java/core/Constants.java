@@ -25,4 +25,15 @@ public final class Constants {
 
 	public static final String JAVA_CONFIG_PKG = "org.springframework.config.java";
 
+	/**
+	 * Used as metadata on framework-internal bean definitions that should not
+	 * count when tallying bean def registration counts during testing
+	 */
+	public static final String JAVA_CONFIG_IGNORE = "JAVA_CONFIG_IGNORE";
+
+	/**
+	 * Name of internal bean factory used for reducing the visibility of 'hidden' beans
+	 */
+	public static final String INTERNAL_BEAN_FACTORY_NAME = "SJC_INTERNAL_BF";
+
 }
