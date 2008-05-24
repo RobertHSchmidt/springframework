@@ -1,7 +1,7 @@
 package org.springframework.config.java.postprocess;
 
 import static java.lang.String.format;
-import static org.springframework.config.java.core.Constants.INTERNAL_BEAN_FACTORY_NAME;
+import static org.springframework.config.java.util.Constants.INTERNAL_BEAN_FACTORY_NAME;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
