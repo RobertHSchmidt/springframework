@@ -18,6 +18,7 @@ package org.springframework.config.java.model;
 import java.util.List;
 
 import org.springframework.config.java.context.JavaConfigBeanFactory;
+import org.springframework.config.java.factory.support.AbstractJavaConfigBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
 
 // import issues.MyConfig;

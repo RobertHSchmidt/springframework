@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.process.MalformedJavaConfigurationException;
+import org.springframework.config.java.model.MalformedJavaConfigurationException;
 import org.springframework.config.java.support.ConfigurationSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

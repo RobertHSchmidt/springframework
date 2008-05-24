@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.process.MalformedJavaConfigurationException;
+import org.springframework.config.java.model.MalformedJavaConfigurationException;
 import org.springframework.config.java.testing.Company;
 import org.springframework.config.java.testing.SimpleConfiguration;
 import org.springframework.config.java.testing.Worker;

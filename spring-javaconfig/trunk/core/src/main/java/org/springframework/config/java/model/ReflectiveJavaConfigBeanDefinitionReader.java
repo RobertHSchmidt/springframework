@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
+import org.springframework.config.java.factory.support.AbstractJavaConfigBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;

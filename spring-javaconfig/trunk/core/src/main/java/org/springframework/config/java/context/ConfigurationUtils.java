@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 @Deprecated // temporary measure
-class ConfigurationUtils {
+public class ConfigurationUtils {
 
 	/**
 	 * Check if the given class is a configuration.
@@ -29,7 +29,7 @@ class ConfigurationUtils {
 	 * {@link Configuration @Configuration}, then it gets much easier
 	 */
 	@Deprecated
-	static boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
+	public static boolean isConfigurationClass(Class<?> candidateConfigurationClass) {
 		Assert.notNull(candidateConfigurationClass);
 
 		if (Modifier.isAbstract(candidateConfigurationClass.getModifiers())

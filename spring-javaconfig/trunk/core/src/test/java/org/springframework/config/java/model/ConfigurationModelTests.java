@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 /**
  * Unit tests for {@link ConfigurationModel}

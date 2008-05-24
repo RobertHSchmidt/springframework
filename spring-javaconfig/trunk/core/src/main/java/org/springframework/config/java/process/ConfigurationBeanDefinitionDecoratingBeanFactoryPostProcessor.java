@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.process;
 
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.BeanMetadataAttributeAccessor;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.context.ConfigurationUtils;
 import org.springframework.config.java.model.ConfigurationClass;
 
 /**

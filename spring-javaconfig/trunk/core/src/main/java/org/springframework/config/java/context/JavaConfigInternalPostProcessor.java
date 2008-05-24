@@ -1,6 +1,7 @@
 package org.springframework.config.java.context;
 
 import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
 
 /**
  * Marker interface indicating that a BFPP is JavaConfig internal and
