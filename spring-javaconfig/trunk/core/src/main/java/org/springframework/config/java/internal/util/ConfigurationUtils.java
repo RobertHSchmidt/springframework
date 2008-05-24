@@ -1,4 +1,4 @@
-package org.springframework.config.java.util;
+package org.springframework.config.java.internal.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

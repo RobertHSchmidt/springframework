@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.internal.model.ConfigurationClass;
-import org.springframework.config.java.util.ConfigurationUtils;
+import org.springframework.config.java.internal.util.ConfigurationUtils;
 
 /**
  * Detects the presence of any {@link Configuration @Configuration} bean definitions and annotates them with

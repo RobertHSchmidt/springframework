@@ -1,7 +1,7 @@
 package org.springframework.config.java.internal.model;
 
 import static java.lang.String.format;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.findAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.findAnnotation;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
