@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.factory;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

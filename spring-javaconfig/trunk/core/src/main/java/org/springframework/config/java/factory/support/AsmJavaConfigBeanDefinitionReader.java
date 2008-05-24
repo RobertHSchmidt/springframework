@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.model;
+package org.springframework.config.java.factory.support;
 
 import java.util.List;
 
-import org.springframework.config.java.context.JavaConfigBeanFactory;
-import org.springframework.config.java.factory.support.AbstractJavaConfigBeanDefinitionReader;
+import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 
 // import issues.MyConfig;

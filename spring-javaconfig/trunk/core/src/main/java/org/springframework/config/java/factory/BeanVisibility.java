@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.factory;
 
 import java.lang.reflect.Modifier;
 

@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.process;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -2,8 +2,8 @@ package org.springframework.config.java.factory.support;
 
 
 import static java.lang.String.format;
-import static org.springframework.config.java.context.BeanVisibility.PUBLIC;
-import static org.springframework.config.java.context.BeanVisibility.visibilityOf;
+import static org.springframework.config.java.factory.BeanVisibility.PUBLIC;
+import static org.springframework.config.java.factory.BeanVisibility.visibilityOf;
 import static org.springframework.util.StringUtils.hasText;
 
 import org.apache.commons.logging.Log;
@@ -24,10 +24,10 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.context.BeanVisibility;
-import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.config.java.core.Constants;
+import org.springframework.config.java.factory.BeanVisibility;
+import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.AutoBeanMethod;
 import org.springframework.config.java.model.BeanMethod;
