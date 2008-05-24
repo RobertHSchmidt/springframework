@@ -29,7 +29,6 @@ import org.springframework.core.io.ClassPathResource;
  * to implement methods from the base class.  Will become concrete during actual implementation
  *
  * @see ReflectiveJavaConfigBeanDefinitionReader
- * @see LegacyReflectiveJavaConfigBeanDefinitionReader
  *
  * @author Chris Beams
  */

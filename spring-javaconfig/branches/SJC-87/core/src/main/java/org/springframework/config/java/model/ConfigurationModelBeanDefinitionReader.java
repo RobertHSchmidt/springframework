@@ -28,13 +28,13 @@ import org.springframework.config.java.context.BeanVisibility;
 import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
 import org.springframework.config.java.core.Constants;
-import org.springframework.config.java.core.ScopedProxyMethodProcessor;
 import org.springframework.config.java.type.Type;
 import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.util.Assert;
 
 /**
  * Renders a given {@link ConfigurationModel} as bean definitions to be
@@ -203,7 +203,7 @@ public class ConfigurationModelBeanDefinitionReader {
 
 			// Create a scoped proxy definition for the original bean name,
 			// "hiding" the target bean in an internal target definition.
-			String targetBeanName = ScopedProxyMethodProcessor.resolveHiddenScopedProxyBeanName(beanName);
+			String targetBeanName = ConfigurationModelBeanDefinitionReader.resolveHiddenScopedProxyBeanName(beanName);
 			RootBeanDefinition scopedProxyDefinition = new RootBeanDefinition(ScopedProxyFactoryBean.class);
 			scopedProxyDefinition.getPropertyValues().addPropertyValue("targetBeanName", targetBeanName);
 
@@ -307,5 +307,21 @@ public class ConfigurationModelBeanDefinitionReader {
 		// because it would result in setParentBeanFactory being called more than once.
 		// note that this violation should be detected at model validation time, not at rendering time - that's too late.
 	}
+
+	/**
+	 * Return the <i>hidden</i> name based on a scoped proxy bean name.
+	 *
+	 * @param originalBeanName the scope proxy bean name as declared in the
+	 * Configuration-annotated class
+	 *
+	 * @return the internally-used <i>hidden</i> bean name
+	 */
+	public static String resolveHiddenScopedProxyBeanName(String originalBeanName) {
+		Assert.hasText(originalBeanName);
+		return TARGET_NAME_PREFIX.concat(originalBeanName);
+	}
+
+	private static final String TARGET_NAME_PREFIX = "scopedTarget.";
+
 
 }
