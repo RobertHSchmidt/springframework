@@ -32,6 +32,7 @@ import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.config.java.process.ConfigurationClassParsingBeanFactoryPostProcessor;
 import org.springframework.config.java.process.ConfigurationEnhancingBeanFactoryPostProcessor;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
+import org.springframework.config.java.process.ConfigurationUtils;
 import org.springframework.config.java.process.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;

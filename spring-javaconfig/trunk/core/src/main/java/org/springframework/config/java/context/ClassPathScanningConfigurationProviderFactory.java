@@ -29,8 +29,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  *
  * @author Chris Beams
  */
-// TODO: return to package-private
-public class ClassPathScanningConfigurationProviderFactory {
+class ClassPathScanningConfigurationProviderFactory {
 
 	/**
 	 * Return a new provider instance configured to treat as candidates only

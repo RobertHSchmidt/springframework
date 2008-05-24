@@ -10,7 +10,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.context.CglibConfigurationEnhancer;
 import org.springframework.config.java.context.ConfigurationEnhancer;
-import org.springframework.config.java.context.JavaConfigBeanFactory;
+import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.core.PriorityOrdered;
 

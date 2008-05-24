@@ -20,10 +20,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.core.BeanFactoryFactory;
+import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.ConfigurationModel;
-import org.springframework.config.java.model.JavaConfigBeanDefinitionReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

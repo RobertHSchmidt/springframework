@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.model;
+package org.springframework.config.java.factory.support;
 
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.config.java.context.DefaultJavaConfigBeanFactory;
+import org.springframework.config.java.factory.DefaultJavaConfigBeanFactory;
 import org.springframework.core.io.Resource;
 
 /**

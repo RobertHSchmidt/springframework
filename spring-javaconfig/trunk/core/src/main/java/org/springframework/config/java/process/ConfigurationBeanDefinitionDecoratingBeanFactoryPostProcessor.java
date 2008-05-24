@@ -7,7 +7,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.ConfigurationUtils;
 import org.springframework.config.java.model.ConfigurationClass;
 
 /**
