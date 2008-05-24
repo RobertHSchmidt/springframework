@@ -1,4 +1,4 @@
-package org.springframework.config.java.postprocess;
+package org.springframework.config.java.processinternal;
 
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.process.ConfigurationPostProcessor;

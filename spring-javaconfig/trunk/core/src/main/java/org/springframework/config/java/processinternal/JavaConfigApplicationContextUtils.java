@@ -1,4 +1,4 @@
-package org.springframework.config.java.postprocess;
+package org.springframework.config.java.processinternal;
 
 import static java.lang.String.format;
 import static org.springframework.config.java.util.Constants.INTERNAL_BEAN_FACTORY_NAME;

@@ -1,4 +1,4 @@
-package org.springframework.config.java.postprocess;
+package org.springframework.config.java.processinternal;
 
 import java.util.ArrayList;
 
