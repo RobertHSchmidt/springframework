@@ -8,7 +8,6 @@ import java.util.List;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.factory.JavaConfigAspectRegistry;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationModel;
