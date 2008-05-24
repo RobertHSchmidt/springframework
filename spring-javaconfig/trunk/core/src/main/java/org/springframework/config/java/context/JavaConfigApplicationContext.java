@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.config.java.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.config.java.naming.BeanNamingStrategy;
@@ -83,7 +84,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this);
+		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this, new DefaultParentBeanFactoryProvider());
 		if(this.getBeanNamingStrategy() != null)
 			iBPP.setBeanNamingStrategy(this.getBeanNamingStrategy());
 		iBPP.postProcessBeanFactory(beanFactory);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.context;
+package org.springframework.config.java.factory;
 
 import static java.lang.String.format;
 
@@ -26,13 +26,13 @@ import org.springframework.beans.factory.BeanFactory;
  * the same type is marked as
  * {@link org.springframework.config.java.annotation.Primary} within a given
  * {@link BeanFactory}.
- * 
+ *
  * @see org.springframework.config.java.annotation.Primary
- * 
+ *
  * @author Chris Beams
  */
 @SuppressWarnings("serial")
-class MultiplePrimaryBeanDefinitionException extends AmbiguousBeanLookupException {
+public class MultiplePrimaryBeanDefinitionException extends AmbiguousBeanLookupException {
 
 	/**
 	 * Create a new instance.

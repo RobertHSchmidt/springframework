@@ -20,7 +20,7 @@ package org.springframework.config.java.annotation;
  * by type.
  * 
  * @see Bean#primary()
- * @see org.springframework.config.java.context.TypeSafeBeanFactory#getBean(Class)
+ * @see org.springframework.config.java.factory.TypeSafeBeanFactory#getBean(Class)
  * 
  * @author Chris Beams
  */

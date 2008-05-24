@@ -10,6 +10,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.factory.BeanFactoryFactory;
 import org.springframework.config.java.factory.DefaultJavaConfigBeanFactory;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.naming.BeanNamingStrategy;
@@ -27,13 +28,17 @@ public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements 
 	public static final int ORDER = Ordered.HIGHEST_PRECEDENCE;
 
 	private static final Log log = LogFactory.getLog(InternalBeanFactoryEstablishingBeanFactoryPostProcessor.class);
+
 	private final AbstractApplicationContext ctx;
+
+	private final BeanFactoryFactory bff;
 
 	private BeanNamingStrategy beanNamingStrategy;
 
 
-	public InternalBeanFactoryEstablishingBeanFactoryPostProcessor(AbstractApplicationContext ctx) {
+	public InternalBeanFactoryEstablishingBeanFactoryPostProcessor(AbstractApplicationContext ctx, BeanFactoryFactory bff) {
 		this.ctx = ctx;
+		this.bff = bff;
 	}
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) throws BeansException {
@@ -45,7 +50,7 @@ public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements 
 
 	private JavaConfigBeanFactory createInternalBeanFactory(ConfigurableListableBeanFactory externalBeanFactory) {
 		Assert.notNull(ctx, "ApplicationContext must be non-null");
-		final DefaultJavaConfigBeanFactory internalBeanFactory = new DefaultJavaConfigBeanFactory(externalBeanFactory);
+		final DefaultJavaConfigBeanFactory internalBeanFactory = new DefaultJavaConfigBeanFactory(externalBeanFactory, bff);
 
 		if(beanNamingStrategy != null)
 			internalBeanFactory.setBeanNamingStrategy(beanNamingStrategy);

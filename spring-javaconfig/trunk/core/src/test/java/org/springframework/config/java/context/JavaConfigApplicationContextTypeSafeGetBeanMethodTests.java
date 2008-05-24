@@ -26,6 +26,8 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Primary;
+import org.springframework.config.java.factory.AmbiguousBeanLookupException;
+import org.springframework.config.java.factory.MultiplePrimaryBeanDefinitionException;
 import org.springframework.config.java.support.ConfigurationSupport;
 
 public class JavaConfigApplicationContextTypeSafeGetBeanMethodTests {

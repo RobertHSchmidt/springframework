@@ -21,7 +21,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.context.TypeSafeBeanFactoryUtils;
+import org.springframework.config.java.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisherAware;
