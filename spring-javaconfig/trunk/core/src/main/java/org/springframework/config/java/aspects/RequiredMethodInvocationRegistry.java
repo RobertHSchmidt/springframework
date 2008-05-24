@@ -31,15 +31,15 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 /**
  * Thread-local storage for recording which beans' required methods have been
  * invoked. Used in conjunction with {@link RequiredMethodInvocationTracker}.
- * 
+ *
  * Currently limited to recording methods annotated with
  * {@link Required @Required} (as opposed to Spring's ability to track
  * user-specified annotations. This has to do with limitations in AspectJ - it
  * is currently not possible to change the definition of a pointcut at runtime.
- * 
+ *
  * @author Chris Beams
  */
-public class RequiredMethodInvocationRegistry extends ThreadLocal<Set<String>> {
+class RequiredMethodInvocationRegistry extends ThreadLocal<Set<String>> {
 
 	@Override
 	protected Set<String> initialValue() {
@@ -49,9 +49,9 @@ public class RequiredMethodInvocationRegistry extends ThreadLocal<Set<String>> {
 	/**
 	 * Record the invocation of a {@link Required @Required} method for later
 	 * interrogation.
-	 * 
+	 *
 	 * @see #interrogateRequiredMethods(Object, String)
-	 * 
+	 *
 	 * @param bean object instance being on which <var>methodName</var> is
 	 * being invoked
 	 * @param className declaring class for <var>methodName</var>
@@ -64,7 +64,7 @@ public class RequiredMethodInvocationRegistry extends ThreadLocal<Set<String>> {
 	/**
 	 * Interrogate any {@link Required @Required} methods within <var>bean</var>
 	 * and determine whether they have been invoked.
-	 * 
+	 *
 	 * @param bean object to interrogate
 	 * @param beanName id/name of <var>bean</var> within its respective
 	 * BeanFactory

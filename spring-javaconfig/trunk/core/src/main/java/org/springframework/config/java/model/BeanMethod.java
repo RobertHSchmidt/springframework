@@ -25,8 +25,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
 import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.aop.HotSwappable;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
 import org.springframework.config.java.util.AnnotationExtractionUtils;
 import org.springframework.config.java.util.MethodAnnotationPrototype;
 import org.springframework.util.Assert;

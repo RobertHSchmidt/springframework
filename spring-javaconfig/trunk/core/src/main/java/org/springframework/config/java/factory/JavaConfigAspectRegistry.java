@@ -22,7 +22,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.config.java.annotation.Bean;
-import org.springframework.config.java.annotation.aop.targetsource.HotSwappable;
+import org.springframework.config.java.annotation.aop.HotSwappable;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.ReflectionUtils.MethodFilter;

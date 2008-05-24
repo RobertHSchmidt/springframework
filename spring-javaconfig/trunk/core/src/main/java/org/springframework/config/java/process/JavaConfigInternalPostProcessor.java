@@ -10,6 +10,4 @@ import org.springframework.config.java.factory.JavaConfigBeanFactory;
  * @see InternalBeanFactoryEstablishingBeanFactoryPostProcessor
  * @see ConfigurationPostProcessor
  */
-public interface JavaConfigInternalPostProcessor {
-
-}
+interface JavaConfigInternalPostProcessor { }
