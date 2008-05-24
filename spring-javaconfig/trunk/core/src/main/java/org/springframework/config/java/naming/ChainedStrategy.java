@@ -18,7 +18,7 @@ package org.springframework.config.java.naming;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.springframework.config.java.model.ModelMethod;
+import org.springframework.config.java.internal.model.ModelMethod;
 import org.springframework.util.Assert;
 
 /**

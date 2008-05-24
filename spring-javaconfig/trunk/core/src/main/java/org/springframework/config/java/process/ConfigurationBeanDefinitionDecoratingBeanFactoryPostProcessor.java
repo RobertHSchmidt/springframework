@@ -7,7 +7,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.config.java.internal.model.ConfigurationClass;
 import org.springframework.config.java.util.ConfigurationUtils;
 
 /**
@@ -16,7 +16,7 @@ import org.springframework.config.java.util.ConfigurationUtils;
  *
  * @author Chris Beams
  */
-public class ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
+class ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		for(String beanName : beanFactory.getBeanDefinitionNames()) {

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Method;
 
 import org.junit.Test;
-import org.springframework.config.java.model.ModelMethod;
+import org.springframework.config.java.internal.model.ModelMethod;
 
 /**
  * @author Rod Johnson

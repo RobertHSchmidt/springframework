@@ -36,8 +36,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.model.MalformedJavaConfigurationException;
-import org.springframework.config.java.model.ValidationError;
+import org.springframework.config.java.internal.model.MalformedJavaConfigurationException;
+import org.springframework.config.java.internal.model.ValidationError;
 import org.springframework.config.java.util.DefaultScopes;
 
 /**

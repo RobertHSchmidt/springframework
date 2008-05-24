@@ -10,9 +10,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.config.java.enhancement.ConfigurationEnhancer;
-import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.processinternal.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.internal.enhancement.ConfigurationEnhancer;
+import org.springframework.config.java.internal.model.ConfigurationClass;
+import org.springframework.config.java.internal.process.ConfigurationEnhancingBeanFactoryPostProcessor;
 
 public class ConfigurationEnhancingBeanFactoryPostProcessorTests {
 

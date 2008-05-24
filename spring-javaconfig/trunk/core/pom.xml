@@ -350,6 +350,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
+                    <excludePackageNames>org.springframework.config.java.internal.*</excludePackageNames>
                     <aggregate>true</aggregate>
                     <groups>
                         <group>
