@@ -29,9 +29,9 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.context.ConfigurableJavaConfigApplicationContext;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
-import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReader;
+import org.springframework.config.java.factory.support.ConfigurationModelBeanDefinitionReader;
+import org.springframework.config.java.model.MalformedJavaConfigurationException;
 import org.springframework.config.java.model.ValidationError;
-import org.springframework.config.java.process.MalformedJavaConfigurationException;
 import org.springframework.config.java.test.Assert;
 
 /**

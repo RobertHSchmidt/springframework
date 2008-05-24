@@ -1,4 +1,4 @@
-package org.springframework.config.java.process;
+package org.springframework.config.java.model;
 
 @SuppressWarnings("serial")
 public class MalformedJavaConfigurationException extends RuntimeException {

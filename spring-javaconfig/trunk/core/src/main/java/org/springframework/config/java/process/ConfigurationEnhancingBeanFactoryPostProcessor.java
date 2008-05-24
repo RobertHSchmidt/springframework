@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.process;
 
 import static java.lang.String.format;
 
@@ -8,6 +8,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.context.CglibConfigurationEnhancer;
+import org.springframework.config.java.context.ConfigurationEnhancer;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.core.PriorityOrdered;
 

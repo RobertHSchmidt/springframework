@@ -25,7 +25,7 @@ import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.ExternalValue;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
-import org.springframework.config.java.model.ConfigurationModelBeanDefinitionReader;
+import org.springframework.config.java.factory.support.ConfigurationModelBeanDefinitionReader;
 import org.springframework.config.java.model.JavaConfigAspectRegistry;
 import org.springframework.config.java.model.ModelMethod;
 import org.springframework.config.java.valuesource.ValueResolutionException;

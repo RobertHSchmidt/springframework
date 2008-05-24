@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.process.MalformedJavaConfigurationException;
 
 /**
  * An abstract representation of a set of user-provided "Configuration classes",

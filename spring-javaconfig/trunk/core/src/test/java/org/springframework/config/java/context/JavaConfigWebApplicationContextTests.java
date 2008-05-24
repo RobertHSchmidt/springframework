@@ -25,7 +25,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.complex.ComplexConfiguration;
-import org.springframework.config.java.process.MalformedJavaConfigurationException;
+import org.springframework.config.java.model.MalformedJavaConfigurationException;
 import org.springframework.web.context.ContextLoaderListener;
 
 public class JavaConfigWebApplicationContextTests {

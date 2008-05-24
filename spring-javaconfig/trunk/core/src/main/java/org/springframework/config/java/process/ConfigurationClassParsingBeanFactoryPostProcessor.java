@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.process;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.config.java.context.JavaConfigBeanFactory;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.config.java.model.ReflectiveJavaConfigBeanDefinitionReader;
