@@ -6,9 +6,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.core.Constants;
-import org.springframework.config.java.factory.BeanFactoryFactory;
+import org.springframework.config.java.factory.BeanFactoryProvider;
 
-public class DefaultParentBeanFactoryProvider implements BeanFactoryFactory {
+public class DefaultBeanFactoryProvider implements BeanFactoryProvider {
 
 	public void registerBeanDefinition(BeanDefinitionRegistry registry) {
 
@@ -27,7 +27,7 @@ public class DefaultParentBeanFactoryProvider implements BeanFactoryFactory {
 		bff.setScope(BeanDefinition.SCOPE_PROTOTYPE);
 		bff.addMetadataAttribute(new BeanMetadataAttribute(Constants.JAVA_CONFIG_IGNORE, true));
 
-		registry.registerBeanDefinition(BeanFactoryFactory.BEAN_NAME, bff);
+		registry.registerBeanDefinition(BeanFactoryProvider.BEAN_NAME, bff);
 	}
 
 	public BeanFactory createBeanFactory(String className) throws Exception {

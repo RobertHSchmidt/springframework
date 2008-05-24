@@ -16,10 +16,10 @@ import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationClass;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.config.java.naming.MethodNameStrategy;
-import org.springframework.config.java.process.ConfigurationClassParsingBeanFactoryPostProcessor;
-import org.springframework.config.java.process.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.ConfigurationClassParsingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
-import org.springframework.config.java.process.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
@@ -84,7 +84,7 @@ public class JavaConfigApplicationContext extends AbstractRefreshableApplication
 
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this, new DefaultParentBeanFactoryProvider());
+		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this, new DefaultBeanFactoryProvider());
 		if(this.getBeanNamingStrategy() != null)
 			iBPP.setBeanNamingStrategy(this.getBeanNamingStrategy());
 		iBPP.postProcessBeanFactory(beanFactory);
