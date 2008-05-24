@@ -1,4 +1,4 @@
-package org.springframework.config.java.factory;
+package org.springframework.config.java.factory.support;
 
 import static java.lang.String.format;
 
@@ -23,6 +23,7 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.HotSwappable;
+import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.util.ReflectionUtils.MethodFilter;
