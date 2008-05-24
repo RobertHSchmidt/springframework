@@ -12,7 +12,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.enhancement.ConfigurationEnhancer;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.process.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.ConfigurationEnhancingBeanFactoryPostProcessor;
 
 public class ConfigurationEnhancingBeanFactoryPostProcessorTests {
 

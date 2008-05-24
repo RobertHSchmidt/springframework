@@ -30,11 +30,11 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.config.java.model.ConfigurationClass;
-import org.springframework.config.java.process.ConfigurationClassParsingBeanFactoryPostProcessor;
-import org.springframework.config.java.process.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.ConfigurationClassParsingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.ConfigurationEnhancingBeanFactoryPostProcessor;
+import org.springframework.config.java.postprocess.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
-import org.springframework.config.java.process.ConfigurationUtils;
-import org.springframework.config.java.process.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
+import org.springframework.config.java.util.ConfigurationUtils;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.util.Assert;
@@ -74,7 +74,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this, new DefaultParentBeanFactoryProvider()).postProcessBeanFactory(beanFactory);
+		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this, new DefaultBeanFactoryProvider()).postProcessBeanFactory(beanFactory);
 		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
 		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
 		super.invokeBeanFactoryPostProcessors(beanFactory);

@@ -25,7 +25,7 @@ import org.springframework.config.java.annotation.Lazy;
 import org.springframework.config.java.annotation.Primary;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.core.Constants;
-import org.springframework.config.java.factory.BeanFactoryFactory;
+import org.springframework.config.java.factory.BeanFactoryProvider;
 import org.springframework.config.java.factory.BeanVisibility;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.AspectClass;
@@ -299,7 +299,7 @@ public class ConfigurationModelBeanDefinitionReader {
 		logger.info(format("Found declaring class [%s] on configClass [%s]", declaringClass, declaringClass));
 
 		BeanFactory parentBF;
-		String factoryName = BeanFactoryFactory.BEAN_NAME;
+		String factoryName = BeanFactoryProvider.BEAN_NAME;
 
 		if(beanFactory.containsBean(factoryName))
 			parentBF = (BeanFactory) beanFactory.getBean(factoryName, new Object[] { declaringClass.getName() });

@@ -1,4 +1,4 @@
-package org.springframework.config.java.process;
+package org.springframework.config.java.postprocess;
 
 import static java.lang.String.format;
 import static org.springframework.config.java.core.Constants.INTERNAL_BEAN_FACTORY_NAME;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.config.java.factory.BeanFactoryFactory;
+import org.springframework.config.java.factory.BeanFactoryProvider;
 import org.springframework.config.java.factory.DefaultJavaConfigBeanFactory;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.naming.BeanNamingStrategy;
@@ -31,12 +31,12 @@ public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements 
 
 	private final AbstractApplicationContext ctx;
 
-	private final BeanFactoryFactory bff;
+	private final BeanFactoryProvider bff;
 
 	private BeanNamingStrategy beanNamingStrategy;
 
 
-	public InternalBeanFactoryEstablishingBeanFactoryPostProcessor(AbstractApplicationContext ctx, BeanFactoryFactory bff) {
+	public InternalBeanFactoryEstablishingBeanFactoryPostProcessor(AbstractApplicationContext ctx, BeanFactoryProvider bff) {
 		this.ctx = ctx;
 		this.bff = bff;
 	}
