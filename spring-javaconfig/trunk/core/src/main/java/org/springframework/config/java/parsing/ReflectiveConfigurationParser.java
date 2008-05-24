@@ -1,6 +1,6 @@
-package org.springframework.config.java.model;
+package org.springframework.config.java.parsing;
 
-import static org.springframework.config.java.model.AnnotationExtractionUtils.findAnnotations;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.findAnnotations;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 import java.lang.annotation.Annotation;
@@ -14,9 +14,18 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.Import;
 import org.springframework.config.java.annotation.ResourceBundles;
 import org.springframework.config.java.core.Constants;
-import org.springframework.config.java.model.AnnotationExtractionUtils.AnnotationFilter;
+import org.springframework.config.java.model.AspectClass;
+import org.springframework.config.java.model.AutoBeanMethod;
+import org.springframework.config.java.model.BeanMethod;
+import org.springframework.config.java.model.ConfigurationClass;
+import org.springframework.config.java.model.ConfigurationModel;
+import org.springframework.config.java.model.ExternalBeanMethod;
+import org.springframework.config.java.model.ExternalValueMethod;
+import org.springframework.config.java.model.NonJavaConfigMethod;
+import org.springframework.config.java.model.PotentialConfigurationClass;
 import org.springframework.config.java.type.ReflectiveType;
 import org.springframework.config.java.type.Type;
+import org.springframework.config.java.util.AnnotationExtractionUtils.AnnotationFilter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;

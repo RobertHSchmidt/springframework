@@ -2,7 +2,7 @@ package org.springframework.config.java.model;
 
 
 import static java.lang.String.format;
-import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
 import static org.springframework.util.ClassUtils.getShortName;
 
 import java.lang.reflect.Modifier;
@@ -39,7 +39,7 @@ public class ConfigurationClass {
 	 *
 	 * @see org.springframework.beans.factory.config.BeanDefinition
 	 * @see org.springframework.core.AttributeAccessor#getAttribute(String)
-	 * @see org.springframework.config.java.model.ConfigurationParser
+	 * @see org.springframework.config.java.parsing.ConfigurationParser
 	 * @see org.springframework.config.java.model.ConfigurationEnhancingBeanFactoryPostProcessor
 	 */
 	public static final String BEAN_ATTR_NAME = "isJavaConfigurationClass";

@@ -3,11 +3,11 @@ package org.springframework.config.java.model;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
-import static org.springframework.config.java.model.AnnotationExtractionUtils.extractClassAnnotation;
 import static org.springframework.config.java.model.AspectClassTests.VALID_ASPECT_CLASS;
 import static org.springframework.config.java.model.AutoBeanMethodTests.VALID_AUTOBEAN_METHOD;
 import static org.springframework.config.java.model.BeanMethodTests.VALID_BEAN_METHOD;
 import static org.springframework.config.java.model.ValidationError.*;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
 
 import java.lang.reflect.Modifier;
 

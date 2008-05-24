@@ -1,6 +1,6 @@
 package org.springframework.config.java.model;
 
-import static org.springframework.config.java.model.AnnotationExtractionUtils.findAnnotation;
+import static org.springframework.config.java.util.AnnotationExtractionUtils.findAnnotation;
 
 import java.lang.annotation.Annotation;
 

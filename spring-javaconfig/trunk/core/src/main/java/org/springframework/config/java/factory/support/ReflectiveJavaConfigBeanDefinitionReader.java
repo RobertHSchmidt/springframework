@@ -12,7 +12,7 @@ import org.springframework.config.java.factory.JavaConfigAspectRegistry;
 import org.springframework.config.java.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.model.AspectClass;
 import org.springframework.config.java.model.ConfigurationModel;
-import org.springframework.config.java.model.ReflectiveConfigurationParser;
+import org.springframework.config.java.parsing.ReflectiveConfigurationParser;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ClassUtils;

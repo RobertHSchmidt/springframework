@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.junit.Test;
+import org.springframework.config.java.util.AnnotationExtractionUtils;
 
 public class AspectClassTests {
 
