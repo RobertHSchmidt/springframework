@@ -33,7 +33,7 @@ import org.springframework.config.java.internal.model.BeanMethod;
 import org.springframework.config.java.internal.model.ConfigurationClass;
 import org.springframework.config.java.internal.model.ConfigurationModel;
 import org.springframework.config.java.internal.type.Type;
-import org.springframework.config.java.util.Constants;
+import org.springframework.config.java.internal.util.Constants;
 import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;

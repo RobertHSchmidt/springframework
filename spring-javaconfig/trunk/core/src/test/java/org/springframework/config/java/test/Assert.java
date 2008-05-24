@@ -2,7 +2,7 @@ package org.springframework.config.java.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.springframework.config.java.util.Constants;
+import org.springframework.config.java.internal.util.Constants;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class Assert {

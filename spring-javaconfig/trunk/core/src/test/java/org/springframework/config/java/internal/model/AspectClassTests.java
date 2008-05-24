@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.config.java.internal.model.AspectClass;
 import org.springframework.config.java.internal.model.ValidationError;
 import org.springframework.config.java.internal.model.ValidationErrors;
-import org.springframework.config.java.util.AnnotationExtractionUtils;
+import org.springframework.config.java.internal.util.AnnotationExtractionUtils;
 
 public class AspectClassTests {
 

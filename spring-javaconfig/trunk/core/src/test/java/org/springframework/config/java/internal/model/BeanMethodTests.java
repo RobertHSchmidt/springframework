@@ -3,7 +3,7 @@ package org.springframework.config.java.internal.model;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.extractMethodAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractMethodAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,7 +16,7 @@ import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.internal.model.BeanMethod;
 import org.springframework.config.java.internal.model.ValidationError;
 import org.springframework.config.java.internal.model.ValidationErrors;
-import org.springframework.config.java.util.MethodAnnotationPrototype;
+import org.springframework.config.java.internal.util.MethodAnnotationPrototype;
 
 
 public class BeanMethodTests {

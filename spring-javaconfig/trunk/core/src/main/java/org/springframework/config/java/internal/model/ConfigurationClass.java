@@ -2,7 +2,7 @@ package org.springframework.config.java.internal.model;
 
 
 import static java.lang.String.format;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractClassAnnotation;
 import static org.springframework.util.ClassUtils.getShortName;
 
 import java.lang.reflect.Modifier;

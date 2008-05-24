@@ -1,6 +1,6 @@
 package org.springframework.config.java.internal.parsing;
 
-import static org.springframework.config.java.util.AnnotationExtractionUtils.findAnnotations;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.findAnnotations;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 import java.lang.annotation.Annotation;
@@ -24,8 +24,8 @@ import org.springframework.config.java.internal.model.NonJavaConfigMethod;
 import org.springframework.config.java.internal.model.PotentialConfigurationClass;
 import org.springframework.config.java.internal.type.ReflectiveType;
 import org.springframework.config.java.internal.type.Type;
-import org.springframework.config.java.util.Constants;
-import org.springframework.config.java.util.AnnotationExtractionUtils.AnnotationFilter;
+import org.springframework.config.java.internal.util.Constants;
+import org.springframework.config.java.internal.util.AnnotationExtractionUtils.AnnotationFilter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;

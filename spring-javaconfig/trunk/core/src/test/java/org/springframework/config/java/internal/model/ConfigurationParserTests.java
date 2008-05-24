@@ -1,7 +1,7 @@
 package org.springframework.config.java.internal.model;
 
 import static org.junit.Assert.*;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractClassAnnotation;
 
 import java.lang.reflect.Modifier;
 

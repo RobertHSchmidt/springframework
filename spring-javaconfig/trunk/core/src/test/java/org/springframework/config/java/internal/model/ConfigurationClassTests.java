@@ -7,7 +7,7 @@ import static org.springframework.config.java.internal.model.AspectClassTests.VA
 import static org.springframework.config.java.internal.model.AutoBeanMethodTests.VALID_AUTOBEAN_METHOD;
 import static org.springframework.config.java.internal.model.BeanMethodTests.VALID_BEAN_METHOD;
 import static org.springframework.config.java.internal.model.ValidationError.*;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractClassAnnotation;
 
 import java.lang.reflect.Modifier;
 

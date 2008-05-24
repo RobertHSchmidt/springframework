@@ -7,8 +7,8 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
 import static org.springframework.config.java.internal.factory.BeanVisibility.HIDDEN;
 import static org.springframework.config.java.internal.factory.BeanVisibility.PUBLIC;
 import static org.springframework.config.java.internal.model.AutoBeanMethodTests.VALID_AUTOBEAN_METHOD;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.extractClassAnnotation;
-import static org.springframework.config.java.util.AnnotationExtractionUtils.extractMethodAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractClassAnnotation;
+import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractMethodAnnotation;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +26,10 @@ import org.springframework.config.java.internal.factory.support.ConfigurationMod
 import org.springframework.config.java.internal.model.BeanMethod;
 import org.springframework.config.java.internal.model.ConfigurationClass;
 import org.springframework.config.java.internal.model.ConfigurationModel;
+import org.springframework.config.java.internal.util.AnnotationExtractionUtils;
+import org.springframework.config.java.internal.util.MethodAnnotationPrototype;
 import org.springframework.config.java.naming.MethodNameStrategy;
-import org.springframework.config.java.util.AnnotationExtractionUtils;
 import org.springframework.config.java.util.DefaultScopes;
-import org.springframework.config.java.util.MethodAnnotationPrototype;
 
 /**
  * TODO: clean up duplication between the tests herein

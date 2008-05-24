@@ -6,7 +6,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.internal.factory.BeanFactoryProvider;
-import org.springframework.config.java.util.Constants;
+import org.springframework.config.java.internal.util.Constants;
 
 public class DefaultBeanFactoryProvider implements BeanFactoryProvider {
 
