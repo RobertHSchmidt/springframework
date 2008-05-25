@@ -1,4 +1,4 @@
-package org.springframework.config.java.aspects;
+package org.springframework.config.java.aspect;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;

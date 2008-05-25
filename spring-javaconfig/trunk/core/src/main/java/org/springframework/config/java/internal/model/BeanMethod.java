@@ -29,7 +29,7 @@ import org.springframework.config.java.annotation.aop.HotSwappable;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.internal.util.AnnotationExtractionUtils;
 import org.springframework.config.java.internal.util.MethodAnnotationPrototype;
-import org.springframework.config.java.type.ModelMethod;
+import org.springframework.config.java.model.ModelMethod;
 import org.springframework.util.Assert;
 
 public class BeanMethod extends ModelMethod {

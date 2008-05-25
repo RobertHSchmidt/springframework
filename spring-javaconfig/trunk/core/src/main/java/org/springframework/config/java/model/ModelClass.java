@@ -1,17 +1,17 @@
-package org.springframework.config.java.type;
+package org.springframework.config.java.model;
 
 import org.springframework.util.ClassUtils;
 
-public class Class {
+public class ModelClass {
 
 	private final String name;
 	private final boolean isInterface;
 
-	public Class(String name) {
+	public ModelClass(String name) {
 		this(name, false);
 	}
 
-	public Class(String name, boolean isInterface) {
+	public ModelClass(String name, boolean isInterface) {
 		this.name = name;
 		this.isInterface = isInterface;
 	}
@@ -33,8 +33,8 @@ public class Class {
 	 * A very limited subset of data is populated for the class, just class name
 	 * and package name.
 	 */
-	public static Class forClass(java.lang.Class<?> clazz) {
-		return new Class(clazz.getName(), clazz.isInterface());
+	public static ModelClass forClass(java.lang.Class<?> clazz) {
+		return new ModelClass(clazz.getName(), clazz.isInterface());
 	}
 
 }

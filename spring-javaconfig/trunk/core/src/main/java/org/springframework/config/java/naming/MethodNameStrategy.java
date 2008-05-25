@@ -15,8 +15,8 @@
  */
 package org.springframework.config.java.naming;
 
-import org.springframework.config.java.type.Class;
-import org.springframework.config.java.type.ModelMethod;
+import org.springframework.config.java.model.ModelClass;
+import org.springframework.config.java.model.ModelMethod;
 import org.springframework.util.Assert;
 
 /**
@@ -84,7 +84,7 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 		Assert.notNull(modelMethod, "modelMethod is required");
 
 		String beanName = modelMethod.getName();
-		Class declaringClass = modelMethod.getDeclaringClass();
+		ModelClass declaringClass = modelMethod.getDeclaringClass();
 		Assert.notNull(declaringClass, "declaringClass was not specified for " + modelMethod);
 
 		switch (prefix) {

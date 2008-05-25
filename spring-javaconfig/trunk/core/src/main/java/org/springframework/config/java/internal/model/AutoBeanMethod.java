@@ -6,17 +6,17 @@ import static org.springframework.config.java.internal.util.AnnotationExtraction
 import java.lang.annotation.Annotation;
 
 import org.springframework.config.java.annotation.AutoBean;
-import org.springframework.config.java.type.Class;
+import org.springframework.config.java.model.ModelClass;
 import org.springframework.util.Assert;
 
 public class AutoBeanMethod {
 
 	private final String name;
 	private final AutoBean metadata;
-	private final Class returnType;
+	private final ModelClass returnType;
 	private final int modifiers;
 
-	public AutoBeanMethod(String name, Class returnType, int modifiers, Annotation... annotations) {
+	public AutoBeanMethod(String name, ModelClass returnType, int modifiers, Annotation... annotations) {
 		this.name = name;
 		Assert.notNull(annotations);
 		this.metadata = findAnnotation(AutoBean.class, annotations);
@@ -37,7 +37,7 @@ public class AutoBeanMethod {
 		return metadata;
 	}
 
-	public Class getReturnType() {
+	public ModelClass getReturnType() {
 		return returnType;
 	}
 

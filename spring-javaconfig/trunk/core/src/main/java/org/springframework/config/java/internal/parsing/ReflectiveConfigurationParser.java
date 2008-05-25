@@ -24,6 +24,7 @@ import org.springframework.config.java.internal.model.NonJavaConfigMethod;
 import org.springframework.config.java.internal.model.PotentialConfigurationClass;
 import org.springframework.config.java.internal.util.Constants;
 import org.springframework.config.java.internal.util.AnnotationExtractionUtils.AnnotationFilter;
+import org.springframework.config.java.model.ModelClass;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
@@ -170,8 +171,7 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 
 	private void processMethod(Method method, ConfigurationClass modelClass) {
 		Annotation[] annotations = getJavaConfigAnnotations(method);
-		org.springframework.config.java.type.Class returnType =
-			org.springframework.config.java.type.Class.forClass(method.getReturnType());
+		ModelClass returnType = ModelClass.forClass(method.getReturnType());
 
 		if(BeanMethod.identifyAsBeanMethod(annotations))
 			modelClass.add(new BeanMethod(method.getName(), method.getModifiers(), annotations));
