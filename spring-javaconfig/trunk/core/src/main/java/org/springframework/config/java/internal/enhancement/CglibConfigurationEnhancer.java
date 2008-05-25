@@ -29,7 +29,7 @@ import org.springframework.config.java.internal.factory.BeanVisibility;
 import org.springframework.config.java.internal.factory.JavaConfigBeanFactory;
 import org.springframework.config.java.internal.factory.support.ConfigurationModelBeanDefinitionReader;
 import org.springframework.config.java.internal.factory.support.JavaConfigAspectRegistry;
-import org.springframework.config.java.internal.type.ModelMethod;
+import org.springframework.config.java.type.ModelMethod;
 import org.springframework.config.java.valuesource.ValueResolutionException;
 import org.springframework.config.java.valuesource.ValueSource;
 import org.springframework.core.annotation.AnnotationUtils;

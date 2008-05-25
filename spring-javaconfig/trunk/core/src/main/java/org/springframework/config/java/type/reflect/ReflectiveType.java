@@ -1,6 +1,6 @@
-package org.springframework.config.java.internal.type.reflect;
+package org.springframework.config.java.type.reflect;
 
-import org.springframework.config.java.internal.type.Type;
+import org.springframework.config.java.type.Type;
 
 public class ReflectiveType implements Type {
 

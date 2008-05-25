@@ -1,4 +1,4 @@
-package org.springframework.config.java.internal.type;
+package org.springframework.config.java.type;
 
 import java.lang.annotation.Annotation;
 

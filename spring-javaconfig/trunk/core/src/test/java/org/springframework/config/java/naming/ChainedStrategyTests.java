@@ -18,7 +18,7 @@ package org.springframework.config.java.naming;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.springframework.config.java.internal.type.ModelMethod;
+import org.springframework.config.java.type.ModelMethod;
 
 /**
  * @author Rod Johnson

@@ -6,7 +6,7 @@ import static org.springframework.config.java.internal.util.AnnotationExtraction
 import java.lang.annotation.Annotation;
 
 import org.springframework.config.java.annotation.AutoBean;
-import org.springframework.config.java.internal.type.Type;
+import org.springframework.config.java.type.Type;
 import org.springframework.util.Assert;
 
 public class AutoBeanMethod {

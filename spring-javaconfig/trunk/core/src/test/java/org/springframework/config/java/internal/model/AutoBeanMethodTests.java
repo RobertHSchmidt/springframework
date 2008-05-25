@@ -15,9 +15,9 @@ import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.internal.model.AutoBeanMethod;
 import org.springframework.config.java.internal.model.ValidationError;
 import org.springframework.config.java.internal.model.ValidationErrors;
-import org.springframework.config.java.internal.type.Type;
-import org.springframework.config.java.internal.type.reflect.ReflectiveType;
 import org.springframework.config.java.internal.util.MethodAnnotationPrototype;
+import org.springframework.config.java.type.Type;
+import org.springframework.config.java.type.reflect.ReflectiveType;
 
 /**
  * Unit tests for {@link AutoBeanMethod}
