@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.type.Class;
+import org.springframework.config.java.model.ModelClass;
 import org.springframework.util.Assert;
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  *
  * @author Chris Beams
  */
-public class ConfigurationClass extends Class {
+public class ConfigurationClass extends ModelClass {
 
 	/**
 	 * Used as metadata on {@link org.springframework.beans.factory.config.BeanDefinition}

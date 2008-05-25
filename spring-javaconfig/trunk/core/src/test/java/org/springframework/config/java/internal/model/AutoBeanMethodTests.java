@@ -13,7 +13,7 @@ import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.internal.util.MethodAnnotationPrototype;
-import org.springframework.config.java.type.Class;
+import org.springframework.config.java.model.ModelClass;
 
 /**
  * Unit tests for {@link AutoBeanMethod}
@@ -28,7 +28,7 @@ public class AutoBeanMethodTests {
 	static AutoBean CUSTOM_METADATA = extractMethodAnnotation(AutoBean.class, new MethodAnnotationPrototype() {
 		public @AutoBean(autowire=Autowire.BY_NAME) void targetMethod() { } }.getClass());
 
-	static final Class DEFAULT_RETURN_TYPE = Class.forClass(TestBean.class);
+	static final ModelClass DEFAULT_RETURN_TYPE = ModelClass.forClass(TestBean.class);
 	static final AutoBeanMethod VALID_AUTOBEAN_METHOD = new AutoBeanMethod("m", DEFAULT_RETURN_TYPE, 0, DEFAULT_METADATA);
 
 	public @Test void testConstruction() {
@@ -53,7 +53,7 @@ public class AutoBeanMethodTests {
 		assertThat(a1, not(equalTo(a2)));
 		assertThat(a2, not(equalTo(a1)));
 
-		Class iface = Class.forClass(ITestBean.class);
+		ModelClass iface = ModelClass.forClass(ITestBean.class);
 		a2 = new AutoBeanMethod("a", iface, 0, DEFAULT_METADATA);
 		assertThat(a1, not(equalTo(a2)));
 
@@ -72,7 +72,7 @@ public class AutoBeanMethodTests {
 		}
 
 		{ // invalid because return type is interface
-			Class rtInvalid = Class.forClass(ITestBean.class);
+			ModelClass rtInvalid = ModelClass.forClass(ITestBean.class);
 			AutoBeanMethod valid = new AutoBeanMethod("invalid", rtInvalid, 0, DEFAULT_METADATA);
 			ValidationErrors errors = new ValidationErrors();
 			valid.validate(errors);

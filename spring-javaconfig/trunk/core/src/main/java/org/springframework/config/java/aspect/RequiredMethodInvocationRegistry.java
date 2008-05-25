@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java.aspects;
+package org.springframework.config.java.aspect;
 
 import static java.lang.String.format;
 import static java.lang.System.identityHashCode;
