@@ -84,13 +84,13 @@ public class BeanMethod extends ModelMethod {
 	}
 
 	public ValidationErrors validate(ValidationErrors errors) {
-		if(Modifier.isPrivate(modifiers))
+		if(Modifier.isPrivate(getModifiers()))
 			// TODO: needs to have reference to parent class for better diagnostics
-			errors.add(ValidationError.METHOD_MAY_NOT_BE_PRIVATE + ": " + name);
+			errors.add(ValidationError.METHOD_MAY_NOT_BE_PRIVATE + ": " + getName());
 
 		Object[] compatibleAnnotationTypes = new Object[] { Bean.class, ScopedProxy.class, HotSwappable.class };
 
-		for(Annotation anno : annotations)
+		for(Annotation anno : getAnnotations())
 			if(!arrayContains(compatibleAnnotationTypes, anno.annotationType()))
 				errors.add(String.format("%s: @%s method is not compatible with @%s",
 						ValidationError.INCOMPATIBLE_ANNOTATION,
@@ -101,7 +101,7 @@ public class BeanMethod extends ModelMethod {
 			if(metadata.scope().equals(SINGLETON) || metadata.scope().equals(PROTOTYPE))
 				errors.add(format("%s: method %s contains an invalid annotation declaration: @ScopedProxy "
 								+ "cannot be used on a singleton/prototype bean",
-								ValidationError.INVALID_ANNOTATION_DECLARATION, name));
+								ValidationError.INVALID_ANNOTATION_DECLARATION, getName()));
 
 		return errors;
 	}
@@ -118,16 +118,15 @@ public class BeanMethod extends ModelMethod {
 	@Override
 	public String toString() {
 		return format("%s: name=%s; modifiers=%d",
-				       getClass().getSimpleName(), name, modifiers);
+				       getClass().getSimpleName(), getName(), getModifiers());
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + modifiers;
+		result = prime * result + ((scopedProxyMetadata == null) ? 0 : scopedProxyMetadata.hashCode());
 		return result;
 	}
 
@@ -135,7 +134,7 @@ public class BeanMethod extends ModelMethod {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -146,13 +145,11 @@ public class BeanMethod extends ModelMethod {
 		}
 		else if (!metadata.equals(other.metadata))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (scopedProxyMetadata == null) {
+			if (other.scopedProxyMetadata != null)
 				return false;
 		}
-		else if (!name.equals(other.name))
-			return false;
-		if (modifiers != other.modifiers)
+		else if (!scopedProxyMetadata.equals(other.scopedProxyMetadata))
 			return false;
 		return true;
 	}
