@@ -55,6 +55,12 @@ public class ModelMethod {
 		return modelMethod;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%s: name=%s; modifiers=%d",
+				       getClass().getSimpleName(), name, modifiers);
+	}
+
 	/* NOTE: bi-directional relationship between ModelMethod and ModelClass means that
 	 * hashCode() should not evaluate declaringClass.  It will cause a stack overflow */
 	@Override

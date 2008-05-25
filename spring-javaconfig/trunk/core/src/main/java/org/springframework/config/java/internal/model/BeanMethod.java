@@ -114,13 +114,6 @@ public class BeanMethod extends ModelMethod {
 		return false;
 	}
 
-
-	@Override
-	public String toString() {
-		return format("%s: name=%s; modifiers=%d",
-				       getClass().getSimpleName(), getName(), getModifiers());
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

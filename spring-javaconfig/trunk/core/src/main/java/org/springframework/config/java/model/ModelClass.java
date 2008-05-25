@@ -28,6 +28,11 @@ public class ModelClass {
 		return ClassUtils.getShortName(name);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%s: name=%s", getClass().getSimpleName(), getSimpleName());
+	}
+
 	/**
 	 * Create a new ConfigurationClass for a given {@link java.lang.Class}.
 	 * A very limited subset of data is populated for the class, just class name

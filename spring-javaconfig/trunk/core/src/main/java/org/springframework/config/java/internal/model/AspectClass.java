@@ -1,13 +1,11 @@
 package org.springframework.config.java.internal.model;
 
-import static java.lang.String.format;
-
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.config.java.model.ModelClass;
 
-public class AspectClass {
+public class AspectClass extends ModelClass {
 
 	public static final String BEAN_ATTR_NAME = "isJavaConfigurationAspectClass";
-	private final String name;
 	private Aspect metadata;
 
 	/**
@@ -22,16 +20,12 @@ public class AspectClass {
 	}
 
 	public AspectClass(String fqClassName, Aspect metadata) {
-		this.name = fqClassName;
+		super(fqClassName);
 		this.metadata = metadata;
 	}
 
 	public void setMetadata(Aspect metadata) {
 		this.metadata = metadata;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public ValidationErrors validate(ValidationErrors errors) {
@@ -41,16 +35,10 @@ public class AspectClass {
 	}
 
 	@Override
-	public String toString() {
-		return format("%s: name=%s", this.getClass().getSimpleName(), name);
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -58,7 +46,7 @@ public class AspectClass {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -68,12 +56,6 @@ public class AspectClass {
 				return false;
 		}
 		else if (!metadata.equals(other.metadata))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
 			return false;
 		return true;
 	}

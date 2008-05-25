@@ -31,7 +31,7 @@ import org.springframework.context.ResourceLoaderAware;
 /**
  * Convenient base class for Configurations, allowing easy lookup of beans in
  * the owning factory
- * 
+ *
  * @author Rod Johnson
  */
 @Configuration
