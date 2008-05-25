@@ -42,12 +42,12 @@ public abstract class AbstractNamingStrategyTests {
 	@Before
 	public void setUp() throws Exception {
 		strategy = createNamingStrategy();
-		Class sampleConfigClass = new ConfigurationClass("MyConfig").setPackage("com.acme");
+		Class sampleConfigClass = new ConfigurationClass("com.acme.MyConfig");
 		sampleMethod = BeanMethodTests.VALID_BEAN_METHOD;
 		sampleMethod.setDeclaringClass(sampleConfigClass);
 		expectedMethodName = sampleMethod.getName();
-		expectedClassName = sampleConfigClass.getName();
-		expectedFqClassName = sampleConfigClass.getFullyQualifiedName();
+		expectedClassName = sampleConfigClass.getSimpleName();
+		expectedFqClassName = sampleConfigClass.getName();
 	}
 
 	/*

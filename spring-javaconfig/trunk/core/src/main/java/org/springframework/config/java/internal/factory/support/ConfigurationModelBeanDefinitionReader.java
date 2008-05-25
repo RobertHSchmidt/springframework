@@ -33,7 +33,7 @@ import org.springframework.config.java.internal.model.BeanMethod;
 import org.springframework.config.java.internal.model.ConfigurationClass;
 import org.springframework.config.java.internal.model.ConfigurationModel;
 import org.springframework.config.java.internal.util.Constants;
-import org.springframework.config.java.type.Type;
+import org.springframework.config.java.type.Class;
 import org.springframework.config.java.valuesource.MessageSourceValueSource;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -271,7 +271,7 @@ public class ConfigurationModelBeanDefinitionReader {
 
 
 	private void loadBeanDefinitionsForAutoBeanMethod(AutoBeanMethod method) {
-		Type returnType = method.getReturnType();
+		Class returnType = method.getReturnType();
 
 		RootBeanDefinition beanDef = new RootBeanDefinition();
 		beanDef.setBeanClassName(returnType.getName());
