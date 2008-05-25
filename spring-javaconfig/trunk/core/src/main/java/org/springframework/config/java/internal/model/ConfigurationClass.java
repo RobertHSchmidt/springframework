@@ -292,17 +292,18 @@ public class ConfigurationClass extends ModelClass {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((autoBeanMethods == null) ? 0 : autoBeanMethods.hashCode());
 		result = prime * result + ((beanMethods == null) ? 0 : beanMethods.hashCode());
 		result = prime * result + ((declaringClass == null) ? 0 : declaringClass.hashCode());
 		result = prime * result + ((externalBeanMethods == null) ? 0 : externalBeanMethods.hashCode());
+		result = prime * result + ((externalValueMethods == null) ? 0 : externalValueMethods.hashCode());
 		result = prime * result + ((importedAspects == null) ? 0 : importedAspects.hashCode());
 		result = prime * result + ((importedClasses == null) ? 0 : importedClasses.hashCode());
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + modifiers;
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((nonJavaConfigMethods == null) ? 0 : nonJavaConfigMethods.hashCode());
+		result = prime * result + ((pkg == null) ? 0 : pkg.hashCode());
 		result = prime * result + ((resourceBundles == null) ? 0 : resourceBundles.hashCode());
 		return result;
 	}
@@ -311,7 +312,7 @@ public class ConfigurationClass extends ModelClass {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -340,6 +341,12 @@ public class ConfigurationClass extends ModelClass {
 		}
 		else if (!externalBeanMethods.equals(other.externalBeanMethods))
 			return false;
+		if (externalValueMethods == null) {
+			if (other.externalValueMethods != null)
+				return false;
+		}
+		else if (!externalValueMethods.equals(other.externalValueMethods))
+			return false;
 		if (importedAspects == null) {
 			if (other.importedAspects != null)
 				return false;
@@ -360,17 +367,17 @@ public class ConfigurationClass extends ModelClass {
 			return false;
 		if (modifiers != other.modifiers)
 			return false;
-		if (getName() == null) {
-			if (other.getName() != null)
-				return false;
-		}
-		else if (!getName().equals(other.getName()))
-			return false;
 		if (nonJavaConfigMethods == null) {
 			if (other.nonJavaConfigMethods != null)
 				return false;
 		}
 		else if (!nonJavaConfigMethods.equals(other.nonJavaConfigMethods))
+			return false;
+		if (pkg == null) {
+			if (other.pkg != null)
+				return false;
+		}
+		else if (!pkg.equals(other.pkg))
 			return false;
 		if (resourceBundles == null) {
 			if (other.resourceBundles != null)
