@@ -28,12 +28,10 @@ abstract class AbstractValidatableAnnotatedMethod<A extends Annotation>
 
 		Type arg = typeArgs[0];
 
-		Assert.isInstanceOf(Class.class, arg);
-
 		@SuppressWarnings("unchecked")
-		Class<? extends Annotation> annoType = (Class<? extends Annotation>) arg;
+		Class<A> annoType = (Class<A>) arg;
 
-		this.metadata = (A) findAnnotation(annoType, annotations);
+		this.metadata = findAnnotation(annoType, annotations);
 		Assert.notNull(metadata, "could not find target annotation @" + annoType.getName());
 	}
 
@@ -44,7 +42,9 @@ abstract class AbstractValidatableAnnotatedMethod<A extends Annotation>
 	public ValidationErrors validate(ValidationErrors errors) {
 		if(Modifier.isPrivate(getModifiers()))
 			// TODO: needs to have reference to parent class for better diagnostics
-			errors.add(ValidationError.METHOD_MAY_NOT_BE_PRIVATE + ": " + getName());
+			errors.add(String.format("%s: @%s method '%s' may not be private",
+					ValidationError.METHOD_MAY_NOT_BE_PRIVATE,
+					metadata.annotationType().getSimpleName(), getName()));
 		return errors;
 	}
 
