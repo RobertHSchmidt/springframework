@@ -58,7 +58,7 @@ public class ConfigurationClassTests {
     		.add(new BeanMethod("z"))
     	;
 
-    	assertArrayEquals(new BeanMethod[] { finalBeanMethod }, configClass.getFinalBeanMethods());
+    	assertArrayEquals(new ValidatableMethod[] { finalBeanMethod }, configClass.getFinalBeanMethods());
 	}
 
 	public @Test void equality() {
