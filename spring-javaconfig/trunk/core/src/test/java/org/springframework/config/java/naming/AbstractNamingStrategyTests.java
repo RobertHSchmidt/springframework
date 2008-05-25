@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.springframework.config.java.internal.model.BeanMethod;
 import org.springframework.config.java.internal.model.BeanMethodTests;
 import org.springframework.config.java.internal.model.ConfigurationClass;
-import org.springframework.config.java.internal.type.Class;
+import org.springframework.config.java.type.Class;
 
 public abstract class AbstractNamingStrategyTests {
 

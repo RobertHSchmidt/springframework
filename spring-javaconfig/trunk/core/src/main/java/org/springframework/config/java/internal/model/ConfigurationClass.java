@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ResourceBundles;
-import org.springframework.config.java.internal.type.Class;
+import org.springframework.config.java.type.Class;
 import org.springframework.util.Assert;
 
 /**
