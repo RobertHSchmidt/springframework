@@ -57,19 +57,6 @@ public class JavaConfigAspectRegistry {
 		beanFactory.registerSingleton(aspectRegistryBeanName, this);
 	}
 
-	/**
-	 * Finds any aspects specified within <var>model</var> and registers associated pointcuts
-	 * and advice such that they can be used during runtime processing within enhanced {@link Bean @Bean}
-	 * methods.
-	 *
-	 * @param model
-	 * @param beanFactory
-	 */
-	public void registerAspects(Class<?>[] atAspectClasses) {
-		for(Class<?> atAspectClass : atAspectClasses)
-			registerAspect(atAspectClass);
-	}
-
 	public Object proxyIfAnyPointcutsApply(Object bean, Method method, Bean metadata) {
 		ProxyFactory pf = new ProxyFactory(bean);
 
@@ -125,7 +112,7 @@ public class JavaConfigAspectRegistry {
 		}
 	}
 
-	private void registerAspect(final Class<?> atAspectClass) {
+	public void registerAspect(final Class<?> atAspectClass) {
 		advisorFactory.validate(atAspectClass);
 
 		ReflectionUtils.doWithMethods(atAspectClass,
