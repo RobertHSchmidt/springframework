@@ -10,7 +10,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
-import org.springframework.config.java.aspects.RequiredMethodInvocationTracker;
 import org.springframework.config.java.context.JavaConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -22,7 +21,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * have been invoked is to do bytecode weaving, and so this has been done using
  * AspectJ
  * 
- * @see RequiredMethodInvocationTracker
+ * @see org.springframework.config.java.aspect.RequiredMethodInvocationTracker
  * 
  * IMPORTANT:
  * 
