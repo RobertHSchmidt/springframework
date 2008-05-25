@@ -34,9 +34,8 @@ public class ModelClass {
 	}
 
 	/**
-	 * Create a new ConfigurationClass for a given {@link java.lang.Class}.
-	 * A very limited subset of data is populated for the class, just class name
-	 * and package name.
+	 * Create a new ModelClass for a given {@link java.lang.Class}.
+	 * A very limited subset of data is populated for the class.
 	 */
 	public static ModelClass forClass(java.lang.Class<?> clazz) {
 		return new ModelClass(clazz.getName(), clazz.isInterface());
