@@ -89,11 +89,11 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 
 		switch (prefix) {
     		case CLASS:
-    			beanName = declaringClass.getName().concat(".").concat(beanName);
+    			beanName = declaringClass.getSimpleName().concat(".").concat(beanName);
     			break;
 
     		case FQN:
-    			beanName = declaringClass.getFullyQualifiedName().concat(".").concat(beanName);
+    			beanName = declaringClass.getName().concat(".").concat(beanName);
     			break;
 
     		default:
