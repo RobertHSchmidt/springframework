@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.springframework.config.java.internal.model.BeanMethod;
 import org.springframework.config.java.internal.model.BeanMethodTests;
 import org.springframework.config.java.internal.model.ConfigurationClass;
+import org.springframework.config.java.internal.type.Class;
 
 public abstract class AbstractNamingStrategyTests {
 
@@ -41,7 +42,7 @@ public abstract class AbstractNamingStrategyTests {
 	@Before
 	public void setUp() throws Exception {
 		strategy = createNamingStrategy();
-		ConfigurationClass sampleConfigClass = new ConfigurationClass("MyConfig").setPackage("com.acme");
+		Class sampleConfigClass = new ConfigurationClass("MyConfig").setPackage("com.acme");
 		sampleMethod = BeanMethodTests.VALID_BEAN_METHOD;
 		sampleMethod.setDeclaringClass(sampleConfigClass);
 		expectedMethodName = sampleMethod.getName();
