@@ -22,20 +22,18 @@ import static org.springframework.config.java.util.DefaultScopes.PROTOTYPE;
 import static org.springframework.config.java.util.DefaultScopes.SINGLETON;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
 
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.aop.HotSwappable;
 import org.springframework.config.java.annotation.aop.ScopedProxy;
 import org.springframework.config.java.internal.util.AnnotationExtractionUtils;
 import org.springframework.config.java.internal.util.MethodAnnotationPrototype;
-import org.springframework.config.java.model.ModelMethod;
-import org.springframework.util.Assert;
 
-public class BeanMethod extends ModelMethod {
+public class BeanMethod extends AbstractValidatableAnnotatedMethod<Bean> {
+
 	private static final Bean DEFAULT_BEAN_ANNOTATION =
 		extractMethodAnnotation(Bean.class, new MethodAnnotationPrototype() { public @Bean void targetMethod() {} }.getClass());
-	private final Bean metadata;
+
 	private final ScopedProxy scopedProxyMetadata;
 
 	/** for testing convenience */
@@ -56,9 +54,6 @@ public class BeanMethod extends ModelMethod {
 	public BeanMethod(String name, int modifiers, Annotation... annotations) {
 		super(name, modifiers, annotations);
 
-		this.metadata = findAnnotation(Bean.class, annotations);
-		Assert.notNull(metadata, "could not find target annotation @" + Bean.class.getName());
-
 		// may be null, it's ok
 		this.scopedProxyMetadata = findAnnotation(ScopedProxy.class, annotations);
 	}
@@ -70,11 +65,6 @@ public class BeanMethod extends ModelMethod {
 		return (AnnotationExtractionUtils.findAnnotation(Bean.class, annotations) != null);
 	}
 
-	public Bean getMetadata() {
-		return metadata;
-	}
-
-
 	public boolean isScopedProxy() {
 		return scopedProxyMetadata != null;
 	}
@@ -83,10 +73,9 @@ public class BeanMethod extends ModelMethod {
 		return scopedProxyMetadata;
 	}
 
+	@Override
 	public ValidationErrors validate(ValidationErrors errors) {
-		if(Modifier.isPrivate(getModifiers()))
-			// TODO: needs to have reference to parent class for better diagnostics
-			errors.add(ValidationError.METHOD_MAY_NOT_BE_PRIVATE + ": " + getName());
+		super.validate(errors);
 
 		Object[] compatibleAnnotationTypes = new Object[] { Bean.class, ScopedProxy.class, HotSwappable.class };
 
@@ -94,11 +83,11 @@ public class BeanMethod extends ModelMethod {
 			if(!arrayContains(compatibleAnnotationTypes, anno.annotationType()))
 				errors.add(String.format("%s: @%s method is not compatible with @%s",
 						ValidationError.INCOMPATIBLE_ANNOTATION,
-						metadata.annotationType().getSimpleName(),
+						getMetadata().annotationType().getSimpleName(),
 						anno.annotationType().getSimpleName()));
 
 		if(this.isScopedProxy())
-			if(metadata.scope().equals(SINGLETON) || metadata.scope().equals(PROTOTYPE))
+			if(getMetadata().scope().equals(SINGLETON) || getMetadata().scope().equals(PROTOTYPE))
 				errors.add(format("%s: method %s contains an invalid annotation declaration: @ScopedProxy "
 								+ "cannot be used on a singleton/prototype bean",
 								ValidationError.INVALID_ANNOTATION_DECLARATION, getName()));
@@ -118,7 +107,6 @@ public class BeanMethod extends ModelMethod {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + ((scopedProxyMetadata == null) ? 0 : scopedProxyMetadata.hashCode());
 		return result;
 	}
@@ -132,12 +120,6 @@ public class BeanMethod extends ModelMethod {
 		if (getClass() != obj.getClass())
 			return false;
 		BeanMethod other = (BeanMethod) obj;
-		if (metadata == null) {
-			if (other.metadata != null)
-				return false;
-		}
-		else if (!metadata.equals(other.metadata))
-			return false;
 		if (scopedProxyMetadata == null) {
 			if (other.scopedProxyMetadata != null)
 				return false;

@@ -255,7 +255,7 @@ public class ConfigurationClass extends ModelClass {
 			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_EXTERNALVALUE_OR_AUTOBEAN.toString() + ": " + getName());
 
 		// cascade through all declared @Bean methods
-		for(BeanMethod method : beanMethods)
+		for(ValidatableMethod method : beanMethods)
 			method.validate(errors);
 
 		// cascade through all declared @ExternalBean methods

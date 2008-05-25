@@ -81,7 +81,7 @@ public class BeanMethodTests {
 			public @Bogus void targetMethod() { }
 		}.getClass());
 
-		BeanMethod method = new BeanMethod("m", 0, beanAnno, unknownAnno);
+		ValidatableMethod method = new BeanMethod("m", 0, beanAnno, unknownAnno);
 		ValidationErrors errors = new ValidationErrors();
 		method.validate(errors);
 		assertTrue(errors.get(0).contains(ValidationError.INCOMPATIBLE_ANNOTATION.toString()));
