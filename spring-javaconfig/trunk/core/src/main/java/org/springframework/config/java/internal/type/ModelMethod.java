@@ -1,4 +1,4 @@
-package org.springframework.config.java.internal.model;
+package org.springframework.config.java.internal.type;
 
 import java.lang.annotation.Annotation;
 
@@ -11,7 +11,7 @@ public class ModelMethod {
 	protected final Annotation[] annotations;
 
 	/** optionally set */
-	private ConfigurationClass declaringClass;
+	private Class declaringClass;
 
 	public ModelMethod(String name, int modifiers, Annotation[] annotations) {
 		Assert.hasText(name);
@@ -33,11 +33,11 @@ public class ModelMethod {
 		return modifiers;
 	}
 
-	public void setDeclaringClass(ConfigurationClass declaringClass) {
+	public void setDeclaringClass(Class declaringClass) {
 		this.declaringClass = declaringClass;
 	}
 
-	public ConfigurationClass getDeclaringClass() {
+	public Class getDeclaringClass() {
 		return declaringClass;
 	}
 
@@ -46,7 +46,7 @@ public class ModelMethod {
 	 */
 	public static ModelMethod forMethod(java.lang.reflect.Method method) {
 		ModelMethod modelMethod = new ModelMethod(method.getName(), method.getModifiers(), method.getAnnotations());
-		modelMethod.setDeclaringClass(ConfigurationClass.forClass(method.getDeclaringClass()));
+		modelMethod.setDeclaringClass(Class.forClass(method.getDeclaringClass()));
 		return modelMethod;
 	}
 

@@ -12,6 +12,7 @@ import java.util.HashSet;
 
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.ResourceBundles;
+import org.springframework.config.java.internal.type.Class;
 import org.springframework.util.Assert;
 
 /**
@@ -28,7 +29,7 @@ import org.springframework.util.Assert;
  *
  * @author Chris Beams
  */
-public class ConfigurationClass {
+public class ConfigurationClass extends Class {
 
 	/**
 	 * Used as metadata on {@link org.springframework.beans.factory.config.BeanDefinition}
@@ -47,7 +48,6 @@ public class ConfigurationClass {
 	private @Configuration class Prototype { }
 	private static final Configuration DEFAULT_METADATA = extractClassAnnotation(Configuration.class, Prototype.class);
 
-	private final String name;
 	private final int modifiers;
 
 	private final Configuration metadata;
@@ -95,8 +95,8 @@ public class ConfigurationClass {
 	}
 
 	public ConfigurationClass(String name, Configuration metadata, int modifiers) {
+		super(name);
 		Assert.hasText(name, "Configuration class name must have text");
-		this.name = name;
 
 		Assert.notNull(metadata, "@Configuration annotation must be non-null");
 		this.metadata = metadata;
@@ -205,21 +205,6 @@ public class ConfigurationClass {
 		return declaringClass;
 	}
 
-	public String getFullyQualifiedName() {
-		Assert.notNull("package must be non-null", getPackage());
-		return getPackage().concat(".").concat(getName());
-	}
-
-	public ConfigurationClass setPackage(String pkg) {
-		this.pkg = pkg;
-		return this;
-	}
-
-	public String getPackage() {
-		return this.pkg;
-	}
-
-
 
 
 	/**
@@ -235,10 +220,6 @@ public class ConfigurationClass {
 	public ConfigurationClass add(ResourceBundles resourceBundle) {
 		resourceBundles.add(resourceBundle);
 		return this;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public int getModifiers() {
@@ -258,13 +239,13 @@ public class ConfigurationClass {
 
 		// a configuration class may not be final (CGLIB limitation)
 		if(Modifier.isFinal(modifiers))
-			errors.add(ValidationError.CONFIGURATION_MUST_BE_NON_FINAL + ": " + name);
+			errors.add(ValidationError.CONFIGURATION_MUST_BE_NON_FINAL + ": " + getName());
 
 		// a configuration class must declare at least one @Bean/@AutoBean OR import at least one other configuration
 		if(importedClasses.isEmpty()
 				&& beanMethods.isEmpty()
 				&& autoBeanMethods.isEmpty())
-			errors.add(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString() + ": " + name);
+			errors.add(ValidationError.CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_BEAN.toString() + ": " + getName());
 
 		// if the class is abstract and declares no @ExternalBean or @AutoBean methods, it is malformed
 		if(Modifier.isAbstract(modifiers)
@@ -272,7 +253,7 @@ public class ConfigurationClass {
 				&& externalValueMethods.isEmpty()
 				&& autoBeanMethods.isEmpty()
 				)
-			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_EXTERNALVALUE_OR_AUTOBEAN.toString() + ": " + name);
+			errors.add(ValidationError.ABSTRACT_CONFIGURATION_MUST_DECLARE_AT_LEAST_ONE_EXTERNALBEAN_EXTERNALVALUE_OR_AUTOBEAN.toString() + ": " + getName());
 
 		// cascade through all declared @Bean methods
 		for(BeanMethod method : beanMethods)
@@ -302,20 +283,10 @@ public class ConfigurationClass {
 		return errors;
 	}
 
-	/**
-	 * Create a new ConfigurationClass for a given {@link java.lang.Class}.
-	 * A very limited subset of data is populated for the class, just class name
-	 * and package name.
-	 */
-	public static ConfigurationClass forClass(Class<?> clazz) {
-		return new ConfigurationClass(clazz.getSimpleName()).setPackage(clazz.getPackage().getName());
-	}
-
-
 	@Override
 	public String toString() {
 		return format("%s: name=%s; beanMethods=%s; externalBeanMethods=%s; autoBeanMethods=%s",
-					   getClass().getSimpleName(), getShortName(name), beanMethods, externalBeanMethods, autoBeanMethods);
+					   getClass().getSimpleName(), getShortName(getName()), beanMethods, externalBeanMethods, autoBeanMethods);
 	}
 
 	@Override
@@ -330,7 +301,7 @@ public class ConfigurationClass {
 		result = prime * result + ((importedClasses == null) ? 0 : importedClasses.hashCode());
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
 		result = prime * result + modifiers;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((nonJavaConfigMethods == null) ? 0 : nonJavaConfigMethods.hashCode());
 		result = prime * result + ((resourceBundles == null) ? 0 : resourceBundles.hashCode());
 		return result;
@@ -389,11 +360,11 @@ public class ConfigurationClass {
 			return false;
 		if (modifiers != other.modifiers)
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
 		}
-		else if (!name.equals(other.name))
+		else if (!getName().equals(other.getName()))
 			return false;
 		if (nonJavaConfigMethods == null) {
 			if (other.nonJavaConfigMethods != null)

@@ -15,10 +15,9 @@
  */
 package org.springframework.config.java.naming;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import org.springframework.config.java.internal.model.ModelMethod;
+import org.springframework.config.java.internal.type.ModelMethod;
 import org.springframework.util.Assert;
 
 /**
@@ -38,12 +37,7 @@ public class ChainedStrategy implements BeanNamingStrategy {
 		this.strategies = strategies;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.config.java.naming.BeanNamingStrategy#getBeanName(java.lang.reflect.Method,
-	 * org.springframework.config.java.annotation.Configuration)
-	 */
-	public String getBeanName(Method beanCreationMethod) {
+	public String getBeanName(ModelMethod beanCreationMethod) {
 		for (BeanNamingStrategy strategy : strategies) {
 			if (strategy != null) {
 				String name = strategy.getBeanName(beanCreationMethod);
@@ -54,10 +48,6 @@ public class ChainedStrategy implements BeanNamingStrategy {
 
 		throw new IllegalArgumentException("no strategy returned a name; consider using different naming strategies "
 				+ Arrays.toString(strategies));
-	}
-
-	public String getBeanName(ModelMethod modelMethod) {
-		throw new UnsupportedOperationException();
 	}
 
 }

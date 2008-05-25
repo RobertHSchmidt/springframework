@@ -15,10 +15,8 @@
  */
 package org.springframework.config.java.naming;
 
-import java.lang.reflect.Method;
-
-import org.springframework.config.java.internal.model.ConfigurationClass;
-import org.springframework.config.java.internal.model.ModelMethod;
+import org.springframework.config.java.internal.type.Class;
+import org.springframework.config.java.internal.type.ModelMethod;
 import org.springframework.util.Assert;
 
 /**
@@ -82,43 +80,11 @@ public class MethodNameStrategy implements BeanNamingStrategy {
 		this.prefix = prefix;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.config.java.naming.BeanNamingStrategy#getBeanName(java.lang.reflect.Method,
-	 * org.springframework.config.java.annotation.Bean,
-	 * org.springframework.config.java.annotation.Configuration)
-	 */
-	@Deprecated
-	public String getBeanName(Method beanMethod) {
-		//throw new UnsupportedOperationException();
-		Assert.notNull(beanMethod, "modelMethod is required");
-
-		String beanName = beanMethod.getName();
-		Class<?> declaringClass = beanMethod.getDeclaringClass();
-		Assert.notNull(declaringClass, "declaringClass was not specified for " + beanMethod);
-
-		switch (prefix) {
-    		case CLASS:
-    			beanName = declaringClass.getSimpleName().concat(".").concat(beanName);
-    			break;
-
-    		case FQN:
-    			beanName = declaringClass.getName().concat(".").concat(beanName);
-    			break;
-
-    		default:
-    			// no-op
-    			break;
-		}
-
-		return beanName;
-	}
-
 	public String getBeanName(ModelMethod modelMethod) {
 		Assert.notNull(modelMethod, "modelMethod is required");
 
 		String beanName = modelMethod.getName();
-		ConfigurationClass declaringClass = modelMethod.getDeclaringClass();
+		Class declaringClass = modelMethod.getDeclaringClass();
 		Assert.notNull(declaringClass, "declaringClass was not specified for " + modelMethod);
 
 		switch (prefix) {
