@@ -3,7 +3,6 @@ package org.springframework.config.java.internal.model;
 
 import static java.lang.String.format;
 import static org.springframework.config.java.internal.util.AnnotationExtractionUtils.extractClassAnnotation;
-import static org.springframework.util.ClassUtils.getShortName;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -285,8 +284,8 @@ public class ConfigurationClass extends ModelClass {
 
 	@Override
 	public String toString() {
-		return format("%s: name=%s; beanMethods=%s; externalBeanMethods=%s; autoBeanMethods=%s",
-					   getClass().getSimpleName(), getShortName(getName()), beanMethods, externalBeanMethods, autoBeanMethods);
+		return format("%s; beanMethods=%s; externalBeanMethods=%s; autoBeanMethods=%s",
+					   super.toString(), beanMethods, externalBeanMethods, autoBeanMethods);
 	}
 
 	@Override

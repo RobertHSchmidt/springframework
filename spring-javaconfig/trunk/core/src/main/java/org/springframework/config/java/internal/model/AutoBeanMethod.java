@@ -7,30 +7,23 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.config.java.annotation.AutoBean;
 import org.springframework.config.java.model.ModelClass;
+import org.springframework.config.java.model.ModelMethod;
 import org.springframework.util.Assert;
 
-public class AutoBeanMethod {
+public class AutoBeanMethod extends ModelMethod {
 
-	private final String name;
 	private final AutoBean metadata;
 	private final ModelClass returnType;
-	private final int modifiers;
 
 	public AutoBeanMethod(String name, ModelClass returnType, int modifiers, Annotation... annotations) {
-		this.name = name;
-		Assert.notNull(annotations);
+		super(name, modifiers, annotations);
 		this.metadata = findAnnotation(AutoBean.class, annotations);
 		Assert.notNull(metadata);
 		this.returnType = returnType;
-		this.modifiers = modifiers;
 	}
 
 	public static boolean identifyAsExternalBeanMethod(Annotation[] annotations) {
 		return (findAnnotation(AutoBean.class, annotations) != null);
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public AutoBean getMetadata() {
@@ -48,17 +41,14 @@ public class AutoBeanMethod {
 
 	@Override
 	public String toString() {
-		return format("%s: name=%s; returnType=%s; modifiers=%d",
-				       getClass().getSimpleName(), name, returnType.getSimpleName(), modifiers);
+		return format("%s; returnType=%s", super.toString(), returnType.getSimpleName());
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-		result = prime * result + modifiers;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((returnType == null) ? 0 : returnType.hashCode());
 		return result;
 	}
@@ -67,7 +57,7 @@ public class AutoBeanMethod {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -77,14 +67,6 @@ public class AutoBeanMethod {
 				return false;
 		}
 		else if (!metadata.equals(other.metadata))
-			return false;
-		if (modifiers != other.modifiers)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
 			return false;
 		if (returnType == null) {
 			if (other.returnType != null)

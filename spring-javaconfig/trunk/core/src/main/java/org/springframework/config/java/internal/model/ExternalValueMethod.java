@@ -5,11 +5,12 @@ import static org.springframework.config.java.internal.util.AnnotationExtraction
 import java.lang.annotation.Annotation;
 
 import org.springframework.config.java.annotation.ExternalValue;
+import org.springframework.config.java.model.ModelMethod;
 
-public class ExternalValueMethod {
+public class ExternalValueMethod extends ModelMethod {
 
 	public ExternalValueMethod(String name, int modifiers, Annotation[] annotations) {
-		// TODO Auto-generated constructor stub
+		super(name, modifiers, annotations);
 	}
 
 	public void validate(ValidationErrors errors) {
