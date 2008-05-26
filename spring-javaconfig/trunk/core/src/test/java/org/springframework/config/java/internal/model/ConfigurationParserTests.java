@@ -16,12 +16,8 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.annotation.DependencyCheck;
 import org.springframework.config.java.annotation.ExternalBean;
 import org.springframework.config.java.annotation.Import;
-import org.springframework.config.java.internal.model.BeanMethod;
-import org.springframework.config.java.internal.model.ConfigurationClass;
-import org.springframework.config.java.internal.model.ConfigurationModel;
-import org.springframework.config.java.internal.model.ExternalBeanMethod;
-import org.springframework.config.java.internal.model.NonJavaConfigMethod;
-import org.springframework.config.java.internal.model.PotentialConfigurationClass;
+import org.springframework.config.java.internal.parsing.AsmConfigurationParser;
+import org.springframework.config.java.internal.parsing.CircularImportException;
 import org.springframework.config.java.internal.parsing.ConfigurationParser;
 import org.springframework.config.java.internal.parsing.ReflectiveConfigurationParser;
 
@@ -64,7 +60,7 @@ public abstract class ConfigurationParserTests {
 	@After
 	public void populateResultModelAndCompareToTargetModel() {
 		assertNotNull("configClass has not been set for this test", configClass);
-		assertTrue("expectedModel has not been populated for this test",
+		assertTrue("expectedModel has not been populated for this test (or was empty)",
 				expectedModel.getConfigurationClasses().length > 0);
 
 		parser.parse(configClass);
@@ -183,20 +179,6 @@ public abstract class ConfigurationParserTests {
 					.addImportedClass(new ConfigurationClass(Imported2.class.getName()).add(new BeanMethod("queen"))))
 				.addImportedClass(new ConfigurationClass(Imported3.class.getName()).add(new BeanMethod("rabbit"))))
 			;
-	}
-
-	public static class CircularImportTests {
-		// TODO: {@Import, model validation}
-		@Ignore
-		public @Test void circularImportsAreDetected() {
-			ConfigurationModel model = new ConfigurationModel();
-			fail("currently causes stack overflow");
-			new ReflectiveConfigurationParser(model).parse(A.class);
-		}
-		@Import(B.class)
-		static class A { @Bean TestBean b1() { return new TestBean(); } }
-		@Import(A.class)
-		static class B { @Bean TestBean b2() { return new TestBean(); } }
 	}
 
 	/**
@@ -371,22 +353,82 @@ public abstract class ConfigurationParserTests {
 	}
 
 
+	// testing for circular imports doesn't following the testing recipe of the other tests,
+	// thus this custom class
+	public abstract static class CircularImportDetectionTests {
+		protected abstract ConfigurationParser newParser(ConfigurationModel model);
+
+		@Test
+    	public void simpleCircularImportIsDetected() {
+			boolean threw = false;
+			try {
+				newParser(new ConfigurationModel()).parse(A.class);
+			} catch (CircularImportException ex) {
+				assertTrue(ex.getMessage().contains("Illegal attempt by @Configuration class 'B' to import class 'A'"));
+				threw = true;
+			}
+			assertTrue(threw);
+    	}
+    	@Import(B.class)
+    	static class A { @Bean TestBean b1() { return new TestBean(); } }
+    	@Import(A.class)
+    	static class B { @Bean TestBean b2() { return new TestBean(); } }
+
+
+		@Test
+    	public void complexCircularImportIsDetected() {
+			boolean threw = false;
+			try {
+				newParser(new ConfigurationModel()).parse(X.class);
+			} catch (CircularImportException ex) {
+				assertTrue(ex.getMessage().contains("Illegal attempt by @Configuration class 'Z2' to import class 'Z'"));
+				threw = true;
+			}
+			assertTrue(threw);
+    	}
+        @Import({Y.class, Z.class})
+        class X { @Bean TestBean x() { return new TestBean(); } }
+        class Y { @Bean TestBean y() { return new TestBean(); } }
+
+        @Import({Z1.class, Z2.class})
+        class Z { @Bean TestBean z() { return new TestBean(); } }
+        class Z1 { @Bean TestBean z1() { return new TestBean(); } }
+
+        @Import(Z.class)
+        class Z2 { @Bean TestBean z2() { return new TestBean(); } }
+	}
+
+
 	// -----------------------------------------------
-	// Concrete test case implementations (one per implementation of JavaConfigurationModelPopulator)
+	// Concrete test case implementations (one per implementation of ConfigurationParser)
 	// -----------------------------------------------
-	public static class ReflectingConfigurationParserTests extends ConfigurationParserTests {
+	public static class ReflectiveConfigurationParserTests extends ConfigurationParserTests {
 		@Override
 		protected ConfigurationParser newParser(ConfigurationModel model) {
 			return new ReflectiveConfigurationParser(model);
 		}
 	}
 
-	/* TODO: implement and uncomment
-	public static class AsmConfigurationParserTests extends JavaConfigurationModelPopulatorTests {
+	public static class ReflectiveCircularImportDetectionTests extends CircularImportDetectionTests {
+		@Override
+		protected ConfigurationParser newParser(ConfigurationModel model) {
+			return new ReflectiveConfigurationParser(model);
+		}
+	}
+
+	@Ignore // asm implementation not yet complete
+	public static class AsmConfigurationParserTests extends ConfigurationParserTests {
 		@Override
 		protected ConfigurationParser newParser(ConfigurationModel model) {
 			return new AsmConfigurationParser(model);
 		}
 	}
-	*/
+
+	@Ignore
+	public static class AsmCircularImportDetectionTests extends CircularImportDetectionTests {
+		@Override
+		protected ConfigurationParser newParser(ConfigurationModel model) {
+			return new AsmConfigurationParser(model);
+		}
+	}
 }

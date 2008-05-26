@@ -5,6 +5,7 @@ import static org.springframework.core.annotation.AnnotationUtils.findAnnotation
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +44,8 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 
 	private final ConfigurationModel model;
 
+	private final Stack<Class<?>> importStack = new Stack<Class<?>>();
+
 	public ReflectiveConfigurationParser(ConfigurationModel model) {
 		this.model = model;
 	}
@@ -64,6 +67,7 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	 * @return
 	 */
 	private ConfigurationClass doParse(final Class<?> literalClass, boolean isDeclaringClass) {
+
 		ConfigurationClass modelClass = createConfigurationClass(literalClass, isDeclaringClass);
 
 		processAnyDeclaringClass(literalClass, modelClass);
@@ -115,9 +119,18 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	private void processAnyImportedConfigurations(final Class<?> literalClass, ConfigurationClass modelClass) {
 		// does this config class import any other config classes?
 		Import importAnno = findAnnotation(literalClass, Import.class);
-		if(importAnno != null)
-			for(Class<?> classToImport : importAnno.value())
-				modelClass.addImportedClass(doParse(classToImport, false));
+		if(importAnno == null)
+			return;
+
+		if(importStack.contains(literalClass))
+			throw new CircularImportException(literalClass, importStack);
+
+		importStack.push(literalClass);
+
+		for(Class<?> classToImport : importAnno.value())
+			modelClass.addImportedClass(doParse(classToImport, false));
+
+		importStack.pop();
 	}
 
 	private void processAnyResourceBundles(Class<?> literalClass, ConfigurationClass modelClass) {
@@ -127,7 +140,7 @@ public class ReflectiveConfigurationParser implements ConfigurationParser {
 	}
 
 	private void processAnyImportedAspects(final Class<?> literalClass) {
-		// does this configuration import any Aspect classes?
+		// does this configuration import any @Aspect classes?
 		Aspects importedAspects = findAnnotation(literalClass, Aspects.class);
 		if(importedAspects == null)
 			return;
