@@ -1,4 +1,4 @@
-package org.springframework.config.java.context;
+package org.springframework.config.java.internal.process;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;

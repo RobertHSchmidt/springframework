@@ -25,7 +25,7 @@ import org.springframework.core.PriorityOrdered;
  *
  * @author Chris Beams
  */
-public class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
+class ConfigurationEnhancingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 	private static final Log log = LogFactory.getLog(ConfigurationEnhancingBeanFactoryPostProcessor.class);
 
 	private ConfigurationEnhancer enhancer;

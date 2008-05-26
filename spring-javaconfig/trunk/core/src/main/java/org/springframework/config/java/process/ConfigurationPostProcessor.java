@@ -4,9 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.context.DefaultBeanFactoryProvider;
-import org.springframework.config.java.internal.process.ConfigurationClassParsingBeanFactoryPostProcessor;
-import org.springframework.config.java.internal.process.ConfigurationEnhancingBeanFactoryPostProcessor;
-import org.springframework.config.java.internal.process.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
+import org.springframework.config.java.internal.process.InternalConfigurationPostProcessor;
 import org.springframework.config.java.internal.process.JavaConfigInternalPostProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
@@ -22,12 +20,7 @@ public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, App
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		new ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
-		InternalBeanFactoryEstablishingBeanFactoryPostProcessor iBPP = new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(ctx, new DefaultBeanFactoryProvider());
-		if(beanNamingStrategy != null)
-			iBPP.setBeanNamingStrategy(beanNamingStrategy);
-		iBPP.postProcessBeanFactory(beanFactory);
-		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
-		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new InternalConfigurationPostProcessor(ctx, beanNamingStrategy, new DefaultBeanFactoryProvider()).postProcessBeanFactory(beanFactory);
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
