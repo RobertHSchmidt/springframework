@@ -30,9 +30,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.config.java.internal.factory.TypeSafeBeanFactoryUtils;
 import org.springframework.config.java.internal.model.ConfigurationClass;
-import org.springframework.config.java.internal.process.ConfigurationClassParsingBeanFactoryPostProcessor;
-import org.springframework.config.java.internal.process.ConfigurationEnhancingBeanFactoryPostProcessor;
-import org.springframework.config.java.internal.process.InternalBeanFactoryEstablishingBeanFactoryPostProcessor;
+import org.springframework.config.java.internal.process.InternalConfigurationPostProcessor;
 import org.springframework.config.java.internal.util.ConfigurationUtils;
 import org.springframework.config.java.process.ConfigurationPostProcessor;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -74,9 +72,7 @@ public class JavaConfigWebApplicationContext extends AbstractRefreshableWebAppli
 
 	@Override
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		new InternalBeanFactoryEstablishingBeanFactoryPostProcessor(this, new DefaultBeanFactoryProvider()).postProcessBeanFactory(beanFactory);
-		new ConfigurationClassParsingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
-		new ConfigurationEnhancingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
+		new InternalConfigurationPostProcessor(this, null, new DefaultBeanFactoryProvider()).postProcessBeanFactory(beanFactory);
 		super.invokeBeanFactoryPostProcessors(beanFactory);
 	}
 

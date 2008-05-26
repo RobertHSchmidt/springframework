@@ -16,7 +16,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ClassUtils;
 
-public class ConfigurationClassParsingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
+class ConfigurationClassParsingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
 	private static final Log log = LogFactory.getLog(ConfigurationClassParsingBeanFactoryPostProcessor.class);
 

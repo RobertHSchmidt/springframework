@@ -23,7 +23,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.util.Assert;
 
-public class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
+class InternalBeanFactoryEstablishingBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
 
 	public static final int ORDER = Ordered.HIGHEST_PRECEDENCE;
 
