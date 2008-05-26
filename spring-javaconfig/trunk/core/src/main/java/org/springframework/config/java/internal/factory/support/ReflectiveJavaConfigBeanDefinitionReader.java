@@ -20,8 +20,7 @@ import org.springframework.util.ClassUtils;
  *
  * @author Chris Beams
  */
-public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader
-                                                      implements JavaConfigBeanDefinitionReader {
+public class ReflectiveJavaConfigBeanDefinitionReader extends AbstractJavaConfigBeanDefinitionReader {
 
 	private final JavaConfigAspectRegistry aspectRegistry;
 
