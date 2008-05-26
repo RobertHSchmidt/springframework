@@ -40,7 +40,6 @@ public class ConfigurationClass extends ModelClass {
 	 * @see org.springframework.beans.factory.config.BeanDefinition
 	 * @see org.springframework.core.AttributeAccessor#getAttribute(String)
 	 * @see org.springframework.config.java.internal.parsing.ConfigurationParser
-	 * @see org.springframework.config.java.internal.model.ConfigurationEnhancingBeanFactoryPostProcessor
 	 */
 	public static final String BEAN_ATTR_NAME = "isJavaConfigurationClass";
 

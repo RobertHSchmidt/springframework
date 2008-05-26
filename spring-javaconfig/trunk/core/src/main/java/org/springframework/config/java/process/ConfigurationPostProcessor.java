@@ -5,7 +5,6 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.config.java.context.DefaultBeanFactoryProvider;
 import org.springframework.config.java.internal.process.InternalConfigurationPostProcessor;
-import org.springframework.config.java.internal.process.JavaConfigInternalPostProcessor;
 import org.springframework.config.java.naming.BeanNamingStrategy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -13,14 +12,17 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 
-public class ConfigurationPostProcessor implements BeanFactoryPostProcessor, ApplicationContextAware, Ordered, JavaConfigInternalPostProcessor {
+public class ConfigurationPostProcessor implements Ordered, ApplicationContextAware, BeanFactoryPostProcessor {
 
 	private AbstractApplicationContext ctx;
 	private BeanNamingStrategy beanNamingStrategy;
 
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		new ConfigurationBeanDefinitionDecoratingBeanFactoryPostProcessor().postProcessBeanFactory(beanFactory);
-		new InternalConfigurationPostProcessor(ctx, beanNamingStrategy, new DefaultBeanFactoryProvider()).postProcessBeanFactory(beanFactory);
+
+		InternalConfigurationPostProcessor icpp = new InternalConfigurationPostProcessor(ctx, beanNamingStrategy, new DefaultBeanFactoryProvider());
+		icpp.addIgnoredBeanPostProcessor(this.getClass().getName());
+		icpp.postProcessBeanFactory(beanFactory);
 	}
 
 	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
