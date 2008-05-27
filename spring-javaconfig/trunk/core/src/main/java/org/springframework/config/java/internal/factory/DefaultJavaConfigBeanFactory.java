@@ -15,7 +15,6 @@
  */
 package org.springframework.config.java.internal.factory;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,6 +25,8 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.internal.util.Constants;
@@ -34,7 +35,8 @@ import org.springframework.config.java.naming.MethodNameStrategy;
 
 public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory implements JavaConfigBeanFactory {
 
-	/** Defaults to {@link MethodNameStrategy}
+	/**
+	 * Defaults to {@link MethodNameStrategy}
 	 * @see #setBeanNamingStrategy(BeanNamingStrategy) to override
 	 */
 	BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
@@ -158,38 +160,41 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 
 	@Override
 	protected boolean hasInstantiationAwareBeanPostProcessors() {
-		return super.hasInstantiationAwareBeanPostProcessors() || parentHasInstantiationAwareBeanPostProcessors();
+		return super.hasInstantiationAwareBeanPostProcessors()
+			|| parentHasInstantiationAwareBeanPostProcessors();
 	}
 
-	// TODO: remove reflective access if possible
+	/**
+	 * Duplicates logic in {@link AbstractBeanFactory#addBeanPostProcessor(BeanPostProcessor)}.
+	 * Ideally would call {@link AbstractBeanFactory#hasInstantiationAwareBeanPostProcessors()},
+	 * however this method is protected.
+	 *
+	 * @see AbstractBeanFactory#addBeanPostProcessor(BeanPostProcessor)
+	 */
 	private boolean parentHasInstantiationAwareBeanPostProcessors() {
-		try {
-    		DefaultListableBeanFactory parentBF = getParentBeanFactory();
-    		Method hasInstantiationAwareBeanPostProcessorsMethod = AbstractBeanFactory.class.getDeclaredMethod("hasInstantiationAwareBeanPostProcessors");
-    		hasInstantiationAwareBeanPostProcessorsMethod.setAccessible(true);
-    		boolean hasInstantiationAwareBeanPostProcessors = (Boolean) hasInstantiationAwareBeanPostProcessorsMethod.invoke(parentBF);
-    		return hasInstantiationAwareBeanPostProcessors;
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+		for(Object bpp : getParentBeanFactory().getBeanPostProcessors())
+			if(bpp instanceof InstantiationAwareBeanPostProcessor)
+				return true;
+
+		return false;
 	}
 
 	@Override
 	protected boolean hasDestructionAwareBeanPostProcessors() {
-		return super.hasDestructionAwareBeanPostProcessors() || parentHasDestructionAwareBeanPostProcessors();
+		return super.hasDestructionAwareBeanPostProcessors()
+			|| parentHasDestructionAwareBeanPostProcessors();
 	}
 
-	// TODO: remove reflective access if possible
+	/**
+	 * @see #parentHasInstantiationAwareBeanPostProcessors()
+	 * @see AbstractBeanFactory#addBeanPostProcessor(BeanPostProcessor)
+	 */
 	private boolean parentHasDestructionAwareBeanPostProcessors() {
-		try {
-    		DefaultListableBeanFactory parentBF = getParentBeanFactory();
-    		Method hasDestructionAwareBeanPostProcessorsMethod = AbstractBeanFactory.class.getDeclaredMethod("hasDestructionAwareBeanPostProcessors");
-    		hasDestructionAwareBeanPostProcessorsMethod.setAccessible(true);
-    		boolean hasDestructionAwareBeanPostProcessors = (Boolean) hasDestructionAwareBeanPostProcessorsMethod.invoke(parentBF);
-    		return hasDestructionAwareBeanPostProcessors;
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+		for(Object bpp : getParentBeanFactory().getBeanPostProcessors())
+			if(bpp instanceof DestructionAwareBeanPostProcessor)
+				return true;
+
+		return false;
 	}
 
 }
