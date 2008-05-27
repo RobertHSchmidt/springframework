@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.java;
+package org.springframework.config.java.factory;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -200,8 +200,7 @@ public class HiddenBeanPostProcessorTests {
 
 
 	public @Test void testApplicationContextWithXml() {
-		ClassPathXmlApplicationContext cac = new ClassPathXmlApplicationContext(
-				new String[] { "/org/springframework/config/java/hiddenBeanPostProcessorTests.xml" }, true);
+		ClassPathXmlApplicationContext cac = new ClassPathXmlApplicationContext("hiddenBeanPostProcessorTests.xml", this.getClass());
 
 		RememberingBeanFactoryPostProcessor rememberingFactoryPostProcessor =
 			(RememberingBeanFactoryPostProcessor) cac.getBean("bfpp1");
