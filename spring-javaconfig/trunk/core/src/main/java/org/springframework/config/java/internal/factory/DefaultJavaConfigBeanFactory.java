@@ -15,11 +15,18 @@
  */
 package org.springframework.config.java.internal.factory;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+
 import org.springframework.beans.BeanMetadataAttribute;
 import org.springframework.beans.BeanMetadataAttributeAccessor;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.config.java.internal.util.Constants;
 import org.springframework.config.java.naming.BeanNamingStrategy;
@@ -32,10 +39,13 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 	 */
 	BeanNamingStrategy beanNamingStrategy = new MethodNameStrategy();
 
-	public DefaultJavaConfigBeanFactory(ConfigurableListableBeanFactory externalBeanFactory, BeanFactoryProvider bff) {
+	public DefaultJavaConfigBeanFactory(ConfigurableListableBeanFactory externalBeanFactory, BeanFactoryProvider beanFactoryProvider) {
 		super(externalBeanFactory);
+
+		// ensure that all BeanPostProcessors, etc registered with the external factory propagate locally
 		this.copyConfigurationFrom(externalBeanFactory);
-		bff.registerBeanDefinition(this);
+
+		beanFactoryProvider.registerBeanDefinition(this);
 	}
 
 	@Override
@@ -130,6 +140,58 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 	public BeanNamingStrategy getBeanNamingStrategy() {
 		return beanNamingStrategy;
 	}
+
+	/**
+	 * Ensure that all externally visible {@link BeanPostProcessor BeanPostProcessors} are applied
+	 * to hidden beans.  BPP instances from the parent (external) bean factory are merged with those
+	 * from this (internal) bean factory, taking care to avoid duplication.  In duplication cases, the
+	 * parent BPP takes precedence.
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List getBeanPostProcessors() {
+		LinkedHashSet mergedBeanPostProcessors = new LinkedHashSet();
+		mergedBeanPostProcessors.addAll(getParentBeanFactory().getBeanPostProcessors());
+		mergedBeanPostProcessors.addAll(super.getBeanPostProcessors());
+		return new ArrayList(mergedBeanPostProcessors);
+	}
+
+	@Override
+	protected boolean hasInstantiationAwareBeanPostProcessors() {
+		return super.hasInstantiationAwareBeanPostProcessors() || parentHasInstantiationAwareBeanPostProcessors();
+	}
+
+	// TODO: remove reflective access if possible
+	private boolean parentHasInstantiationAwareBeanPostProcessors() {
+		try {
+    		DefaultListableBeanFactory parentBF = getParentBeanFactory();
+    		Method hasInstantiationAwareBeanPostProcessorsMethod = AbstractBeanFactory.class.getDeclaredMethod("hasInstantiationAwareBeanPostProcessors");
+    		hasInstantiationAwareBeanPostProcessorsMethod.setAccessible(true);
+    		boolean hasInstantiationAwareBeanPostProcessors = (Boolean) hasInstantiationAwareBeanPostProcessorsMethod.invoke(parentBF);
+    		return hasInstantiationAwareBeanPostProcessors;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	protected boolean hasDestructionAwareBeanPostProcessors() {
+		return super.hasDestructionAwareBeanPostProcessors() || parentHasDestructionAwareBeanPostProcessors();
+	}
+
+	// TODO: remove reflective access if possible
+	private boolean parentHasDestructionAwareBeanPostProcessors() {
+		try {
+    		DefaultListableBeanFactory parentBF = getParentBeanFactory();
+    		Method hasDestructionAwareBeanPostProcessorsMethod = AbstractBeanFactory.class.getDeclaredMethod("hasDestructionAwareBeanPostProcessors");
+    		hasDestructionAwareBeanPostProcessorsMethod.setAccessible(true);
+    		boolean hasDestructionAwareBeanPostProcessors = (Boolean) hasDestructionAwareBeanPostProcessorsMethod.invoke(parentBF);
+    		return hasDestructionAwareBeanPostProcessors;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
 
 	/*
 	@Override

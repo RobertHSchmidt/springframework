@@ -104,7 +104,7 @@ public class HiddenBeanPostProcessorTests {
 
 	}
 
-	public @Test void testBeanPostProcessorActsOnHiddenBeans() {
+	public @Test void testBeanPostProcessorActsOnHiddenBeans_WithProgrammaticallyRegisteredBPP() {
 		final RememberingBeanPostProcessor rememberingPostProcessor = new RememberingBeanPostProcessor();
 
 		new JavaConfigApplicationContext(HasHiddenBeansNeedingPostProcessing.class) {
@@ -115,13 +115,27 @@ public class HiddenBeanPostProcessorTests {
 			}
 		};
 
-		assertTrue("Must have recorded public bean method",
-				rememberingPostProcessor.beansSeen.containsKey("publicPoint"));
-		assertTrue("Must have recorded package bean method",
-				rememberingPostProcessor.beansSeen.containsKey("packagePoint"));
-		assertTrue("Must have recorded protected bean method",
-				rememberingPostProcessor.beansSeen.containsKey("protectedPoint"));
+		assertHiddenBeansWereProcessed(rememberingPostProcessor);
 	}
+	public static class HasHiddenBeansNeedingPostProcessing {
+		public @Bean Point publicPoint() { return protectedPoint(); }
+		protected @Bean Point protectedPoint() { return packagePoint(); }
+		@Bean Point packagePoint() { return new Point(); }
+	}
+
+	public @Test void testBeanPostProcessorActsOnHiddenBeans_WithDeclarativelyRegisteredBPP() {
+		JavaConfigApplicationContext ctx = new JavaConfigApplicationContext(HasHiddenBeansNeedingPostProcessing_WithDeclarativeBPP.class);
+		RememberingBeanPostProcessor rememberingPostProcessor = ctx.getBean(RememberingBeanPostProcessor.class);
+
+		assertHiddenBeansWereProcessed(rememberingPostProcessor);
+	}
+	public static class HasHiddenBeansNeedingPostProcessing_WithDeclarativeBPP {
+		public @Bean RememberingBeanPostProcessor rbpp() { return new RememberingBeanPostProcessor(); }
+		public @Bean Point publicPoint() { return protectedPoint(); }
+		protected @Bean Point protectedPoint() { return packagePoint(); }
+		@Bean Point packagePoint() { return new Point(); }
+	}
+
 	public static class RememberingBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 		private Map<String, Class<?>> beansSeen = new HashMap<String, Class<?>>();
 
@@ -133,6 +147,14 @@ public class HiddenBeanPostProcessorTests {
 			beansSeen.put(beanName, bean.getClass());
 			return bean;
 		}
+	}
+	private void assertHiddenBeansWereProcessed(final RememberingBeanPostProcessor rememberingPostProcessor) {
+		assertTrue("Must have recorded public bean method",
+				rememberingPostProcessor.beansSeen.containsKey("publicPoint"));
+		assertTrue("Must have recorded package bean method",
+				rememberingPostProcessor.beansSeen.containsKey("packagePoint"));
+		assertTrue("Must have recorded protected bean method",
+				rememberingPostProcessor.beansSeen.containsKey("protectedPoint"));
 	}
 
 	public @Test void testBasicBeanPostProcessorDeclaredInXmlAppliesToJavaConfigBeans() {
@@ -174,11 +196,6 @@ public class HiddenBeanPostProcessorTests {
 		ctx.refresh();
 
 		validateBeanFactoryPostProcessor(rememberingFactoryPostProcessor);
-	}
-	public static class HasHiddenBeansNeedingPostProcessing {
-		public @Bean Point publicPoint() { return protectedPoint(); }
-		protected @Bean Point protectedPoint() { return packagePoint(); }
-		@Bean Point packagePoint() { return new Point(); }
 	}
 
 
