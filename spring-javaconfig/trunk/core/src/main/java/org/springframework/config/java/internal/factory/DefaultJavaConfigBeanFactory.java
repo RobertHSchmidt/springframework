@@ -192,43 +192,5 @@ public class DefaultJavaConfigBeanFactory extends DefaultListableBeanFactory imp
 		}
 	}
 
-
-	/*
-	@Override
-	public String[] getBeanDefinitionNames() {
-		LinkedHashSet<String> names = new LinkedHashSet<String>();
-
-		for(String name : super.getBeanDefinitionNames())
-			names.add(name);
-
-		if(this.getParentBeanFactory() != null)
-			for(String name : this.getParentBeanFactory().getBeanDefinitionNames())
-				names.add(name);
-
-		return names.toArray(new String[names.size()]);
-	}
-
-	@Override
-	public BeanDefinition getBeanDefinition(String beanName) throws NoSuchBeanDefinitionException {
-		if(containsLocalBean(beanName))
-			return super.getBeanDefinition(beanName);
-
-		if(this.getParentBeanFactory() != null)
-			return this.getParentBeanFactory().getBeanDefinition(beanName);
-
-		return super.getBeanDefinition(beanName);
-	}
-
-	// Need to make special allowances for the BeanFactoryPostProcessors.
-	// JavaConfig-specific post processors from the parent should NOT be applied to the child.
-	@Override
-	public String[] getBeanNamesForType(Class type, boolean includeNonSingletons, boolean allowEagerInit) {
-		if(BeanFactoryPostProcessor.class.equals(type))
-			return new String[] { };
-
-		return super.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
-	}
-
-	*/
 }
 
