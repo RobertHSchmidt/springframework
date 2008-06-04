@@ -1,3 +1,0 @@
-#macro (sequence $name)CREATE TABLE ${name} (ID BIGINT NOT NULL) type=MYISAM;
-INSERT INTO ${name} values(0);
-#end

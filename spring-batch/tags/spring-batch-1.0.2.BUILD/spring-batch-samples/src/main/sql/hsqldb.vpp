@@ -1,4 +1,0 @@
-#macro (sequence $name)CREATE TABLE ${name} (
-	ID BIGINT IDENTITY
-);
-#end
