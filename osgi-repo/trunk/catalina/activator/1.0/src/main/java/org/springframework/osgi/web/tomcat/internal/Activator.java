@@ -21,6 +21,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.Properties;
 
 import javax.management.MBeanRegistration;
@@ -36,11 +38,15 @@ import org.apache.catalina.startup.Embedded;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.url.AbstractURLStreamHandlerService;
+import org.osgi.service.url.URLConstants;
+import org.osgi.service.url.URLStreamHandlerService;
 
 /**
  * Simple activator for starting Apache Tomcat Catalina container inside OSGi
@@ -81,7 +87,7 @@ public class Activator implements BundleActivator {
 
 	private StandardService server;
 
-	private ServiceRegistration registration, legacyRegistration;
+	private ServiceRegistration registration, legacyRegistration, urlRegistration;
 
 	private Thread startupThread;
 
@@ -114,6 +120,8 @@ public class Activator implements BundleActivator {
 								+ conn.getPort());
 					}
 
+					// register URL service
+					urlRegistration = registerTomcatJNDIUrlService();
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
 					legacyRegistration = publishServerAsAServiceInLegacyMode(server);
@@ -137,6 +145,7 @@ public class Activator implements BundleActivator {
 		// unpublish service first
 		registration.unregister();
 		legacyRegistration.unregister();
+		urlRegistration.unregister();
 
 		log.info("Unpublished  " + ServerInfo.getServerInfo() + " OSGi service");
 
@@ -389,5 +398,22 @@ public class Activator implements BundleActivator {
 		}
 
 		return embedded;
+	}
+
+	private ServiceRegistration registerTomcatJNDIUrlService() {
+		Properties properties = new Properties();
+		properties.put(URLConstants.URL_HANDLER_PROTOCOL, "jndi");
+		final URLStreamHandler handler = new DirContextURLStreamHandler();
+
+		return bundleContext.registerService(URLStreamHandlerService.class.getName(),
+			new AbstractURLStreamHandlerService() {
+
+				private final static String EMPTY_STRING = "";
+
+
+				public URLConnection openConnection(URL u) throws IOException {
+					return new URL(u, EMPTY_STRING, handler).openConnection();
+				}
+			}, properties);
 	}
 }
