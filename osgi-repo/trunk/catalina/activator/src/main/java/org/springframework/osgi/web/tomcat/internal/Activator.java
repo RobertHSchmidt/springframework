@@ -27,14 +27,11 @@ import java.util.Properties;
 
 import javax.management.MBeanRegistration;
 
-import org.apache.catalina.Engine;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardService;
-import org.apache.catalina.startup.Embedded;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,20 +60,6 @@ public class Activator implements BundleActivator {
 	/** logger */
 	private static final Log log = LogFactory.getLog(Activator.class);
 
-	/**
-	 * user-configurable config location
-	 * 
-	 * @deprecated will be removed in RC1
-	 */
-	private static final String CONF_LOCATION = "conf/embedded-server.properties";
-
-	/**
-	 * default config location *
-	 * 
-	 * @deprecated will be removed in RC1
-	 */
-	private static final String DEFAULT_CONF_LOCATION = "conf/embedded-server-defaults.properties";
-
 	/** default XML configuration */
 	private static final String DEFAULT_XML_CONF_LOCATION = "conf/default-server.xml";
 
@@ -87,7 +70,7 @@ public class Activator implements BundleActivator {
 
 	private StandardService server;
 
-	private ServiceRegistration registration, legacyRegistration, urlRegistration;
+	private ServiceRegistration registration, urlRegistration;
 
 	private Thread startupThread;
 
@@ -124,7 +107,6 @@ public class Activator implements BundleActivator {
 					urlRegistration = registerTomcatJNDIUrlService();
 					// publish server as an OSGi service
 					registration = publishServerAsAService(server);
-					legacyRegistration = publishServerAsAServiceInLegacyMode(server);
 					log.info("Published " + ServerInfo.getServerInfo() + " as an OSGi service");
 				}
 				catch (Exception ex) {
@@ -144,7 +126,6 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		// unpublish service first
 		registration.unregister();
-		legacyRegistration.unregister();
 		urlRegistration.unregister();
 
 		log.info("Unpublished  " + ServerInfo.getServerInfo() + " OSGi service");
@@ -174,12 +155,6 @@ public class Activator implements BundleActivator {
 	private StandardService createCatalinaServer(Bundle bundle) throws Exception {
 		// first try to use the XML file
 		URL xmlConfiguration = bundle.getResource(XML_CONF_LOCATION);
-
-		// if there is no custom XML file, check the custom properties
-		if (xmlConfiguration == null && bundle.getResource(CONF_LOCATION) != null) {
-			Configuration config = readConfiguration(bundle);
-			return createServerFromProperties(config);
-		}
 
 		if (xmlConfiguration != null) {
 			log.info("Using custom XML configuration " + xmlConfiguration);
@@ -245,104 +220,6 @@ public class Activator implements BundleActivator {
 		}
 	}
 
-	/**
-	 * 
-	 * @param configuration
-	 * @return
-	 * @deprecated will be removed in RC1
-	 */
-	private StandardService createServerFromProperties(Configuration configuration) {
-		// create embedded server
-		Embedded embedded = new Embedded();
-		embedded.setCatalinaHome(configuration.getHome());
-		embedded.setName("Catalina");
-
-		// add listener(s) (removed since it only works on 6.0.x+ )
-		// embedded.addLifecycleListener(new JasperListener());
-
-		// create host
-		StandardHost host = new StandardHost();
-		host.setName("Catalina");
-		host.setDeployOnStartup(false);
-		host.setLiveDeploy(false);
-		host.setAutoDeploy(false);
-		host.setXmlValidation(false);
-		host.setXmlNamespaceAware(false);
-
-		//host.setWorkDir(workDir);
-		host.setUnpackWARs(false);
-
-		// create engine
-		Engine engine = embedded.createEngine();
-		engine.setDefaultHost(host.getName());
-		engine.setName("Catalina");
-
-		// add the host -> engine
-		engine.addChild(host);
-
-		// engine -> server
-		embedded.addEngine(engine);
-
-		// create a plain HTTP server (no HTTPS)
-		String hostName = configuration.getHost();
-		Connector http = embedded.createConnector((hostName.length() < 1 ? null : hostName), configuration.getPort(),
-			false);
-		http.setEnableLookups(false);
-
-		embedded.addConnector(http);
-
-		// everything is configured, return the server
-		return embedded;
-
-	}
-
-	private Configuration readConfiguration(Bundle bundle) throws IOException {
-		// read default location
-		Properties defaults = new Properties();
-
-		URL defaultLocation = bundle.getResource(DEFAULT_CONF_LOCATION);
-		if (defaultLocation == null)
-			throw new IllegalArgumentException("Cannot find default location " + DEFAULT_CONF_LOCATION);
-
-		loadStream(defaults, defaultLocation.openStream());
-
-		// user properties
-		Properties userProps;
-
-		URL userConfigLocation = bundle.getResource(CONF_LOCATION);
-		// check if indeed we have something
-		if (userConfigLocation == null) {
-			userProps = defaults;
-			if (log.isDebugEnabled())
-				log.debug("Reading default server configuration from  " + defaultLocation);
-		}
-
-		else {
-			if (log.isDebugEnabled())
-				log.debug("Reading user server configuration from  " + userConfigLocation);
-
-			userProps = new Properties(defaults);
-			loadStream(userProps, userConfigLocation.openStream());
-		}
-
-		return new Configuration(userProps);
-	}
-
-	private void loadStream(Properties props, InputStream stream) throws IOException {
-		try {
-			props.load(stream);
-		}
-		finally {
-			try {
-				if (stream != null)
-					stream.close();
-			}
-			catch (IOException ex) {
-				// ignore
-			}
-		}
-	}
-
 	private ServiceRegistration publishServerAsAService(StandardService server) {
 		Properties props = new Properties();
 		// put some extra properties to easily identify the service
@@ -359,45 +236,6 @@ public class Activator implements BundleActivator {
 			MBeanRegistration.class.getName(), Lifecycle.class.getName() };
 
 		return bundleContext.registerService(classes, server, props);
-	}
-
-	/**
-	 * Service publication for M1 builds. Will create an Embedded instance used
-	 * just for publication.
-	 * 
-	 * @param server
-	 * @return
-	 * @deprecated will be removed in RC1
-	 */
-	private ServiceRegistration publishServerAsAServiceInLegacyMode(StandardService server) {
-
-		Properties props = new Properties();
-		// put some extra properties to easily identify the service
-		props.put(Constants.SERVICE_VENDOR, "Spring Dynamic Modules");
-		props.put(Constants.SERVICE_DESCRIPTION, ServerInfo.getServerInfo() + " deprecated");
-		props.put(Constants.BUNDLE_VERSION, ServerInfo.getServerNumber());
-		props.put(Constants.BUNDLE_NAME, bundleContext.getBundle().getSymbolicName());
-
-		// spring-dm specific property
-		props.put("org.springframework.osgi.bean.name", "tomcat-server");
-
-		// publish just the interfaces and the major classes (server/handlerWrapper)
-		String[] classes = new String[] { Embedded.class.getName() };
-
-		return bundleContext.registerService(classes, createEmbeddedServerFromServer(server), props);
-	}
-
-	private Embedded createEmbeddedServerFromServer(StandardService server) {
-		Embedded embedded = new Embedded();
-		embedded.setName("Catalina");
-		embedded.addEngine((Engine) server.getContainer());
-
-		for (int connectorsIndex = 0; connectorsIndex < server.findConnectors().length; connectorsIndex++) {
-			Connector connector = server.findConnectors()[connectorsIndex];
-			embedded.addConnector(connector);
-		}
-
-		return embedded;
 	}
 
 	private ServiceRegistration registerTomcatJNDIUrlService() {
