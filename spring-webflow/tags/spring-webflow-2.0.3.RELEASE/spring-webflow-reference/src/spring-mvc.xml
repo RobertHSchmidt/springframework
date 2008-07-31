@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="spring-mvc">
+	<title>Spring MVC Integration</title>
+	<sect1 id="spring-mvc-introduction">
+		<title>Introduction</title>
+		<para>
+			This chapter shows how to integrate Web Flow into a Spring MVC web application.
+			The <code>booking-mvc</code> sample application is a good reference for Spring MVC with Web Flow.
+			This application is a simplified travel site that allows users to search for and book hotel rooms.
+		</para>
+	</sect1>
+	<sect1 id="spring-mvc-config-web.xml">
+		<title>Configuring web.xml</title>
+		<para>
+			The first step to using Spring MVC is to configure the <code>DispatcherServlet</code> in <code>web.xml</code>.
+			You typically do this once per web application.
+		</para>
+		<para>
+ 			The example below maps all requests that begin with <code>/spring/</code> to the DispatcherServlet.
+			An <code>init-param</code> is used to provide the <code>contextConfigLocation</code>.
+			This is the configuration file for the web application.
+		</para>
+		<programlisting language="xml"><![CDATA[
+<servlet>
+    <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/web-application-config.xml</param-value>
+    </init-param>
+</servlet>
+	
+<servlet-mapping>
+    <servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+    <url-pattern>/spring/*</url-pattern>
+</servlet-mapping>]]></programlisting>
+	</sect1>
+	<sect1 id="spring-mvc-config-spring-url-mapping">
+		<title>Mapping URLs to Flows</title>
+		<para>
+			The <code>DispatcherServlet</code> maps request URLs to handlers.
+			A simple way to create URL mapping rules is to define a <code>SimpleUrlHandlerMapping</code>:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<bean id="flowUrlMappings" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+        <value>
+            /hotels/booking=bookingFlowHandler
+        </value>
+    </property>
+</bean>]]>
+		</programlisting>
+		<para>
+			The example above maps the servlet-relative request URL <code>/hotels/booking</code> to the <code>bookingFlowHandler</code>.
+		</para>
+	</sect1>
+	<sect1 id="spring-mvc-config-flow-handlers">
+		<title>Flow Handlers</title>
+		<para>
+			A <code>FlowHandler</code> manages executions of a single flow definition.
+			A <code>FlowHandler</code> is responsible for:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>Providing the <code>id</code> of the flow definition to execute</para>
+			</listitem>
+			<listitem>
+				<para>Creating the input to pass new flow executions</para>
+			</listitem>
+			<listitem>
+				<para>Handling flow execution outcomes</para>
+			</listitem>
+			<listitem>
+				<para>Handling flow execution exceptions</para>
+			</listitem>
+		</itemizedlist>
+		<para>
+			These responsibilities are illustrated in the definition of the <code>org.springframework.mvc.servlet.FlowHandler</code> interface:
+		</para>
+		<programlisting language="java">
+public interface FlowHandler {
+
+    public String getFlowId();
+
+    public MutableAttributeMap createExecutionInputMap(HttpServletRequest request);
+
+    public String handleExecutionOutcome(FlowExecutionOutcome outcome,
+        HttpServletRequest request, HttpServletResponse response);
+
+    public String handleException(FlowException e,
+        HttpServletRequest request, HttpServletResponse response);
+}				
+		</programlisting>
+		<para>
+			To implement a FlowHandler, subclass <code>AbstractFlowHandler</code>.  You only need to override the methods that you need.
+			Specifically:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Override <code>getFlowId(HttpServletRequest)</code> when the id of your flow cannot be derived from the URL.
+					By default, the flow id is derived from the last path element in the request URI, before any query parameters.
+					For example, <code>http://localhost/hotels/booking?hotelId=1</code> results in a flow id of <code>booking</code> by default.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Override <code>createExecutionInputMap(HttpServletRequest)</code> when you need fine-grained control over extracting
+					flow input parameters from the HttpServletRequest.  By default, all request parameters are treated as flow input parameters.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Override <code>handleExecutionOutcome</code> when you need to handle specific flow execution outcomes in a custom manner.
+					The default behavior sends a redirect to the ended flow's URL to restart a new execution of the flow.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Override <code>handleException</code> when you need fine-grained control over unhandled flow exceptions.
+					The default behavior attempts to restart the flow when a client attempts to access an ended or expired flow execution.
+					Any other exception is rethrown to the Spring MVC ExceptionResolver infrastructure by default.
+				</para>
+			</listitem>
+		</itemizedlist>
+		<sect2 id="spring-mvc-flow-handler-example">
+			<title>Example FlowHandler</title>
+			<para>
+				A common interaction pattern between Spring MVC And Web Flow is for a Flow to redirect to a Controller when it ends.
+				FlowHandlers allow this to be done without coupling the flow definition with a specific controller URL.
+				An example FlowHandler that redirects to a Spring MVC Controller is shown below:
+			</para>
+			<programlisting language="java"><![CDATA[
+public class BookingFlowHandler extends AbstractFlowHandler {
+    public String handleExecutionOutcome(FlowExecutionOutcome outcome,
+                                         HttpServletRequest request, HttpServletResponse response) {
+        if (outcome.getId().equals("bookingConfirmed")) {
+            return "/booking/show?bookingId=" + outcome.getOutput().get("bookingId");
+        } else {
+            return "/hotels/index";
+        }
+    }
+}]]>
+			</programlisting>
+			<para>
+				Since this handler only needs to handle flow execution outcomes in a custom manner, nothing else is overridden.
+				The <code>bookingConfirmed</code> outcome will result in a redirect to show the new booking.
+				Any other outcome will redirect back to the hotels index page.
+			</para>
+			<para>
+				To use your FlowHandler, first deploy an instance to Spring so it can be mapped to a URL:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<bean id="bookingFlowHandler" class="org.springframework.webflow.samples.booking.BookingFlowHandler" />]]>
+			</programlisting>
+			<para>
+				Then add the URL mapping rule:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<property name="mappings">
+    <value>
+        /hotels/booking=bookingFlowHandler
+    </value>
+</property>]]>
+			</programlisting>
+			<para>
+				With this configuration, accessing the URL <code>/hotels/booking</code> will launch the <code>booking</code> flow.
+				When the booking flow ends, the FlowHandler will process the flow execution outcome and redirect to the appropriate controller.
+			</para>
+		</sect2>
+		<sect2 id="spring-mvc-flow-handler-adapter">
+			<title>Registering the FlowHandlerAdapter</title>
+			<para>
+				To enable flow handlers, make sure you define the special <code>FlowHandlerAdapter</code>.  You only need to do this once.
+			</para>
+			<programlisting language="xml"><![CDATA[
+<!-- Enables FlowHandler URL mapping -->
+<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+    <property name="flowExecutor" ref="flowExecutor" />
+</bean>
+]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="spring-mvc-flow-handler-redirects">
+			<title>FlowHandler Redirects</title>
+			<para>
+				A FlowHandler handling a FlowExecutionOutcome or FlowException returns a <code>String</code> to indicate the resource to redirect to after handling.
+				In the previous example, the <code>BookingFlowHandler</code> redirects to the <code>booking/show</code> resource URI for <code>bookingConfirmed</code> outcomes,
+				and the <code>hotels/index</code> resource URI for all other outcomes. 
+			</para>
+			<para>
+				By default, returned resource locations are relative to the current servlet mapping.
+				This allows for a flow handler to redirect to other Controllers in the application using relative paths.
+				In addition, explicit redirect prefixes are supported for cases where more control is needed.
+			</para>
+			<para>
+				The explicit redirect prefixes supported are:
+			</para>
+			<itemizedlist>
+				<listitem><para><code>servletRelative:</code> - redirect to a resource relative to the current servlet</para></listitem>
+				<listitem><para><code>contextRelative:</code> - redirect to a resource relative to the current web application context path</para></listitem>
+				<listitem><para><code>serverRelative:</code> - redirect to a resource relative to the server root</para></listitem>
+				<listitem><para><code>http://</code> or <code>https://</code> - redirect to a fully-qualified resource URI</para></listitem>
+			</itemizedlist>
+			<para>
+				These same redirect prefixes are also supported within a flow definition when using the <code>externalRedirect:</code> directive in
+				conjunction with a view-state or end-state; for example, <code>view="externalRedirect:http://springframework.org"</code>
+			</para>
+		</sect2>
+	</sect1>
+	<sect1 id="spring-mvc-config-spring-flow-controllers">
+		<title>Flow Controller</title>
+		<para>
+			With the FlowHandler MVC integration approach, you define one handler per flow.
+			This is overkill in the cases where default flow handling rules are sufficient.
+		</para>
+		<para>
+			For simple cases, consider using the <code>FlowController</code> to map flow requests to a single handler.
+			You only have to configure this controller once and it will apply the flow handling defaults outlined in the previous section.
+			Also, you can still override these defaults by configuring the controller's <code>flowHandlers</code> property.
+		</para>
+		<para>
+			Below is a typical <code>FlowController</code> definition:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<bean id="flowController" class="org.springframework.webflow.mvc.servlet.FlowController">
+    <property name="flowExecutor" ref="flowExecutor" />
+</bean>]]>
+		</programlisting>
+		<para>
+			Below illustrates several URLs mapped to this controller:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<bean id="flowUrlMappings" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+        <value>
+            /login=flowController
+            /hotels/booking=flowController
+        </value>
+    </property>
+</bean>]]>
+		</programlisting>
+		<para>
+			With this configuration, accessing <code>/login</code> launches the login flow.
+			Accessing <code>/hotels/booking</code> launches the booking flow.
+		</para>
+	</sect1>
+	<sect1 id="spring-mvc-config-spring-view-resolution">
+		<title>View Resolution</title>
+		<para>
+			Web Flow 2 maps selected view identifiers to files located within the flow's working directory unless otherwise specified.
+			For existing Spring MVC + Web Flow applications, an external <code>ViewResolver</code> is likely already handling this mapping for you.
+			Therefore, to continue using that resolver and to avoid having to change how your existing flow views are packaged, configure Web Flow as follows:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
+    <flow:location path="/WEB-INF/hotels/booking/booking.xml" />
+</webflow:flow-registry>
+
+<webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator"/>
+
+<bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+    <property name="viewResolvers" ref="myExistingViewResolverToUseForFlows"/>
+</bean>]]>
+		</programlisting>
+	</sect1>
+</chapter>

@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="views">
+	<title>Rendering views</title>
+	<sect1 id="views-introduction">
+		<title>Introduction</title>
+		<para>
+			This chapter shows you how to use the <code>view-state</code> element to render views within a flow.
+		</para>
+	</sect1>
+	<sect1 id="view-convention">
+		<title>Defining view states</title>
+		<para>
+			Use the <code>view-state</code> element to define a step of the flow that renders a view and waits for a user event to resume:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails">
+    <transition on="submit" to="reviewBooking" />
+</view-state>]]>
+		</programlisting>
+		<para>
+			By convention, a view-state maps its id to a view template in the directory where the flow is located.
+			For example, the state above might render <filename>/WEB-INF/hotels/booking/enterBookingDetails.xhtml</filename>
+			if the flow itself was located in the <filename>/WEB-INF/hotels/booking</filename> directory.
+		</para>
+		<para>
+			Below is a sample directory structure showing views and other resources like message bundles co-located with their flow definition:
+		</para>
+		<mediaobject>
+			<imageobject role="fo">
+				<imagedata fileref="images/flow-view-packaging.png" format="PNG" align="center"/>
+			</imageobject>
+			<imageobject role="html">
+				<imagedata fileref="images/flow-view-packaging.png" format="PNG" align="center"/>
+			</imageobject>
+			<caption>
+				<para>Flow Packaging</para>
+			</caption>
+		</mediaobject>				
+	</sect1>
+	<sect1 id="view-explicit">
+		<title>Specifying view identifiers</title>
+		<para>
+			Use the <code>view</code> attribute to explictly specify the id of the view to render.
+		</para>
+		<sect2 id="view-explicit-flowrelative">
+			<title>Flow relative view ids</title>
+			<para>
+				The view id may be a relative path to view resource in the flow's working directory:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" view="bookingDetails.xhtml">]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="view-explicit-absolute">
+			<title>Absolute view ids</title>
+			<para>
+				The view id may be a absolute path to a view resource in the webapp root directory:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" view="/WEB-INF/hotels/booking/bookingDetails.xhtml">]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="view-explicit-logical">
+			<title>Logical view ids</title>
+			<para>
+				With some view frameworks, such as Spring MVC's view framework, the view id may also be a logical identifier resolved by the framework:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" view="bookingDetails">]]>
+			</programlisting>
+			<para>
+				See the Spring MVC integration section for more information on how to integrate with the MVC <code>ViewResolver</code> infrastructure.
+			</para>
+		</sect2>
+	</sect1>
+	<sect1 id="view-scope">
+		<title>View scope</title>
+		<para>
+			A view-state allocates a new <code>viewScope</code> when it enters.
+			This scope may be referenced within the view-state to assign variables that should live for the duration of the state.
+			This scope is useful for manipulating objects over a series of requests from the same view, often Ajax requests.
+			A view-state destroys its viewScope when it exits.
+		</para>
+		<sect2 id="view-scope-var">
+			<title>Allocating view variables</title>
+			<para>
+				Use the <code>var</code> tag to declare a view variable.
+				Like a flow variable, any <code>@Autowired</code> references are automatically restored when the view state resumes.
+			</para>
+			<programlisting language="xml"><![CDATA[
+<var name="searchCriteria" class="com.mycompany.myapp.hotels.SearchCriteria" />]]>
+			</programlisting>
+		</sect2>		
+		<sect2 id="view-scope-actions">
+			<title>Assigning a viewScope variable</title>
+			<para>
+				Use the <code>on-render</code> tag to assign a variable from an action result before the view renders:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<on-render>
+    <evaluate expression="bookingService.findHotels(searchCriteria)" result="viewScope.hotels" />
+</on-render>]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="view-scope-ajax">
+			<title>Manipulating objects in view scope</title>
+			<para>
+				Objects in view scope are often manipulated over a series of requests from the same view.
+				The following example pages through a search results list. 
+				The list is updated in view scope before each render.
+				Asynchronous event handlers modify the current data page, then request re-rendering of the search results fragment.
+			</para>
+			<programlisting language="xml"><![CDATA[
+<view-state id="searchResults">
+    <on-render>
+        <evaluate expression="bookingService.findHotels(searchCriteria)" result="viewScope.hotels" />
+    </on-render>
+    <transition on="next">
+        <evaluate expression="searchCriteria.nextPage()" />
+        <render fragments="searchResultsFragment" />            
+    </transition>
+    <transition on="previous">
+        <evaluate expression="searchCriteria.previousPage()" />
+        <render fragments="searchResultsFragment" />          
+    </transition>
+</view-state>]]>
+			</programlisting>			
+		</sect2>
+	</sect1>
+	<sect1 id="view-on-render">
+		<title>Executing render actions</title>
+		<para>
+			Use the <code>on-render</code> element to execute one or more actions before view rendering.
+			Render actions are executed on the initial render as well as any subsequent refreshes, including any partial re-renderings of the view.
+		</para>
+		<programlisting language="xml"><![CDATA[
+<on-render>
+    <evaluate expression="bookingService.findHotels(searchCriteria)" result="viewScope.hotels" />
+</on-render>]]>
+	    </programlisting>
+	</sect1>
+	<sect1 id="view-model">
+		<title>Binding to a model</title>
+		<para>
+			Use the <code>model</code> attribute to declare a model object the view binds to.
+			This attribute is typically used in conjunction with views that render data controls, such as forms.
+			It enables form data binding and validation behaviors to be driven from metadata on your model object.
+		</para>
+		<para>
+			The following example declares an <code>enterBookingDetails</code> state manipulates the <code>booking</code> model:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" model="booking">]]>
+	    </programlisting>
+	    <para>		
+			The model may an object in any accessible scope, such as <code>flowScope</code> or <code>viewScope</code>.
+			Specifying a <code>model</code> triggers the following behavior when a view event occurs:
+		</para>
+		<orderedlist>
+			<listitem><para>View-to-model binding.  On view postback, user input values are bound to model object properties for you.</para></listitem>
+			<listitem><para>Model validation.  After binding, if the model object requires validation that validation logic will be invoked.</para></listitem>
+		</orderedlist>
+		<para>
+			For a flow event to be generated that can drive a view state transition, model binding must complete successfully.
+			If model binding fails, the view is re-rendered to allow the user to revise their edits.
+		</para>
+	</sect1>
+	<sect1 id="view-bind">
+		<title>Suppressing binding</title>
+		<para>
+			Use the <code>bind</code> attribute to suppress model binding and validation for particular view events.
+			The following example suppresses binding when the <code>cancel</code> event occurs:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" model="booking">
+    <transition on="proceed" to="reviewBooking">
+    <transition on="cancel" to="bookingCancelled" bind="false" />
+</view-state>]]>
+		</programlisting>
+	</sect1>
+	<sect1 id="view-binder">
+		<title>Specifying bindings explicitly</title>
+		<para>
+			Use the <code>binder</code> element to configure the exact set of model bindings usable by the view.
+			This is particularly useful in a Spring MVC environment for restricting the set of "allowed fields" per view.
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" model="booking">
+    <binder>
+        <binding property="creditCard" />
+        <binding property="creditCardName" />
+        <binding property="creditCardExpiryMonth" />
+        <binding property="creditCardExpiryYear" />
+    </binder>
+    <transition on="proceed" to="reviewBooking" />
+    <transition on="cancel" to="cancel" bind="false" />
+</view-state>
+]]>
+		</programlisting>
+		<para>
+			If the binder element is not specified, all public properties of the model are eligible for binding by the view.
+			With the binder element specified, only the explicitly configured bindings are allowed.
+		</para>
+		<para>
+			Each binding may also apply a converter to format the model property value for display in a custom manner.
+			If no converter is specified, the default converter for the model property's type will be used.		
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" model="booking">
+    <binder>
+        <binding property="checkinDate" converter="shortDate" />
+        <binding property="checkoutDate" converter="shortDate" />    
+        <binding property="creditCard" />
+        <binding property="creditCardName" />
+        <binding property="creditCardExpiryMonth" />
+        <binding property="creditCardExpiryYear" />
+    </binder>
+    <transition on="proceed" to="reviewBooking" />
+    <transition on="cancel" to="cancel" bind="false" />
+</view-state>
+]]>
+		</programlisting>
+		<para>
+			In the example above, the <code>shortDate</code> converter is bound to the 
+			<code>checkinDate</code> and <code>checkoutDate</code> properties.
+			Custom converters may be registered with the application's ConversionService.
+		</para>
+		<para>
+			Each binding may also apply a required check that will generate a validation error
+			if the user provided value is null on form postback:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="enterBookingDetails" model="booking">
+    <binder>
+        <binding property="checkinDate" converter="shortDate" required="true" />
+        <binding property="checkoutDate" converter="shortDate" required="true" />
+        <binding property="creditCard" required="true" />
+        <binding property="creditCardName" required="true" />
+        <binding property="creditCardExpiryMonth" required="true" />
+        <binding property="creditCardExpiryYear" required="true" />
+    </binder>
+    <transition on="proceed" to="reviewBooking">
+    <transition on="cancel" to="bookingCancelled" bind="false" />
+</view-state>]]>
+		</programlisting>
+		<para>
+			In the example above, all of the bindings are required.
+			If one or more blank input values are bound, validation errors will be generated and the view will re-render with those errors.
+		</para>
+	</sect1>
+	<sect1 id="view-validate">
+		<title>Validating a model</title>
+		<para>
+			Model validation is driven by constraints specified against the model object.
+			These constraints may be specified declaratively, or enforced using a programmatic validation routine or external <code>Validator</code>.
+		</para>
+		<sect2 id="view-validation-programmatic">
+			<title>Programmatic validation</title>
+			<para>
+				There are two ways to perform model validation programatically.
+			</para>
+			<sect3 id="view-validation=programmatic-validate-method">
+				<title>Implementing a model validate method</title>
+				<para>
+					The first way is to define a validate method on the model object class.
+					To do this, create a public method with the name <code>validate${state}</code>, where <code>state</code> is the id of your view-state.
+					The method must declare a <code>MessageContext</code> parameter for recording validation error messages.
+					For example:
+				</para>
+				<programlisting language="java"><![CDATA[
+public void validateEnterBookingDetails(MessageContext context) {
+    Calendar calendar = Calendar.getInstance();
+    if (checkinDate.before(today())) {
+        context.addMessage(new MessageBuilder().error().source("checkinDate").defaultText(
+            "Check in date must be a future date").build());
+    } else if (!checkinDate.before(checkoutDate)) {
+        context.addMessage(new MessageBuilder().error().source("checkoutDate").defaultText(
+            "Check out date must be later than check in date").build());
+    }
+}]]>
+				</programlisting>
+			</sect3>
+			<sect3 id="view-validation=programmatic-validator">
+				<title>Implementing a Validator</title>
+				<para>
+					The second way is to define a separate object, called a <emphasis>Validator</emphasis>, which validates your model object.
+					To do this, create a class that defines a public method with the name <code>validate${state}</code>, where <code>state</code> is the id of your view-state.
+					The method must declare a parameter to accept your model object, and a <code>MessageContext</code> parameter for recording validation error messages.
+					For example:
+				</para>
+				<programlisting language="java"><![CDATA[
+@Component
+public class BookingValidator {
+    public void validateEnterBookingDetails(Booking booking, MessageContext context) {
+        if (booking.getCheckinDate().before(today())) {
+            context.addMessage(new MessageBuilder().error().source("checkinDate").defaultText(
+                "Check in date must be a future date").build());
+        } else if (!booking.getCheckinDate().before(checkoutDate)) {
+            context.addMessage(new MessageBuilder().error().source("checkoutDate").defaultText(
+                "Check out date must be later than check in date").build());
+        }
+    }
+}]]>
+				</programlisting>
+				<para>
+					A Validator can also accept a Spring MVC <code>Errors</code> object, which is required for invoking existing Spring Validators.
+				</para>
+				<para>
+					Validators must be registered as Spring beans employing the naming convention <code>${model}Validator</code> to be detected and invoked automatically.
+					In the example above, Spring 2.5 classpath-scanning would detect the <code>@Component</code> and automatically register it as a bean with the name <code>bookingValidator</code>.
+					Then, anytime the <code>booking</code> model needs to be validated, this <code>bookingValidator</code> instance would be invoked for you.
+				</para>
+			</sect3>
+		</sect2>
+		<sect2 id="view-validation-declarative">
+			<title>Declarative validation</title>
+			<para>
+				Spring Web Flow does not yet ship integration with a declarative validation framework such as Hibernate Validator.
+				It is expected that integration will be provided in a future Web Flow release.
+				This integration will allow declarative validation constraints to be defined against model properties.
+			</para>
+		</sect2>		
+	</sect1>
+	<sect1 id="view-validation-suppression">
+		<title>Suppressing validation</title>
+		<para>
+			Use the <code>validate</code> attribute to suppress model validation for particular view events:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="chooseAmenities" model="booking">
+    <transition on="proceed" to="reviewBooking">
+    <transition on="back" to="enterBookingDetails" validate="false" />
+</view-state>]]>
+		</programlisting>
+		<para>
+			In this example, data binding will still occur on <code>back</code> but validation will be suppressed.
+		</para>
+	</sect1>	
+	<sect1 id="transition-actions">
+		<title>Transition actions</title>
+		<para>
+			A view-state transition can execute one or more actions before executing.
+			These actions may return an error result to prevent the transition itself from executing.
+			If an error result occurs, the view will re-render and should typically display an appropriate error message to the user.
+		</para>
+		<para>
+			If the transition action invokes a plain Java method, the invoked method may return false to prevent the transition from executing.
+			This technique can be used to handle exceptions thrown by service-layer methods.
+			The example below invokes an action that calls a service and handles an exceptional situation:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<transition on="submit" to="bookingConfirmed">
+    <evaluate expression="bookingAction.makeBooking(booking, messageContext)" />
+</transition>]]>
+		</programlisting>
+		<programlisting language="java"><![CDATA[
+public class BookingAction {
+   public boolean makeBooking(Booking booking, MessageContext context) {
+       try {
+           bookingService.make(booking);
+           return true;
+       } catch (RoomNotAvailableException e) {
+           context.addMessage(builder.error().
+               .defaultText("No room is available at this hotel").build());
+           return false;
+       }
+   }
+}]]>
+		</programlisting>
+	</sect1>
+	<sect1 id="simple-event-handlers">
+		<title>Handling events</title>
+		<para>
+			From a view-state, transitions without targets can also be defined.  Such transitions are called "event handlers":
+		</para>
+		<programlisting language="xml"><![CDATA[
+<transition on="event">
+    <!-- Handle event -->
+</transition>]]>
+		</programlisting>
+		<para>
+			These event handlers do not change the state of the flow.
+			They simply execute their actions and re-render the current view or one or more fragments of the current view.
+		</para>
+		<sect2 id="event-handlers-render">
+			<title>Rendering partials</title>
+			<para>
+				Use the <code>render</code> element to request partial re-rendering of a view after handling an event:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<transition on="next">
+    <evaluate expression="searchCriteria.nextPage()" />
+    <render fragments="searchResultsFragment" />            
+</transition>]]>
+			</programlisting>
+			<para>
+				The fragments attribute should reference the ID(s) of the view element(s) you wish to re-render.
+				Specify multiple elements to re-render by separating them with a comma delimiter.
+			</para>
+			<para>
+				Such partial rendering is often used with events signaled by Ajax to update a specific zone of the view.
+			</para>
+		</sect2>
+		<sect2 id="event-handlers-global">
+			<title>Handling global events</title>
+			<para>
+				Use the flow's <code>global-transitions</code> element to create event handlers that apply across all views.
+				Global-transitions are often used to handle global menu links that are part of the layout.
+			</para>
+			<programlisting language="xml"><![CDATA[
+<global-transitions>
+    <transition on="login" to="login">
+    <transition on="logout" to="logout">
+</global-transitions>]]>
+			</programlisting>
+		</sect2>		
+	</sect1>
+	<sect1 id="view-messages">
+		<title>Working with messages</title>
+		<para>
+			Spring Web Flow's <code>MessageContext</code> is an API for recording messages during the course of flow executions.
+			Plain text messages can be added to the context, as well as internationalized messages resolved by a Spring <code>MessageSource</code>.
+			Messages are renderable by views and automatically survive flow execution redirects.
+			Three distinct message severities are provided: <code>info</code>, <code>warning</code>, and <code>error</code>.
+			In addition, a convenient <code>MessageBuilder</code> exists for fluently constructing messages.
+		</para>
+		<sect2 id="plain-text-message">
+			<title>Adding plain text messages</title>
+			<programlisting language="java"><![CDATA[
+MessageContext context = ...
+MessageBuilder builder = new MessageBuilder();
+context.addMessage(builder.error().source("checkinDate")
+    .defaultText("Check in date must be a future date").build());
+context.addMessage(builder.warn().source("smoking")
+    .defaultText("Smoking is bad for your health").build());
+context.addMessage(builder.info()
+    .defaultText("We have processed your reservation - thank you and enjoy your stay").build());]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="plain-text-message-intl">
+			<title>Adding internationalized messages</title>
+			<programlisting language="java"><![CDATA[
+MessageContext context = ...
+MessageBuilder builder = new MessageBuilder();
+context.addMessage(builder.error().source("checkinDate").code("checkinDate.notFuture").build());
+context.addMessage(builder.warn().source("smoking").code("notHealthy")
+    .resolvableArg("smoking").build());			
+context.addMessage(builder.info().code("reservationConfirmation").build());]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="message-bundles">
+			<title>Using message bundles</title>
+			<para>
+				Internationalized messages are defined in message bundles accessed by a Spring <code>MessageSource</code>.
+				To create a flow-specific message bundle, simply define <code>messages.properties</code> file(s) in your flow's directory.
+				Create a default <code>messages.properties</code> file and a .properties file for each additional <code>Locale</code> you need to support.
+			</para>
+			<programlisting><![CDATA[
+#messages.properties
+checkinDate=Check in date must be a future date
+notHealthy={0} is bad for your health
+reservationConfirmation=We have processed your reservation - thank you and enjoy your stay]]>
+			</programlisting>
+			<para>
+				From within a view or a flow, you may also access message resources using the <code>resourceBundle</code> EL variable:
+			</para>
+			<programlisting><![CDATA[
+<h:outputText value="#{resourceBundle.reservationConfirmation}" />]]>
+			</programlisting>
+		</sect2>
+	</sect1>
+	<sect1 id="view-popup">
+		<title>Displaying popups</title>
+		<para>
+			Use the <code>popup</code> attribute to render a view in a modal popup dialog:
+		</para>
+		<programlisting language="xml"><![CDATA[
+<view-state id="changeSearchCriteria" view="enterSearchCriteria.xhtml" popup="true">]]>
+		</programlisting>
+		<para>
+			When using Web Flow with the Spring Javascript, no client side code is necessary for the popup to display.
+			Web Flow will send a response to the client requesting a redirect to the view from a popup, and the client will honor the request.
+		</para>
+	</sect1>
+	<sect1 id="view-backtracking">
+		<title>View backtracking</title>
+		<para>
+			By default, when you exit a view state and transition to a new view state, you can go back to the previous state using the browser back button.
+			These view state history policies are configurable on a per-transition basis by using the <code>history</code> attribute.
+		</para>
+		<sect2 id="history-discard">
+			<title>Discarding history</title>
+			<para>
+				Set the history attribute to <code>discard</code> to prevent backtracking to a view:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<transition on="cancel" to="bookingCancelled" history="discard">]]>
+			</programlisting>
+		</sect2>
+		<sect2 id="history-invalidate">
+			<title>Invalidating history</title>
+			<para>
+				Set the history attribute to <code>invalidate</code> to prevent backtracking to a view as well all previously displayed views:
+			</para>
+			<programlisting language="xml"><![CDATA[
+<transition on="confirm" to="bookingConfirmed" history="invalidate">]]>
+			</programlisting>
+		</sect2>
+	</sect1>	
+</chapter>
