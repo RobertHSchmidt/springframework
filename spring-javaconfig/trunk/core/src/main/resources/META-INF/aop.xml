@@ -1,5 +1,0 @@
-<aspectj>
-	<aspects>
-		<aspect name="org.springframework.config.java.aspect.RequiredMethodInvocationTracker"/>
-    </aspects>
-</aspectj>
