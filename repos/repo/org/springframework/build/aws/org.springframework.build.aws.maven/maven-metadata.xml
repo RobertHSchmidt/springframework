@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.springframework.build.aws</groupId>
+  <artifactId>org.springframework.build.aws.maven</artifactId>
+  <version>2.0.0.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>2.0.0.RELEASE</version>
+    </versions>
+    <lastUpdated>20080925113359</lastUpdated>
+  </versioning>
+</metadata>
