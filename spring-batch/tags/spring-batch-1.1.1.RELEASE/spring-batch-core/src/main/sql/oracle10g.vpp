@@ -1,3 +1,0 @@
-#macro (sequence $name)CREATE SEQUENCE ${name};
-#end
-#macro (notnull $name $type)MODIFY ${name} NOT NULL#end

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="spring-batch">
-
-	<property file="${basedir}/../build.properties"/>
-	<import file="${basedir}/../spring-build/standard/default.xml"/>
-
-</project>
