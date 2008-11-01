@@ -36,14 +36,14 @@
       <item name="Forums" href="http://forum.springframework.org/forumdisplay.php?f=41" />
       <item name="JIRA" href="http://jira.springframework.org/browse/BATCH" />
       <item name="Downloads" href="downloads.html" />
-      <item name="1.0.x" href="http://www.springframework.org/spring-batch/1.0.x/index.html" />
-      <item name="1.1.x" href="http://www.springframework.org/spring-batch/1.1.x/index.html" />
+      <item name="1.0.x" href="http://www.springframework.org/spring-batch-old/1.0.x/index.html" />
     </menu>
     <menu name="Modules" ref="modules">
       <item name="Infrastructure" href="spring-batch-infrastructure/index.html" />
       <item name="Infrastructure Tests" href="spring-batch-infrastructure-tests/index.html" />
       <item name="Core" href="spring-batch-core/index.html" />
       <item name="Samples" href="spring-batch-samples/index.html" />
+      <item name="Enterprise Integration" href="spring-batch-integration/index.html" />
       <item name="Documentation" href="spring-batch-docs/index.html" />
       <item name="Archetypes" href="spring-batch-archetypes/index.html" />
     </menu>
