@@ -8,7 +8,7 @@
 	<groupId>org.springframework.osgi</groupId>
 	<artifactId>jetty.web.extender.fragment.osgi</artifactId>
 	<packaging>bundle</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>Jetty Spring-DM Web Fragment (OSGi version)</name>
 
 	<properties>
@@ -41,7 +41,7 @@
 				  <archive>  
 					<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
 					<manifestEntries>
-					  <Fragment-Host>org.springframework.bundle.osgi.web.extender</Fragment-Host>
+					  <Fragment-Host>org.springframework.osgi.web.extender</Fragment-Host>
 					</manifestEntries>
 				  </archive>
 				</configuration>
@@ -90,5 +90,11 @@
 			<name>Spring External Dependencies Repository</name>
 			<url>http://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
 		</repository>
+		<repository>
+			<id>spring-external</id>
+			<name>Spring Portfolio External Repository</name>
+			<url>http://maven.springframework.org/external</url>
+		</repository>
 	</repositories>		
+	
 </project>
