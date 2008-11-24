@@ -31,6 +31,7 @@
 	</properties>
 
 	<!-- build only new modules -->
+	<!-- all modules disabled for now to prevent accidental builds that go into the repo -->
 	<modules>
 		<!--
 		<module>aop-alliance</module>
@@ -51,39 +52,25 @@
 		<module>mysql-connector</module>
 		<module>portlet-api</module>
 		<module>struts</module>
-		-->
-
-		
 		<module>ant</module>	
 		
-		<!-- jetty modules -->
 		<module>jetty/etc</module>
 		<module>jetty/activator</module>
 		<module>jetty/web.extender.fragment</module>
 		
 		<module>catalina/5.5.x</module>
-		<!--
 		<module>catalina/6.0.x</module>
-		-->
 		<module>catalina/activator</module>
 		<module>el/commons-el</module>
 		<module>el/api</module>
-
 		<module>jstl/1.1.2</module>
-
 		<module>jsp-api/2.0</module>
 		<!--
 		<module>jsp-api/2.1</module>
 		<module>jstl/1.2</module>
-		-->
-
 		<module>servlet-api/2.4</module>
-		<!--
 		<module>servlet-api/2.5</module>
-		-->
-
 		<module>jasper/5.5.23</module>
-		<!--
 		<module>jasper/6.0.16</module>
 		-->
 		
@@ -124,6 +111,11 @@
 				</configuration>
 				<extensions>true</extensions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -148,11 +140,16 @@
 	</pluginRepositories>
 
 	<repositories>
-<!-- This repository needs to move to S3 -->
+		<!-- This repository needs to move to S3 -->
 		<repository>
 			<id>spring-ext</id>
 			<name>Spring External Dependencies Repository</name>
 			<url>http://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext</url>
+		</repository>
+		<repository>
+			<id>spring-external</id>
+			<name>Spring Portfolio External Repository</name>
+			<url>http://maven.springframework.org/external</url>
 		</repository>
 	</repositories>
 </project>
