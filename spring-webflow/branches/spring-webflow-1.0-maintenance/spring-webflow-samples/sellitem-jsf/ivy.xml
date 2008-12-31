@@ -20,6 +20,11 @@
     <dependency org="org.springframework" name="spring-dao" rev="2.0.7"/>
     <dependency org="org.springframework" name="spring-jdbc" rev="2.0.7"/>
 	<dependency org="hsqldb" name="hsqldb" rev="1.8.0.7"/>
+	<dependency org="commons-digester" name="commons-digester" rev="1.6"/>
+	<dependency org="commons-collections" name="commons-collections" rev="3.1"/>
+	<dependency org="commons-el" name="commons-el" rev="1.0"/>
+	<dependency org="commons-beanutils" name="commons-beanutils" rev="1.6"/>
+	<dependency org="commons-lang" name="commons-lang" rev="2.1"/>
     
     <!-- build-time only dependencies -->
 	<dependency	org="javax.servlet" name="servlet-api" rev="2.4" conf="buildtime->default"/>
