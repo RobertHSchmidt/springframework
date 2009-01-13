@@ -50,7 +50,9 @@ class UtilConcurrentConversationLock implements ConversationLock {
 	 * Releases the lock.
 	 */
 	public void unlock() {
-		lock.release();
+		if (lock.holds() > 0) {
+			lock.release(lock.holds());
+		}
 	}
 
 	/**
