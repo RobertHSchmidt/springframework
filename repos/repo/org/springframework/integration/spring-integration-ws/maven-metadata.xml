@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.springframework.integration</groupId>
+  <artifactId>spring-integration-ws</artifactId>
+  <version>1.0.1.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>1.0.1.RELEASE</version>
+    </versions>
+    <lastUpdated>20090120090813</lastUpdated>
+  </versioning>
+</metadata>
