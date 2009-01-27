@@ -7,12 +7,17 @@
     <name>Maven Spring Skin</name>
     <description>A Maven2 Skin that resembles the layout of www.springframework.org</description>
     <distributionManagement>
-        <repository>
-            <id>local</id>
-            <url>
-                file:///Users/arjen/Projects/Spring/repos/repo
-            </url>
-        </repository>
+		<downloadUrl>http://www.springframework.org/download</downloadUrl>
+		<repository>
+			<id>spring-release</id>
+			<name>Spring Release Repository</name>
+			<url>s3://repository.springsource.com/maven/bundles/release</url>
+		</repository>
+		<snapshotRepository>
+			<id>spring-snapshot</id>
+			<name>Spring Snapshot Repository</name>
+			<url>s3://repository.springsource.com/maven/bundles/snapshot</url>
+		</snapshotRepository>
     </distributionManagement>
     <developers>
         <developer>
@@ -26,12 +31,32 @@
             </roles>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>dsyer</id>
+            <name>Dave Syer</name>
+            <email>david.syer@springsource.com</email>
+            <organization>SpringSource</organization>
+            <organizationUrl>http://www.springsource.com</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
     </developers>
     <scm>
         <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</connection>
         <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/</url>
     </scm>
+    <build>
+		<extensions>
+			<extension>
+				<groupId>org.springframework.build.aws</groupId>
+				<artifactId>org.springframework.build.aws.maven</artifactId>
+				<version>2.0.0.RELEASE</version>
+			</extension>
+		</extensions>
+    </build>
 
 </project>
 
