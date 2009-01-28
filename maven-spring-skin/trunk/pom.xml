@@ -44,9 +44,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.5</connection>
-        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.5</developerConnection>
-        <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/tags/maven-spring-skin-1.0.5</url>
+        <connection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</connection>
+        <developerConnection>scm:svn:https://springframework.svn.sourceforge.net/svnroot/springframework/maven-spring-skin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewvc/springframework/maven-spring-skin/trunk</url>
     </scm>
     <build>
 		<extensions>
@@ -57,6 +57,16 @@
 			</extension>
 		</extensions>
     </build>
-
+	<repositories>
+		<repository>
+			<id>com.springsource.repository.bundles.release</id>
+			<name>SpringSource Enterprise Bundle Repository -
+				SpringSource Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>
 
