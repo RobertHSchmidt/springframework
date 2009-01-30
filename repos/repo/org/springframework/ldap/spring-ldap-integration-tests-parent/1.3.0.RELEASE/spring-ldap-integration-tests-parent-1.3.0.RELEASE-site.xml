@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Spring LDAP">
+  <bannerLeft>
+    <name>Spring LDAP</name>
+    <src>images/spring-ldap.png</src>
+    <href>http://www.springframework.org/ldap</href>
+  </bannerLeft>
+  <publishDate position="left" format="d MMM yyyy" />
+  <poweredBy>
+    <logo img="images/logos/spring.png" name="Powered by Spring" href="http://www.springframework.org" />
+    <logo img="images/logos/s101d.png" name="Powered by Structure 101" href="http://www.headwaysoftware.com/products/structure101/" />
+    <logo img="images/logos/jira.png" name="Powered by JIRA" href="http://www.atlassian.com/software/jira/" />
+    <logo img="images/logos/bamboo.png" name="Built by Bamboo" href="http://www.atlassian.com/software/bamboo/" />
+    <logo img="images/logos/maven-feather.png" name="Build with Maven 2" href="http://maven.apache.org" />
+    <logo img="images/logos/contegix.png" name="Hosted by Contegix" href="http://www.contegix.com/" />
+  </poweredBy>
+  <skin>
+    <groupId>org.springframework.maven.skins</groupId>
+    <artifactId>maven-spring-skin</artifactId>
+    <version>1.0.4</version>
+  </skin>
+  <body>
+    <head>
+      <script language="javascript" type="text/javascript">i=11692</script>
+      <script src="http://t4.trackalyzer.com/trackalyze.js" language="javascript" type="text/javascript"></script>
+    </head>
+    <links>
+      <item name="Spring Framework" href="http://www.springframework.org" />
+      <item name="Spring LDAP 1.3" href="http://static.springframework.org/spring-ldap/sites/1.3/" />
+    </links>
+    <menu name="Overview">
+      <item name="Home" href="index.html" />
+      <item name="Downloads" href="downloads/releases.html" />
+    </menu>
+    <menu name="Documentation">
+      <item name="API" href="apidocs/index.html" />
+      <item name="Reference" href="reference.html" />
+      <item name="FAQ" href="faq.html" />
+      <item name="Upgrading" href="upgrading.html" />
+      <item name="Resources &amp; Tools" href="resources.html" />
+    </menu>
+    <menu name="Support">
+      <item name="Support Forums" href="http://forum.springframework.org/forumdisplay.php?f=40" />
+      <item name="JIRA" href="http://jira.springframework.org/browse/LDAP" />
+      <item name="Road Map" href="http://jira.springframework.org/browse/LDAP?report=com.atlassian.jira.plugin.system.project:roadmap-panel" />
+    </menu>
+    <menu name="Reports" ref="reports" />
+  </body>
+</project>
