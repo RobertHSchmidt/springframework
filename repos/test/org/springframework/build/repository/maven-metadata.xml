@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <plugins>
+    <plugin>
+      <name>Build Converter Plugin</name>
+      <prefix>org.springframework.build.repository.</prefix>
+      <artifactId>org.springframework.build.repository.maven</artifactId>
+    </plugin>
+  </plugins>
+</metadata>
