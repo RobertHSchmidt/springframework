@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.springframework.build.repository</groupId>
+  <artifactId>org.springframework.build.repository.maven</artifactId>
+  <version>1.0.0.CI-SNAPSHOT</version>
+  <versioning>
+    <latest>1.0.0.CI-SNAPSHOT</latest>
+    <versions>
+      <version>1.0.0.CI-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20090131165204</lastUpdated>
+  </versioning>
+</metadata>
