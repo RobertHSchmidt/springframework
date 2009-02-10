@@ -78,15 +78,15 @@ import org.springframework.webflow.executor.support.ResponseInstructionHandler;
  *     &lt;/action&gt;
  * </pre>
  * 
- * This example maps the logical request URL <code>/userRegistration.do</code> as a Flow controller (<code>FlowAction</code>).
- * It is expected that flows to launch be provided in a dynamic fashion by the views (allowing this single
- * <code>FlowAction</code> to manage any number of flow executions). A Spring binding action form instance is set in
- * request scope, acting as an adapter enabling POJO-based binding and validation with Spring.
+ * This example maps the logical request URL <code>/userRegistration.do</code> as a Flow controller (
+ * <code>FlowAction</code>). It is expected that flows to launch be provided in a dynamic fashion by the views (allowing
+ * this single <code>FlowAction</code> to manage any number of flow executions). A Spring binding action form instance
+ * is set in request scope, acting as an adapter enabling POJO-based binding and validation with Spring.
  * <p>
  * Other notes regarding Struts/Spring Web Flow integration:
  * <ul>
- * <li>Logical view names returned when <code>ViewStates</code> and <code>EndStates</code> are entered are mapped
- * to physical view templates using standard Struts action forwards (typically global forwards).</li>
+ * <li>Logical view names returned when <code>ViewStates</code> and <code>EndStates</code> are entered are mapped to
+ * physical view templates using standard Struts action forwards (typically global forwards).</li>
  * <li>Use of the <code>SpringBindingActionForm</code> requires no special setup in <code>struts-config.xml</code>:
  * simply declare a form bean in request scope of the class
  * <code>org.springframework.web.struts.SpringBindingActionForm</code> and use it with your FlowAction.</li>
@@ -267,7 +267,7 @@ public class FlowAction extends ActionSupport {
 	 * @see HttpServletResponse#sendRedirect(java.lang.String)
 	 */
 	protected ActionForward createRedirectForward(String url, HttpServletResponse response) throws Exception {
-		response.sendRedirect(url);
+		response.sendRedirect(response.encodeRedirectURL(url));
 		return null;
 	}
 

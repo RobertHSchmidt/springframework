@@ -225,6 +225,7 @@ public class PortletFlowController extends AbstractController implements Initial
 				// issue the redirect to the external URL
 				String url = argumentHandler.createExternalUrl(redirect, responseInstruction.getFlowExecutionKey(),
 						context);
+				// note: no need for response.encodeURL since we're redirecting to an *external* resource
 				response.sendRedirect(url);
 			}
 
