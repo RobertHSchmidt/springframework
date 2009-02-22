@@ -55,6 +55,23 @@
         </pluginManagement>
       </build>
     </profile>
+    <profile>
+      <id>staging</id>
+      <distributionManagement>
+        <site>
+          <id>staging</id>
+          <url>file:///${user.dir}/target/staging</url>
+        </site>
+        <repository>
+          <id>staging</id>
+          <url>file:///${user.dir}/target/staging</url>
+        </repository>
+        <snapshotRepository>
+          <id>staging</id>
+          <url>file:///${user.dir}/target/staging</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
   </profiles>
   <distributionManagement>
     <downloadUrl>http://www.springframework.org/download</downloadUrl>
