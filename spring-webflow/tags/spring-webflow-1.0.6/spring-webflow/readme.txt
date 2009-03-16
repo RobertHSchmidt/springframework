@@ -1,4 +1,4 @@
-SPRING WEB FLOW 1.0.6 ()
+SPRING WEB FLOW 1.0.6 (14.01.2009)
 ----------------------------------
 http://www.springframework.org/webflow
 http://forum.springframework.org
