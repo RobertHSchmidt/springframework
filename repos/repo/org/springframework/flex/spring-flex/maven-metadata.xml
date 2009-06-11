@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.springframework.flex</groupId>
+  <artifactId>spring-flex</artifactId>
+  <version>1.0.0.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>1.0.0.RELEASE</version>
+    </versions>
+    <lastUpdated>20090611150451</lastUpdated>
+  </versioning>
+</metadata>
