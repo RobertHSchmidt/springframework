@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-asm</artifactId>
+  <version>3.0.0.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>3.0.0.RELEASE</version>
+    </versions>
+    <lastUpdated>20091216174157</lastUpdated>
+  </versioning>
+</metadata>
