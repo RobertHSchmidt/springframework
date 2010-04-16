@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><metadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
   <groupId>org.springframework.integration</groupId>
   <artifactId>spring-integration-jms</artifactId>
   <version>1.0.1.RELEASE</version>
@@ -8,7 +9,8 @@
       <version>1.0.2.RELEASE</version>
       <version>1.0.2.SR1</version>
       <version>1.0.3.RELEASE</version>
+      <version>1.0.4.RELEASE</version>
     </versions>
-    <lastUpdated>20090718221316</lastUpdated>
+    <lastUpdated>20100416195944</lastUpdated>
   </versioning>
 </metadata>
