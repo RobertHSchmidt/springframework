@@ -1,11 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?><metadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
   <groupId>org.springframework.ldap</groupId>
   <artifactId>spring-ldap-core</artifactId>
   <version>1.3.0.RELEASE</version>
   <versioning>
     <versions>
       <version>1.3.0.RELEASE</version>
+      <version>1.3.1.RELEASE</version>
     </versions>
-    <lastUpdated>20090130095527</lastUpdated>
+    <lastUpdated>20101201080834</lastUpdated>
   </versioning>
 </metadata>
