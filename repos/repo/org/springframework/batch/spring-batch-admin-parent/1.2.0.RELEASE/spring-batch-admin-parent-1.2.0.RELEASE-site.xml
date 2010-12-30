@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><project xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd" name="Spring Batch Admin Parent" xmlns="http://maven.apache.org/DECORATION/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <bannerLeft>
+    <name>Spring Batch Admin Parent</name>
+    <href>http://www.springframework.org/spring-batch</href>
+  </bannerLeft>
+  <bannerRight>
+    <src>images/shim.gif</src>
+  </bannerRight>
+  <poweredBy>
+    <logo img="images/shim.gif" name="" href="" />
+  </poweredBy>
+  <skin>
+    <groupId>org.springframework.maven.skins</groupId>
+    <artifactId>maven-spring-skin</artifactId>
+    <version>1.0.5</version>
+  </skin>
+  <body>
+    <links>
+      <item name="Home" href="http://static.springframework.org/spring-batch/index.html" />
+    </links>
+  </body>
+</project>
