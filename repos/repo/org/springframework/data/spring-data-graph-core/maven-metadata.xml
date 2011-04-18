@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.springframework.data</groupId>
+  <artifactId>spring-data-graph-core</artifactId>
+  <version>1.0.0.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>1.0.0.RELEASE</version>
+    </versions>
+    <lastUpdated>20110418222309</lastUpdated>
+  </versioning>
+</metadata>

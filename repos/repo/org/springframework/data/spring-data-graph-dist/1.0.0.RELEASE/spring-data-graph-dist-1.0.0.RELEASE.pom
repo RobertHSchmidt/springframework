@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.springframework.data</groupId>
+	<artifactId>spring-data-graph-dist</artifactId>
+	<name>Spring Data Graph Distribution</name>
+	<version>1.0.0.RELEASE</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>spring-data-graph-parent</module>
+		<module>spring-data-graph-core</module>
+		<module>spring-data-neo4j</module>
+		<module>spring-data-neo4j-rest</module>
+	</modules>
+
+	<developers>
+		<developer>
+			<id>trisberg</id>
+			<name>Thomas Risberg</name>
+			<email>trisberg at vmware.com</email>
+			<organization>SpringSource</organization>
+			<organizationUrl>http://www.SpringSource.com</organizationUrl>
+			<roles>
+				<role>Project Admin</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<id>mpollack</id>
+			<name>Mark Pollack</name>
+			<email>mpollack at vmware.com</email>
+			<organization>SpringSource</organization>
+			<organizationUrl>http://www.SpringSource.com</organizationUrl>
+			<roles>
+				<role>Project Admin</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<id>mhunger</id>
+			<name>Michael Hunger</name>
+			<email>michael.hunger at neotechnology.com</email>
+			<organization>Neo Technology</organization>
+			<organizationUrl>http://www.neotechnology.com</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>dmontag</id>
+			<name>David Montag</name>
+			<email>david.montag at neotechnology.com</email>
+			<organization>Neo Technology</organization>
+			<organizationUrl>http://www.neotechnology.com</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-7</timezone>
+		</developer>
+        <developer>
+			<id>systay</id>
+			<name>Andres Taylor</name>
+			<email>andres at neotechnology.com</email>
+			<organization>Neo Technology</organization>
+			<organizationUrl>http://www.neotechnology.com</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<comments>
+			Copyright 2010 the original author or authors.
+			 
+			Licensed under the Apache License, Version 2.0 (the "License");
+			you may not use this file except in compliance with the License.
+			You may obtain a copy of the License at
+			
+			     http://www.apache.org/licenses/LICENSE-2.0
+			
+			Unless required by applicable law or agreed to in writing, software
+			distributed under the License is distributed on an "AS IS" BASIS,
+			WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+			implied.
+			See the License for the specific language governing permissions and
+			limitations under the License.
+			</comments>
+		</license>
+	</licenses>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- dist.* properties are used by the antrun tasks below -->
+		<dist.id>spring-data-graph</dist.id>
+		<dist.name>Spring Data</dist.name>
+		<dist.key>DATAGRAPH</dist.key>
+		<dist.version>${project.version}</dist.version>
+		<dist.releaseType>snapshot</dist.releaseType>
+		<dist.finalName>${dist.id}-${dist.version}</dist.finalName>
+		<dist.fileName>${dist.finalName}.zip</dist.fileName>
+		<dist.filePath>target/${dist.fileName}</dist.filePath>
+		<dist.bucketName>dist.springframework.org</dist.bucketName>
+		<!-- these properties should be in ~/.m2/settings.xml
+		<dist.accessKey>s3 access key</dist.accessKey>
+		<dist.secretKey>s3 secret key</dist.secretKey>
+		-->
+	</properties>
+	<profiles>
+		<profile>
+			<id>staging</id>
+			<distributionManagement>
+				<site>
+					<id>spring-site-staging</id>
+					<url>file:///${java.io.tmpdir}/spring-data/data-graph/docs/${project.version}</url>
+				</site>
+				<repository>
+					<id>spring-milestone-staging</id>
+					<url>${maven.url}</url>
+				</repository>
+				<snapshotRepository>
+					<id>spring-snapshot-staging</id>
+					<url>file:///${java.io.tmpdir}/spring-data/data-graph/snapshot</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+	<distributionManagement>
+		<!-- see 'staging' profile for dry-run deployment settings -->
+		<downloadUrl>http://www.springsource.com/spring-data</downloadUrl>
+		<site>
+			<id>static.springframework.org</id>
+			<url>scp://static.springframework.org/var/www/domains/springframework.org/static/htdocs/spring-data/data-graph/snapshot-site/</url>
+		</site>
+		<repository>
+			<id>spring-milestone</id>
+			<name>Spring Milestone Repository</name>
+			<url>s3://maven.springframework.org/release</url>
+		</repository>
+		<snapshotRepository>
+			<id>spring-snapshot</id>
+			<name>Spring Snapshot Repository</name>
+			<url>s3://maven.springframework.org/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<build>
+		<extensions>
+			<extension>
+				<!-- available only in the springframework maven repository. see <repositories> section below -->
+				<groupId>org.springframework.build.aws</groupId>
+				<artifactId>org.springframework.build.aws.maven</artifactId>
+				<version>3.1.0.RELEASE</version>
+			</extension>
+		</extensions>
+		<plugins>
+            <plugin>
+                <groupId>com.agilejava.docbkx</groupId>
+                <artifactId>docbkx-maven-plugin</artifactId>
+                <version>2.0.8</version>
+                <executions>
+                    <execution>
+                        <id>single-page</id>
+                        <goals>
+                            <goal>generate-html</goal>
+                        </goals>
+                        <configuration>
+                            <keepRelativeImageUris>true</keepRelativeImageUris>
+                            <htmlCustomization>${basedir}/src/docbkx/resources/xsl/html.xsl</htmlCustomization>
+					        <useExtensions>1</useExtensions>
+					        <highlightSource>1</highlightSource>
+					        <highlightDefaultLanguage></highlightDefaultLanguage>
+                            <postProcess>
+                                <move tofile="${basedir}/target/site/reference/html/index.html"
+                                      file="${basedir}/target/docbkx/html/index.html"/>
+
+                                <copy todir="${basedir}/target/site/reference/html" flatten="true">
+                                    <fileset dir="${basedir}/src/docbkx/">
+                                        <exclude name="${basedir}/src/docbkx/resources/*"/>
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                    </fileset>
+                                </copy>
+
+                                <copy todir="${basedir}/target/site/reference/html">
+                                    <fileset dir="${basedir}/src/docbkx/resources">
+                                        <include name="**/*.css"/>
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                    </fileset>
+                                </copy>
+                            </postProcess>
+                        </configuration>
+                        <phase>pre-site</phase>
+                    </execution>
+                    <execution>
+                        <id>single-pdf</id>
+                        <goals>
+                            <goal>generate-pdf</goal>
+                        </goals>
+                        <configuration>
+                            <imgSrcPath>${basedir}/src/docbkx/</imgSrcPath>
+                            <admonGraphicsPath>${basedir}/src/docbkx/resources/images/</admonGraphicsPath>
+					        <useExtensions>1</useExtensions>
+					        <highlightSource>1</highlightSource>
+					        <highlightDefaultLanguage></highlightDefaultLanguage>
+                            <postProcess>
+                                <copy file="${basedir}/target/docbkx/pdf/index.pdf"
+                                      tofile="${basedir}/target/site/reference/pdf/spring-data-graph-reference.pdf"
+                                      failonerror="false"/>
+                            </postProcess>
+                        </configuration>
+                        <phase>pre-site</phase>
+                    </execution>
+                    <execution>
+                        <id>multi-page</id>
+                        <goals>
+                            <goal>generate-html</goal>
+                        </goals>
+                        <configuration>
+                            <keepRelativeImageUris>true</keepRelativeImageUris>
+                            <chunkedOutput>true</chunkedOutput>
+                            <htmlCustomization>${basedir}/src/docbkx/resources/xsl/html_chunk.xsl</htmlCustomization>
+					        <useExtensions>1</useExtensions>
+					        <highlightSource>1</highlightSource>
+					        <highlightDefaultLanguage></highlightDefaultLanguage>
+                            <targetDirectory>${basedir}/target/docbkx/multi/</targetDirectory>
+                            <postProcess>
+                                <move todir="${basedir}/target/site/reference/multi">
+                                    <fileset dir="${basedir}/target/docbkx/multi">
+                                        <include name="**/*.html"/>
+                                    </fileset>
+                                </move>
+                                <copy todir="${basedir}/target/site/reference/multi">
+                                    <fileset dir="${basedir}/src/docbkx/resources">
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${basedir}/target/site/reference/multi" flatten="true">
+                                    <fileset dir="${basedir}/src/docbkx">
+                                        <exclude name="${basedir}/src/docbkx/resources/*"/>
+                                        <include name="**/*.css"/>
+                                        <include name="**/*.png"/>
+                                        <include name="**/*.gif"/>
+                                        <include name="**/*.jpg"/>
+                                    </fileset>
+                                </copy>
+                            </postProcess>
+                        </configuration>
+                        <phase>pre-site</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.docbook</groupId>
+                        <artifactId>docbook-xml</artifactId>
+                        <version>4.4</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.xmlgraphics</groupId>
+                        <artifactId>fop</artifactId>
+                        <version>0.93</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includes>index.xml</includes>
+                    <chunkedOutput>false</chunkedOutput>
+                    <draftWatermarkImage/>
+                    <htmlStylesheet>css/html.css</htmlStylesheet>
+                    <sourceDirectory>${basedir}/src/docbkx/</sourceDirectory>
+                    <foCustomization>${basedir}/src/docbkx/resources/xsl/fopdf.xsl</foCustomization>
+                    <xincludeSupported>true</xincludeSupported>
+                    <entities>
+                        <entity>
+                            <name>version</name>
+                            <value>${project.version}</value>
+                        </entity>
+                    </entities>
+                </configuration>
+            </plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<javadoc:aggregate>true</javadoc:aggregate>
+					<breakiterator>true</breakiterator>
+					<header>Spring Data Graph</header>
+					<source>1.5</source>
+					<quiet>true</quiet>
+					<javadocDirectory>${project.basedir}/src/main/javadoc</javadocDirectory>
+					<overview>${project.basedir}/src/main/javadoc/overview.html</overview>
+					<stylesheetfile>${project.basedir}/src/main/javadoc/spring-javadoc.css</stylesheetfile>
+					<!-- copies doc-files subdirectory which contains image resources -->
+					<docfilessubdirs>true</docfilessubdirs>
+					<links>
+						<link>http://static.springframework.org/spring/docs/3.0.x/javadoc-api</link>
+						<link>http://java.sun.com/javase/6/docs/api</link>
+					</links>
+				</configuration>
+			</plugin>
+			<plugin><!--
+				run `mvn package assembly:assembly` to trigger assembly creation.
+				see http://www.sonatype.com/books/mvnref-book/reference/assemblies-set-dist-assemblies.html -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<inherited>false</inherited>
+                <configuration>
+                    <descriptors>
+                        <descriptor>${project.basedir}/src/assembly/distribution.xml</descriptor>
+                    </descriptors>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+				<executions>
+					<execution>
+						<id>distribution</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>upload-dist</id>
+						<phase>deploy</phase>
+						<configuration>
+							<tasks>
+								<ant antfile="${basedir}/src/ant/upload-dist.xml">
+									<target name="upload-dist"/>
+								</ant>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.build</groupId>
+						<artifactId>org.springframework.build.aws.ant</artifactId>
+						<version>3.0.5.RELEASE</version>
+					</dependency>
+					<dependency>
+						<groupId>net.java.dev.jets3t</groupId>
+						<artifactId>jets3t</artifactId>
+						<version>0.7.2</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+		<!-- the name of this project is 'spring-data-graph-dist';
+			 make sure the zip file is just 'spring-data-graph'. -->
+		<finalName>${dist.finalName}</finalName>
+	</build>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repository.source.maven.release</id>
+            <name>SpringSource Maven Release Repository</name>
+            <url>http://repository.springsource.com/maven/bundles/release</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>jboss-legacy-repository</id>
+            <name>Old JBoss Public Repository</name>
+            <url>http://repository.jboss.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <repositories>
+		<repository>
+			<id>central</id>
+            <url>http://uk.maven.org/maven2</url>
+		</repository>
+        <repository>
+            <id>jboss-legacy-repository</id>
+            <name>Old JBoss Public Repository</name>
+            <url>http://repository.jboss.org/maven2/</url>
+        </repository>
+		<repository>
+			<id>repository.springframework.maven.release</id>
+			<name>Spring Framework Maven Release Repository</name>
+			<url>http://maven.springframework.org/release</url>
+		</repository>
+		<repository>
+			<id>repository.springframework.maven.milestone</id>
+			<name>Spring Framework Maven Milestone Repository</name>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+		<repository>
+			<!-- necessary for org.springframework.build.aws.maven dependency -->
+			<id>repository.source.maven.release</id>
+			<name>SpringSource Maven Release Repository</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+		</repository>
+        <repository>
+            <id>jboss-repository</id>
+            <name>JBoss Public Repository</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+        </repository>
+	</repositories>
+</project>
