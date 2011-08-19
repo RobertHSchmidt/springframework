@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.springframework.security</groupId>
+  <artifactId>spring-security-samples-aspectj</artifactId>
+  <version>3.0.5.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>3.0.5.RELEASE</version>
+      <version>3.0.6.RELEASE</version>
+    </versions>
+    <lastUpdated>20110819200246</lastUpdated>
+  </versioning>
+</metadata>
