@@ -3,10 +3,11 @@
   <groupId>org.springframework.data</groupId>
   <artifactId>spring-data-jpa</artifactId>
   <versioning>
-    <release>1.0.0.RELEASE</release>
+    <release>1.0.1.RELEASE</release>
     <versions>
       <version>1.0.0.RELEASE</version>
+      <version>1.0.1.RELEASE</version>
     </versions>
-    <lastUpdated>20110721183901</lastUpdated>
+    <lastUpdated>20110905121302</lastUpdated>
   </versioning>
 </metadata>
