@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.springframework.social</groupId>
+  <artifactId>spring-social-facebook-web</artifactId>
+  <version>1.0.0.RELEASE</version>
+  <versioning>
+    <versions>
+      <version>1.0.0.RELEASE</version>
+    </versions>
+    <lastUpdated>20110908220402</lastUpdated>
+  </versioning>
+</metadata>
