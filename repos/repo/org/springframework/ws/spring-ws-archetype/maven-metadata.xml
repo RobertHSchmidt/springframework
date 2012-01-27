@@ -4,7 +4,7 @@
   <artifactId>spring-ws-archetype</artifactId>
   <versioning>
     <latest>1.5.10</latest>
-    <release>2.0.3.RELEASE</release>
+    <release>2.0.4.RELEASE</release>
     <versions>
       <version>1.0-rc1</version>
       <version>1.0-rc2</version>
@@ -32,7 +32,8 @@
       <version>1.5.10</version>
       <version>2.0.2.RELEASE</version>
       <version>2.0.3.RELEASE</version>
+      <version>2.0.4.RELEASE</version>
     </versions>
-    <lastUpdated>20111020123712</lastUpdated>
+    <lastUpdated>20120127103650</lastUpdated>
   </versioning>
 </metadata>
