@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><metadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
   <groupId>org.springframework.webflow</groupId>
   <artifactId>spring-binding</artifactId>
   <version>2.0.6.RELEASE</version>
@@ -13,7 +14,8 @@
       <version>2.2.0.RELEASE</version>
       <version>2.2.1.RELEASE</version>
       <version>2.3.0.RELEASE</version>
+      <version>2.3.1.RELEASE</version>
     </versions>
-    <lastUpdated>20110228143438</lastUpdated>
+    <lastUpdated>20120327191451</lastUpdated>
   </versioning>
 </metadata>
