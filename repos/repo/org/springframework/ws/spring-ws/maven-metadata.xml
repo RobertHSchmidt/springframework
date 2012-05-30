@@ -3,7 +3,7 @@
   <groupId>org.springframework.ws</groupId>
   <artifactId>spring-ws</artifactId>
   <versioning>
-    <release>2.0.5.RELEASE</release>
+    <release>2.1.0.RELEASE</release>
     <versions>
       <version>1.0-m3</version>
       <version>1.0-rc1</version>
@@ -31,7 +31,8 @@
       <version>2.0.3.RELEASE</version>
       <version>2.0.4.RELEASE</version>
       <version>2.0.5.RELEASE</version>
+      <version>2.1.0.RELEASE</version>
     </versions>
-    <lastUpdated>20120504133839</lastUpdated>
+    <lastUpdated>20120530113256</lastUpdated>
   </versioning>
 </metadata>
