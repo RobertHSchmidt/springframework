@@ -3,7 +3,7 @@
   <groupId>org.springframework.ws</groupId>
   <artifactId>spring-ws-test</artifactId>
   <versioning>
-    <release>2.1.1.RELEASE</release>
+    <release>2.1.2.RELEASE</release>
     <versions>
       <version>2.0.0-RC1</version>
       <version>2.0.0-RC2</version>
@@ -15,7 +15,8 @@
       <version>2.0.5.RELEASE</version>
       <version>2.1.0.RELEASE</version>
       <version>2.1.1.RELEASE</version>
+      <version>2.1.2.RELEASE</version>
     </versions>
-    <lastUpdated>20120918102038</lastUpdated>
+    <lastUpdated>20121204103531</lastUpdated>
   </versioning>
 </metadata>
